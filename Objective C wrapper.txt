@@ -1,0 +1,104 @@
+From:	Phil Jordan <phil@philjordan.eu>
+Sent:	01 January 2012 19:59
+To:	Tim Burgess
+Subject:	Re: Objective c++
+
+Hi Tim,
+
+On Sun, Jan 1, 2012 at 18:12, Tim Burgess <tim@raisedbar.net> wrote:
+> I hope you don’t mind me mailing you direct.  I’ve just read your 
+> article on
+> c++/Objective-C integration and found myself a bit lost in the detail,
+> especially since I need to call Objective-C code from c++.
+
+Sure, no problem - admittedly, the article primarily describes the opposite, wrapping C++ in an 
+Objective-C class.
+
+> My particular
+> requirement is to be able to wrap the NSSpeechSynthesizer class in the 
+> AppKit so that I can call it from a cross-platform project I’ve 
+> written in
+> c++ to help blind musicians.  My objective –C knowledge is virtually
+> non-existent and my c++ could be a lot better (my coding career was 
+> based around Clipper and SQL rather too many years ago).  I’ve spent a 
+> lot of time reading articles on the web that seem to skirt around this 
+> topic, but I’ve yet to see a clear worked example, especially one that 
+> demonstrates wrapping Objective-C with c++, rather than going in the 
+> other direction.  I’d be most grateful if you could point me in the 
+> direction of any such examples, as this is really holding up my 
+> freeware project for what I suspect will turn out to be a trivial amount of code.
+
+Sounds like a very cool project! I've never worked with the NSSpeechSynthesizer itself, but the general 
+idea is the same:
+- create a pure C++ header for the wrapper class, not using any Objective-C types
+- Implement the wrapper class in a .mm file, and do any datatype conversions in there
+
+I'll attempt a basic example here, admittedly untested, and without boilerplate code like include guards, 
+constructor guards, error checking, etc:
+
+in SpeechSynthesizer.h:
+
+#include <string>
+
+struct SpeechSynthesizerImpl;
+class SpeechSynthesizer
+{
+  SpeechSynthesizerImpl* impl;
+public:
+  explicit SpeechSynthesizer(const std::string& voice_identifier);
+  ~SpeechSynthesizer();
+
+  // wraps NSSpeechSynthesizer's startSpeakingString: method
+  bool StartSpeaking(const std::string& text);
+  // wraps the voice method, to illustrate string conversion
+  std::string GetVoice();
+};
+
+
+In SpeechSynthesizer.mm:
+
+#include "SpeechSynthesizer.h"
+#include <AppKit/NSSpeechSynthesizer.h>
+
+// the indirection avoids declaring the variable of type
+NSSpeechSynthesizer* (which is an Obj-C type) in the header struct SpeechSynthesizerImpl {
+  NSSpeechSynthesizer* synth;
+};
+
+SpeechSynthesizer::SpeechSynthesizer(const std::string& voice_identifier) :
+  // instantiate the private implementation (PIMPL) object
+  impl(new SpeechSynthesizerImpl())
+{
+  // convert the C++ string to an ObjC one
+  NSString* voice = [NSString stringWithUTF8String:voice_identifier.c_str()];
+  // instantiate the wrapped synthesizer
+  impl->synth = [[NSSpeechSynthesizer alloc] initWithVoice:voice]; }
+
+SpeechSynthesizer::~SpeechSynthesizer()
+{
+  [impl->synth release];
+  delete impl;
+}
+
+bool SpeechSynthesizer::StartSpeaking(const std::string& text) {
+  return [impl->synth startSpeakingString:[NSString stringWithUTF8String:text.c_str()]];
+}
+
+std::string SpeechSynthesizer::GetVoice() {
+  return std::string([[impl->synth voice] UTF8String]); }
+
+
+
+The idea is to only declare any variables with ObjC type in the .mm file, so that those types won't "leak" 
+into the header, which would make it unincludable from normal .cpp files. I've included illustrations for 
+converting back and forth between C++ and Objective-C strings, you'll probably want to move those 
+conversions into helper functions, and if you're using anything other than UTF-8 you'll need to use the 
+NSString methods with other encodings.
+In any case, I hope that helps you to get started, do let me know if anything isn't clear yet.
+
+> Best wishes and a happy new year.
+
+Likewise, hope you have a good one!
+
+Regards,
+phil

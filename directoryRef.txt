@@ -1,0 +1,4 @@
+    <Feature Id="DataFoldersFeature" Title="SurfaceReader Data Folders Feature" Level="1">
+      <ComponentRef Id="DataFoldersComponent" />
+      <ComponentGroupRef Id="SurfaceReaderDataFolders"/>
+    </Feature>

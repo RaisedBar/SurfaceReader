@@ -1,0 +1,22 @@
+Boost
+C:\program files\boost
+https://github.com/boostorg/boost.git --recurse-submodules
+Required libs:
+filesystem
+serialization
+system 
+thread
+wserialization 
+
+Crypto++
+C:\program files\crypto++
+https://github.com/weidai11/cryptopp.git
+
+rtMIDI
+c:\program files\rtMIDI
+https://github.com/thestk/rtmidi.git 
+
+wxWidgets
+c:\wxwidgets-3.1.0
+https://github.com/wxWidgets/wxWidgets.git 
+

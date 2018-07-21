@@ -1,0 +1,275 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>15.0</VCProjectVersion>
+    <ProjectGuid>{1C13AB1F-4A21-4A59-B248-59E0EC6243B9}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <WindowsTargetPlatformVersion>10.0.10240.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);c:\wxwidgets-3.1.0\include;c:\wxwidgets-3.1.0\include\msvc;c:\program files\boost;c:\program files (x86)\visual leak detector\include;c:\program files\crypto++;c:\program files\rtmidi;C:\program files (x86)\WiX Toolset v3.11\SDK\VS2017\inc;</IncludePath>
+    <SourcePath>$(VC_SourcePath);c:\program files\rtmidi;</SourcePath>
+    <LibraryPath>$(VC_LibraryPath_x86);$(WindowsSDK_LibraryPath_x86);$(NETFXKitsDir)Lib\um\x86;.\lib;c:\wxwidgets-3.1.0\lib\vc_lib;c:\program files\boost\stage\lib;C:\program files\crypto++\win32\Output\Debug;C:\program files (x86)\WiX Toolset v3.11\SDK\VS2017\lib\x86;c:\program files\rtmidi\lib\x86;c:\program files (x86)\visual leak detector\lib\win32;</LibraryPath>
+    <OutDir>$(SolutionDir)files\x86\</OutDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);c:\wxwidgets-3.1.0\include;c:\wxwidgets-3.1.0\include\msvc;c:\program files\boost;c:\program files (x86)\visual leak detector\include;c:\program files\crypto++;c:\program files\rtmidi;C:\program files (x86)\WiX Toolset v3.11\SDK\VS2017\inc;</IncludePath>
+    <LibraryPath>$(VC_LibraryPath_x86);$(WindowsSDK_LibraryPath_x86);$(NETFXKitsDir)Lib\um\x86;.\lib;c:\wxwidgets-3.1.0\lib\vc_lib;c:\program files\boost\stage\lib;C:\program files\crypto++\win32\Output\Release;C:\program files (x86)\WiX Toolset v3.11\SDK\VS2017\lib\x86;c:\program files\rtmidi\lib\x86;c:\program files (x86)\visual leak detector\lib\win32;</LibraryPath>
+    <OutDir>$(SolutionDir)files\x86\</OutDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);c:\wxwidgets-3.1.0\include;c:\wxwidgets-3.1.0\include\msvc;c:\program files\boost;c:\program files (x86)\visual leak detector\include;c:\program files\crypto++;c:\program files\rtmidi;C:\program files (x86)\WiX Toolset v3.11\SDK\VS2017\inc;</IncludePath>
+    <LibraryPath>$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);$(NETFXKitsDir)Lib\um\x64;C:\wxWidgets-3.1.0\lib\vc_x64_lib;C:\program files\Boost\stage\lib;C:\program files\crypto++\x64\Output\release;C:\program files (x86)\WiX Toolset v3.11\SDK\VS2017\lib\x64;c:\program files\rtmidi\lib\x64;</LibraryPath>
+    <OutDir>$(SolutionDir)files\x64\</OutDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);c:\wxwidgets-3.1.0\include;c:\wxwidgets-3.1.0\include\msvc;c:\program files\boost;c:\program files (x86)\visual leak detector\include;c:\program files\crypto++;c:\program files\rtmidi;C:\program files (x86)\WiX Toolset v3.11\SDK\VS2017\inc;</IncludePath>
+    <LibraryPath>$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);$(NETFXKitsDir)Lib\um\x64;C:\wxWidgets-3.1.0\lib\vc_x64_lib;C:\program files\Boost\stage\lib;C:\program files\crypto++\x64\Output\Debug;C:\program files (x86)\WiX Toolset v3.11\SDK\VS2017\lib\x64;c:\program files\rtmidi\lib\x64;</LibraryPath>
+    <OutDir>$(SolutionDir)X64\debug\</OutDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <Optimization>Disabled</Optimization>
+    </ClCompile>
+    <Link>
+      <TargetMachine>MachineX86</TargetMachine>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Windows</SubSystem>
+      <AdditionalDependencies>Msi.lib;dolapi.lib;cryptlib.lib;dutil.lib;wxzlibd.lib;wxpngd.lib;wxmsw31ud_core.lib;wxbase31ud.lib;winmm.lib;rtmidid.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_SCL_SECURE_NO_WARNINGS;__WINDOWS_MM__;WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+    </ClCompile>
+    <Link>
+      <TargetMachine>MachineX86</TargetMachine>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Windows</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalDependencies>Msi.lib;dolapi.lib;cryptlib.lib;dutil.lib;wxzlib.lib;wxpng.lib;wxmsw31u_core.lib;wxbase31u.lib;winmm.lib;rtmidi.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <PreprocessorDefinitions>_SCL_SECURE_NO_WARNINGS;__WINDOWS_MM__;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>Msi.lib;cryptlib.lib;dutil.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <PreprocessorDefinitions>_SCL_SECURE_NO_WARNINGS;__WINDOWS_MM__;_UNICODE;UNICODE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>Msi.lib;cryptlib.lib;dutil.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\..\..\Program Files\rtmidi\RtMidi.cpp" />
+    <ClCompile Include=".\ActionPickerWin.cpp" />
+    <ClCompile Include=".\ActionsPageWin.cpp" />
+    <ClCompile Include=".\AppCollection.cpp" />
+    <ClCompile Include=".\AppConfig.cpp" />
+    <ClCompile Include=".\AppConfigChooserDialog.cpp" />
+    <ClCompile Include=".\AppConfigWizard.cpp" />
+    <ClCompile Include=".\ControlStatesDialog.cpp" />
+    <ClCompile Include=".\DefineCharDialog.cpp" />
+    <ClCompile Include=".\DefineDisplayDlg.cpp" />
+    <ClCompile Include=".\DefineLEDLampDlg.cpp" />
+    <ClCompile Include=".\DefineMessageDialog.cpp" />
+    <ClCompile Include=".\DefineStateDialog.cpp" />
+    <ClCompile Include=".\DefineTranslationTable.cpp" />
+    <ClCompile Include=".\DisplayDefinition.cpp" />
+    <ClCompile Include=".\DisplayParamsDlg.cpp" />
+    <ClCompile Include=".\DisplayReportDlg.cpp" />
+    <ClCompile Include=".\DisplaysPage.cpp" />
+    <ClCompile Include=".\DisplayStatesDialog.cpp" />
+    <ClCompile Include=".\EditProtocol.cpp" />
+    <ClCompile Include=".\Encryption.cpp" />
+    <ClCompile Include=".\gwspeak_i.c" />
+    <ClCompile Include=".\HardwarePage.cpp" />
+    <ClCompile Include=".\LEDLampsPage.cpp" />
+    <ClCompile Include=".\MessageDefinition.cpp" />
+    <ClCompile Include=".\MIDI.cpp" />
+    <ClCompile Include=".\MIDIDialog.cpp" />
+    <ClCompile Include=".\MIDISurface.cpp" />
+    <ClCompile Include=".\NewSurfaceDialog.cpp" />
+    <ClCompile Include=".\Protocol.cpp" />
+    <ClCompile Include=".\ProtocolChooserDialog.cpp" />
+    <ClCompile Include=".\ProtocolCollection.cpp" />
+    <ClCompile Include=".\ProtocolWizard.cpp" />
+    <ClCompile Include=".\RBInputBox.cpp" />
+    <ClCompile Include=".\RBSpeech.cpp" />
+    <ClCompile Include=".\RBStringFuncs.cpp" />
+    <ClCompile Include=".\RBWizardPage.cpp" />
+    <ClCompile Include=".\ScreenReaderFunctionsDlg.cpp" />
+    <ClCompile Include=".\ScreenReaderParametersDlg.cpp" />
+    <ClCompile Include=".\SpeechDialog.cpp" />
+    <ClCompile Include=".\SRTaskBar.cpp" />
+    <ClCompile Include=".\SurfaceAction.cpp" />
+    <ClCompile Include=".\SurfaceActions.cpp" />
+    <ClCompile Include=".\SurfaceFrame.cpp" />
+    <ClCompile Include=".\SurfaceList.cpp" />
+    <ClCompile Include=".\SurfacePage.cpp" />
+    <ClCompile Include=".\SurfaceParameters.cpp" />
+    <ClCompile Include=".\SurfaceReader.cpp" />
+    <ClCompile Include=".\SurfaceWizard.cpp" />
+    <ClCompile Include=".\SysExPage.cpp" />
+    <ClCompile Include=".\TextDisplaysPage.cpp" />
+    <ClCompile Include=".\TranslationTablesDialog.cpp" />
+    <ClCompile Include=".\UpdateChecker.cpp" />
+    <ClCompile Include=".\wineyes_i.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include=".\ActionPickerWin.h" />
+    <ClInclude Include=".\ActionsPageWin.h" />
+    <ClInclude Include=".\AppCollection.h" />
+    <ClInclude Include=".\AppConfig.h" />
+    <ClInclude Include=".\AppConfigChooserDialog.h" />
+    <ClInclude Include=".\AppConfigWizard.h" />
+    <ClInclude Include=".\ControlStatesDialog.h" />
+    <ClInclude Include=".\DefineCharDialog.h" />
+    <ClInclude Include=".\DefineDisplayDlg.h" />
+    <ClInclude Include=".\DefineLEDLampDlg.h" />
+    <ClInclude Include=".\DefineMessageDialog.h" />
+    <ClInclude Include=".\DefineStateDialog.h" />
+    <ClInclude Include=".\DefineTranslationTable.h" />
+    <ClInclude Include=".\DisplayDefinition.h" />
+    <ClInclude Include=".\DisplayParamsDlg.h" />
+    <ClInclude Include=".\DisplayReportDlg.h" />
+    <ClInclude Include=".\DisplaysPage.h" />
+    <ClInclude Include=".\DisplayStatesDialog.h" />
+    <ClInclude Include=".\EditProtocol.h" />
+    <ClInclude Include=".\Encryption.h" />
+    <ClInclude Include=".\gwspeak.h" />
+    <ClInclude Include=".\HardwarePage.h" />
+    <ClInclude Include=".\jfwapi.h" />
+    <ClInclude Include=".\LEDLampsPage.h" />
+    <ClInclude Include=".\MessageDefinition.h" />
+    <ClInclude Include=".\MIDI.h" />
+    <ClInclude Include=".\MIDIDialog.h" />
+    <ClInclude Include=".\MIDISurface.h" />
+    <ClInclude Include=".\MIDIWidget.h" />
+    <ClInclude Include=".\NewSurfaceDialog.h" />
+    <ClInclude Include=".\nvdaController.h" />
+    <ClInclude Include=".\ParseIniFile.h" />
+    <ClInclude Include=".\ParseJsdFile.h" />
+    <ClInclude Include=".\Protocol.h" />
+    <ClInclude Include=".\ProtocolChooserDialog.h" />
+    <ClInclude Include=".\ProtocolCollection.h" />
+    <ClInclude Include=".\ProtocolWizard.h" />
+    <ClInclude Include=".\RBEnums.h" />
+    <ClInclude Include=".\RBException.h" />
+    <ClInclude Include=".\RBInputBox.h" />
+    <ClInclude Include=".\RBSpeech.h" />
+    <ClInclude Include=".\RBSpeechWin.h" />
+    <ClInclude Include=".\RBStringFuncs.h" />
+    <ClInclude Include=".\RBTextCtrl.h" />
+    <ClInclude Include=".\RBWizardPage.h" />
+    <ClInclude Include=".\RtMidi.h" />
+    <ClInclude Include=".\ScreenReaderFunctionsDlg.h" />
+    <ClInclude Include=".\ScreenReaderParametersDlg.h" />
+    <ClInclude Include=".\Serializer.h" />
+    <ClInclude Include=".\SpeechDialog.h" />
+    <ClInclude Include=".\SpeechParameters.h" />
+    <ClInclude Include=".\SRConstants.h" />
+    <ClInclude Include=".\SROptions.h" />
+    <ClInclude Include=".\SRTaskBar.h" />
+    <ClInclude Include=".\SurfaceAction.h" />
+    <ClInclude Include=".\SurfaceActions.h" />
+    <ClInclude Include=".\SurfaceFrame.h" />
+    <ClInclude Include=".\SurfaceList.h" />
+    <ClInclude Include=".\SurfacePage.h" />
+    <ClInclude Include=".\SurfaceParameters.h" />
+    <ClInclude Include=".\SurfaceReader.h" />
+    <ClInclude Include=".\SurfaceReaderHelp.h" />
+    <ClInclude Include=".\SurfaceWizard.h" />
+    <ClInclude Include=".\SysExPage.h" />
+    <ClInclude Include=".\TextDisplaysPage.h" />
+    <ClInclude Include=".\TranslationTablesDialog.h" />
+    <ClInclude Include=".\UpdateChecker.h" />
+    <ClInclude Include=".\wineyes.h" />
+    <ClInclude Include=".\apiproto.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include=".\sample.rc" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
