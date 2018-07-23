@@ -9,7 +9,7 @@
 //crypto++.
 #include <base64.h>
 #include <filters.h>
-#include <wx/msw/winundef.h> 
+//#include <wx/msw/winundef.h> 
 
 
 std::string Encrypt( std::string strIn);

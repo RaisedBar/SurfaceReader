@@ -2,7 +2,7 @@
 // Encryption/decryption for strings
 
 #include "Encryption.h"
-#include <wx/msw/winundef.h> 
+//#include <wx/msw/winundef.h> 
  
 
 std::string Encrypt( std::string strIn)

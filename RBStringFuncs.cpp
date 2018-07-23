@@ -1,5 +1,6 @@
 // RBStringFuncs.cpp
 
+#pragma warning(disable:4996)
 #include "RBStringFuncs.h"
 
 
