@@ -33,7 +33,7 @@ using namespace std;
 
 
 // String-handling functions
-
+//.remove when tim updates things.
 boost::filesystem::path AppDataPath();
 boost::filesystem::path HelpPath();
 boost::filesystem::path AppConfigPath();

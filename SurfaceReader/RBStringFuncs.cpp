@@ -2,7 +2,7 @@
 
 #pragma warning(disable:4996)
 #include "RBStringFuncs.h"
-
+#include <algorithm>
 
 // Implementations
 
@@ -209,6 +209,9 @@ boost::filesystem::path LogPath()
 
 std::wstring PathToURL(std::wstring wstrPath)
 {
+	replace_if(begin(wstrPath), end(wstrPath), [](const wchar_t s) {return s == ' '; }, L"%20%");
+	return wstrPath;
+	/*
 	std::wstring wstrURL;
 	char cSpace = 32;
 
@@ -224,6 +227,7 @@ std::wstring PathToURL(std::wstring wstrPath)
 		}
 	}
 	return wstrURL;
+	*/
 }
 
 

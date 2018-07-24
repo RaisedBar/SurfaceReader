@@ -228,6 +228,12 @@
     <ClInclude Include="WIX Include.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="RBPathFuncs.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RBPathErrorException.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="SurfaceReader.cpp">
@@ -390,6 +396,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="wineyes_i.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="RBPathFuncsWin.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

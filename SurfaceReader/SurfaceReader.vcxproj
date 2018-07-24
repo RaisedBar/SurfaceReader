@@ -192,6 +192,8 @@
     <ClInclude Include="RBEnums.h" />
     <ClInclude Include="RBException.h" />
     <ClInclude Include="RBInputBox.h" />
+    <ClInclude Include="RBPathErrorException.h" />
+    <ClInclude Include="RBPathFuncs.h" />
     <ClInclude Include="RBSpeech.h" />
     <ClInclude Include="RBSpeechWin.h" />
     <ClInclude Include="RBStringFuncs.h" />
@@ -258,6 +260,7 @@
     <ClCompile Include="ProtocolCollection.cpp" />
     <ClCompile Include="ProtocolWizard.cpp" />
     <ClCompile Include="RBInputBox.cpp" />
+    <ClCompile Include="RBPathFuncsWin.cpp" />
     <ClCompile Include="RBSpeech.cpp" />
     <ClCompile Include="RBStringFuncs.cpp" />
     <ClCompile Include="RBWizardPage.cpp" />
