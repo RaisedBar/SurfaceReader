@@ -7,27 +7,23 @@
 
 #include <string>
 
-#include <wx/string.h>
-#include <wx/msw/winundef.h> 
-
-
 // String constants
-const std::string strEmpty = "";
+const std::wstring strEmpty = L"";
 const std::wstring wstrEmpty = L"";
-const std::string strNoteOn = "144";
-const std::string HASH_DELIMITER = ".";
-const std::string strSysExHashPrefix = "X";
-const std::string strDoubleHashPrefix = "D";
-const std::string strNibbleHashPrefix = "N";
-const std::string NIBBLE_RANGE_MARKER = "R";
-const std::string NIBBLE_WILD_CARD_MARKER = "V";
-const std::string strDecimalFormat = "%d";
-const std::string strHexFormat = "%|02X|";
-const std::string strFloatFormat = "%|2f|";
+const std::wstring strNoteOn = L"144";
+const std::wstring HASH_DELIMITER = L".";
+const std::wstring strSysExHashPrefix = L"X";
+const std::wstring strDoubleHashPrefix = L"D";
+const std::wstring strNibbleHashPrefix = L"N";
+const std::wstring NIBBLE_RANGE_MARKER = L"R";
+const std::wstring NIBBLE_WILD_CARD_MARKER = L"V";
+const std::wstring strDecimalFormat = L"%d";
+const std::wstring strHexFormat = L"%|02X|";
+const std::wstring strFloatFormat = L"%|2f|";
 
-const std::string strFullStop = ".";
-const std::string strSpace = " ";
-const std::string strDoubleQuotes = "\"";
+const std::wstring strFullStop = L".";
+const std::wstring strSpace = L" ";
+const std::wstring strDoubleQuotes = L"\"";
 
 // Company name
 const std::wstring wstrRBCompanyName = L"Raised Bar";
@@ -620,7 +616,7 @@ const std::string strCopyError = "Unable to copy: ";
 const std::wstring wstrAllFilesTemplate = L"*.*";
 
 // Unicode characters
-const wxUniChar wxucFullStop = 46;
+const wchar_t wxucFullStop = 46;
 
 // Event ID values
 const int SPEECH_UPDATE_ID = 100000;
