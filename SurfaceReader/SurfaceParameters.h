@@ -30,8 +30,8 @@ public:
 	
 std::wstring GetSurfaceName();
 void SetSurfaceName( std::wstring wstrSurfaceName);
-std::string GetProtocolID();
-void SetProtocolID( std::string strNewProtocolID);
+std::wstring GetProtocolID();
+void SetProtocolID( std::wstring strNewProtocolID);
 std::wstring GetProtocolName();
 void SetProtocolName( std::wstring wstrNewProtocolName);
 int GetHardwareInID();
@@ -42,14 +42,14 @@ int GetDisplayInID();
 void SetDisplayInID( int nNewID);
 int GetDisplayOutID();
 	void SetDisplayOutID( int nNewID);
-	std::string GetHardwareInName();
-	void SetHardwareInName( std::string strNewName);
-	std::string GetHardwareOutName();
-void SetHardwareOutName( std::string strNewName);
-std::string GetDisplayInName();
-void SetDisplayInName( std::string strNewName);
-std::string GetDisplayOutName();
-void SetDisplayOutName( std::string strNewName);
+	std::wstring GetHardwareInName();
+	void SetHardwareInName( std::wstring strNewName);
+	std::wstring GetHardwareOutName();
+void SetHardwareOutName( std::wstring strNewName);
+std::wstring GetDisplayInName();
+void SetDisplayInName( std::wstring strNewName);
+std::wstring GetDisplayOutName();
+void SetDisplayOutName( std::wstring strNewName);
 std::pair <std::wstring, std::wstring> GetAppConfigID();
 void SetAppConfigID( std::pair <std::wstring, std::wstring> myAppConfigID);
 std::wstring GetAppConfigName();
@@ -127,10 +127,10 @@ throw ID_LOAD_DATA_EXCEPTION;
 	
 	// Internal storage
 std::wstring m_SurfaceName;
-std::string m_ProtocolID;
+std::wstring m_ProtocolID;
 std::wstring wstrProtocolName;
 int m_HardwareInID, m_HardwareOutID, m_DisplayInID, m_DisplayOutID; 
-std::string m_HardwareInName, m_HardwareOutName, m_DisplayInName, m_DisplayOutName;
+std::wstring m_HardwareInName, m_HardwareOutName, m_DisplayInName, m_DisplayOutName;
 Mode m_SurfaceMode;
 int m_ReadDisplayDelay;
 int m_MIDIBufferSize;

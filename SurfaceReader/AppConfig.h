@@ -49,35 +49,35 @@ public:
 	// Setters and getters
 	void SetAppName( std::wstring wstrName);
 	std::wstring GetAppName() const;
-void SetProtocolID( std::string strID);
-	std::string GetProtocolID() const;
-MessageDefinition GetControlDefinition( std::string strControlHash);
-void SetControlDefinition( std::pair <std::string, MessageDefinition> myPair);
+void SetProtocolID( std::wstring strID);
+	std::wstring GetProtocolID() const;
+MessageDefinition GetControlDefinition( std::wstring strControlHash);
+void SetControlDefinition( std::pair <std::wstring, MessageDefinition> myPair);
 MessageDefinition GetControlDefinitionItem( unsigned int nItem);
 
-std::map <std::string , MessageDefinition> GetHardwareControls()
+std::map <std::wstring , MessageDefinition> GetHardwareControls()
 	{
 		return HardwareControls;
 }
 
-void SetHardwareControls( std::map <std::string , MessageDefinition> myNewHardwareControls)
+void SetHardwareControls( std::map <std::wstring , MessageDefinition> myNewHardwareControls)
 {
 HardwareControls = myNewHardwareControls;
 }
 
-DisplayDefinition GetDisplayDefinition( std::string strDisplayHash);
-std::string GetDisplayHash( std::wstring wstrLabel);
-void SetDisplayDefinition( std::pair <std::string, DisplayDefinition> myPair);
-void UpdateDisplayDefinitions( std::map <std::string, DisplayDefinition> myNewDisplays);
+DisplayDefinition GetDisplayDefinition( std::wstring strDisplayHash);
+std::wstring GetDisplayHash( std::wstring wstrLabel);
+void SetDisplayDefinition( std::pair <std::wstring, DisplayDefinition> myPair);
+void UpdateDisplayDefinitions( std::map <std::wstring, DisplayDefinition> myNewDisplays);
 DisplayDefinition GetDisplayDefinitionItem( unsigned int nItem);
 std::vector <std::wstring> GetDisplayNames();
 
-std::map <std::string , DisplayDefinition> GetDisplays()
+std::map <std::wstring , DisplayDefinition> GetDisplays()
 	{
 		return Displays;
 }
 
-void SetDisplays( std::map <std::string , DisplayDefinition> myNewDisplays)
+void SetDisplays( std::map <std::wstring , DisplayDefinition> myNewDisplays)
 {
 Displays = myNewDisplays;
 }
@@ -110,10 +110,10 @@ throw ID_LOAD_DATA_EXCEPTION;
 
 // Internal storage
 std::wstring wstrAppName;
-std::string strProtocolID;
+std::wstring strProtocolID;
 // This map stores the Hash of the message as an std::string key and a message definition
-std::map <std::string , MessageDefinition> HardwareControls;
-std::map <std::string , DisplayDefinition> Displays;
+std::map <std::wstring , MessageDefinition> HardwareControls;
+std::map <std::wstring , DisplayDefinition> Displays;
 };
 #endif
 

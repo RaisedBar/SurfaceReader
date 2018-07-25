@@ -35,11 +35,11 @@
 class TranslationTablesDialog: public wxDialog
 {
 public:
-TranslationTablesDialog( const wxString& title, std::string strHash, boost::shared_ptr<SurfaceProtocol> pProtocol);
+TranslationTablesDialog( const wxString& title, std::wstring strHash, boost::shared_ptr<SurfaceProtocol> pProtocol);
 ~TranslationTablesDialog();
 
 bool IsValidTableID();
-std::string GetTableID();
+std::wstring GetTableID();
 
 private:
 void CheckSelection();
@@ -59,7 +59,7 @@ wxListBox * lbxTables;
 wxButton * AddTableButton, * RenameTableButton, * DeleteTableButton, * EditTableButton, * OKButton, * CancelButton;
 
 // Internal storage
-std::string strMyHash;
+std::wstring strMyHash;
 boost::shared_ptr<SurfaceProtocol> pMyProtocol;
 
 DECLARE_EVENT_TABLE()

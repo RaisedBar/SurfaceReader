@@ -33,7 +33,7 @@
 class DisplayStatesDialog: public wxDialog
 {
 public:
-DisplayStatesDialog( const wxString& title, std::string strHash, DisplayDefinition * pDisplay, std::vector <unsigned char> vSysEx);
+DisplayStatesDialog( const wxString& title, std::wstring strHash, DisplayDefinition * pDisplay, std::vector <unsigned char> vSysEx);
 ~DisplayStatesDialog();
 
 private:
@@ -53,7 +53,7 @@ wxListBox * lbxStates;
 wxButton * AddStateButton, * DeleteStateButton, * EditStateButton, * OKButton, * CancelButton;
 
 // Internal storage
-std::string strMyHash;
+std::wstring strMyHash;
 std::vector <unsigned char> vMySysEx;
 std::vector <unsigned char> vBytes;
 DisplayDefinition * pMyDisplay;

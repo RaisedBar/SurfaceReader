@@ -7,7 +7,7 @@
 #include "DefineStateDialog.h"
 
 
-DefineStateDialog::DefineStateDialog( const wxString& title, std::string strHash, std::vector <unsigned char> vSysExHeader)
+DefineStateDialog::DefineStateDialog( const wxString& title, std::wstring strHash, std::vector <unsigned char> vSysExHeader)
        : 
 wxDialog(NULL, -1, title, wxDefaultPosition, wxSize(250, 230))
 {  
@@ -85,7 +85,7 @@ Centre();
 
 
 // Constructor to edit an existing state
-DefineStateDialog::DefineStateDialog( const wxString& title, std::string strHash, std::vector <unsigned char> vSysExHeader, wxString wxstrLabel, std::vector <unsigned char> vKeyBytes)
+DefineStateDialog::DefineStateDialog( const wxString& title, std::wstring strHash, std::vector <unsigned char> vSysExHeader, wxString wxstrLabel, std::vector <unsigned char> vKeyBytes)
 : wxDialog(NULL, -1, title, wxDefaultPosition, wxSize(250, 230))
 {  
 strMyHash = strHash;
@@ -243,15 +243,15 @@ else  // Short message, may be 1 or 2 data bytes
 {
 	if (strMyHash.substr( 0,1).compare( strDoubleHashPrefix) == 0)    // double data byte
 {
-	if ((IsSingleHexByteString( txtMSBByte->GetValue().ToStdString()) == false)
-		&& (IsSingleHexByteString( txtLSBByte->GetValue().ToStdString()) == false))
+	if ((IsSingleHexByteString(NarrowToWideString(txtMSBByte->GetValue().ToStdString())) == false)
+		&& (IsSingleHexByteString(NarrowToWideString(txtLSBByte->GetValue().ToStdString())) == false))
 	{
 		blnResult = true;
 	}
 	}  // end if double
 	else  // single data byte
 {
-	if (IsSingleHexByteString( txtMSBByte->GetValue().ToStdString()))
+	if (IsSingleHexByteString(NarrowToWideString(txtMSBByte->GetValue().ToStdString())))
 {
 blnResult = true;
 }
@@ -285,7 +285,7 @@ if (myInputBox->ShowModal() == wxID_OK)
 {
 wxString wxstrNewByte = myInputBox->GetText();
 		
-if (IsSingleHexByteWString( wxstrNewByte.ToStdWstring()))
+if (IsSingleHexByteString( wxstrNewByte.ToStdWstring()))
 {
 long lTemp;
 wxstrNewByte.ToLong( &lTemp, 16);

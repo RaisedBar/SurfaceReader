@@ -53,7 +53,7 @@ class ActionsPage: public wxWizardPageSimple
 			ActionsPage(wxWizard * wizParent, const wxString & title, boost::shared_ptr<AppConfig> pAppConfig, boost::shared_ptr<SurfaceProtocol> pProtocol, boost::shared_ptr<RBSpeech> pSpeech, boost::shared_ptr<JawsCacheType> pJawsCache);
 ~ActionsPage();
 
-std::map <std::string, MessageDefinition> GetActions();
+std::map <std::wstring, MessageDefinition> GetActions();
 std::wstring GetActionParameterDescription( SurfaceAction mySA);
 
 	DECLARE_EVENT_TABLE()
@@ -77,10 +77,10 @@ void ToggleButtons();
 void GetDisplayParameters();
 void GetScreenReaderFunction();
 
-std::string GetControlName( std::wstring wstrName);
+std::wstring GetControlName( std::wstring wstrName);
 int GetLevel( wxTreeItemId wxtIDCurrentNode);
 int GetChildNumber( wxTreeItemId wxtIDCurrentNode);
-std::string GetControlHash( wxTreeItemId myCurrentNode);
+std::wstring GetControlHash( wxTreeItemId myCurrentNode);
 std::wstring GetMode( wxTreeItemId myCurrentNode);
 bool OtherScreenReadersContainActions( wxTreeItemId wxtIDCurrentNode);
 std::vector <std::wstring> ReplicateActions( wxTreeItemId wxtiCurrentNode, ActiveProduct myProduct);
@@ -117,7 +117,7 @@ boost::shared_ptr<AppConfig> pMyAppConfig;
 boost::shared_ptr<SurfaceProtocol> pMyProtocol;
 boost::shared_ptr<RBSpeech> pMySpeech;
 
-std::map <std::string, MessageDefinition> myControls;
+std::map <std::wstring, MessageDefinition> myControls;
 boost::shared_ptr<JawsCacheType> pMyJawsCache;
 };
 #endif  // define guard

@@ -55,11 +55,11 @@ MIDIDialog(const wxString& title, const bool blnVirtualIn, int nSelectedPort);
 
 void SetSelectedInput( int nPortNumber);
 int GetSelectedInput();
-std::string GetSelectedInputName();
+std::wstring GetSelectedInputName();
 
 void SetSelectedOutput( int nPortNumber);
 int GetSelectedOutput();
-std::string GetSelectedOutputName();
+std::wstring GetSelectedOutputName();
 
 private:
 	void ListMIDIInPorts();

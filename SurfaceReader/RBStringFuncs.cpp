@@ -2,8 +2,10 @@
 
 #include "RBStringFuncs.h"
 #include <algorithm>
+#include <boost/locale.hpp>
 
 using namespace std;
+using namespace boost::locale::conv;
 
 // Implementations
 
@@ -172,4 +174,24 @@ vector <unsigned char> GetSysExAddressBytesFromHash(wstring strMsgHash, unsigned
 	}
 
 	return vAddresses;
+}
+
+wstring NarrowToWideString(string stringToConvert)
+{
+	if (stringToConvert.empty())
+	{
+		return L"";
+	}
+	
+	return utf_to_utf<wchar_t>(stringToConvert);
+}
+
+string WideToNarrowString(wstring stringToConvert)
+{
+	if (stringToConvert.empty())
+	{
+		return "";
+	}
+
+	return utf_to_utf<char>(stringToConvert);
 }

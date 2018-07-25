@@ -89,13 +89,13 @@ nStripCount= nStrips;
 }
 
 
-std::string DisplayDefinition::GetCharacterTranslationID()
+std::wstring DisplayDefinition::GetCharacterTranslationID()
 {
 return strTranslationID;
 }
 
 
-void DisplayDefinition::SetCharacterTranslationID( std::string strTableID)
+void DisplayDefinition::SetCharacterTranslationID( std::wstring strTableID)
 {
 strTranslationID = strTableID;
 }
@@ -113,7 +113,7 @@ void DisplayDefinition::SetSysExCursorOffset( int nNewCursorOffset)
 }
 
 
-int DisplayDefinition::GetNibbledCursorPosition( std::string strHash, unsigned char nData2)
+int DisplayDefinition::GetNibbledCursorPosition( std::wstring strHash, unsigned char nData2)
 {
 int nResult = -1;
 
@@ -150,13 +150,13 @@ void DisplayDefinition::SetUniCode( bool blnUniCoded)
 }
 
 
-std::string DisplayDefinition::GetLinkedDisplayHash()
+std::wstring DisplayDefinition::GetLinkedDisplayHash()
 {
 return strLinkedDisplayHash;
 }
 
 
-void DisplayDefinition::SetLinkedDisplayHash( std::string strLinkedHash)
+void DisplayDefinition::SetLinkedDisplayHash( std::wstring strLinkedHash)
 {
 strLinkedDisplayHash = strLinkedHash;
 }

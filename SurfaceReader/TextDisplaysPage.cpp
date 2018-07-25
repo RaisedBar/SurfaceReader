@@ -126,7 +126,7 @@ if (myNewDisplayDlg->ShowModal() == wxID_OK)
 		std::wstring wstrLabel = myNewDisplayDlg->GetDisplayName();
 
 		// Query any duplication (can't ban duplicates due to Mackie C4 LCD1)
-		std::string strTempHash = 			pMyProtocol->GetDisplayHash( wstrLabel);
+		std::wstring strTempHash = 			pMyProtocol->GetDisplayHash( wstrLabel);
 	
 		if ((strTempHash.empty() == false)
 			&& (strTempHash.compare( myNewDisplayDlg->GetDisplayHash()) != 0)) 
@@ -150,7 +150,7 @@ nDuplicateNumber = 		nDuplicateNumber++;
 
 // Add a new entry, but make sure the parameters match the existing entry, except for the hash, label and any address bytes
 DisplayDefinition myDefinition = pMyProtocol->GetDisplay( strTempHash);
-																																std::string strNewHash = myNewDisplayDlg->GetDisplayHash();
+																																std::wstring strNewHash = myNewDisplayDlg->GetDisplayHash();
 																																																																myDefinition.SetLinkedDisplayHash( strTempHash);
 																																																																myDefinition.SetLabel( wstrNewLabel);
 																																																																myDefinition.SetSysExAddressBytes( myNewDisplayDlg->GetSysExAddressBytes());																
@@ -186,7 +186,7 @@ myNewDisplayDlg->Destroy();
 																// We're not implementing MIDI shift buttons yet, so this is a place-holder
 	myDefinition.SetMIDIModifier( false);
 
-																std::string strHash = myNewDisplayDlg->GetDisplayHash();
+																std::wstring strHash = myNewDisplayDlg->GetDisplayHash();
 																myDefinition.SetLabel( myNewDisplayDlg->GetDisplayName());								
 																																myDefinition.IsLEDLamp( false);																
 																																myDefinition.SetLineCount( myNewDisplayDlg->GetLineCount());
@@ -232,7 +232,7 @@ int nSelection = lbxDisplayNames->GetSelection();
 			std::wstring wstrDisplayName = lbxDisplayNames->GetStringSelection().ToStdWstring();
 
 			// Find the associated entry within the map
-		std::string strOldHash = pMyProtocol->GetDisplayHash( wstrDisplayName);			
+		std::wstring strOldHash = pMyProtocol->GetDisplayHash( wstrDisplayName);			
 		
 		if (strOldHash.empty())
 		{
@@ -250,7 +250,7 @@ if (myEditedDisplayDlg->ShowModal() == wxID_OK)
 	if (myEditedDisplayDlg->IsValidDisplay())
 {
 				// Update values
-	std::string strNewHash = myEditedDisplayDlg->GetDisplayHash();
+	std::wstring strNewHash = myEditedDisplayDlg->GetDisplayHash();
 
 	// We're not implementing MIDI shift buttons yet, so this is a place-holder
 	myDisplay.SetMIDIModifier( false);
@@ -296,7 +296,7 @@ wstrMessage.append( wstrQuestionMark);
 if (		wxMessageBox( wstrMessage,                wstrAppTitle, wxYES_NO | wxNO_DEFAULT | wxICON_QUESTION) == wxYES) 
 {
 // Try to remove the associated entry from the map
-	std::string strHash = pMyProtocol->GetDisplayHash( wstrDisplayName);
+	std::wstring strHash = pMyProtocol->GetDisplayHash( wstrDisplayName);
 			
 	if (strHash.empty() == false)
 		{
@@ -317,7 +317,7 @@ if (		wxMessageBox( wstrMessage,                wstrAppTitle, wxYES_NO | wxNO_DE
 	{
 		std::wstring wstrDisplayName = lbxDisplayNames->GetStringSelection().ToStdWstring();
 // Try to update the associated entry within the map
-		std::string strHash = pMyProtocol->GetDisplayHash( wstrDisplayName);			
+		std::wstring strHash = pMyProtocol->GetDisplayHash( wstrDisplayName);			
 		
 		if (strHash.empty() == false)
 		{
@@ -361,14 +361,14 @@ else
 			if (lbxDisplayNames->GetSelection() > -1)
 			{
 	std::wstring wstrDisplayName = lbxDisplayNames->GetStringSelection().ToStdWstring();
-std::string strDisplayHash = pMyProtocol->GetDisplayHash( wstrDisplayName);
+std::wstring strDisplayHash = pMyProtocol->GetDisplayHash( wstrDisplayName);
 TranslationTablesDialog * myTablesDlg = new TranslationTablesDialog( wstrTablesTitle, strDisplayHash, pMyProtocol);		
 		
 if (myTablesDlg->ShowModal() == wxID_OK)
 		{
 			if (myTablesDlg->IsValidTableID())
 			{
-				std::string strTableID = myTablesDlg->GetTableID();
+				std::wstring strTableID = myTablesDlg->GetTableID();
 				DisplayDefinition myDisplay = pMyProtocol->GetDisplay( strDisplayHash);
 				myDisplay.SetCharacterTranslationID( strTableID);
 				pMyProtocol->SetDisplay( strDisplayHash, myDisplay);								

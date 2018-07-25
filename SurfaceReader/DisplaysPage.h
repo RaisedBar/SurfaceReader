@@ -44,7 +44,7 @@ class DisplaysPage: public wxWizardPageSimple
 		DisplaysPage(wxWizard * wizParent, const wxString & title, boost::shared_ptr<AppConfig> pAppConfig, boost::shared_ptr<SurfaceProtocol> pProtocol);
 ~DisplaysPage();
 
-std::map <std::string, DisplayDefinition> GetDisplays();
+std::map <std::wstring, DisplayDefinition> GetDisplays();
 
 		DECLARE_EVENT_TABLE()
 
@@ -53,10 +53,10 @@ void ListDisplays( wxTreeItemId wxtIDCurrentNode);
 void ListStates( wxTreeItemId wxtIDCurrentNode);
 void ToggleButtons();
 
-std::string GetDisplayName( std::wstring wstrName);
+std::wstring GetDisplayName( std::wstring wstrName);
 int GetLevel( wxTreeItemId wxtIDCurrentNode);
 int GetChildNumber( wxTreeItemId wxtIDCurrentNode);
-std::string GetDisplayHash( wxTreeItemId myCurrentNode);
+std::wstring GetDisplayHash( wxTreeItemId myCurrentNode);
 
 // Event handlers
 void OnTreeSelect( wxTreeEvent& event);
@@ -80,9 +80,9 @@ DolphinProduct myDolphinProduct;
 ActiveProduct myActiveProduct; //apply action to what product?
 ActiveProduct myOldActiveProduct;
 // Storage for the defined actions
-	std::map <std::string, MessageDefinition> myDefinitions;
+	std::map <std::wstring, MessageDefinition> myDefinitions;
 boost::shared_ptr<SurfaceProtocol> pMyProtocol;
 boost::shared_ptr<AppConfig> pMyAppConfig;
-std::map <std::string, DisplayDefinition> myDisplays;
+std::map <std::wstring, DisplayDefinition> myDisplays;
 };
 #endif

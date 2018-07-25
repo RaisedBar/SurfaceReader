@@ -62,8 +62,8 @@ private:
 	std::wstring GetSurfaceName();
 void SetSurfaceName( std::wstring wstrName);
 
-std::string GetProtocolID();
-void SetProtocolID( std::string strID);
+std::wstring GetProtocolID();
+void SetProtocolID( std::wstring strID);
 
 int GetHardware_MIDIIn();
 int GetHardware_VirtualMIDIOut();
@@ -75,15 +75,15 @@ void SetHardware_VirtualMIDIOut( int nID);
 void SetDisplay_VirtualMIDIIn( int nID);
 void SetDisplay_MIDIOut( int nID);
 
-std::string GetHardware_MIDIInName();
-std::string GetHardware_VirtualMIDIOutName();
-std::string GetDisplay_VirtualMIDIInName();
-std::string GetDisplay_MIDIOutName();
+std::wstring GetHardware_MIDIInName();
+std::wstring GetHardware_VirtualMIDIOutName();
+std::wstring GetDisplay_VirtualMIDIInName();
+std::wstring GetDisplay_MIDIOutName();
 
-void GetHardware_MIDIInName( std::string strName);
-void GetHardware_VirtualMIDIOutName( std::string strName);
-void GetDisplay_VirtualMIDIInName( std::string strName);
-void GetDisplay_MIDIOutName( std::string strName);
+void GetHardware_MIDIInName( std::wstring strName);
+void GetHardware_VirtualMIDIOutName( std::wstring strName);
+void GetDisplay_VirtualMIDIInName( std::wstring strName);
+void GetDisplay_MIDIOutName( std::wstring strName);
 
 void ListProtocols();
 bool IsValidPortID( int nPortID);
@@ -103,7 +103,7 @@ std::wstring wstrProtocolFileName;
 		
 // Internal storage
 int nHardware_MIDIIn, nHardware_VirtualMIDIOut, nDisplay_VirtualMIDIIn, nDisplay_MIDIOut;
-std::string strHardware_MIDIInName, strHardware_VirtualMIDIOutName, strDisplay_VirtualMIDIInName, strDisplay_MIDIOutName;	
+std::wstring strHardware_MIDIInName, strHardware_VirtualMIDIOutName, strDisplay_VirtualMIDIInName, strDisplay_MIDIOutName;	
 	
 boost::shared_ptr<SurfaceParameters> pMySurfaceParameters;
 boost::shared_ptr<ProtocolCollection> pMyProtocols;

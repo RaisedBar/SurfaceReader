@@ -32,7 +32,7 @@
 class ControlStatesDialog: public wxDialog
 {
 public:
-ControlStatesDialog( const wxString& title, std::string strHash, MessageDefinition * pMessage, std::vector <unsigned char> vSysExHeader);
+ControlStatesDialog( const wxString& title, std::wstring strHash, MessageDefinition * pMessage, std::vector <unsigned char> vSysExHeader);
 ~ControlStatesDialog();
 
 private:
@@ -52,7 +52,7 @@ wxListBox * lbxStates;
 wxButton * AddStateButton, * DeleteStateButton, * EditStateButton, * OKButton, * CancelButton;
 
 // Internal storage
-std::string strMyHash;
+std::wstring strMyHash;
 std::vector <unsigned char> vBytes;
 MessageDefinition * pMyMessage;
 std::vector <unsigned char> vMySysExHeader;

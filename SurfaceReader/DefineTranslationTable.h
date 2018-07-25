@@ -40,11 +40,11 @@ class DefineTranslationTable: public wxDialog
 {
 public:
 DefineTranslationTable( const wxString& title, boost::shared_ptr<SurfaceProtocol> pProtocol);
-	DefineTranslationTable( const wxString& title, std::string strTableID, boost::shared_ptr<SurfaceProtocol> pProtocol);
+	DefineTranslationTable( const wxString& title, std::wstring strTableID, boost::shared_ptr<SurfaceProtocol> pProtocol);
 ~DefineTranslationTable();
 
 bool IsValidTableDefinition();
-std::string GetTableID();
+std::wstring GetTableID();
 std::map <unsigned char, std::wstring> GetCharacterMap();
 
 private:
@@ -59,7 +59,7 @@ void OnCancel( wxCommandEvent& event);
 wxListBox * lbxCharacters;
 
   // Internal storage
-std::string strMyTableID;
+std::wstring strMyTableID;
 std::map <unsigned char, std::wstring> myLabels;
 boost::shared_ptr<SurfaceProtocol> pMyProtocol;
 

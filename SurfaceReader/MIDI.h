@@ -196,13 +196,13 @@ bool IsValidData2Value( std::vector <unsigned char> myMessage);
 bool IsValidSysEx( std::vector <unsigned char> vMessages);
 bool IsValidSysExHeader( std::vector <unsigned char> vMyBytes);
 
-std::string MIDIHash(); 
-std::string NibbledShortMIDIHash( std::vector <unsigned char> myMessage, int nNibbles);
-int NibbledMessageValue( std::string strHash, std::vector <unsigned char> vBuffer);
+std::wstring MIDIHash(); 
+std::wstring NibbledShortMIDIHash( std::vector <unsigned char> myMessage, int nNibbles);
+int NibbledMessageValue( std::wstring strHash, std::vector <unsigned char> vBuffer);
 
 private:
-std::string ShortMIDIHash( std::vector <unsigned char> myMessage);
-std::string SysExHash( std::vector <unsigned char> myMessage);
+std::wstring ShortMIDIHash( std::vector <unsigned char> myMessage);
+std::wstring SysExHash( std::vector <unsigned char> myMessage);
 	
 unsigned int nAddressBytes;
 std::vector <unsigned char> vMIDIBytes;

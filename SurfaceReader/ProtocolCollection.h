@@ -23,7 +23,7 @@
 class	ProtocolCollection
 	{
 private:
-	std::map <std::string, SurfaceProtocol> myProtocols;
+	std::map <std::wstring, SurfaceProtocol> myProtocols;
 	
 	friend std::ostream & operator<<( std::ostream &os, const ProtocolCollection &C);
 friend std::istream & operator>>( std::istream &is, const ProtocolCollection &C);
@@ -41,18 +41,18 @@ friend class boost::serialization::access;
 	
 	bool IsProtocolNameUnique(std::wstring wstrName);
 	int Add(SurfaceProtocol myNewProtocol);
-	void Remove(std::string strProtocolID);
+	void Remove(std::wstring strProtocolID);
 	
 	// Expose the start of the map for iteration
-	std::map <std::string, SurfaceProtocol>::iterator begin();
+	std::map <std::wstring, SurfaceProtocol>::iterator begin();
 		// Expose the end of the map for error handling
-		std::map <std::string, SurfaceProtocol>::iterator end();
+		std::map <std::wstring, SurfaceProtocol>::iterator end();
 // Reports whether a given protocol name already exists in the map by returning its protocol ID
-		std::string FindIDForProtocolName(std::wstring myProtocolName);
+		std::wstring FindIDForProtocolName(std::wstring myProtocolName);
 	// Indicates whether a specified protocol exists in the collection
-		bool ProtocolExists(std::string strProtocolID);
+		bool ProtocolExists(std::wstring strProtocolID);
 		// Returns a protocol, based on its ID
-		SurfaceProtocol GetProtocol(std::string strProtocolID);
+		SurfaceProtocol GetProtocol(std::wstring strProtocolID);
 	// Returns a protocol, based on its location in the map
 		SurfaceProtocol GetProtocol(int nIndex);
 	//Count.

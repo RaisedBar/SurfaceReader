@@ -32,15 +32,15 @@ NewSurfaceDialog(const wxString& title, boost::shared_ptr <ProtocolCollection> p
 ~NewSurfaceDialog();
 
 std::wstring SurfaceName() const;
-	std::string ProtocolID();
+	std::wstring ProtocolID();
 int Hardware_MIDIIn() const;
 int Hardware_VirtualMIDIOut() const;
 int Display_VirtualMIDIIn() const;
 int Display_MIDIOut() const;
-std::string Hardware_MIDIInName() const;
-std::string Hardware_VirtualMIDIOutName() const;
-std::string Display_VirtualMIDIInName() const;
-std::string Display_MIDIOutName() const;
+std::wstring Hardware_MIDIInName() const;
+std::wstring Hardware_VirtualMIDIOutName() const;
+std::wstring Display_VirtualMIDIInName() const;
+std::wstring Display_MIDIOutName() const;
 bool IsValidSurface();
 
 void OnDisplaySetup(wxCommandEvent& event);
@@ -67,13 +67,13 @@ wxStaticText * lblProtocolPrompt;
 		boost::shared_ptr <ProtocolCollection> pProtocols;
 		
 		// Path to protocol files
-wxString wxstrPath; 		
-wxUniChar wxuPathDivider;
-wxString wxstrProtocolFileName;
+std::wstring wxstrPath; 		
+wchar_t wxuPathDivider;
+std::wstring wxstrProtocolFileName;
 		
 // Assigned port ID values
 		int nHardware_MIDIIn, nHardware_VirtualMIDIOut, nDisplay_VirtualMIDIIn, nDisplay_MIDIOut;
-std::string strHardware_MIDIIn, strHardware_VirtualMIDIOut, strDisplay_VirtualMIDIIn, strDisplay_MIDIOut;	
+std::wstring strHardware_MIDIIn, strHardware_VirtualMIDIOut, strDisplay_VirtualMIDIIn, strDisplay_MIDIOut;	
 	
 // Event handler for list box selection
 void OnProtocolSelect( wxCommandEvent& event);

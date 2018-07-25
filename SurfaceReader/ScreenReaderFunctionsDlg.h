@@ -58,7 +58,7 @@ ActionInfoType GetAction( std::wstring wstrFunctionName);
 
 private:
 void ToggleButtons();
-ActionCollectionType GetCachedJawsActionsListItem( std::wstring wstrAppName, std::string strProtocolID);
+ActionCollectionType GetCachedJawsActionsListItem( std::wstring wstrAppName, std::wstring strProtocolID);
 std::wstring GetJawsJSDFileName();
 std::wstring GetHSCFileName();
 

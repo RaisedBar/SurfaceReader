@@ -6,7 +6,7 @@
 #define SURFACE_FRAME_H
 
 #pragma once
-
+#include <filesystem>
 #include "RBSpeech.h"
 #include "SurfaceReaderHelp.h"
 
@@ -42,10 +42,6 @@
 #endif
 
 //#include <boost/foreach.hpp>
-
-#define BOOST_FILESYSTEM_VERSION 3
-//#include <boost/filesystem.hpp>
-using namespace boost::filesystem;
 
 // #include <wx/wx.h>
 #include <wx/panel.h>
@@ -120,7 +116,7 @@ private:
 bool InitData();
 void ClearDisplays();
 void AddDisplay( std::wstring wstrLabel);
-void SetDisplayText( std::wstring wstrLabel, std::string strDisplayText);
+void SetDisplayText( std::wstring wstrLabel, std::wstring strDisplayText);
 
 	void 	InitMenus();
 void UpdateMenuStates();
@@ -128,12 +124,12 @@ void UpdateMenuStates();
 		void ListSurfaces();
 bool OpenSurfacePorts( SurfacePointer pMySurface);
 		void CloseSurfacePorts(SurfacePointer pMySurface);
-std::string GetPortErrorReport(SurfacePointer pMySurface);
+std::wstring GetPortErrorReport(SurfacePointer pMySurface);
 		void OpenAllSurfaces();
 		void CloseAllSurfaces();
 
 bool IsSurfaceNameUnique( std::wstring wstrName);
-bool CopyDir( boost::filesystem::path const & source, boost::filesystem::path const & destination);
+bool CopyDir(std::experimental::filesystem::path const & source, std::experimental::filesystem::path const & destination);
 
 bool DeleteAppConfigFiles();
 void SaveAppConfigs();
@@ -150,7 +146,7 @@ bool LoadSurfaces();
 	bool LoadOptions();
 	bool SaveOptions();
 
-void ShowLog( boost::filesystem::path myPath, bool blnIsEncrypted);
+void ShowLog(std::experimental::filesystem::path myPath, bool blnIsEncrypted);
 
 // event handlers 
 

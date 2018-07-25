@@ -14,7 +14,7 @@ if (myProtocols.size() == 0)
 	return blnResult;
 }
 
-std::map <std::string, SurfaceProtocol> ::iterator it;
+std::map <std::wstring, SurfaceProtocol> ::iterator it;
 
 for (it = myProtocols.begin(); it != myProtocols.end(); it++)
 {
@@ -31,7 +31,7 @@ return blnResult;
 
 int ProtocolCollection::Add(SurfaceProtocol myNewProtocol)
 	{
-	 std::map <std::string, SurfaceProtocol> ::iterator it;
+	 std::map <std::wstring, SurfaceProtocol> ::iterator it;
 	 
 	 it = myProtocols.find( myNewProtocol.GetProtocolID());
 	if (it != myProtocols.end())
@@ -39,16 +39,16 @@ int ProtocolCollection::Add(SurfaceProtocol myNewProtocol)
 		myProtocols.erase( it);
 	}
 	
-	std::pair <std::string, SurfaceProtocol> myPair;
+	std::pair <std::wstring, SurfaceProtocol> myPair;
 	myPair = std::make_pair( myNewProtocol.GetProtocolID(), myNewProtocol);
 
 	myProtocols.insert( myPair);
 		return myProtocols.size();
 	}
 	
-void ProtocolCollection::Remove(std::string strProtocolID)
+void ProtocolCollection::Remove(std::wstring strProtocolID)
 	{
-		std::map <std::string, SurfaceProtocol> ::iterator it;
+		std::map <std::wstring, SurfaceProtocol> ::iterator it;
 		it = myProtocols.find( strProtocolID);
 	
 	if (it != myProtocols.end())
@@ -58,21 +58,21 @@ void ProtocolCollection::Remove(std::string strProtocolID)
 }
 		
 // Expose the start of the map for iteration
-std::map <std::string, SurfaceProtocol>::iterator ProtocolCollection::begin()
+std::map <std::wstring, SurfaceProtocol>::iterator ProtocolCollection::begin()
 	{
 		return myProtocols.begin();		
 	}
 	
 	// Expose the end of the map for error handling
-std::map <std::string, SurfaceProtocol>::iterator ProtocolCollection::end()
+std::map <std::wstring, SurfaceProtocol>::iterator ProtocolCollection::end()
 	{
 return myProtocols.end();
 	}
 	
 	// Reports whether a given protocol name already exists in the map by returning its protocol ID
-std::string ProtocolCollection::FindIDForProtocolName(std::wstring myProtocolName)
+std::wstring ProtocolCollection::FindIDForProtocolName(std::wstring myProtocolName)
 	{
-		std::map <std::string, SurfaceProtocol>::const_iterator it;
+		std::map <std::wstring, SurfaceProtocol>::const_iterator it;
 				
 		for (it = myProtocols.begin(); it != myProtocols.end(); it++)
 		{
@@ -87,9 +87,9 @@ std::string ProtocolCollection::FindIDForProtocolName(std::wstring myProtocolNam
 	}
 
 	// Indicates whether a specified protocol exists in the collection
-bool ProtocolCollection::ProtocolExists(std::string strProtocolID)
+bool ProtocolCollection::ProtocolExists(std::wstring strProtocolID)
 		{
-std::map <std::string, SurfaceProtocol> ::iterator it;
+std::map <std::wstring, SurfaceProtocol> ::iterator it;
 it = myProtocols.find( strProtocolID);
 
 if (it != myProtocols.end()) 
@@ -104,9 +104,9 @@ else
 	
 
 	// Returns a protocol, based on its ID
-SurfaceProtocol ProtocolCollection::GetProtocol(std::string strProtocolID)
+SurfaceProtocol ProtocolCollection::GetProtocol(std::wstring strProtocolID)
 	{
-				std::map <std::string, SurfaceProtocol> ::iterator it;
+				std::map <std::wstring, SurfaceProtocol> ::iterator it;
 it = myProtocols.find( strProtocolID);
 if (it != myProtocols.end()) 
 	{
@@ -123,7 +123,7 @@ return it->second;
 // Returns a protocol, based on its location in the map
 SurfaceProtocol ProtocolCollection::GetProtocol(int nIndex)
 	{
-		std::map <std::string, SurfaceProtocol>::iterator it;
+		std::map <std::wstring, SurfaceProtocol>::iterator it;
 int i = 0;		
 
 for (it = myProtocols.begin(); it != myProtocols.end(); it++)

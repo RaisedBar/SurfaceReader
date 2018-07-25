@@ -6,6 +6,7 @@
 
 
 #include "SysExPage.h"
+#include "RBStringFuncs.h"
 
 
 ProtocolSysExPage::ProtocolSysExPage(wxWizard * wizParent, const wxString & title, boost::shared_ptr<SurfaceProtocol> pProtocol, bool EncryptionMode)
@@ -119,9 +120,9 @@ void ProtocolSysExPage::SetProtocolName( std::wstring wstrProtocolName)
 
 std::vector <long> ProtocolSysExPage::GetSysExManufacturerID()
 {
-	std::string strTemp1 = txtSysExManufacturerByte1->GetValue().ToStdString();
-	std::string strTemp2 = txtSysExManufacturerByte2->GetValue().ToStdString();
-	std::string strTemp3 = txtSysExManufacturerByte3->GetValue().ToStdString();
+	std::wstring strTemp1 = NarrowToWideString(txtSysExManufacturerByte1->GetValue().ToStdString());
+	std::wstring strTemp2 = NarrowToWideString(txtSysExManufacturerByte2->GetValue().ToStdString());
+	std::wstring strTemp3 = NarrowToWideString(txtSysExManufacturerByte3->GetValue().ToStdString());
 	vManufacturerID.clear();
 
 	if ( IsSingleHexByteString( strTemp1) == false)
@@ -187,7 +188,7 @@ void ProtocolSysExPage::SetSysExManufacturerID( std::vector <long> vNewManufactu
 	
 	long ProtocolSysExPage::GetSysExModelID() const
 {
-	std::string strTemp = txtSysExModelID->GetValue().ToStdString();
+	std::wstring strTemp = NarrowToWideString(txtSysExModelID->GetValue().ToStdString());
 	
 	if ((strTemp.empty())
 || (IsSingleHexByteString( strTemp) == false))
@@ -211,7 +212,7 @@ txtSysExModelID->GetValue().ToLong( &lTemp, 16);
 		}
 		else
 				{
-std::string strModelID = ByteToHex( lModelID);
+std::wstring strModelID = ByteToHex( lModelID);
 										txtSysExModelID->SetValue( strModelID);
 		}
 	}
@@ -219,7 +220,7 @@ std::string strModelID = ByteToHex( lModelID);
 	
 	long ProtocolSysExPage::GetSysExDeviceID() const
 {
-			std::string strTemp = txtSysExDeviceID->GetValue().ToStdString();
+			std::wstring strTemp = NarrowToWideString(txtSysExDeviceID->GetValue().ToStdString());
 			
 if ((strTemp.empty())
 || (IsSingleHexByteString( strTemp) == false))
@@ -243,7 +244,7 @@ void ProtocolSysExPage::SetSysExDeviceID( long lDeviceID)
 		}
 		else
 				{
-					std::string strDeviceID = ByteToHex( lDeviceID);
+					std::wstring strDeviceID = ByteToHex( lDeviceID);
 					txtSysExDeviceID->SetValue( strDeviceID);
 	}
 }
@@ -264,9 +265,9 @@ bool ProtocolSysExPage::IsValidProtocolName()
 
 bool ProtocolSysExPage::IsValidSysExManufacturerID()
 {
-	std::string strByte1 = txtSysExManufacturerByte1->GetValue().ToStdString();
-	std::string strByte2 = txtSysExManufacturerByte2->GetValue().ToStdString();
-	std::string strByte3 = txtSysExManufacturerByte3->GetValue().ToStdString();
+	std::wstring strByte1 = NarrowToWideString(txtSysExManufacturerByte1->GetValue().ToStdString());
+	std::wstring strByte2 = NarrowToWideString(txtSysExManufacturerByte2->GetValue().ToStdString());
+	std::wstring strByte3 = NarrowToWideString(txtSysExManufacturerByte3->GetValue().ToStdString());
 
 	if (IsSingleHexByteString( strByte1) == false)
 {
@@ -303,7 +304,7 @@ else  // Byte 1 > 0, so bytes 2 and 3 must be blank
 
 	bool ProtocolSysExPage::IsValidSysExDeviceID() const
 {
-	std::string strDeviceID = txtSysExDeviceID->GetValue().ToStdString();
+	std::wstring strDeviceID = NarrowToWideString(txtSysExDeviceID->GetValue().ToStdString());
 
 	if (IsSingleHexByteString( strDeviceID))
 {
@@ -325,7 +326,7 @@ return true;
 
 	bool ProtocolSysExPage::IsValidSysExModelID()
 	{
-		std::string strModelID = txtSysExModelID->GetValue().ToStdString();
+		std::wstring strModelID = NarrowToWideString(txtSysExModelID->GetValue().ToStdString());
 
 	if (IsSingleHexByteString( strModelID))
 {

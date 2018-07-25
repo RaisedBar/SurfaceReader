@@ -36,7 +36,7 @@ AppConfig GetAppConfig( std::pair <std::wstring, std::wstring> myID);
 AppConfig GetAppConfigItem( int nIndex);
 int Count();
 bool IsAppConfigUnique( std::pair <std::wstring, std::wstring> myAppConfigID);
-void UpdateDisplays( std::wstring wstrProtocolID, std::map <std::string , DisplayDefinition> myNewDisplays);
+void UpdateDisplays( std::wstring wstrProtocolID, std::map <std::wstring , DisplayDefinition> myNewDisplays);
 
 private:
 

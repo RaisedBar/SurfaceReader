@@ -74,9 +74,9 @@ std::wstring SurfacePage::GetSurfaceName()
 }
 
 
-std::string SurfacePage::GetProtocolID()
+std::wstring SurfacePage::GetProtocolID()
 {
-	std::string strProtocolID;
+	std::wstring strProtocolID;
 	strProtocolID.clear();
 
 	if (blnListProtocols)
@@ -344,17 +344,17 @@ return nDisplay_MIDIOut;
 		}
 
 
-std::string SurfacePage::GetHardware_MIDIInName()
+std::wstring SurfacePage::GetHardware_MIDIInName()
 {
 	return strHardware_MIDIInName;
 }
 
 
-std::string SurfacePage::GetHardware_VirtualMIDIOutName()
+std::wstring SurfacePage::GetHardware_VirtualMIDIOutName()
 {
 if (nHardware_VirtualMIDIOut == VP_PORT_ID)
 {
-	std::string strName = txtSurfaceName->GetValue().ToStdString();
+	std::wstring strName = NarrowToWideString(txtSurfaceName->GetValue().ToStdString());
 	strName.append( strVirtualOutSuffix);
 return strName;
 }
@@ -365,11 +365,11 @@ else
 }
 
 
-std::string SurfacePage::GetDisplay_VirtualMIDIInName()
+std::wstring SurfacePage::GetDisplay_VirtualMIDIInName()
 {
 if (nDisplay_VirtualMIDIIn == VP_PORT_ID)
 	{
-		std::string strName = txtSurfaceName->GetValue().ToStdString();
+		std::wstring strName = NarrowToWideString(txtSurfaceName->GetValue().ToStdString());
 	strName.append( strVirtualInSuffix);
 return strName;
 }
@@ -380,14 +380,14 @@ else
 }
 
 
-std::string SurfacePage::GetDisplay_MIDIOutName()
+std::wstring SurfacePage::GetDisplay_MIDIOutName()
 {
 return strDisplay_MIDIOutName;
 		}
 		
 void SurfacePage::ListProtocols()
 {
-		std::map <std::string, SurfaceProtocol> ::const_iterator it;
+		std::map <std::wstring, SurfaceProtocol> ::const_iterator it;
 
 		for (it = pMyProtocols->begin(); it != pMyProtocols->end(); it++)
 	{

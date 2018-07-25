@@ -36,7 +36,7 @@ DisplayParamsDlg(const wxString & title, SurfaceActionType mySAType, boost::shar
 ~DisplayParamsDlg();
 
 bool IsValidParameterSet();
-std::string GetDisplayHash();
+std::wstring GetDisplayHash();
 int GetDisplayLine();
 int GetDisplayStrip();
 int GetDisplayStartPosition();
@@ -44,7 +44,7 @@ int GetDisplaySubstringLength();
 
 private:
 void ListDisplays();
-void ListParameter1Values( std::string strHash);
+void ListParameter1Values( std::wstring strHash);
 void ListLengths();
 
 // Event handlers:

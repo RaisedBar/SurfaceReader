@@ -140,7 +140,7 @@ break;
 return blnResult;
 }
 
-std::string DisplayParamsDlg::GetDisplayHash()
+std::wstring DisplayParamsDlg::GetDisplayHash()
 {
 	return pMyAppConfig->GetDisplayHash( lbxDisplayNames->GetStringSelection().ToStdWstring());
 }
@@ -217,7 +217,7 @@ break;
 }
 
 
-void DisplayParamsDlg::ListParameter1Values( std::string strHash)
+void DisplayParamsDlg::ListParameter1Values( std::wstring strHash)
 {
 	lbxDisplayParam1->Clear();	
 DisplayDefinition myDisplay = pMyAppConfig->GetDisplayDefinition( strHash);
@@ -261,7 +261,7 @@ break;
 
 void DisplayParamsDlg::ListLengths()
 {
-	std::string strHash = pMyAppConfig->GetDisplayHash( lbxDisplayNames->GetStringSelection().ToStdWstring());
+	std::wstring strHash = pMyAppConfig->GetDisplayHash( lbxDisplayNames->GetStringSelection().ToStdWstring());
 	int nStartSelection = lbxDisplayParam1->GetSelection();
 	lbxDisplayParam2->Clear();
 

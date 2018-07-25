@@ -74,7 +74,7 @@ ActionsPage::~ActionsPage()
 {}
 
 
-std::map <std::string, MessageDefinition> ActionsPage::GetActions()
+std::map <std::wstring, MessageDefinition> ActionsPage::GetActions()
 {
 	return myControls;
 }
@@ -83,14 +83,14 @@ std::map <std::string, MessageDefinition> ActionsPage::GetActions()
 SurfaceActionType ActionsPage::GetSurfaceActionTypeFromNode( wxTreeItemId myCurrentNode)
 {
 wxTreeItemId wxtIDCurrentNode = myCurrentNode;
-std::string strHash = GetControlHash( wxtIDCurrentNode);
+std::wstring strHash = GetControlHash( wxtIDCurrentNode);
 	
 if (strHash.empty())
 	{
 		return NoAction;
 }
 
-std::map <std::string, MessageDefinition> ::iterator it;
+std::map <std::wstring, MessageDefinition> ::iterator it;
 MessageDefinition myDefinition;
 
 it = myControls.find( strHash);
@@ -321,9 +321,9 @@ break;
 }
 
 
-std::string ActionsPage::GetControlName( std::wstring wstrName)
+std::wstring ActionsPage::GetControlName( std::wstring wstrName)
 {
-		std::map <std::string, MessageDefinition> ::iterator it;
+		std::map <std::wstring, MessageDefinition> ::iterator it;
 		
 	for (it = myControls.begin(); it != myControls.end(); it++)
 {
@@ -334,19 +334,19 @@ std::string ActionsPage::GetControlName( std::wstring wstrName)
 		}  // end for
 		
 // Not found
-	std::string strNotFound;
+	std::wstring strNotFound;
 	strNotFound.clear();
 	return strNotFound;
 }
 
 
-std::string ActionsPage::GetControlHash( wxTreeItemId myCurrentNode )
+std::wstring ActionsPage::GetControlHash( wxTreeItemId myCurrentNode )
 {
 wxTreeItemId wxtIDCurrentNode = myCurrentNode;
 	
 if (GetLevel( wxtIDCurrentNode) == PROTOCOL_LEVEL)
 {
-	std::string strNotFound;
+	std::wstring strNotFound;
 	strNotFound.clear();
 	return strNotFound;
 	}
@@ -471,7 +471,7 @@ for (unsigned int i = 0; i < nParameters; i++)
 if (i == 0)
 	{
 		// Get the name of the targeted display
-		std::string strDisplayHash = wxString( mySA.GetParameter( i).second).ToStdString();
+	std::wstring strDisplayHash = mySA.GetParameter(i).second;
 		wstrDescription.append( pMyAppConfig->GetDisplayDefinition( strDisplayHash).GetLabel());
 }
 else
@@ -563,7 +563,7 @@ switch (myNewSurfaceAction.GetSurfaceActionType())
 {
 case ReadDisplay:
 {
-std::string strDisplayHash = myDisplayParamsDlg->GetDisplayHash();
+std::wstring strDisplayHash = myDisplayParamsDlg->GetDisplayHash();
 std::wstring wstrDisplayHash( strDisplayHash.begin(), strDisplayHash.end());
 	myNewSurfaceAction.SetParameter(Type_String, wstrDisplayHash);
 }
@@ -571,7 +571,7 @@ break;
 
 case ReadDisplayLine:
 {
-	std::string strDisplayHash = myDisplayParamsDlg->GetDisplayHash();
+	std::wstring strDisplayHash = myDisplayParamsDlg->GetDisplayHash();
 std::wstring wstrDisplayHash( strDisplayHash.begin(), strDisplayHash.end());
 	myNewSurfaceAction.SetParameter(Type_String, wstrDisplayHash);
 	myNewSurfaceAction.SetParameter(Type_Int, boost::lexical_cast <std::wstring> (myDisplayParamsDlg->GetDisplayLine()));
@@ -580,7 +580,7 @@ break;
 
 case ReadDisplayStrip:
 {
-	std::string strDisplayHash = myDisplayParamsDlg->GetDisplayHash();
+	std::wstring strDisplayHash = myDisplayParamsDlg->GetDisplayHash();
 std::wstring wstrDisplayHash( strDisplayHash.begin(), strDisplayHash.end());
 	myNewSurfaceAction.SetParameter(Type_String, wstrDisplayHash);
 	myNewSurfaceAction.SetParameter(Type_Int, boost::lexical_cast <std::wstring> (myDisplayParamsDlg->GetDisplayStrip()));
@@ -589,7 +589,7 @@ break;
 
 case ReadDisplaySection:
 {
-	std::string strDisplayHash = myDisplayParamsDlg->GetDisplayHash();
+	std::wstring strDisplayHash = myDisplayParamsDlg->GetDisplayHash();
 std::wstring wstrDisplayHash( strDisplayHash.begin(), strDisplayHash.end());
 	myNewSurfaceAction.SetParameter(Type_String, wstrDisplayHash);
 	myNewSurfaceAction.SetParameter(Type_Int, boost::lexical_cast <std::wstring> (myDisplayParamsDlg->GetDisplayStartPosition()));
@@ -600,7 +600,7 @@ break;
 case ReadLEDIfOn:
 	case ReadLEDIfOff:
 {
-std::string strDisplayHash = myDisplayParamsDlg->GetDisplayHash();
+std::wstring strDisplayHash = myDisplayParamsDlg->GetDisplayHash();
 std::wstring wstrDisplayHash( strDisplayHash.begin(), strDisplayHash.end());
 	myNewSurfaceAction.SetParameter(Type_String, wstrDisplayHash);
 }
@@ -686,12 +686,12 @@ std::vector <std::wstring> ActionsPage::ReplicateActions( wxTreeItemId wxtIDCurr
 // Iterate through the controls
 	while (wxActionsTree->GetNextSibling( myNode).IsOk())
 	{
-std::string strHash = GetControlHash( myNode);		
+std::wstring strHash = GetControlHash( myNode);		
 
 if (strHash.empty() == false)
 {
 bool blnActions = false;
-std::map <std::string, MessageDefinition>::iterator it;
+std::map <std::wstring, MessageDefinition>::iterator it;
 it = myControls.find( strHash);
 
 if (it != myControls.end())
@@ -779,11 +779,11 @@ MessageDefinition myMessageDefinition;
 		SurfaceAction mySurfaceAction = myActionPicker->GetSurfaceAction();
 		
 		// Find the control to add the action to:
-std::string strHash = GetControlName( wstrControlName);
+std::wstring strHash = GetControlName( wstrControlName);
 
 if (strHash.empty() == false)
 {
-std::map <std::string, MessageDefinition>::iterator it;
+std::map <std::wstring, MessageDefinition>::iterator it;
 it = myControls.find( strHash);
 
 if (IsLiveModeNode( wxActionsTree->GetFocusedItem()))
@@ -893,14 +893,14 @@ if ((nIndex >= wxActionsTree->GetChildrenCount( wxActionsTree->GetItemParent( wx
 	return;
 }
 
-std::string strHash = GetControlHash( wxtIDCurrentNode );
+std::wstring strHash = GetControlHash( wxtIDCurrentNode );
 
 if (strHash.empty())
 	{
 		return;
 }
 
-std::map <std::string, MessageDefinition> ::iterator it;
+std::map <std::wstring, MessageDefinition> ::iterator it;
 
 it = myControls.find( strHash);
 
@@ -967,11 +967,11 @@ if (GetLevel( wxtIDCurrentNode) == CONTROL_LEVEL)
 		std::wstring wstrControlName = wxActionsTree->GetItemText( wxtIDCurrentNode).ToStdWstring();
 
 // Try to update the associated entry within the map of controls
-std::string strFoundHash = GetControlName( wstrControlName);			
+std::wstring strFoundHash = GetControlName( wstrControlName);			
 		
-if (strFoundHash != "")
+if (strFoundHash.length() >0)
 		{
-std::map <std::string, MessageDefinition>::iterator it;
+std::map <std::wstring, MessageDefinition>::iterator it;
 
 it = myControls.find( strFoundHash);
 
@@ -996,7 +996,7 @@ else
 				myDefinition.SetLabel( wstrLabel);				
 								
 // Update the map, then the tree node
-std::pair <std::string, MessageDefinition> myDefinitionPair;
+std::pair <std::wstring, MessageDefinition> myDefinitionPair;
 myDefinitionPair = std::make_pair( strFoundHash, myDefinition);
 myControls.erase( it);
 myControls.insert( myDefinitionPair);
@@ -1080,14 +1080,14 @@ if ((nIndex == 0)
 	return;
 }
 
-std::string strHash = GetControlHash( wxtIDCurrentNode );
+std::wstring strHash = GetControlHash( wxtIDCurrentNode );
 
-if (strHash == "")
+if (strHash.length() ==0)
 	{
 		return;
 }
 
-std::map <std::string, MessageDefinition> ::iterator it;
+std::map <std::wstring, MessageDefinition> ::iterator it;
 MessageDefinition myDefinition;
 
 it = myControls.find( strHash);
@@ -1175,14 +1175,14 @@ if ((nIndex == wxActionsTree->GetChildrenCount( wxActionsTree->GetItemParent( wx
 	return;
 }
 
-std::string strHash = GetControlHash( wxtIDCurrentNode );
+std::wstring strHash = GetControlHash( wxtIDCurrentNode );
 
-if (strHash == "")
+if (strHash.empty())
 	{
 		return;
 }
 
-std::map <std::string, MessageDefinition> ::iterator it;
+std::map <std::wstring, MessageDefinition> ::iterator it;
 MessageDefinition myDefinition;
 
 it = myControls.find( strHash);
@@ -1367,7 +1367,7 @@ wxMessageBox( wstrOut, wxT( "Test"), wxOK | wxICON_ERROR);
 	void ActionsPage::ListControls( wxTreeItemId wxtIDCurrentNode)
 	{
 			  // Create a branch for every available hardware control
-				std::map <std::string, MessageDefinition>::iterator it;
+				std::map <std::wstring, MessageDefinition>::iterator it;
 
 for (it = myControls.begin(); it != myControls.end(); it++)
 {
@@ -1402,14 +1402,14 @@ ListActions( wxtIDNewNode);
 
 	void ActionsPage::ListActions( wxTreeItemId wxtIDCurrentNode )
 	{
-std::string strHash = GetControlHash( wxtIDCurrentNode );
+std::wstring strHash = GetControlHash( wxtIDCurrentNode );
 
-if (strHash == "")
+if (strHash.empty())
 	{
 		return;
 }
 
-std::map <std::string, MessageDefinition> ::iterator it;
+std::map <std::wstring, MessageDefinition> ::iterator it;
 MessageDefinition myDefinition;
 
 it = myControls.find( strHash);

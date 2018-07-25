@@ -944,13 +944,13 @@ return false;
 }
 
 
-std::string MIDI::MIDIHash()
+std::wstring MIDI::MIDIHash()
 	{
-std::string strResult;
+std::wstring strResult;
 
 if (vMIDIBytes.size() == 0)  // the MIDI object was constructed with no data
 {
-	std::string strEmpty;
+	std::wstring strEmpty;
 	strEmpty.clear();
 	return strEmpty;
 }
@@ -969,13 +969,13 @@ return strResult;
 }
 
 
-std::string MIDI::SysExHash( std::vector <unsigned char> vBytes)
+std::wstring MIDI::SysExHash( std::vector <unsigned char> vBytes)
 {
-std::string strResult = strSysExHashPrefix;
+std::wstring strResult = strSysExHashPrefix;
 
 for (unsigned int i = 0; i < vBytes.size(); i++)
 {
-std::string strByte = boost::lexical_cast <std::string> (static_cast<unsigned int> ( vBytes.at( i)));
+std::wstring strByte = boost::lexical_cast <std::wstring> (static_cast<unsigned int> ( vBytes.at( i)));
 	strResult.append( strByte);
 strResult.append( HASH_DELIMITER);
 }
@@ -984,9 +984,9 @@ return strResult;
 }
 
 
-std::string MIDI::ShortMIDIHash( std::vector <unsigned char> vBytes)
+std::wstring MIDI::ShortMIDIHash( std::vector <unsigned char> vBytes)
 {
-std::string strResult;
+std::wstring strResult;
 
 if (vBytes.size() == 3)   // Single-message format
 {
@@ -1006,10 +1006,10 @@ case MIDI_CMD_PITCH_WHEEL:
 // std::string strMsg = boost::lexical_cast <std::string> (nCmd);
 // 	std::string strChannel =boost::lexical_cast <std::string> (nChannel);
 		strResult = strDoubleHashPrefix;
-std::string strCmd = boost::lexical_cast <std::string> (static_cast<unsigned int> ( nCmd));
+std::wstring strCmd = boost::lexical_cast <std::wstring> (static_cast<unsigned int> ( nCmd));
 			strResult.append( strCmd);
 strResult.append(  HASH_DELIMITER);
-std::string strChannel = boost::lexical_cast <std::string> (static_cast<unsigned int> ( nChannel));
+std::wstring strChannel = boost::lexical_cast <std::wstring> (static_cast<unsigned int> ( nChannel));
 	strResult.append( strChannel);
 }
 break;
@@ -1019,9 +1019,9 @@ default:
 // case NOTE_OFF:
 	// case CC:
 {
-std::string strCmd = boost::lexical_cast <std::string> (static_cast<unsigned int> ( nCmd));
-std::string strChannel = boost::lexical_cast <std::string> (static_cast<unsigned int> ( nChannel));
-std::string strData1 = boost::lexical_cast <std::string> (static_cast<unsigned int> ( nData1));
+std::wstring strCmd = boost::lexical_cast <std::wstring> (static_cast<unsigned int> ( nCmd));
+std::wstring strChannel = boost::lexical_cast <std::wstring> (static_cast<unsigned int> ( nChannel));
+std::wstring strData1 = boost::lexical_cast <std::wstring> (static_cast<unsigned int> ( nData1));
 	strResult.append( strCmd);
 strResult.append( HASH_DELIMITER);
 strResult.append( strChannel);
@@ -1039,9 +1039,9 @@ return strResult;
 }
 
 
-std::string MIDI::NibbledShortMIDIHash( std::vector <unsigned char> vBytes, int nNibbles)
+std::wstring MIDI::NibbledShortMIDIHash( std::vector <unsigned char> vBytes, int nNibbles)
 {
-std::string strResult;
+std::wstring strResult;
 strResult.clear();
 
 /*
@@ -1103,7 +1103,7 @@ strResult = strNibbleHashPrefix;
 
 for (unsigned int i = 0; i < vNibbles.size(); i++)
 {
-std::string strByte = boost::lexical_cast <std::string> (static_cast<unsigned int> ( vNibbles.at( i)));
+std::wstring strByte = boost::lexical_cast <std::wstring> (static_cast<unsigned int> ( vNibbles.at( i)));
 		strResult.append( strByte);
 strResult.append( HASH_DELIMITER);
 }
@@ -1142,7 +1142,7 @@ else
 }
 
 
-int MIDI::NibbledMessageValue( std::string strHash, std::vector <unsigned char> vBuffer)
+int MIDI::NibbledMessageValue( std::wstring strHash, std::vector <unsigned char> vBuffer)
 {
 int nNibbleValue = -1;
 
@@ -1169,7 +1169,7 @@ unsigned int nNibbleCount = 0;
 
 for (int i = 0; i < nEndPos; i++)
 {
-	std::string strTemp = strHash.substr( i, 1);
+	std::wstring strTemp = strHash.substr( i, 1);
 	
 		if (strTemp.compare( strFullStop) == 0)
 	{

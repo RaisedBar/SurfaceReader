@@ -7,7 +7,7 @@
 #include "DisplayStatesDialog.h"
 
 
-DisplayStatesDialog::DisplayStatesDialog( const wxString& title, std::string strHash, DisplayDefinition * pDisplay, std::vector <unsigned char> vSysEx)
+DisplayStatesDialog::DisplayStatesDialog( const wxString& title, std::wstring strHash, DisplayDefinition * pDisplay, std::vector <unsigned char> vSysEx)
        : wxDialog(NULL, -1, title, wxDefaultPosition, wxSize(250, 230))
 {  
 strMyHash = strHash;

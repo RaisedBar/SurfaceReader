@@ -1,5 +1,4 @@
-
-// LEDLampsPage.cpp
+//LEDLampsPage.cpp
 // Author:  T A Burgess
 // Raised Bar Ltd.
 // http:LEDLampsPagewww.raisedbar.net
@@ -93,7 +92,7 @@ if (myNewLampDlg->ShowModal() == wxID_OK)
 {
 	std::wstring wstrLabel = myNewLampDlg->GetLEDLampName();
 			// Check that the new label is unique
-		std::string strTempHash = 			pMyProtocol->GetDisplayHash( wstrLabel);
+		std::wstring strTempHash = 			pMyProtocol->GetDisplayHash( wstrLabel);
 
 		if (strTempHash.empty() == false)
 {
@@ -107,7 +106,7 @@ else
 // We're not implementing MIDI shift buttons yet, so this is a place-holder
 	myDefinition.SetMIDIModifier( false);
 
-std::string strHash = myNewLampDlg->GetDisplayHash();
+std::wstring strHash = myNewLampDlg->GetDisplayHash();
 														myDefinition.SetLabel( myNewLampDlg->GetLEDLampName());																												
 														myDefinition.IsLEDLamp( true);
 														myDefinition.SetLineCount( 0);
@@ -136,7 +135,7 @@ int nSelection = lbxLampNames->GetSelection();
 			std::wstring wstrDisplayName = lbxLampNames->GetStringSelection().ToStdWstring();
 
 			// Find the associated entry within the map
-		std::string strOldHash = pMyProtocol->GetDisplayHash( wstrDisplayName);			
+		std::wstring strOldHash = pMyProtocol->GetDisplayHash( wstrDisplayName);			
 		
 		if (strOldHash.empty())
 		{
@@ -145,7 +144,7 @@ int nSelection = lbxLampNames->GetSelection();
 		
 		// Store the control hash and the definition
 			DisplayDefinition myDisplay = pMyProtocol->GetDisplay( strOldHash);
-std::string strNewHash;
+std::wstring strNewHash;
 std::vector <unsigned char> vSysExAddressBytes; 
 			
 // Edit the message definition
@@ -193,7 +192,7 @@ wstrMessage.append( wstrQuestionMark);
 if (		wxMessageBox( wstrMessage,                wstrAppTitle, wxYES_NO | wxNO_DEFAULT | wxICON_QUESTION) == wxYES) 
 {
 	// Try to remove the associated entry from the map
-	std::string strHash = pMyProtocol->GetDisplayHash( wstrLampName);
+	std::wstring strHash = pMyProtocol->GetDisplayHash( wstrLampName);
 			
 	if (strHash .empty() == false)
 		{
@@ -216,7 +215,7 @@ if (		wxMessageBox( wstrMessage,                wstrAppTitle, wxYES_NO | wxNO_DE
 				{	
 // We use the first display to hold our global values
 					DisplayDefinition myDisplay = pMyProtocol->GetDisplayItem( GLOBAL_STATE_INDEX);
-std::string strHash = pMyProtocol->GetDisplayHash( myDisplay.GetLabel());
+std::wstring strHash = pMyProtocol->GetDisplayHash( myDisplay.GetLabel());
 DisplayStatesDialog * myStatesDlg = new DisplayStatesDialog( wstrLEDStatesTitle, strHash, &myDisplay, pMyProtocol->GetSysExHeader());
 
 		if (myStatesDlg->ShowModal() == wxID_OK)
@@ -235,7 +234,7 @@ DisplayStatesDialog * myStatesDlg = new DisplayStatesDialog( wstrLEDStatesTitle,
 			if (nSelection > -1)
 	{
 		std::wstring wstrLampLabel = lbxLampNames->GetStringSelection().ToStdWstring();
-std::string strHash = pMyProtocol->GetDisplayHash( wstrLampLabel);
+std::wstring strHash = pMyProtocol->GetDisplayHash( wstrLampLabel);
 DisplayDefinition myDisplay;
 myDisplay = pMyProtocol->GetDisplay( strHash);
 

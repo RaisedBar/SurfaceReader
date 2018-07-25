@@ -36,12 +36,12 @@ class DefineDisplayDialog: public wxDialog
 {
 public:
 	DefineDisplayDialog( const wxString& title, const bool blnIsLED, boost::shared_ptr<SurfaceProtocol> pProtocol);
-	DefineDisplayDialog( const wxString& title, const wxString &ControlLabel, const std::string &strDisplayHash, DisplayDefinition myDisplay, boost::shared_ptr<SurfaceProtocol> pProtocol);
+	DefineDisplayDialog( const wxString& title, const wxString &ControlLabel, const std::wstring &strDisplayHash, DisplayDefinition myDisplay, boost::shared_ptr<SurfaceProtocol> pProtocol);
 ~DefineDisplayDialog();
 
  bool IsValidDisplay() const;
 
- std::string GetDisplayHash() const;
+ std::wstring GetDisplayHash() const;
 std::wstring GetDisplayName() const;
 long GetLineCount() const;
 long GetDisplayLength() const;
@@ -71,7 +71,7 @@ wxCheckBox * wxchkCursorFromLeft, * wxchkUniCode;
 wxButton * MIDIButton, * OKButton, * CancelButton;
 
 bool blnIsLEDLamp;
-std::string strHash;
+std::wstring strHash;
  DisplayDefinition myDisplayDefinition;
 boost::shared_ptr<SurfaceProtocol> pMyProtocol;
 std::vector <unsigned char> vSysExAddressBytes;

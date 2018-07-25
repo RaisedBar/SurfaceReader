@@ -71,7 +71,7 @@ return txtLampName->GetValue().ToStdWstring();
 }
 
 
-std::string DefineLEDLampDialog::GetDisplayHash() const
+std::wstring DefineLEDLampDialog::GetDisplayHash() const
 {
 return strHash;
 }

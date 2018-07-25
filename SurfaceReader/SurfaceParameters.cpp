@@ -33,12 +33,12 @@ void SurfaceParameters::SetSurfaceName( std::wstring wstrSurfaceName)
 	m_SurfaceName = wstrSurfaceName;
 }
 
-std::string SurfaceParameters::GetProtocolID()
+std::wstring SurfaceParameters::GetProtocolID()
 {
 	return m_ProtocolID;
 }
 
-void SurfaceParameters::SetProtocolID( std::string strNewProtocolID)
+void SurfaceParameters::SetProtocolID( std::wstring strNewProtocolID)
 {
 	m_ProtocolID = strNewProtocolID;
 }
@@ -96,42 +96,42 @@ void SurfaceParameters::SetDisplayOutID( int nNewID)
 		m_DisplayOutID = nNewID;
 }
 
-std::string SurfaceParameters::GetHardwareInName()
+std::wstring SurfaceParameters::GetHardwareInName()
 	{
 		return m_HardwareInName;
 }
 
-void SurfaceParameters::SetHardwareInName( std::string strNewName)
+void SurfaceParameters::SetHardwareInName( std::wstring strNewName)
 	{
 		m_HardwareInName = strNewName;
 }
 
-std::string SurfaceParameters::GetHardwareOutName() 
+std::wstring SurfaceParameters::GetHardwareOutName() 
 {
 	return m_HardwareOutName;
 }
 
-void SurfaceParameters::SetHardwareOutName( std::string strNewName) 
+void SurfaceParameters::SetHardwareOutName( std::wstring strNewName) 
 {
 m_HardwareOutName = strNewName;
 }
 
-std::string SurfaceParameters::GetDisplayInName()
+std::wstring SurfaceParameters::GetDisplayInName()
 {
 	return m_DisplayInName;
 }
 
-void SurfaceParameters::SetDisplayInName( std::string strNewName)
+void SurfaceParameters::SetDisplayInName( std::wstring strNewName)
 {
 m_DisplayInName = strNewName;
 }
 
-std::string SurfaceParameters::GetDisplayOutName()
+std::wstring SurfaceParameters::GetDisplayOutName()
 {
 	return m_DisplayOutName;
 }
 
-void SurfaceParameters::SetDisplayOutName( std::string strNewName)
+void SurfaceParameters::SetDisplayOutName( std::wstring strNewName)
 {
 	m_DisplayOutName = strNewName;
 }

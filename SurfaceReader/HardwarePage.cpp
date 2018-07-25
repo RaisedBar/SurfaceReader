@@ -136,9 +136,9 @@ return blnResult;
 }
 
 
-std::string HardwareControlsPage::MIDILearn()
+std::wstring HardwareControlsPage::MIDILearn()
 {
-std::string strHash;
+std::wstring strHash;
 strHash.clear();
 
 		if (blnIsOpen == false)
@@ -200,7 +200,7 @@ std::wstring wstrError( strError.begin(), strError.end());
 void HardwareControlsPage::OnAddDefinition( wxCommandEvent& event)
 {
 	DefineMessageDialog * myDefinitionDialog = new DefineMessageDialog( wstrHardwareSetupTitle, lbxControlNames->GetStringSelection(), pMyProtocol->GetSysExHeader());
-std::string strControlHash;
+std::wstring strControlHash;
 strControlHash.clear();
 std::vector <unsigned char> vSysExAddressBytes;
 
@@ -231,7 +231,7 @@ blnDone = true;
 			else
 			{
 	// Check that the new label is unique
-				std::string strTempHash = 			pMyProtocol->GetHardwareControlHash( wstrLabel);
+				std::wstring strTempHash = 			pMyProtocol->GetHardwareControlHash( wstrLabel);
 bool blnUniqueLabel = false;
 
 if (strTempHash.empty() == false)
@@ -269,7 +269,7 @@ myDefinitionDialog->Destroy();
 	
 	void HardwareControlsPage::OnLearnDefinition( wxCommandEvent& event)
 		{
-std::string strControlHash = ( MIDILearn());
+std::wstring strControlHash = ( MIDILearn());
 
 if (strControlHash.empty())
 {
@@ -297,7 +297,7 @@ blnDone = true;
 			else
 			{
 	// Check that the new label is unique
-				std::string strTempHash = 			pMyProtocol->GetHardwareControlHash( wstrLabel);
+				std::wstring strTempHash = 			pMyProtocol->GetHardwareControlHash( wstrLabel);
 bool blnUniqueLabel = false;
 
 if (strTempHash.empty() == false)
@@ -344,7 +344,7 @@ void HardwareControlsPage::OnEditDefinition( wxCommandEvent& event)
 			std::wstring wstrControlName = lbxControlNames->GetStringSelection().ToStdWstring();
 
 			// Find the associated entry within the map
-			std::string strOldHash = pMyProtocol->GetHardwareControlHash( wstrDisplayName);			
+			std::wstring strOldHash = pMyProtocol->GetHardwareControlHash( wstrDisplayName);			
 		
 		if (strOldHash.empty())
 		{
@@ -353,7 +353,7 @@ void HardwareControlsPage::OnEditDefinition( wxCommandEvent& event)
 		
 		// Store the control hash and the definition
 MessageDefinition myMessage= pMyProtocol->GetDisplay( strOldHash);
-std::string strNewHash;
+std::wstring strNewHash;
 std::vector <unsigned char> vSysExAddressBytes; 
 			
 // Edit the message definition
@@ -400,9 +400,9 @@ wstrMessage.append( wstrQuestionMark);
 if (		wxMessageBox( wstrMessage,                wstrAppTitle, wxYES_NO | wxNO_DEFAULT | wxICON_QUESTION) == wxYES) 
 {
 // Try to remove the associated entry from the map
-	std::string strHash = pMyProtocol->GetHardwareControlHash( wstrControlName);
+	std::wstring strHash = pMyProtocol->GetHardwareControlHash( wstrControlName);
 			
-	if (strHash != "")
+	if (strHash != L"")
 		{
 			pMyProtocol->DeleteHardwareControl( strHash);
 			// Update the list box
@@ -460,12 +460,12 @@ else
 	std::wstring wstrLabel = lbxControlNames->GetString( i).ToStdWstring();
 			
 	// Check that the new label does not already have a matching LED
-		std::string strDisplayHash = 			pMyProtocol->GetDisplayHash( wstrLabel);
+		std::wstring strDisplayHash = 			pMyProtocol->GetDisplayHash( wstrLabel);
 
 		if (strDisplayHash.empty())
 {
 		// Get the control message we're cloning
-	std::string strControlHash = pMyProtocol->GetHardwareControlHash( wstrLabel);
+	std::wstring strControlHash = pMyProtocol->GetHardwareControlHash( wstrLabel);
 
 	// Add a referenced definition entry to the map
 																DisplayDefinition myLEDDefinition;

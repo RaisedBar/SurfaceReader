@@ -2,13 +2,14 @@
 //Implementation of the SurfaceProtocol Class.
 
 #include "Protocol.h"
+#include <wx/msgdlg.h>
 
 
 SurfaceProtocol::SurfaceProtocol()
 {
 	// Generate a new Protocol ID 
 	boost::uuids::uuid myUUID = 	boost::uuids::random_generator()();
-	strProtocolID = boost::lexical_cast <std::string> (myUUID); 
+	strProtocolID = boost::lexical_cast <std::wstring> (myUUID); 
 	strProtocolName.clear();
 blnIsEncrypted = false;
 		
@@ -36,14 +37,14 @@ SurfaceProtocol myProtocol = *this;
 myProtocol.SetProtocolName( wstrNewName);
 // Generate a new ID
 	boost::uuids::uuid myUUID = 	boost::uuids::random_generator()();
-	myProtocol.SetProtocolID( boost::lexical_cast <std::string> (myUUID));
+	myProtocol.SetProtocolID( boost::lexical_cast <std::wstring> (myUUID));
 return myProtocol;
 }
 
 	
 // Setters and getters
 	
-std::string SurfaceProtocol::GetProtocolID() const
+std::wstring SurfaceProtocol::GetProtocolID() const
 	{
 return strProtocolID;
 	}
@@ -100,9 +101,9 @@ void SurfaceProtocol::SetSysExDeviceID( int nDeviceID)
 }
 
 
-	DisplayDefinition SurfaceProtocol::GetDisplay( std::string strHash)
+	DisplayDefinition SurfaceProtocol::GetDisplay( std::wstring strHash)
 	{
-std::map <std::string, DisplayDefinition> ::iterator it;
+std::map <std::wstring, DisplayDefinition> ::iterator it;
 		it = DisplayMessages.find( strHash);
 
 		if (it != DisplayMessages.end())
@@ -117,9 +118,9 @@ std::map <std::string, DisplayDefinition> ::iterator it;
 	}
 
 
-void SurfaceProtocol::SetDisplay( std::string strHash, DisplayDefinition myDisplayDefinition)
+void SurfaceProtocol::SetDisplay( std::wstring strHash, DisplayDefinition myDisplayDefinition)
 {
-std::map <std::string, DisplayDefinition>::iterator it;
+std::map <std::wstring, DisplayDefinition>::iterator it;
 it = DisplayMessages.find( strHash);
 
 if (it != DisplayMessages.end())
@@ -133,13 +134,13 @@ if (it != DisplayMessages.end())
 	}
 }
 
-std::pair <std::string, DisplayDefinition> myPair;
+std::pair <std::wstring, DisplayDefinition> myPair;
 myPair = std::make_pair( strHash, myDisplayDefinition);
 DisplayMessages.insert( myPair);
 }
 
 
-int SurfaceProtocol::GetNibbleCursorPos( std::string strHash)
+int SurfaceProtocol::GetNibbleCursorPos( std::wstring strHash)
 {
 	int nResult = 0;
 	
@@ -155,13 +156,13 @@ int SurfaceProtocol::GetNibbleCursorPos( std::string strHash)
 }
 
 
-std::pair <DisplayDefinition, std::string> SurfaceProtocol::GetNibbleDisplay( std::string strDisplayHash)
+std::pair <DisplayDefinition, std::wstring> SurfaceProtocol::GetNibbleDisplay( std::wstring strDisplayHash)
 	{
-std::map <std::string, DisplayDefinition> ::iterator it;
+std::map <std::wstring, DisplayDefinition> ::iterator it;
 
 for (it = DisplayMessages.begin(); it != DisplayMessages.end(); it++)
 {
-	std::string strKey = it->first; 
+	std::wstring strKey = it->first; 
 
 	int nValuePos = strKey.find( NIBBLE_WILD_CARD_MARKER, 0);
 int nFirstRangePos = strKey.find( NIBBLE_RANGE_MARKER, 0);
@@ -201,17 +202,17 @@ if (strDisplayHash.substr( 0, strKey.length()).compare( strKey) == 0)  // Possib
 {
 if (blnRange)
 {
-	std::string strTest = it->first;
+	std::wstring strTest = it->first;
 	int nEnd = strDisplayHash.find( HASH_DELIMITER, nFirstRangePos);
-std::string strValue = strDisplayHash.substr( nFirstRangePos, (nEnd - nFirstRangePos));
+std::wstring strValue = strDisplayHash.substr( nFirstRangePos, (nEnd - nFirstRangePos));
 	
 int nMinPos = nFirstRangePos +2;
 nEnd = it->first.find( HASH_DELIMITER, nMinPos);
-std::string strMin = it->first.substr( nMinPos, (nEnd - nMinPos));
+std::wstring strMin = it->first.substr( nMinPos, (nEnd - nMinPos));
 	
 int nMaxPos = nEnd +1;
 nEnd = it->first.find( HASH_DELIMITER, (nMaxPos));
-std::string strMax = it->first.substr( nMaxPos, (nEnd - nMinPos) -1);
+std::wstring strMax = it->first.substr( nMaxPos, (nEnd - nMinPos) -1);
 nEnd = strMax.find( HASH_DELIMITER, 0);
 
 if (nEnd > 0)
@@ -227,7 +228,7 @@ lValue = boost::lexical_cast <long> (strValue);
 }
 catch(bad_lexical_cast &)
 {
-std::string strVariable = "strValue = ";
+std::wstring strVariable = L"strValue = ";
 	wxMessageBox( strVariable.append( strValue), wstrErrorTitle, wxOK | wxICON_ERROR);
 }
 
@@ -237,7 +238,7 @@ try
 }
 catch(bad_lexical_cast &)
 {
-std::string strVariable = "strMin = ";
+std::wstring strVariable = L"strMin = ";
 	wxMessageBox( strVariable.append( strMin), wstrErrorTitle, wxOK | wxICON_ERROR);
 }
 
@@ -247,7 +248,7 @@ try
 }
 catch(bad_lexical_cast &)
 {
-std::string strVariable = "strMax = ";
+std::wstring strVariable = L"strMax = ";
 		wxMessageBox( strVariable.append( strMax), wstrErrorTitle, wxOK | wxICON_ERROR);
 }
 
@@ -257,7 +258,7 @@ unsigned char nMax = (unsigned char) lMax;
 
 if ((nValue >= nMin) && (nValue <= nMax))
 {
-	std::pair <DisplayDefinition, std::string> myPair;
+	std::pair <DisplayDefinition, std::wstring> myPair;
 myPair = std::make_pair( it->second, it->first);
 	return myPair;	
 }	
@@ -265,15 +266,15 @@ myPair = std::make_pair( it->second, it->first);
 
 else if (blnValue)
 {
-std::string strRemainder = it->first;
+std::wstring strRemainder = it->first;
 unsigned int nStartPos = nValuePos +2;
 unsigned int nLength = (strRemainder.length() - nValuePos) -2;
 strRemainder = strRemainder.substr( nStartPos, nLength);
-std::string strKey2 = strDisplayHash.substr( nStartPos, nLength);
+std::wstring strKey2 = strDisplayHash.substr( nStartPos, nLength);
 
 if ( strKey2.compare( strRemainder) == 0)
 {
-std::pair <DisplayDefinition, std::string> myPair;
+std::pair <DisplayDefinition, std::wstring> myPair;
 myPair = std::make_pair( it->second, it->first);
 	return myPair;	
 }  // Remainder matches the rest of the incoming message after skipping the value wild card
@@ -288,7 +289,7 @@ myPair = std::make_pair( it->second, it->first);
 
 std::vector <std::wstring> SurfaceProtocol::GetDisplayNames()
 {
-std::map <std::string, DisplayDefinition>::iterator it;
+std::map <std::wstring, DisplayDefinition>::iterator it;
 std::vector <std::wstring> myDisplayNames;
 
 for (it = DisplayMessages.begin(); it != DisplayMessages.end(); it++)
@@ -308,7 +309,7 @@ DisplayDefinition SurfaceProtocol::GetDisplayItem( unsigned int nItem)
 DisplayDefinition myDefinition;
 		unsigned int i = 0;
 bool blnFound = false;
-std::map <std::string, DisplayDefinition>::iterator it;
+std::map <std::wstring, DisplayDefinition>::iterator it;
 
 for (it = DisplayMessages.begin(); it != DisplayMessages.end(); it++)
 {
@@ -340,10 +341,10 @@ throw RB_NO_DISPLAY_DEFINITION;
 }
 
 
-std::string SurfaceProtocol::GetDisplayHash( std::wstring wstrName)
+std::wstring SurfaceProtocol::GetDisplayHash( std::wstring wstrName)
 {
-	std::map <std::string, DisplayDefinition> ::iterator it;
-std::string strResult;
+	std::map <std::wstring, DisplayDefinition> ::iterator it;
+std::wstring strResult;
 strResult.clear();
 
 		for (it = DisplayMessages.begin(); it != DisplayMessages.end(); it++)
@@ -358,9 +359,9 @@ return strResult;
 	}
 
 
-bool SurfaceProtocol::DeleteDisplay( std::string strHash)
+bool SurfaceProtocol::DeleteDisplay( std::wstring strHash)
 {
-	std::map <std::string, DisplayDefinition>::iterator it;
+	std::map <std::wstring, DisplayDefinition>::iterator it;
 	it = DisplayMessages.find( strHash);
 
 	if (it != DisplayMessages.end())
@@ -384,13 +385,13 @@ unsigned int SurfaceProtocol::GetDisplayCount() const
 bool SurfaceProtocol::RenameDisplay( std::wstring wstrOldName, std::wstring wstrNewName)
 {
 bool blnResult = false;
-std::map <std::string, DisplayDefinition> ::iterator it;
+std::map <std::wstring, DisplayDefinition> ::iterator it;
 
 for (it = DisplayMessages.begin(); it != DisplayMessages.end(); it++)
 {
 	if (it->second.GetLabel().compare( wstrOldName) == 0)
 {
-	std::pair <std::string, DisplayDefinition> myPair;
+	std::pair <std::wstring, DisplayDefinition> myPair;
 	myPair = std::make_pair( it->first, it->second);
 	myPair.second.SetLabel( wstrNewName);
 	DisplayMessages.erase( it);
@@ -404,9 +405,9 @@ return blnResult;
 }
 
 
-MessageDefinition SurfaceProtocol::GetHardwareControl( std::string strHash)
+MessageDefinition SurfaceProtocol::GetHardwareControl( std::wstring strHash)
 	{
-std::map <std::string, MessageDefinition> ::iterator it;
+std::map <std::wstring, MessageDefinition> ::iterator it;
 it = HardwareMessages.find( strHash);
 
 		if (it != HardwareMessages.end())
@@ -421,9 +422,9 @@ it = HardwareMessages.find( strHash);
 }
 
 
-bool SurfaceProtocol::SetHardwareControl( std::string strHash, MessageDefinition myControlDefinition)
+bool SurfaceProtocol::SetHardwareControl( std::wstring strHash, MessageDefinition myControlDefinition)
 {
-std::map <std::string, MessageDefinition>::iterator it;
+std::map <std::wstring, MessageDefinition>::iterator it;
 it = HardwareMessages.find( strHash);
 
 if (it != HardwareMessages.end())
@@ -441,7 +442,7 @@ if (it != HardwareMessages.end())
 	}
 }
 
-std::pair <std::string, MessageDefinition> myPair;
+std::pair <std::wstring, MessageDefinition> myPair;
 myPair = std::make_pair( strHash, myControlDefinition);
 HardwareMessages.insert( myPair);
 return true;
@@ -450,7 +451,7 @@ return true;
 
 std::vector <std::wstring> SurfaceProtocol::GetHardwareControlNames()
 	{
-std::map <std::string, MessageDefinition>::iterator it;
+std::map <std::wstring, MessageDefinition>::iterator it;
 std::vector <std::wstring> myControlNames;
 
 for (it = HardwareMessages.begin(); it != HardwareMessages.end(); it++)
@@ -462,16 +463,16 @@ return myControlNames;
 }
 
 
-std::pair <std::string, MessageDefinition> SurfaceProtocol::GetHardwareControlItem( unsigned int nItem)
+std::pair <std::wstring, MessageDefinition> SurfaceProtocol::GetHardwareControlItem( unsigned int nItem)
 {
 bool blnFound = false;
-std::pair <std::string, MessageDefinition> myPair;
+std::pair <std::wstring, MessageDefinition> myPair;
 
 	if ((nItem < HardwareMessages.size())
 		&& (HardwareMessages.empty() == false))
 	{
 				unsigned int i = 0;
-std::map <std::string, MessageDefinition>::iterator it;
+std::map <std::wstring, MessageDefinition>::iterator it;
 
 for (it = HardwareMessages.begin(); it != HardwareMessages.end(); it++)
 {
@@ -514,7 +515,7 @@ bool blnFound = false;
 		&& (HardwareMessages.empty() == false))
 	{
 				unsigned int i = 0;
-std::map <std::string, MessageDefinition>::iterator it;
+std::map <std::wstring, MessageDefinition>::iterator it;
 
 for (it = HardwareMessages.begin(); it != HardwareMessages.end(); it++)
 {
@@ -547,16 +548,16 @@ return myDefinition;
 }
 
 
-std::string SurfaceProtocol::GetHardwareControlHashItem( unsigned int nItem)
+std::wstring SurfaceProtocol::GetHardwareControlHashItem( unsigned int nItem)
 {
-	std::string strResult;
+	std::wstring strResult;
 	strResult.clear();
 
 	if ((nItem < HardwareMessages.size())
 		&& (HardwareMessages.empty() == false))
 	{
 unsigned int i = 0;
-std::map <std::string, MessageDefinition>::iterator it;
+std::map <std::wstring, MessageDefinition>::iterator it;
 
 for (it = HardwareMessages.begin(); it != HardwareMessages.end(); it++)
 {
@@ -574,10 +575,10 @@ return strResult;
 	}
 
 
-std::string SurfaceProtocol::GetHardwareControlHash( std::wstring wstrName)
+std::wstring SurfaceProtocol::GetHardwareControlHash( std::wstring wstrName)
 {
-	std::map <std::string, MessageDefinition> ::iterator it;
-std::string strResult;
+	std::map <std::wstring, MessageDefinition> ::iterator it;
+std::wstring strResult;
 strResult.clear();
 
 		for (it = HardwareMessages.begin(); it != HardwareMessages.end(); it++)
@@ -592,9 +593,9 @@ return strResult;
 	}
 
 
-bool SurfaceProtocol::DeleteHardwareControl( std::string strHash)
+bool SurfaceProtocol::DeleteHardwareControl( std::wstring strHash)
 	{
-	std::map <std::string, MessageDefinition>::iterator it;
+	std::map <std::wstring, MessageDefinition>::iterator it;
 it = HardwareMessages.find( strHash);
 
 if (it != HardwareMessages.end())
@@ -612,13 +613,13 @@ return false;
 bool SurfaceProtocol::RenameHardwareControl( std::wstring wstrOldName, std::wstring wstrNewName)
 {
 bool blnResult = false;
-std::map <std::string, MessageDefinition> ::iterator it;
+std::map <std::wstring, MessageDefinition> ::iterator it;
 
 for (it = HardwareMessages.begin(); it != HardwareMessages.end(); it++)
 {
 	if (it->second.GetLabel().compare( wstrOldName) == 0)
 {
-	std::pair <std::string, MessageDefinition> myPair;
+	std::pair <std::wstring, MessageDefinition> myPair;
 	myPair = std::make_pair( it->first, it->second);
 	myPair.second.SetLabel( wstrNewName);
 	HardwareMessages.erase( it);
@@ -663,9 +664,9 @@ return vHeader;
 }
 
 
-DisplayDefinition SurfaceProtocol::GetSysExDisplay( std::string strControlHash)
+DisplayDefinition SurfaceProtocol::GetSysExDisplay( std::wstring strControlHash)
 {
-std::map <std::string, DisplayDefinition> ::iterator it;
+std::map <std::wstring, DisplayDefinition> ::iterator it;
 DisplayDefinition myDisplayDefinition;
 bool blnFound = false;
 
@@ -692,9 +693,9 @@ if (blnFound)
 }
 
 
-std::pair <std::wstring, std::map <unsigned char, std::wstring> > SurfaceProtocol::GetTranslationTable( std::string strTableID)
+std::pair <std::wstring, std::map <unsigned char, std::wstring> > SurfaceProtocol::GetTranslationTable( std::wstring strTableID)
 {
-std::map <std::string, std::pair <std::wstring, std::map <unsigned char, std::wstring> > > ::iterator it;
+std::map <std::wstring, std::pair <std::wstring, std::map <unsigned char, std::wstring> > > ::iterator it;
 it = CharacterTables.find( strTableID);
 
 if (it != CharacterTables.end())
@@ -709,12 +710,12 @@ throw RBException( wxT( "No matching table."));
 }
 
 
-void SurfaceProtocol::SetTranslationTable( std::string strTableID, std::pair <std::wstring, std::map <unsigned char, std::wstring> > myTablePair)
+void SurfaceProtocol::SetTranslationTable( std::wstring strTableID, std::pair <std::wstring, std::map <unsigned char, std::wstring> > myTablePair)
 {
-	std::pair <std::string, std::pair <std::wstring, std::map <unsigned char, std::wstring> > > myPair;	
+	std::pair <std::wstring, std::pair <std::wstring, std::map <unsigned char, std::wstring> > > myPair;	
 	myPair = std::make_pair( strTableID, myTablePair);	
 	
-std::map <std::string, std::pair <std::wstring, std::map <unsigned char, std::wstring> > >::iterator it;
+std::map <std::wstring, std::pair <std::wstring, std::map <unsigned char, std::wstring> > >::iterator it;
 
 it = CharacterTables.find( strTableID);
 
@@ -727,7 +728,7 @@ CharacterTables.insert( myPair);
 }
 
 
-std::wstring SurfaceProtocol::GetTranslatedByte( std::string strTableID, unsigned char nByteValue)
+std::wstring SurfaceProtocol::GetTranslatedByte( std::wstring strTableID, unsigned char nByteValue)
 		{
 	std::wstring wstrResult;
 	wstrResult.clear();
@@ -766,7 +767,7 @@ if (nError == ID_NO_MATCHING_CHARACTER)
 }
 
 
-std::wstring SurfaceProtocol::GetTranslatedString( std::string strTableID, std::wstring wstrText)
+std::wstring SurfaceProtocol::GetTranslatedString( std::wstring strTableID, std::wstring wstrText)
 {
 	if (wstrText.empty())
 		{
@@ -792,7 +793,7 @@ int SurfaceProtocol::GetTranslationTableCount()
 
 std::vector <std::wstring> SurfaceProtocol::GetTableLabels()
 {
-	std::map <std::string, std::pair <std::wstring, std::map <unsigned char, std::wstring> > > ::iterator it;
+	std::map <std::wstring, std::pair <std::wstring, std::map <unsigned char, std::wstring> > > ::iterator it;
 std::vector <std::wstring> myTableLabels;
 
 for (it = CharacterTables.begin(); it != CharacterTables.end(); it++)
@@ -803,9 +804,9 @@ for (it = CharacterTables.begin(); it != CharacterTables.end(); it++)
 return myTableLabels;
 }
 
-bool SurfaceProtocol::DeleteTranslationTable( std::string strTableID)
+bool SurfaceProtocol::DeleteTranslationTable( std::wstring strTableID)
 {
-std::map <std::string, std::pair <std::wstring, std::map <unsigned char, std::wstring> > > ::iterator it;
+std::map <std::wstring, std::pair <std::wstring, std::map <unsigned char, std::wstring> > > ::iterator it;
 it = CharacterTables.find( strTableID);
 
 if (it != CharacterTables.end())
@@ -820,12 +821,12 @@ return false;
 }
 
 
-std::string SurfaceProtocol::GetTranslationTableID( std::wstring wstrTableName)
+std::wstring SurfaceProtocol::GetTranslationTableID( std::wstring wstrTableName)
 {
-std::string strResult;
+std::wstring strResult;
 strResult.clear();
 
-std::map <std::string, std::pair <std::wstring, std::map <unsigned char, std::wstring> > >::iterator it;
+std::map <std::wstring, std::pair <std::wstring, std::map <unsigned char, std::wstring> > >::iterator it;
 
 for (it = CharacterTables.begin(); it != CharacterTables.end(); it++)
 {
@@ -840,9 +841,9 @@ return strResult;
 }
 
 
-std::wstring SurfaceProtocol::GetTranslationTableName( std::string strTableID)
+std::wstring SurfaceProtocol::GetTranslationTableName( std::wstring strTableID)
 {
-std::map <std::string, std::pair <std::wstring, std::map <unsigned char, std::wstring> > >::iterator it;
+std::map <std::wstring, std::pair <std::wstring, std::map <unsigned char, std::wstring> > >::iterator it;
 it = CharacterTables.find( strTableID); 
 
 if (it == CharacterTables.end())
@@ -858,9 +859,9 @@ return it->second.first;
 }
 
 
-void SurfaceProtocol::SetTranslationTableName( std::string strTableID, std::wstring wstrNewName)
+void SurfaceProtocol::SetTranslationTableName( std::wstring strTableID, std::wstring wstrNewName)
 {
-std::map <std::string, std::pair <std::wstring, std::map <unsigned char, std::wstring> > >::iterator it;
+std::map <std::wstring, std::pair <std::wstring, std::map <unsigned char, std::wstring> > >::iterator it;
 it = CharacterTables.find( strTableID); 
 
 if (it != CharacterTables.end())
@@ -870,7 +871,7 @@ if (it != CharacterTables.end())
 }
 
 
-int SurfaceProtocol::GetDisplayCursorPosition( std::string strHash, std::vector <unsigned char> vMessage)
+int SurfaceProtocol::GetDisplayCursorPosition( std::wstring strHash, std::vector <unsigned char> vMessage)
 {
 if (strHash.substr( 0, 1).compare( strNibbleHashPrefix) == 0)
 																																{
@@ -891,7 +892,7 @@ return -1;
 																																}
 
 
-void SurfaceProtocol::SetProtocolID( std::string strNewProtocolID)
+void SurfaceProtocol::SetProtocolID( std::wstring strNewProtocolID)
 {
 strProtocolID = strNewProtocolID;
 }
@@ -905,12 +906,12 @@ return nMsgBufferSize;
 
 void SurfaceProtocol::SetMessageBufferSize()
 {
-std::map <std::string, MessageDefinition> ::iterator it;
+std::map <std::wstring, MessageDefinition> ::iterator it;
 unsigned int nMax = 0;
 
 for (it = HardwareMessages.begin(); it != HardwareMessages.end(); it++)
 {
-	std::string strHash = it->first;
+	std::wstring strHash = it->first;
 	std::wstring wstrHash( strHash.begin(), strHash.end());
 
 	unsigned int nLength = CharCount( wstrHash, wxucFullStop);
@@ -948,13 +949,13 @@ blnDropExtraStatusBytes = blnDropBytes;
 }
 
 
-std::pair <MessageDefinition, std::string> SurfaceProtocol::GetNibbleHardwareControl( std::string strControlHash)
+std::pair <MessageDefinition, std::wstring> SurfaceProtocol::GetNibbleHardwareControl( std::wstring strControlHash)
 {
-std::map <std::string, MessageDefinition> ::iterator it;
+std::map <std::wstring, MessageDefinition> ::iterator it;
 
 for (it = HardwareMessages.begin(); it != HardwareMessages.end(); it++)
 {
-	std::string strKey = it->first; 
+	std::wstring strKey = it->first; 
 
 	int nValuePos = strKey.find( NIBBLE_WILD_CARD_MARKER, 0);
 int nFirstRangePos = strKey.find( NIBBLE_RANGE_MARKER, 0);
@@ -994,17 +995,17 @@ if (strControlHash.substr( 0, strKey.length()).compare( strKey) == 0)  // Possib
 
 if (blnRange)
 {
-	std::string strTest = it->first;
+	std::wstring strTest = it->first;
 	int nEnd = strControlHash.find( HASH_DELIMITER, nFirstRangePos);
-std::string strValue = strControlHash.substr( nFirstRangePos, (nEnd - nFirstRangePos) +1);
+std::wstring strValue = strControlHash.substr( nFirstRangePos, (nEnd - nFirstRangePos) +1);
 	
 int nMinPos = nFirstRangePos +2;
 nEnd = it->first.find( HASH_DELIMITER, nMinPos);
-std::string strMin = it->first.substr( nMinPos, (nEnd - nMinPos));
+std::wstring strMin = it->first.substr( nMinPos, (nEnd - nMinPos));
 	
 int nMaxPos = nEnd +1;
 nEnd = it->first.find( HASH_DELIMITER, (nMaxPos));
-std::string strMax = it->first.substr( nMaxPos, (nEnd - nMinPos));
+std::wstring strMax = it->first.substr( nMaxPos, (nEnd - nMinPos));
 if (strMax.substr( (strMax.length() -1), 1).compare( HASH_DELIMITER) == 0)
 {
 	strMax = strMax.substr( 0, (strMax.length() -1));
@@ -1021,7 +1022,7 @@ unsigned char nMax = (unsigned char) lMax;
 
 if ((nValue >= nMin) && (nValue <= nMax))
 {
-	std::pair <MessageDefinition, std::string> myPair;
+	std::pair <MessageDefinition, std::wstring> myPair;
 myPair = std::make_pair( it->second, it->first);
 	return myPair;	
 }	
@@ -1029,14 +1030,14 @@ myPair = std::make_pair( it->second, it->first);
 
 else if (blnValue)
 {
-std::string strRemainder = it->first;
+std::wstring strRemainder = it->first;
 unsigned int nStartPos = nValuePos +2;
 unsigned int nLength = (strRemainder.length() - nValuePos) -2;
 strRemainder = strRemainder.substr( nStartPos, nLength);
 	
 if (strControlHash.substr( nStartPos, nLength).compare( strRemainder) == 0)
 {
-std::pair <MessageDefinition, std::string> myPair;
+std::pair <MessageDefinition, std::wstring> myPair;
 myPair = std::make_pair( it->second, it->first);
 	return myPair;	
 }  // Remainder matches the rest of the incoming message after skipping the value wild card

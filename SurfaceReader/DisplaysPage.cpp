@@ -121,9 +121,9 @@ default:
 }
 
 
-std::string DisplaysPage::GetDisplayName( std::wstring wstrName)
+std::wstring DisplaysPage::GetDisplayName( std::wstring wstrName)
 {
-	std::map <std::string, DisplayDefinition> ::iterator it;
+	std::map <std::wstring, DisplayDefinition> ::iterator it;
 		
 	for (it = myDisplays.begin(); it != myDisplays.end(); it++)
 {
@@ -134,13 +134,13 @@ std::string DisplaysPage::GetDisplayName( std::wstring wstrName)
 		}  // end for
 		
 // Not found
-	std::string strNotFound;
+	std::wstring strNotFound;
 	strNotFound.clear();
 	return strNotFound;
 }
 
 
-std::string DisplaysPage::GetDisplayHash( wxTreeItemId myCurrentNode )
+std::wstring DisplaysPage::GetDisplayHash( wxTreeItemId myCurrentNode )
 {
 wxTreeItemId wxtIDCurrentNode = myCurrentNode;
 	
@@ -158,7 +158,7 @@ DisplayDefinition myDisplayDefinition;
 }
 
 
-std::map <std::string, DisplayDefinition> DisplaysPage::GetDisplays()
+std::map <std::wstring, DisplayDefinition> DisplaysPage::GetDisplays()
 {
 	return myDisplays;
 }
@@ -186,11 +186,11 @@ if (GetLevel( wxtIDCurrentNode) == DISPLAY_LEVEL)
 		std::wstring wstrDisplayName = wxDisplayTree->GetItemText( wxtIDCurrentNode).ToStdWstring();
 
 // Try to update the associated entry within the map of displays
-std::string strFoundHash = GetDisplayName( wstrDisplayName);			
+std::wstring strFoundHash = GetDisplayName( wstrDisplayName);			
 		
 if (strFoundHash.empty() == false)
 		{
-std::map <std::string, DisplayDefinition>::iterator it;
+std::map <std::wstring, DisplayDefinition>::iterator it;
 
 it = myDisplays.find( strFoundHash);
 
@@ -215,7 +215,7 @@ else
 				myDefinition.SetLabel( wstrLabel);				
 								
 // Update the map, then the tree node
-std::pair <std::string, DisplayDefinition> myDefinitionPair;
+std::pair <std::wstring, DisplayDefinition> myDefinitionPair;
 myDefinitionPair = std::make_pair( strFoundHash, myDefinition);
 myDisplays.erase( it);
 myDisplays.insert( myDefinitionPair);
@@ -247,7 +247,7 @@ void DisplaysPage::OnWizardCancel(wxWizardEvent& event)
 		void DisplaysPage::ListDisplays( wxTreeItemId wxtIDCurrentNode)
 	{
 			  // Create a branch for every available display
-std::map <std::string, DisplayDefinition>::iterator it;
+std::map <std::wstring, DisplayDefinition>::iterator it;
 
 for (it = myDisplays.begin(); it != myDisplays.end(); it++)
 {

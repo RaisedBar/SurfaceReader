@@ -345,8 +345,8 @@ void UnloadAPI();
 	/// <summary> 
 	HRESULT IsHotSpotInSet(std::wstring SetName, std::wstring SpotName);
 	HRESULT IsHotSpotInCurrentSet(std::wstring SpotName);
-HRESULT ListHotSpotsInSet(std::wstring SetName, std::vector<std::string>& Spots);
-HRESULT ListHotSpotsInCurrentSet(std::vector<std::string>& Spots);
+HRESULT ListHotSpotsInSet(std::wstring SetName, std::vector<std::wstring>& Spots);
+HRESULT ListHotSpotsInCurrentSet(std::vector<std::wstring>& Spots);
 HRESULT GetActiveHotSpotSet(std::wstring& ActiveSet);
 HRESULT ExecuteHotSpot(std::wstring Set, std::wstring SpotName);
 void SetFirstJsdFile(wxString File);

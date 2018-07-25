@@ -9,7 +9,8 @@
 
 #pragma once
 
-
+#include <wx/msgdlg.h>
+#include <boost/algorithm/string/replace.hpp>
 #include <vector>
 #include <string>
 
@@ -20,7 +21,8 @@
 
 #ifdef __WINDOWS__ 
 //Windows includes.
-//#include <windows.h>
+#define WIN32_LEAN_AND_MEAN
+#include <windows.h>
 //#include <wx/msw/winundef.h> 
 #endif  // if windows/Mac
 
@@ -69,12 +71,12 @@ void SetHardwareInID( int nID)
 nHardwareInPortID = nID;
 }
 
-std::string GetHardwareInName()
+std::wstring GetHardwareInName()
 {
 return strHardwareInPortName;
 }
 
-void SetHardwareInName( std::string strName)
+void SetHardwareInName( std::wstring strName)
 {
 strHardwareInPortName = strName;
 }
@@ -89,12 +91,12 @@ void SetHardwareOutID( int nID)
 nHardwareOutPortID = nID;
 }
 
-std::string GetHardwareOutName()
+std::wstring GetHardwareOutName()
 {
 return strHardwareOutPortName;
 }
 
-void SetHardwareOutName( std::string strName)
+void SetHardwareOutName( std::wstring strName)
 {
 strHardwareOutPortName = strName;
 }
@@ -109,12 +111,12 @@ void SetDisplayInID( int nID)
 nDisplayInPortID = nID;
 }
 
-std::string GetDisplayInName()
+std::wstring GetDisplayInName()
 {
 return strDisplayInPortName;
 }
 
-void SetDisplayInName( std::string strName)
+void SetDisplayInName( std::wstring strName)
 {
 strDisplayInPortName = strName;
 }
@@ -129,17 +131,17 @@ void SetDisplayOutID( int nID)
 nDisplayOutPortID = nID;
 }
 
-std::string GetDisplayOutName()
+std::wstring GetDisplayOutName()
 {
 return strDisplayOutPortName;
 }
 
-void SetDisplayOutName( std::string strName)
+void SetDisplayOutName( std::wstring strName)
 {
 strDisplayOutPortName = strName;
 }
 
-std::vector <std::string> GetPortErrors()
+std::vector <std::wstring> GetPortErrors()
 	{
 return vErrors;
 }
@@ -193,11 +195,11 @@ protected:
 	// internal storage
 	std::wstring wstrWidgetName;
 		  int nHardwareInPortID, nHardwareOutPortID, nDisplayInPortID, nDisplayOutPortID;
-std::string strHardwareInPortName, strHardwareOutPortName, strDisplayInPortName, strDisplayOutPortName;
+std::wstring strHardwareInPortName, strHardwareOutPortName, strDisplayInPortName, strDisplayOutPortName;
 Mode WidgetMode; //store the current mode on a widget-by-widget basis.
 
 // Error strings
-std::vector <std::string> vErrors;
+std::vector <std::wstring> vErrors;
 
 // MIDI devices
 RtMidiIn * m_HardwareMIDIIn, * m_DisplayMIDIIn;
@@ -342,7 +344,7 @@ void SetWidgetMode( Mode NewMode)
 }
 
 // Validate input port
-bool IsValidInputPort( int nPortID, std::string strPortName)
+bool IsValidInputPort( int nPortID, std::wstring strPortName)
 {
 // Test for a currently valid port ID
 if (nPortID == VP_PORT_ID)
@@ -374,15 +376,15 @@ try
 }
 
 // Create an array with the character, c, and a null terminator 
-char buff[2] = { '\1', '\0' };
-std::string strOne( buff);
-std::string strEmpty( "");
+wchar_t buff[2] = { '\1', '\0' };
+std::wstring strOne( buff);
+std::wstring strEmpty(L"");
 
-std::string strTempName = StripSpaces( strPortName);
+std::wstring strTempName = StripSpaces( strPortName);
 	strTempName = StripNonAlphaNums( strTempName);
 boost::replace_all(strTempName, strOne, strEmpty); 	
 	
-std::string strCurrentPortName = StripSpaces( myMIDIIn->getPortName( nPortID));
+std::wstring strCurrentPortName = StripSpaces(NarrowToWideString(myMIDIIn->getPortName( nPortID)));
 strCurrentPortName = StripNonAlphaNums( strCurrentPortName);
 boost::replace_all(strCurrentPortName, strOne, strEmpty); 
 #ifdef __WINDOWS__ 
@@ -404,7 +406,7 @@ return false;
 catch ( RtMidiError &error )
 {
 #ifdef __WINDOWS__
-OutputDebugStringA(error.what());
+OutputDebugStringW(NarrowToWideString(error.what()).c_str());
 #endif
 
 		delete myMIDIIn;
@@ -414,7 +416,7 @@ return false;
 
 
 // Validate output port
-bool IsValidOutputPort( int nPortID, std::string strPortName)
+bool IsValidOutputPort( int nPortID, std::wstring strPortName)
 {
 // Test for a currently valid port ID
 if (nPortID == VP_PORT_ID)
@@ -445,15 +447,15 @@ return false;
 }
 
 // Create an array with the character, c, and a null terminator 
-char buff[2] = { '\1', '\0' };
-std::string strOne( buff);
-std::string strEmpty( "");
+wchar_t buff[2] = { '\1', '\0' };
+std::wstring strOne( buff);
+std::wstring strEmpty(L"");
 
-std::string strTempName = StripSpaces( strPortName);
+std::wstring strTempName = StripSpaces( strPortName);
 	strTempName = StripNonAlphaNums( strTempName);
 boost::replace_all(strTempName, strOne, strEmpty); 	
 	
-	std::string strCurrentPortName = StripSpaces( myMIDIOut->getPortName( nPortID));
+	std::wstring strCurrentPortName = StripSpaces(NarrowToWideString(myMIDIOut->getPortName( nPortID)));
 strCurrentPortName = StripNonAlphaNums( strCurrentPortName);
 boost::replace_all(strCurrentPortName, strOne, strEmpty); 	
 		
@@ -514,10 +516,9 @@ try
 	{
 if (nInputID == VP_PORT_ID)
 {
-wxString wxstrName = wstrWidgetName;
-	std::string strName = wxstrName.ToStdString();
+	std::wstring strName = wstrWidgetName;
 		strName.append( strVirtualInSuffix);
-m_DisplayMIDIIn->openVirtualPort( strName);
+m_DisplayMIDIIn->openVirtualPort(WideToNarrowString(strName));
 // Don't ignore sysex, timing, or active sensing messages.
     m_DisplayMIDIIn->ignoreTypes( false, false, false );
 }
@@ -546,10 +547,9 @@ try
 	{
 if (nOutputID == VP_PORT_ID)
 {
-	wxString wxstrName( wstrWidgetName);
-	std::string strName = wxstrName.ToStdString();
+	std::wstring strName = wstrWidgetName;
 	strName = strName.append( strVirtualOutSuffix);
-m_HardwareMIDIOut->openVirtualPort( strName);
+m_HardwareMIDIOut->openVirtualPort(WideToNarrowString(strName));
 }
 else
 {
@@ -656,7 +656,7 @@ bool blnResult = true;
 
 if (IsValidInputPort( nHardwareInID, strHardwareInPortName) == false) 
 	{
-std::string strOut = strHardwareInError; 
+std::wstring strOut = strHardwareInError; 
 strOut.append( strHardwareInPortName);
 vErrors.push_back( strOut);
 blnResult = false;
@@ -664,7 +664,7 @@ blnResult = false;
 
 if (IsValidOutputPort( nHardwareOutID, strHardwareOutPortName) == false)
 	{
-std::string strOut = strHardwareOutError;
+std::wstring strOut = strHardwareOutError;
 strOut.append( strHardwareOutPortName);
 vErrors.push_back( strOut);			
 blnResult = false;
@@ -689,7 +689,7 @@ catch ( RBException &myException)
 OutputDebugString( myException.what());
 					#endif
 
-std::string strOut = strHardwareOutError;
+std::wstring strOut = strHardwareOutError;
 strOut.append( strHardwareOutPortName);
 vErrors.push_back( strOut);			
 blnOutput = false;
@@ -705,7 +705,7 @@ catch ( RBException &myException)
 			OutputDebugString( myException.what());
 			#endif
 			
-			std::string strOut = strHardwareInError;
+			std::wstring strOut = strHardwareInError;
 			strOut.append( strHardwareInPortName);
 			vErrors.push_back( strOut);			
 blnInput = false;
@@ -728,7 +728,7 @@ bool blnResult = true;
 	
 		if (IsValidInputPort( nDisplayInID, strDisplayInPortName) == false) 
 {
-	std::string strOut = strDisplayInError;
+	std::wstring strOut = strDisplayInError;
 	strOut.append( strDisplayInPortName);
 	vErrors.push_back( strOut);			
 blnResult = false;
@@ -736,7 +736,7 @@ blnResult = false;
 
 if (IsValidOutputPort( nDisplayOutID, strDisplayOutPortName) == false)
 {
-	std::string strOut = strDisplayOutError;
+	std::wstring strOut = strDisplayOutError;
 	strOut.append( strDisplayOutPortName);
 	vErrors.push_back( strOut);
 blnResult = false;
@@ -761,7 +761,7 @@ bool blnInput, blnOutput;
 	OutputDebugString( myException.what());
 			#endif
 
-std::string strOut = strDisplayOutError;
+std::wstring strOut = strDisplayOutError;
 strOut.append( strDisplayOutPortName);
 vErrors.push_back( strOut);
 blnResult = false;
@@ -777,7 +777,7 @@ catch ( RBException &myException)
 			OutputDebugString( myException.what());
 			#endif
 			
-			std::string strOut = strDisplayInError;
+			std::wstring strOut = strDisplayInError;
 			strOut.append( strDisplayInPortName);
 			vErrors.push_back( strOut);
 					blnResult = false;

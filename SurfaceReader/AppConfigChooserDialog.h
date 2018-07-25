@@ -29,7 +29,7 @@
 class AppConfigChooserDialog: public wxDialog
 {
 public:
-AppConfigChooserDialog( const wxString& title, std::string strProtocolID, boost::shared_ptr <AppCollection> pApps);
+AppConfigChooserDialog( const wxString& title, std::wstring strProtocolID, boost::shared_ptr <AppCollection> pApps);
 ~AppConfigChooserDialog();
 
 std::pair <std::wstring, std::wstring> GetAppConfigID();

@@ -7,7 +7,7 @@
 #include "AppConfigChooserDialog.h"
 
 
-AppConfigChooserDialog::AppConfigChooserDialog( const wxString& title, std::string strProtocolID, boost::shared_ptr <AppCollection> pApps)
+AppConfigChooserDialog::AppConfigChooserDialog( const wxString& title, std::wstring strProtocolID, boost::shared_ptr <AppCollection> pApps)
        : wxDialog(NULL, -1, title, wxDefaultPosition, wxSize(250, 230)),
 	   pMyApps( new AppCollection())
 {  

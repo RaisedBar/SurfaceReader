@@ -11,9 +11,6 @@ using boost::lexical_cast;
 using boost::bad_lexical_cast;
 
 #include <string>
-using namespace std;
-
-
 #include "SRConstants.h"
 
 
@@ -35,4 +32,6 @@ std::wstring NibbleToHex( unsigned int nNibble);
 int IntFromHex(const std::wstring &wstrIn); 
 unsigned int CharCount( std::wstring wxstrIn, wchar_t wxucChar);
 std::vector <unsigned char> GetSysExAddressBytesFromHash(std::wstring strMsgHash, unsigned int nHeaderLength);
+std::wstring NarrowToWideString(std::string stringToConvert);
+std::string WideToNarrowString(std::wstring stringToConvert);
 #endif // RB_STRING_FUNCS_H

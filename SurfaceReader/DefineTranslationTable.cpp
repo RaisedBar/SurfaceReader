@@ -16,7 +16,7 @@ pMyProtocol = pProtocol;
 	
 	// Generate a new table ID
 boost::uuids::uuid myUUID = 	boost::uuids::random_generator()();
-	strMyTableID = boost::lexical_cast <std::string> (myUUID); 	
+	strMyTableID = boost::lexical_cast <std::wstring> (myUUID); 	
 	myLabels.clear();
 
 	// Populate the table with default ANSI values
@@ -60,7 +60,7 @@ Centre();
 }
 
 
-DefineTranslationTable::DefineTranslationTable( const wxString& title, std::string strTableID, boost::shared_ptr<SurfaceProtocol> pProtocol)
+DefineTranslationTable::DefineTranslationTable( const wxString& title, std::wstring strTableID, boost::shared_ptr<SurfaceProtocol> pProtocol)
        : wxDialog(NULL, -1, title, wxDefaultPosition, wxSize(250, 230))
 {  
 strMyTableID = strTableID;
@@ -120,7 +120,7 @@ return false;
 }
 
 
-std::string DefineTranslationTable::GetTableID()
+std::wstring DefineTranslationTable::GetTableID()
 {
 return strMyTableID;
 }
@@ -148,7 +148,7 @@ for (it = myLabels.begin(); it != myLabels.end(); it++)
 		std::wstring wstrItem = it->second;
 		wstrItem.append( wstrSpacedOpenParen);
 		
-		std::string strHexByte = ByteToHex( it->first);
+		std::wstring strHexByte = ByteToHex( it->first);
 		wstrItem.append( strHexByte.begin(), strHexByte.end());
 		
 		wstrItem.append( wstrCloseParen);

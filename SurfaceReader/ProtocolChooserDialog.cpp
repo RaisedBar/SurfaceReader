@@ -7,7 +7,7 @@
 #include "ProtocolChooserDialog.h"
 
 
-ProtocolChooserDialog::ProtocolChooserDialog( const wxString& title, std::string strProtocolID, boost::shared_ptr <ProtocolCollection> pProtocols)
+ProtocolChooserDialog::ProtocolChooserDialog( const wxString& title, std::wstring strProtocolID, boost::shared_ptr <ProtocolCollection> pProtocols)
        : wxDialog(NULL, -1, title, wxDefaultPosition, wxSize(250, 230)),
 	   pMyProtocols( new ProtocolCollection())
 {  
@@ -45,10 +45,10 @@ ProtocolChooserDialog::~ProtocolChooserDialog()
 {}
 
 
-std::string ProtocolChooserDialog::GetProtocolID()
+std::wstring ProtocolChooserDialog::GetProtocolID()
 {
 std::wstring wstrProtocolName;
-std::string strNewProtocolID;
+std::wstring strNewProtocolID;
 
 if (lbxProtocols->GetSelection() < 0)
 {
@@ -62,9 +62,9 @@ else
 }
 
 
-void ProtocolChooserDialog::ListProtocols( std::string strMyProtocolID)
+void ProtocolChooserDialog::ListProtocols( std::wstring strMyProtocolID)
 {
-std::map <std::string, SurfaceProtocol>::iterator it;
+std::map <std::wstring, SurfaceProtocol>::iterator it;
 lbxProtocols->Clear();
 
 for (it = pMyProtocols->begin(); it != pMyProtocols->end(); it++)

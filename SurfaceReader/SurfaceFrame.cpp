@@ -2,6 +2,9 @@
 
 
 #include "SurfaceFrame.h"
+#include "RBPathFuncs.h"
+using namespace std::experimental::filesystem;
+using namespace RaisedBar::PathFunctions;
 
 #ifdef __WINDOWS__
 // #include <vld.h>
@@ -86,7 +89,7 @@ blnLogging( false)
 
 	// Initialise the help system
 #ifdef __WINDOWS__
-path myHelpPath( HelpPath());
+std::experimental::filesystem::path myHelpPath( HelpPath());
 wstrHelpFileName = HelpPath().generic_wstring();
 	wstrHelpFileName.append( wstrCHMHelpFile);
 pHelpController = new wxCHMHelpController;
@@ -395,7 +398,7 @@ else
 	if (nSurfaceNumber > -1)
 		{
 			std::wstring wstrMode = SurfacePointers.at( nSurfaceNumber)->GetModeDescription( SurfacePointers.at( nSurfaceNumber)->GetWidgetMode());	
-			std::string strProtocolID = SurfacePointers.at( nSurfaceNumber)->GetProtocolID();
+			std::wstring strProtocolID = SurfacePointers.at( nSurfaceNumber)->GetProtocolID();
 			std::wstring wstrProtocolName = Protocols->GetProtocol( strProtocolID).GetProtocolName();
 			
 			std::wstring wstrAppName = SurfacePointers.at( nSurfaceNumber)->GetAppConfigID().first;
@@ -449,8 +452,8 @@ void SurfaceFrame::ClearDisplays()
 bool SurfaceFrame::OpenSurfacePorts( SurfacePointer pMySurface)
 		{
 bool blnResult = true;
-std::string strErrors;
-wxString strReportTitle = strPortError;
+std::wstring strErrors;
+std::wstring strReportTitle = strPortError;
 strReportTitle.append( pMySurface->GetLabel());
 strReportTitle.append( strSpacedColon);
 strReportTitle.append( strNewLine);
@@ -501,7 +504,7 @@ strReportTitle.append( SurfacePointers.at( i)->GetLabel());
 strReportTitle.append( strSpacedColon);
 strReportTitle.append( strNewLine);
 
-std::string strErrors = GetPortErrorReport( SurfacePointers.at( i));
+std::wstring strErrors = GetPortErrorReport( SurfacePointers.at( i));
 SurfacePointers.at( i)->ClearPortErrors();
 
 wxMessageBox( strReportTitle.append( strErrors), wstrErrorTitle, wxOK | wxICON_ERROR);	
@@ -516,10 +519,10 @@ else   // Enable processing
 		}
 
 
-		std::string SurfaceFrame::GetPortErrorReport(SurfacePointer pMySurface)
+		std::wstring SurfaceFrame::GetPortErrorReport(SurfacePointer pMySurface)
 {
-	std::string strOut;
-	std::vector <std::string> vErrors = pMySurface->GetPortErrors();
+	std::wstring strOut;
+	std::vector <std::wstring> vErrors = pMySurface->GetPortErrors();
 
 	for (unsigned int i = 0; i < vErrors.size(); i++)
 	{
@@ -586,33 +589,33 @@ Close( true);
 
 bool SurfaceFrame::DeleteSurfaceFiles()
 	{
-		    path myPath( SurfacePath());
+		    std::experimental::filesystem::path myPath( SurfacePath());
 	
   try
   {
-    if (! exists( myPath))    // does the path actually exist?
+    if (! std::experimental::filesystem::exists( myPath))    // does the path actually exist?
     {
       return false;
 	}  // if exists
 	
-	if (! is_directory( myPath))      // myPath must be a directory?
+	if (! std::experimental::filesystem::is_directory( myPath))      // myPath must be a directory?
       {
 	  return false;
 	}  // if directory
 	}  // end try
-  catch (const filesystem_error &error)
+  catch (const std::experimental::filesystem::filesystem_error &error)
   {
     	  wxMessageBox( error.what(), wstrErrorTitle, wxOK | wxICON_ERROR);
 		  return false;
   }
           
 // Directory exists so process the contents
-  directory_iterator end_itr; // Default ctor yields past-the-end
+  std::experimental::filesystem::directory_iterator end_itr; // Default ctor yields past-the-end
 
-for (directory_iterator i( myPath); i != end_itr; ++i )
+for (std::experimental::filesystem::directory_iterator i( myPath); i != end_itr; ++i )
 {
     // Skip if not a file
-    if (! is_regular_file( i->status() ) ) 
+    if (! std::experimental::filesystem::is_regular_file( i->status() ) ) 
 		{
 			continue;
 	}
@@ -623,9 +626,9 @@ for (directory_iterator i( myPath); i != end_itr; ++i )
 	// File matches, so delete it
 		try
 		{
-			boost::filesystem::remove(i->path());
+			std::experimental::filesystem::remove(i->path());
 		}
-				catch (const filesystem_error &error)
+				catch (const std::experimental::filesystem::filesystem_error &error)
 					{
 						wxMessageBox(error.what(), wstrErrorTitle, wxOK | wxICON_ERROR);
 												return false;
@@ -638,21 +641,21 @@ return true;
 
 void SurfaceFrame::SaveSurfaces()
 {
-path myPath( SurfacePath());
+	std::experimental::filesystem::path myPath( SurfacePath());
 	
   try
   {
-    if (! exists( myPath))    // does the path actually exist?
+    if (!std::experimental::filesystem::exists( myPath))    // does the path actually exist?
     {
       return;
 	}  // if exists
 	
-	if (! is_directory( myPath))      // myPath must be a directory?
+	if (!std::experimental::filesystem::is_directory( myPath))      // myPath must be a directory?
       {
 	  return;
 	}  // if directory
 	}  // end try
-  catch (const filesystem_error &error)
+  catch (const std::experimental::filesystem::filesystem_error &error)
   {
     	  wxMessageBox( error.what(), wstrErrorTitle, wxOK | wxICON_ERROR);
 		  return;
@@ -693,34 +696,34 @@ SaveData <SurfaceParameters> (myParameters, myPath, false);
 bool SurfaceFrame::LoadSurfaces()
 {
 	bool blnResult = true;
-path myPath( SurfacePath());
+std::experimental::filesystem::path myPath( SurfacePath());
 std::vector <std::string> vFailedFiles;
 
 try
   {
-    if (! exists( myPath))    // does the path actually exist?
+    if (!std::experimental::filesystem::exists( myPath))    // does the path actually exist?
     {
       return false;
 	}  // if exists
 	
-	if (! is_directory( myPath))      // myPath must be a directory?
+	if (!std::experimental::filesystem::is_directory( myPath))      // myPath must be a directory?
       {
 	  return false;
 	}  // if directory
 	}  // end try
-  catch (const filesystem_error &error)
+  catch (const std::experimental::filesystem::filesystem_error &error)
   {
     	  wxMessageBox( error.what(), wstrErrorTitle, wxOK | wxICON_ERROR);
 return false;
   }
           
 // Directory exists so process the contents
-  directory_iterator end_itr; // Default ctor yields past-the-end
+  std::experimental::filesystem::directory_iterator end_itr; // Default ctor yields past-the-end
 
-for (directory_iterator i( myPath); i != end_itr; ++i )
+for (std::experimental::filesystem::directory_iterator i( myPath); i != end_itr; ++i )
 {
     // Skip if not a file
-    if (! is_regular_file( i->status() ) ) 
+    if (!std::experimental::filesystem::is_regular_file( i->status() ) )
 		{
 			continue;
 	}
@@ -815,33 +818,33 @@ return blnResult;
 
 bool SurfaceFrame::DeleteAppConfigFiles()
 	{
-			path myPath( AppConfigPath());
+	std::experimental::filesystem::path myPath( AppConfigPath());
 	
   try
   {
-    if (! exists( myPath))    // does the path actually exist?
+    if (!std::experimental::filesystem::exists( myPath))    // does the path actually exist?
     {
       return false;
 	}  // if exists
 	
-	if (! is_directory( myPath))      // myPath must be a directory?
+	if (!std::experimental::filesystem::is_directory( myPath))      // myPath must be a directory?
       {
 	  return false;
 	}  // if directory
 	}  // end try
-  catch (const filesystem_error &error)
+  catch (const std::experimental::filesystem::filesystem_error &error)
   {
     	  wxMessageBox( error.what(), wstrErrorTitle, wxOK | wxICON_ERROR);
 		  return false;
   }
           
 // Directory exists so process the contents
-  directory_iterator end_itr; // Default ctor yields past-the-end
+  std::experimental::filesystem::directory_iterator end_itr; // Default ctor yields past-the-end
 
-for (directory_iterator i( myPath); i != end_itr; ++i )
+for (std::experimental::filesystem::directory_iterator i( myPath); i != end_itr; ++i )
 {
     // Skip if not a file
-    if (! is_regular_file( i->status() ) ) 
+    if (!std::experimental::filesystem::is_regular_file( i->status() ) )
 		{
 			continue;
 	}
@@ -853,9 +856,9 @@ for (directory_iterator i( myPath); i != end_itr; ++i )
 				// File matches, so delete it
 		try
 		{
-			boost::filesystem::remove(i->path());
+			std::experimental::filesystem::remove(i->path());
 		}
-		catch (const filesystem_error &error)
+		catch (const std::experimental::filesystem::filesystem_error &error)
 		{
 			wxMessageBox(error.what(), wstrErrorTitle, wxOK | wxICON_ERROR);
 			return false;
@@ -868,21 +871,21 @@ return true;
 
 void SurfaceFrame::SaveAppConfigs()
 {
-path myPath( AppConfigPath());
+	std::experimental::filesystem::path myPath( AppConfigPath());
 	
   try
   {
-    if (! exists( myPath))    // does the path actually exist?
+    if (!std::experimental::filesystem::exists( myPath))    // does the path actually exist?
     {
       return;
 	}  // if exists
 	
-	if (! is_directory( myPath))      // myPath must be a directory?
+	if (!std::experimental::filesystem::is_directory( myPath))      // myPath must be a directory?
       {
 	  return;
 	}  // if directory
 	  }  // end try
-  catch (const filesystem_error &error)
+  catch (const std::experimental::filesystem::filesystem_error &error)
   {
     	  wxMessageBox( error.what(), wstrErrorTitle, wxOK | wxICON_ERROR);
 		  return;
@@ -894,7 +897,7 @@ DeleteAppConfigFiles();
 {
 		std::wstring wstrFileName= Apps->GetAppConfigItem(i).GetAppName();
 			wstrFileName.append( wstrDash).append(Protocols->GetProtocol( Apps->GetAppConfigItem(i).GetProtocolID()).GetProtocolName());
-std::string strProtocolID = Apps->GetAppConfigItem( i).GetProtocolID();
+std::wstring strProtocolID = Apps->GetAppConfigItem( i).GetProtocolID();
 		bool blnEncrypted = Protocols->GetProtocol(strProtocolID).IsEncrypted();
 	AppConfig myAppConfig;
 	
@@ -1001,7 +1004,7 @@ vFailedFiles.push_back( i->path().filename().generic_string());
 if (blnSuccess)
 				{
 				// Add the new configuration to the collection
-std::string strProtocolID= myAppConfig.GetProtocolID();
+std::wstring strProtocolID= myAppConfig.GetProtocolID();
 std::wstring wstrProtocolID( strProtocolID.begin(), strProtocolID.end());
 				Apps->Add( myAppConfig.GetAppName(), wstrProtocolID, myAppConfig);		
 }  // end if blnSuccess
@@ -1066,7 +1069,7 @@ for (directory_iterator i( myPath); i != end_itr; ++i )
 	// File matches, so delete it
 		try
 		{
-			boost::filesystem::remove(i->path());
+			std::experimental::filesystem::remove(i->path());
 		}
 				catch (const filesystem_error &error)
 			{
@@ -1238,9 +1241,9 @@ void SurfaceFrame::AddDisplay( std::wstring wstrDisplayLabel)
 {}
 
 
-bool SurfaceFrame::CopyDir( boost::filesystem::path const & source, boost::filesystem::path const & destination)
+bool SurfaceFrame::CopyDir(std::experimental::filesystem::path const & source, const std::experimental::filesystem::path & destination)
 {
-    namespace fs = boost::filesystem;
+    namespace fs = std::experimental::filesystem;
     try
     {
         // Check whether the function call is valid
@@ -1311,7 +1314,7 @@ return false;
 }
 
 
-void SurfaceFrame::ShowLog( boost::filesystem::path myPath, bool blnIsEncrypted)
+void SurfaceFrame::ShowLog(std::experimental::filesystem::path myPath, bool blnIsEncrypted)
 {
 	std::ifstream myFile( myPath.generic_string().c_str());
 	std::string strContents;
@@ -1377,10 +1380,10 @@ int nHOut = myProtocolWizard.GetSurfaceParameters().GetHardwareOutID();
 int nDisplayIn = myProtocolWizard.GetSurfaceParameters().GetDisplayInID();
 int nDisplayOut = myProtocolWizard.GetSurfaceParameters().GetDisplayOutID();
 	// Get port names for validation
-std::string strHIn = myProtocolWizard.GetSurfaceParameters().GetHardwareInName();
-std::string strHOut = myProtocolWizard.GetSurfaceParameters().GetHardwareOutName();
-std::string strDisplayIn = myProtocolWizard.GetSurfaceParameters().GetDisplayInName();
-std::string strDisplayOut = myProtocolWizard.GetSurfaceParameters().GetDisplayOutName();
+std::wstring strHIn = myProtocolWizard.GetSurfaceParameters().GetHardwareInName();
+std::wstring strHOut = myProtocolWizard.GetSurfaceParameters().GetHardwareOutName();
+std::wstring strDisplayIn = myProtocolWizard.GetSurfaceParameters().GetDisplayInName();
+std::wstring strDisplayOut = myProtocolWizard.GetSurfaceParameters().GetDisplayOutName();
 	
 // Update the surface list
 lbxSurfaces->Append( SurfacePointers.back()->GetSurfaceName());
@@ -1428,7 +1431,7 @@ void SurfaceFrame::OnNewAppConfig(wxCommandEvent& event)
 }
 
 	std::wstring wstrSurfaceName = lbxSurfaces->GetStringSelection().ToStdWstring();
-std::string strProtocolID;
+std::wstring strProtocolID;
 bool blnNoSurfaces = (SurfacePointers.size() == 0);
 
 if (blnNoSurfaces == true)
@@ -1502,7 +1505,7 @@ if (myAppConfigWizard.RunWizard( myAppConfigWizard.GetActionsPage()))
 	pAppConfig = myAppConfigWizard.GetAppConfig();
 	
 	// Add the updated configuration to the map of available configurations
-std::string strProtocolID = pAppConfig->GetProtocolID();
+std::wstring strProtocolID = pAppConfig->GetProtocolID();
 std::wstring wstrProtocolID( strProtocolID.begin(), strProtocolID.end()); ;
 	Apps->Add( pAppConfig->GetAppName(), wstrProtocolID, * pAppConfig);
 SaveAppConfigs();
@@ -1520,7 +1523,7 @@ void SurfaceFrame::OnImportProtocol( wxCommandEvent& event)
 
         if (myFileImportDlg.ShowModal() == wxID_OK)
     {
-path mySourcePath( myFileImportDlg.GetPath());
+path mySourcePath(NarrowToWideString(myFileImportDlg.GetPath().ToStdString()));
 	  		 path myTargetPath( ProtocolPath());
 		  myTargetPath /= myFileImportDlg.GetFilename().ToStdWstring();
 
@@ -1538,7 +1541,7 @@ return;
 
 		  try
 	{
-		copy_file( mySourcePath, myTargetPath, copy_option::overwrite_if_exists);
+		std::experimental::filesystem::copy_file( mySourcePath, myTargetPath, std::experimental::filesystem::copy_options::overwrite_existing);
 }
 		catch( ...)
 		{
@@ -1559,7 +1562,7 @@ void SurfaceFrame::OnImportAppConfig( wxCommandEvent& event)
 
         if (myFileImportDlg.ShowModal() == wxID_OK)
     {
-path mySourcePath( myFileImportDlg.GetPath());
+path mySourcePath(NarrowToWideString(myFileImportDlg.GetPath().ToStdString()));
 	  		 path myTargetPath( AppConfigPath());
 		  myTargetPath /= myFileImportDlg.GetFilename().ToStdWstring();
 
@@ -1577,7 +1580,7 @@ return;
 
 		  try
 	{
-		copy_file( mySourcePath, myTargetPath, copy_option::overwrite_if_exists);
+		copy_file( mySourcePath, myTargetPath, copy_options::overwrite_existing);
 }
 		catch( ...)
 		{
@@ -1599,7 +1602,7 @@ myFileExportDlg.CenterOnParent();
 
         if (myFileExportDlg.ShowModal() == wxID_OK)
     {
-		path myTargetPath( myFileExportDlg.GetPath());
+		path myTargetPath(NarrowToWideString(myFileExportDlg.GetPath().ToStdString()));
 
 if ((exists( myTargetPath))    
 && (is_directory( myTargetPath)))
@@ -1631,7 +1634,7 @@ myFileExportDlg.CenterOnParent();
 
         if (myFileExportDlg.ShowModal() == wxID_OK)
     {
-		path myTargetPath( myFileExportDlg.GetPath());
+		path myTargetPath(NarrowToWideString(myFileExportDlg.GetPath().ToStdString()));
 
 if ((exists( myTargetPath))    
 && (is_directory( myTargetPath)))
@@ -1678,7 +1681,7 @@ if (nMySelection < 0)   // No selection in list box
 
 	// Find the protocol ID for the highlighted surface
 	std::wstring wstrSurfaceName; 
-	std::string strProtocolID;
+	std::wstring strProtocolID;
 
 	try
 	{
@@ -1738,7 +1741,7 @@ if (myAppConfigWizard.RunWizard( myAppConfigWizard.GetActionsPage()))
 	pAppConfig = myAppConfigWizard.GetAppConfig();
 	
 	// Add the updated configuration to the map of available configurations
-std::string strProtocolID = pAppConfig->GetProtocolID();
+std::wstring strProtocolID = pAppConfig->GetProtocolID();
 std::wstring wstrProtocolID( strProtocolID.begin(), strProtocolID.end());
 	Apps->Add( pAppConfig->GetAppName(), wstrProtocolID, *pAppConfig);
 	SaveAppConfigs();
@@ -1759,7 +1762,7 @@ return;
 }
 
 		int nMIDIInID; 
-	std::string strProtocolID; 
+	std::wstring strProtocolID; 
 bool blnProtocolExists = true;
 
 CloseSurfacePorts( SurfacePointers.at( nMySelection));
@@ -1823,7 +1826,7 @@ if (myProtocolEdit.RunWizard( myProtocolEdit.GetSysExPage()))
 SaveProtocols();
 
 // Update any dependent application configurations
-std::string strProtocolID = pProtocol->GetProtocolID();
+std::wstring strProtocolID = pProtocol->GetProtocolID();
 std::wstring wstrProtocolID( strProtocolID.begin(), strProtocolID.end());
 Apps->UpdateDisplays( wstrProtocolID, pProtocol->GetDisplays());
 SaveAppConfigs();
@@ -1850,7 +1853,7 @@ if (nMySelection < 0)   // No selection in list box
 }
 
 std::wstring wstrSurfaceName; 
-std::string strProtocolID = SurfacePointers.at( nMySelection)->GetProtocolID();
+std::wstring strProtocolID = SurfacePointers.at( nMySelection)->GetProtocolID();
 				boost::shared_ptr <SurfaceProtocol> pProtocol( new SurfaceProtocol (Protocols->GetProtocol( strProtocolID)));
 
 if ((pProtocol->IsEncrypted()) && (blnEncryptionMode == false))
@@ -2048,7 +2051,7 @@ if (nMySelection < 0)   // No selection in list box
 	// Load files, in case new app configs have been copied into place
 	LoadAppConfigs();
 
-		std::string 	strProtocolID = SurfacePointers.at( nMySelection)->GetProtocolID();
+		std::wstring 	strProtocolID = SurfacePointers.at( nMySelection)->GetProtocolID();
 AppConfigChooserDialog * myAppChooser = new AppConfigChooserDialog( wstrAppChooserTitle, strProtocolID, Apps); 
 
 if (myAppChooser->ShowModal() == wxID_OK)
@@ -2181,7 +2184,7 @@ if (nMySelection < 0)   // No selection in list box
 
 	// CloseSurfacePorts( SurfacePointers.at( nMySelection));
 
-	std::string strProtocolID = SurfacePointers.at( nMySelection)->GetProtocolID();
+	std::wstring strProtocolID = SurfacePointers.at( nMySelection)->GetProtocolID();
 	ProtocolChooserDialog * myProtocolChooser = new ProtocolChooserDialog( wstrProtocolChooserTitle, strProtocolID, Protocols); 
 
 if (myProtocolChooser->ShowModal() == wxID_OK)
@@ -2460,8 +2463,8 @@ return;
 		else
 		{
 			// Decrypt and display the log
-boost::filesystem::path myPath = LogPath();
-std::string strFileName = lbxSurfaces->GetStringSelection().ToStdString();
+std::experimental::filesystem::path myPath = LogPath();
+std::wstring strFileName = NarrowToWideString(lbxSurfaces->GetStringSelection().ToStdString());
 strFileName.append( strLogExtension);
 myPath /= strFileName;
 ShowLog( myPath, true);			
@@ -2470,8 +2473,8 @@ ShowLog( myPath, true);
 	else
 	{
 		// Display the log
-		boost::filesystem::path myPath = LogPath();
-		std::string strFileName = lbxSurfaces->GetStringSelection().ToStdString();
+		std::experimental::filesystem::path myPath = LogPath();
+		std::wstring strFileName = NarrowToWideString(lbxSurfaces->GetStringSelection().ToStdString());
 strFileName.append( strLogExtension);
 myPath /= strFileName;
 ShowLog( myPath, false);			
@@ -2547,7 +2550,7 @@ ClearDisplays();
 			
 // Identify the selected surface and its protocol
 std::wstring wstrSurfaceName = lbxSurfaces->GetStringSelection().ToStdWstring();
-std::string strProtocolID = SurfacePointers.at( nMySelection)->GetProtocolID();
+std::wstring strProtocolID = SurfacePointers.at( nMySelection)->GetProtocolID();
 	boost::shared_ptr<SurfaceProtocol> pProtocol( new SurfaceProtocol (Protocols->GetProtocol( strProtocolID)));
 
 for (unsigned int i = 0; i < pProtocol->GetDisplayCount(); i++)
@@ -2638,7 +2641,7 @@ myReport->Destroy();
 bool SurfaceFrame::LoadOptions()
 {
 	    bool blnResult = false;
-		boost::filesystem::path myPath( AppDataPath());
+		std::experimental::filesystem::path myPath( AppDataPath());
 myPath /= wstrOptionsFileName;
 
 try

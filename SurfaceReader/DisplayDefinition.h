@@ -60,13 +60,13 @@ int GetSysExCursorOffset();
 void SetSysExCursorOffset( int nNewCursorOffset);
 bool IsCursorFromLeft();
 void SetCursorFromLeft( bool blnLefty);
-int GetNibbledCursorPosition( std::string wstrHash, unsigned char nData2);
+int GetNibbledCursorPosition( std::wstring wstrHash, unsigned char nData2);
 bool IsUniCode();
 void SetUniCode( bool blnUniCoded);
-std::string GetCharacterTranslationID();
-void SetCharacterTranslationID( std::string strTableID);
-std::string GetLinkedDisplayHash();
-void SetLinkedDisplayHash( std::string strLinkedHash);
+std::wstring GetCharacterTranslationID();
+void SetCharacterTranslationID( std::wstring strTableID);
+std::wstring GetLinkedDisplayHash();
+void SetLinkedDisplayHash( std::wstring strLinkedHash);
 
 private:
 	friend std::ostream & operator<<( std::ostream &os, const DisplayDefinition &DD);
@@ -117,7 +117,7 @@ myArchive & boost::serialization::make_nvp( cLinkedHashTag, strLinkedDisplayHash
 }
 
 // Internal storage
-std::string strLinkedDisplayHash;
+std::wstring strLinkedDisplayHash;
 bool blnIsLEDLamp;
 int nDisplayLineCount;
  int nDisplayLength;
@@ -131,7 +131,7 @@ int nCursorOffset;
  // Handle unicode
   bool blnIsUniCode;
  // The ID for any required character translation table
-std::string strTranslationID; 
+std::wstring strTranslationID; 
  };
 
 // Set the class version for serialisation

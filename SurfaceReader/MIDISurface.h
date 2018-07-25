@@ -291,8 +291,8 @@ public:
 MIDISurface(SurfaceFrame * parent, ActiveProduct apProduct, SurfaceParameters * myParameters, boost::shared_ptr<ProtocolCollection> pProtocols, boost::shared_ptr<AppCollection> pApps);
 	MIDISurface( SurfaceFrame * parent, ActiveProduct apProduct, boost::shared_ptr<ProtocolCollection> pProtocols, boost::shared_ptr<AppCollection> pApps);
 			MIDISurface(SurfaceFrame * parent, ActiveProduct apProduct, std::wstring wstrName, boost::shared_ptr<ProtocolCollection> pProtocols, boost::shared_ptr<AppCollection> pApps);
-			MIDISurface(SurfaceFrame * parent, ActiveProduct apProduct, std::wstring wstrName, std::string myNewProtocolID, boost::shared_ptr<ProtocolCollection> pProtocols, boost::shared_ptr<AppCollection> pApps);
-			        	MIDISurface( SurfaceFrame * parent, ActiveProduct apProduct, std::wstring wstrName, std::string strNewProtocolID, int nHWIn, int nHWOut, int nDisplayIn, int nDisplayOut, boost::shared_ptr<ProtocolCollection> pProtocols, boost::shared_ptr<AppCollection> pApps);
+			MIDISurface(SurfaceFrame * parent, ActiveProduct apProduct, std::wstring wstrName, std::wstring myNewProtocolID, boost::shared_ptr<ProtocolCollection> pProtocols, boost::shared_ptr<AppCollection> pApps);
+			        	MIDISurface( SurfaceFrame * parent, ActiveProduct apProduct, std::wstring wstrName, std::wstring strNewProtocolID, int nHWIn, int nHWOut, int nDisplayIn, int nDisplayOut, boost::shared_ptr<ProtocolCollection> pProtocols, boost::shared_ptr<AppCollection> pApps);
 	    ~MIDISurface();
 
 void FlushLog();
@@ -301,11 +301,11 @@ void AnalyseHardwareMessage(std::vector <unsigned char> vBytes);
 void SendHardwareMessage( std::vector <unsigned char> * pMessage);
 void SendDisplayMessage( std::vector <unsigned char> * pMessage);
 
-std::string GetSurfaceID();
+std::wstring GetSurfaceID();
 			std::wstring GetSurfaceName();
 	void SetSurfaceName( std::wstring wstrName);
-	std::string GetProtocolID();
-	void SetProtocolID( std::string myNewProtocolID);
+	std::wstring GetProtocolID();
+	void SetProtocolID( std::wstring myNewProtocolID);
 	std::wstring GetProtocolName();
 void SetProtocolName( std::wstring wstrNewProtocolName);
 
@@ -329,7 +329,6 @@ bool StopDisplayProcessing();
 bool ResumeHardwareProcessing();
 bool ResumeDisplayProcessing();
 void LogIt( std::wstring wstrMessage);
-void LogIt( std::string strMessage);
 
 private:
 	// Logging
@@ -337,30 +336,30 @@ boost::log::sources::severity_logger<boost::log::trivial::severity_level> lg; //
 	
 void Speak( std::wstring wstrText, bool blnInterrupt);
 void UpdateStatusBar( std::wstring wstrMode);
-	void UpdateUI( std::wstring wstrLabel, bool blnLEDLamp, int nDisplayLength, int nLineCount, SurfaceProtocol * pProtocol, std::string strTranslationID);
+	void UpdateUI( std::wstring wstrLabel, bool blnLEDLamp, int nDisplayLength, int nLineCount, SurfaceProtocol * pProtocol, std::wstring strTranslationID);
 	std::wstring FormatDisplay( const std::wstring &wstrDisplayText, const int &nDisplayLength, const int &nLineCount);
 	int GetNibble( int nNibblePos, std::vector <unsigned char> myMessage);
 	void SetCurrentState( std::wstring wstrDisplayLabel, std::wstring wxstrState);
-void SetDisplayText( std::wstring wstrLabel, std::wstring wstrText, bool blnCursorFromLeft, bool blnLEDLamp, int nDisplayLength, int nLineCount, SurfaceProtocol * pProtocol, std::string strTranslationID);
-void SetDisplayText( std::wstring wstrLabel, int nCursorPosition, std::wstring wstrNewText, bool blnCursorFromLeft, bool blnLEDLamp, int nDisplayLength, int nLineCount, SurfaceProtocol * pProtocol, std::string strTranslationID);
-bool IsNoteMessage( std::string strHash);
-bool IsNoteOffMessage( std::string strHash, int nDataValue);
-void UpdateDisplay( std::pair <DisplayDefinition, std::string> myDisplayPair, std::vector <unsigned char> myMessage, SurfaceProtocol * myProtocol);
-std::pair <int, int> GetCursorInfo( std::string strHash, std::vector <unsigned char> myMessage, DisplayDefinition * myDisplay, SurfaceProtocol * pProtocol);
+void SetDisplayText( std::wstring wstrLabel, std::wstring wstrText, bool blnCursorFromLeft, bool blnLEDLamp, int nDisplayLength, int nLineCount, SurfaceProtocol * pProtocol, std::wstring strTranslationID);
+void SetDisplayText( std::wstring wstrLabel, int nCursorPosition, std::wstring wstrNewText, bool blnCursorFromLeft, bool blnLEDLamp, int nDisplayLength, int nLineCount, SurfaceProtocol * pProtocol, std::wstring strTranslationID);
+bool IsNoteMessage( std::wstring strHash);
+bool IsNoteOffMessage( std::wstring strHash, int nDataValue);
+void UpdateDisplay( std::pair <DisplayDefinition, std::wstring> myDisplayPair, std::vector <unsigned char> myMessage, SurfaceProtocol * myProtocol);
+std::pair <int, int> GetCursorInfo( std::wstring strHash, std::vector <unsigned char> myMessage, DisplayDefinition * myDisplay, SurfaceProtocol * pProtocol);
 
 // Action processing
-std::pair <MessageDefinition, std::string> IdentifyHardwareControl( std::vector <unsigned char> vBuffer, SurfaceProtocol * pProtocol);
-std::pair <DisplayDefinition, std::string> IdentifyDisplay( std::vector <unsigned char> vBuffer, AppConfig * pAppConfig);
-void ProcessLiveModeMessage( std::pair <MessageDefinition, std::string> myHardwarePair, SurfaceProtocol * pProtocol, AppConfig * pAppConfig, unsigned int nControlValue, std::vector <unsigned char> vBuffer);
-bool ProcessIDModeMessage( std::string strHash, MessageDefinition myMessageDefinition, SurfaceProtocol * pProtocol, AppConfig * pAppConfig, unsigned int nControlState, std::vector <unsigned char> vBuffer);
-bool ProcessConfigModeMessage( std::string strHash, MessageDefinition myMessageDefinition, SurfaceProtocol * pProtocol, AppConfig * pAppConfig, unsigned int nControlState, std::vector <unsigned char> vBuffer);
-void ProcessScreenReaderModeMessage( std::string strHash, MessageDefinition myMessageDefinition, SurfaceProtocol * pProtocol, AppConfig * pAppConfig, unsigned int nControlValue, std::vector <unsigned char> vBuffer);
-std::wstring GetActionString( SurfaceAction myAction, MessageDefinition myMessageDefinition, std::string strHash, int nControlState, SurfaceProtocol * pProtocol, AppConfig * pAppConfig, std::vector <unsigned char> vBuffer);
-std::wstring GetControlLabelString( MessageDefinition * myDefinition, std::string strHash, int nDataValue, AppConfig * pAppConfig);
+std::pair <MessageDefinition, std::wstring> IdentifyHardwareControl( std::vector <unsigned char> vBuffer, SurfaceProtocol * pProtocol);
+std::pair <DisplayDefinition, std::wstring> IdentifyDisplay( std::vector <unsigned char> vBuffer, AppConfig * pAppConfig);
+void ProcessLiveModeMessage( std::pair <MessageDefinition, std::wstring> myHardwarePair, SurfaceProtocol * pProtocol, AppConfig * pAppConfig, unsigned int nControlValue, std::vector <unsigned char> vBuffer);
+bool ProcessIDModeMessage( std::wstring strHash, MessageDefinition myMessageDefinition, SurfaceProtocol * pProtocol, AppConfig * pAppConfig, unsigned int nControlState, std::vector <unsigned char> vBuffer);
+bool ProcessConfigModeMessage( std::wstring strHash, MessageDefinition myMessageDefinition, SurfaceProtocol * pProtocol, AppConfig * pAppConfig, unsigned int nControlState, std::vector <unsigned char> vBuffer);
+void ProcessScreenReaderModeMessage( std::wstring strHash, MessageDefinition myMessageDefinition, SurfaceProtocol * pProtocol, AppConfig * pAppConfig, unsigned int nControlValue, std::vector <unsigned char> vBuffer);
+std::wstring GetActionString( SurfaceAction myAction, MessageDefinition myMessageDefinition, std::wstring strHash, int nControlState, SurfaceProtocol * pProtocol, AppConfig * pAppConfig, std::vector <unsigned char> vBuffer);
+std::wstring GetControlLabelString( MessageDefinition * myDefinition, std::wstring strHash, int nDataValue, AppConfig * pAppConfig);
 std::wstring GetControlStateString( MessageDefinition * myDefinition, int nDataValue, AppConfig * pAppConfig);
-std::wstring GetControlLabelPlusStateString( MessageDefinition * myDefinition, std::string strHash, int nDataValue, AppConfig * pAppConfig);
+std::wstring GetControlLabelPlusStateString( MessageDefinition * myDefinition, std::wstring strHash, int nDataValue, AppConfig * pAppConfig);
 void ProcessDisplayActions();
-std::wstring GetLEDString( std::string strHash, DisplayDefinition * pDisplay, SurfaceProtocol * pProtocol, int nDataValue);
+std::wstring GetLEDString( std::wstring strHash, DisplayDefinition * pDisplay, SurfaceProtocol * pProtocol, int nDataValue);
 std::wstring GetDisplayString( SurfaceAction myAction, AppConfig * pAppConfig, int nDataValue);
 std::wstring GetDisplayLineString( SurfaceAction myAction, AppConfig * pAppConfig);
 std::wstring GetDisplayStripString( SurfaceAction myAction, AppConfig * pAppConfig);
@@ -422,8 +421,8 @@ ActiveProduct MyProduct;
 	// Special case: Novation AutoMap devices:
 bool blnAutoMap;
 
-std::string mySurfaceID;
-	std::string myProtocolID;
+std::wstring mySurfaceID;
+	std::wstring myProtocolID;
 	std::wstring wstrProtocolName;
 	std::pair <std::wstring, std::wstring> myAppConfigID; 
 std::wstring wstrAppConfigName;

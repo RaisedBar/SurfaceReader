@@ -201,7 +201,7 @@ switch (myNewSurfaceAction.GetSurfaceActionType())
 {
 case ReadDisplay:
 {
-std::string strHash = myDisplayParamsDlg->GetDisplayHash();
+std::wstring strHash = myDisplayParamsDlg->GetDisplayHash();
 std::wstring wstrHash( strHash.begin(), strHash.end());
 	myNewSurfaceAction.SetParameter(Type_String, wstrHash);
 }
@@ -209,7 +209,7 @@ break;
 
 case ReadDisplayLine:
 {
-	std::string strHash = myDisplayParamsDlg->GetDisplayHash();
+	std::wstring strHash = myDisplayParamsDlg->GetDisplayHash();
 std::wstring wstrHash( strHash.begin(), strHash.end());
 	myNewSurfaceAction.SetParameter(Type_String, wstrHash);
 	myNewSurfaceAction.SetParameter(Type_Int, boost::lexical_cast <std::wstring> (myDisplayParamsDlg->GetDisplayLine()));
@@ -218,7 +218,7 @@ break;
 
 case ReadDisplayStrip:
 {
-	std::string strHash = myDisplayParamsDlg->GetDisplayHash();
+	std::wstring strHash = myDisplayParamsDlg->GetDisplayHash();
 std::wstring wstrHash( strHash.begin(), strHash.end());
 	myNewSurfaceAction.SetParameter(Type_String, wstrHash);
 	myNewSurfaceAction.SetParameter(Type_Int, boost::lexical_cast <std::wstring> (myDisplayParamsDlg->GetDisplayStrip()));
@@ -227,7 +227,7 @@ break;
 
 case ReadDisplaySection:
 {
-	std::string strHash = myDisplayParamsDlg->GetDisplayHash();
+	std::wstring strHash = myDisplayParamsDlg->GetDisplayHash();
 std::wstring wstrHash( strHash.begin(), strHash.end());
 	myNewSurfaceAction.SetParameter(Type_String, wstrHash);
 	myNewSurfaceAction.SetParameter(Type_Int, boost::lexical_cast <std::wstring> (myDisplayParamsDlg->GetDisplayStartPosition()));
@@ -238,7 +238,7 @@ break;
 case ReadLEDIfOn:
 case ReadLEDIfOff:
 {
-std::string strHash = myDisplayParamsDlg->GetDisplayHash();
+std::wstring strHash = myDisplayParamsDlg->GetDisplayHash();
 std::wstring wstrHash( strHash.begin(), strHash.end());
 	myNewSurfaceAction.SetParameter(Type_String, wstrHash);
 }

@@ -34,8 +34,8 @@ using boost::bad_lexical_cast;
 class DefineStateDialog: public wxDialog
 {
 public:
-DefineStateDialog( const wxString& title, std::string strHash, std::vector <unsigned char> vSysExHeader);
-DefineStateDialog( const wxString& title, std::string strHash, std::vector <unsigned char> vSysExHeader, wxString wxstrLabel, std::vector <unsigned char> vKeyBytes);
+DefineStateDialog( const wxString& title, std::wstring strHash, std::vector <unsigned char> vSysExHeader);
+DefineStateDialog( const wxString& title, std::wstring strHash, std::vector <unsigned char> vSysExHeader, wxString wxstrLabel, std::vector <unsigned char> vKeyBytes);
 ~DefineStateDialog();
 
 bool IsValidStateDefinition();
@@ -58,7 +58,7 @@ wxTextCtrl * txtStateLabel, * txtMSBByte, * txtLSBByte, * txtSysExByte;
 RBTextCtrl * rbtxtSysExBytes;
 
   // Internal storage
-std::string strMyHash;
+std::wstring strMyHash;
 std::vector <unsigned char> vMySysExHeader;
 std::vector <unsigned char> vBytes;
 

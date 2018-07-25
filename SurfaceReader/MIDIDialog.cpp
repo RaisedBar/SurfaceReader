@@ -5,7 +5,7 @@
 // http://www.raisedbar.net
 
 #include "MIDIDialog.h"
-
+#include "RBStringFuncs.h"
 
 MIDIDialog::MIDIDialog(const wxString & title)
        : wxDialog(NULL, -1, title, wxDefaultPosition, wxSize( MIDI_DIALOG_HEIGHT, MIDI_DIALOG_WIDTH))
@@ -317,7 +317,7 @@ else
 }
 
 
-std::string MIDIDialog::GetSelectedInputName()
+std::wstring MIDIDialog::GetSelectedInputName()
 	{		
 #ifndef __WINDOWS__ 
 				if (myVirtualIn)
@@ -331,11 +331,11 @@ return strName;
 					int nSelected = lbxMIDIIn->GetSelection();
 if (nSelected >= 0)
 	{
-		return lbxMIDIIn->GetStringSelection().ToStdString();
+		return NarrowToWideString(lbxMIDIIn->GetStringSelection().ToStdString());
 	}
 else
 	{
-	std::string strEmpty;
+	std::wstring strEmpty;
 	strEmpty.clear();
 	return strEmpty;
 	}
@@ -364,7 +364,7 @@ else
 }
 
 
-std::string MIDIDialog::GetSelectedOutputName()
+std::wstring MIDIDialog::GetSelectedOutputName()
 {		
 #ifndef __WINDOWS__ 
 if (myVirtualOut)
@@ -378,11 +378,11 @@ return strName;
 	int nSelected = lbxMIDIOut->GetSelection();
 if (nSelected >= 0)
 	{
-		return lbxMIDIOut->GetStringSelection().ToStdString();
+		return NarrowToWideString(lbxMIDIOut->GetStringSelection().ToStdString());
 	}
 else
 	{
-	std::string strEmpty;
+	std::wstring strEmpty;
 	strEmpty.clear();
 	return strEmpty;
 	}

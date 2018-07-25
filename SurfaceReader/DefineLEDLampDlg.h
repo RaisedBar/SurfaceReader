@@ -38,7 +38,7 @@ public:
 
  bool IsValidLEDLamp() const;
 
- std::string GetDisplayHash() const;
+ std::wstring GetDisplayHash() const;
 std::wstring GetLEDLampName() const;
 std::vector <unsigned char> GetSysExAddressBytes();
 
@@ -53,7 +53,7 @@ wxPanel * RBPanel;
 wxStaticText * lblLampNamePrompt;
 wxTextCtrl * txtLampName;
 
-std::string strHash;
+std::wstring strHash;
  DisplayDefinition myDisplayDefinition;
 
 // Dialog buttons

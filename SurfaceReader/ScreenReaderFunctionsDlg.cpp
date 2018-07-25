@@ -1,6 +1,8 @@
 // ScreenReaderFunctionsDlg.cpp
 
 #include "ScreenReaderFunctionsDlg.h"
+#include "RBPathFuncs.h"
+using namespace RaisedBar::PathFunctions;
 
 #ifdef __WINDOWS__
 
@@ -245,7 +247,7 @@ return;
 }
 
 wstrTargetFileName = wstrHSCFileName;
-std::vector<std::string> Hotspots;
+std::vector<std::wstring> Hotspots;
 pMySpeech->ClearHscFile();
 pMySpeech->SetHscFile(wstrHSCFileName);
 HRESULT hr =pMySpeech->ListHotSpotsInSet(wstrHSCFileName, Hotspots);
@@ -259,7 +261,7 @@ return;
 lbxActionNames->Clear();
 
 // Populate the list here...
-BOOST_FOREACH(std::string spot, Hotspots)
+BOOST_FOREACH(std::wstring spot, Hotspots)
 lbxActionNames->Append(spot);
 #endif
 }
@@ -321,11 +323,11 @@ default:
 }
 
 
-ActionCollectionType ScreenReaderFunctionsDlg::GetCachedJawsActionsListItem( std::wstring wstrAppName, std::string strProtocolID)
+ActionCollectionType ScreenReaderFunctionsDlg::GetCachedJawsActionsListItem( std::wstring wstrAppName, std::wstring strProtocolID)
 {
 #ifdef __WINDOWS__
 	JawsCacheType::iterator it;
-	std::pair < std::wstring, std::string> myPair;
+	std::pair < std::wstring, std::wstring> myPair;
 	myPair = std::make_pair( wstrAppName, strProtocolID);
 it = pMyJawsCache->find( myPair);
 
@@ -507,9 +509,9 @@ if (it != myActionType.first.end())
 	myActionCollection = myActionType.second;
 	
 	// Update the cache for next time
-std::pair< std::wstring, std::string> myIndexPair;
+std::pair< std::wstring, std::wstring> myIndexPair;
 	myIndexPair = std::make_pair( pMyAppConfig->GetAppName(), pMyAppConfig->GetProtocolID());
-	std::pair <std::pair <std::wstring, std::string>, ActionCollectionType> myPair;
+	std::pair <std::pair <std::wstring, std::wstring>, ActionCollectionType> myPair;
 	myPair = std::make_pair( myIndexPair, myActionCollection);
 	pMyJawsCache->insert( myPair);
 

@@ -151,9 +151,9 @@ std::wstring NewSurfaceDialog::SurfaceName() const
 }
 
 
-std::string NewSurfaceDialog::ProtocolID()
+std::wstring NewSurfaceDialog::ProtocolID()
 {
-	std::string strProtocolID;
+	std::wstring strProtocolID;
 	int nSelection = lbxSurfaceProtocols->GetSelection();
 
 	if (nSelection > -1)
@@ -284,25 +284,25 @@ return nDisplay_MIDIOut;
 		}
 
 
-std::string NewSurfaceDialog::Hardware_MIDIInName() const
+std::wstring NewSurfaceDialog::Hardware_MIDIInName() const
 {
 return strHardware_MIDIIn;
 }
 
 
-std::string NewSurfaceDialog::Hardware_VirtualMIDIOutName() const
+std::wstring NewSurfaceDialog::Hardware_VirtualMIDIOutName() const
 {
 return strHardware_VirtualMIDIOut;
 		}
 
 
-std::string NewSurfaceDialog::Display_VirtualMIDIInName() const
+std::wstring NewSurfaceDialog::Display_VirtualMIDIInName() const
 {
 return 	strDisplay_VirtualMIDIIn;
 		}
 
 
-std::string NewSurfaceDialog::Display_MIDIOutName() const
+std::wstring NewSurfaceDialog::Display_MIDIOutName() const
 {
 return strDisplay_MIDIOut;
 		}
@@ -310,7 +310,7 @@ return strDisplay_MIDIOut;
 
 void NewSurfaceDialog::ListProtocols()
 {
-	std::map <std::string, SurfaceProtocol> ::const_iterator it;
+	std::map <std::wstring, SurfaceProtocol> ::const_iterator it;
 
 		for (it = pProtocols->begin(); it != pProtocols->end(); it++)
 	{

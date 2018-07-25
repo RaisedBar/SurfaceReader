@@ -29,21 +29,21 @@ HardwareControls.clear();
 	}
 
 
-std::string AppConfig::GetProtocolID() const
+std::wstring AppConfig::GetProtocolID() const
 	{
 		return strProtocolID;
 	}
 
 
-	void AppConfig::SetProtocolID( std::string strID)
+	void AppConfig::SetProtocolID( std::wstring strID)
 	{	
 		strProtocolID = strID;
 	}
 
 
-		MessageDefinition AppConfig::GetControlDefinition( std::string strControlHash)
+		MessageDefinition AppConfig::GetControlDefinition( std::wstring strControlHash)
 	{
-		std::map <std::string, MessageDefinition>::iterator it;
+		std::map <std::wstring, MessageDefinition>::iterator it;
 		it = HardwareControls.find( strControlHash);
 
 		if (it != HardwareControls.end())
@@ -57,7 +57,7 @@ throw RBException( wstrNoMessageDefinitionError);
 }
 
 
-	void AppConfig::SetControlDefinition( std::pair <std::string, MessageDefinition> myPair)
+	void AppConfig::SetControlDefinition( std::pair <std::wstring, MessageDefinition> myPair)
 	{
 		/*
 		std::map <std::string, MessageDefinition>::iterator it;
@@ -84,7 +84,7 @@ if ((nItem < HardwareControls.size())
 		&& (HardwareControls.empty() == false))
 	{
 				unsigned int i = 0;
-std::map <std::string, MessageDefinition>::iterator it;
+std::map <std::wstring, MessageDefinition>::iterator it;
 
 for (it = HardwareControls.begin(); it != HardwareControls.end(); it++)
 {
@@ -111,9 +111,9 @@ else
 	}		
 }
 
-DisplayDefinition AppConfig::GetDisplayDefinition( std::string strDisplayHash)
+DisplayDefinition AppConfig::GetDisplayDefinition( std::wstring strDisplayHash)
 	{
-		std::map <std::string, DisplayDefinition>::iterator it;
+		std::map <std::wstring, DisplayDefinition>::iterator it;
 		it = Displays.find( strDisplayHash);
 
 		if (it != Displays.end())
@@ -127,7 +127,7 @@ throw RB_NO_DISPLAY_DEFINITION;
 }
 
 
-	void AppConfig::SetDisplayDefinition( std::pair <std::string, DisplayDefinition> myPair)
+	void AppConfig::SetDisplayDefinition( std::pair <std::wstring, DisplayDefinition> myPair)
 	{
 		/*
 		std::map <std::string, DisplayDefinition>::iterator it;
@@ -143,9 +143,9 @@ throw RB_NO_DISPLAY_DEFINITION;
 	}
 
 	
-	void AppConfig::UpdateDisplayDefinitions( std::map<std::string, DisplayDefinition> myNewDisplays)
+	void AppConfig::UpdateDisplayDefinitions( std::map<std::wstring, DisplayDefinition> myNewDisplays)
 	{
-				std::map <std::string, DisplayDefinition>::iterator it, it2;
+				std::map <std::wstring, DisplayDefinition>::iterator it, it2;
 		
 				for (it = myNewDisplays.begin(); it != myNewDisplays.end(); it++)				
 				{
@@ -162,11 +162,11 @@ throw RB_NO_DISPLAY_DEFINITION;
 }
 
 	
-	std::string AppConfig::GetDisplayHash( std::wstring wstrLabel)
+	std::wstring AppConfig::GetDisplayHash( std::wstring wstrLabel)
 	{
-std::string strHash;
+std::wstring strHash;
 strHash.clear();
-std::map <std::string, DisplayDefinition>::iterator it;
+std::map <std::wstring, DisplayDefinition>::iterator it;
 
 for (it = Displays.begin(); it != Displays.end(); it++)
 {
@@ -191,7 +191,7 @@ if ((nItem < Displays.size())
 		&& (Displays.empty() == false))
 	{
 				unsigned int i = 0;
-std::map <std::string, DisplayDefinition>::iterator it;
+std::map <std::wstring, DisplayDefinition>::iterator it;
 
 for (it = Displays.begin(); it != Displays.end(); it++)
 {
@@ -221,7 +221,7 @@ else
 
 std::vector <std::wstring> AppConfig::GetDisplayNames()
 {
-std::map <std::string, DisplayDefinition>::iterator it;
+std::map <std::wstring, DisplayDefinition>::iterator it;
 std::vector <std::wstring> myDisplayNames;
 
 for (it = Displays.begin(); it != Displays.end(); it++)

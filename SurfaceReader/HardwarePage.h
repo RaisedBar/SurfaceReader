@@ -51,9 +51,9 @@ virtual bool TransferDataFromWindow();
 
 private:
 void ListDefinedControls();
-std::string FindControlName( wxString wxstrName);
+std::wstring FindControlName( wxString wxstrName);
 void SetMIDIInputID( int nInputID);
-std::string MIDILearn();
+std::wstring MIDILearn();
 void CloseInput();
 
 // Event handlers:

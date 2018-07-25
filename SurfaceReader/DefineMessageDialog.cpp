@@ -30,7 +30,7 @@ std::wstring wstrRadioButtonName;
 wstrRadioButtonName = wstrRB_NoteOn;
 wstrRadioButtonName.append( wstrSpacedOpenParen);
 
-std::string strHexByte = ByteToHex( (unsigned char) MIDI_CMD_NOTE_ON);
+std::wstring strHexByte = ByteToHex( (unsigned char) MIDI_CMD_NOTE_ON);
 wstrRadioButtonName.append( strHexByte.begin(), strHexByte.end());
 
 wstrRadioButtonName.append( wstrCloseParen);
@@ -162,7 +162,7 @@ DisableNibbleEdits();
 
 // Constructor to allow editing of an existing message definition
 
-DefineMessageDialog::DefineMessageDialog(const wxString & title, const wxString &ControlLabel, std::vector <unsigned char> vHeader, std::string strHash)
+DefineMessageDialog::DefineMessageDialog(const wxString & title, const wxString &ControlLabel, std::vector <unsigned char> vHeader, std::wstring strHash)
        : wxDialog(NULL, -1, title, wxDefaultPosition, wxSize(250, 230))
 {  
 // Set the window title to reflect the control being edited
@@ -188,7 +188,7 @@ std::wstring wstrRadioButtonName;
 // Note On
 wstrRadioButtonName = wstrRB_NoteOn;
 wstrRadioButtonName.append( wstrSpacedOpenParen);
-std::string strHexByte = ByteToHex( (unsigned char) MIDI_CMD_NOTE_ON);
+std::wstring strHexByte = ByteToHex( (unsigned char) MIDI_CMD_NOTE_ON);
 wstrRadioButtonName.append( strHexByte.begin(), strHexByte.end());
 wstrRadioButtonName.append( wstrCloseParen);
 wxRadioButton *rb_Note_On = new wxRadioButton( myPanel, ID_NOTE_ON, wstrRadioButtonName);
@@ -296,7 +296,7 @@ wxBoxSizer * hBoxSysExMessage = new wxBoxSizer( wxHORIZONTAL);
 lblSysExPrompt = new wxStaticText(myPanel, wxID_ANY, wstrSysExPrompt);
 rbtxtSysEx = new RBTextCtrl( myPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_READONLY);
 vSysExAddressBytes = GetSysExAddressBytesFromHash( strHash, vSysExHeader.size());
-std::string strSysExMessage = BytesToHex( vSysExHeader);
+std::wstring strSysExMessage = BytesToHex( vSysExHeader);
 strSysExMessage.append( BytesToHex( vSysExAddressBytes));
 rbtxtSysEx->SetValue( strSysExMessage);
 
@@ -353,10 +353,10 @@ DefineMessageDialog::~DefineMessageDialog()
 {}
 
 
-int DefineMessageDialog::MessageType( std::string strMsgHash)
+int DefineMessageDialog::MessageType( std::wstring strMsgHash)
 {
 // Figure out what kind of message is represented by the hash string
-	std::string strFirst = strMsgHash.substr( 0, 1);
+	std::wstring strFirst = strMsgHash.substr( 0, 1);
 	
 	if (strFirst.compare( strSysExHashPrefix) == 0)
 {
@@ -542,7 +542,7 @@ return false;
 }
 
 
-		std::string DefineMessageDialog::GetMessageHash()
+		std::wstring DefineMessageDialog::GetMessageHash()
 			{
 MIDI myMIDI;
 
@@ -737,7 +737,7 @@ else if (nNibble == NIBBLE_WILD_CARD_MARKER)
 	
 else
 	{
-		strHash.append( boost::lexical_cast <std::string> ( (unsigned int) nNibble));
+		strHash.append( boost::lexical_cast <std::wstring> ( (unsigned int) nNibble));
 }
 		
 strHash.append( HASH_DELIMITER);		
@@ -892,14 +892,14 @@ btnRemoveNibble->Enable();
 		}
 
 			
-std::string DefineMessageDialog::GetSingleMessageHash( std::vector <unsigned char> myNewMessage)
+std::wstring DefineMessageDialog::GetSingleMessageHash( std::vector <unsigned char> myNewMessage)
 		{
 MIDI myMIDI( myNewMessage, false);
 return myMIDI.MIDIHash();
 }
 
 
-std::string DefineMessageDialog::DoubleMessageHash( std::vector <unsigned char> myMSBMessage, std::vector <unsigned char> myLSBMessage)
+std::wstring DefineMessageDialog::DoubleMessageHash( std::vector <unsigned char> myMSBMessage, std::vector <unsigned char> myLSBMessage)
 {
 // Join the two messages
 	for (unsigned int i = 0; i < myLSBMessage.size(); i++)
@@ -912,7 +912,7 @@ return myMIDI.MIDIHash();
 }
 
 
-std::string DefineMessageDialog::SysExMessageHash( std::vector <unsigned char> vNewMessage, bool blnFake)
+std::wstring DefineMessageDialog::SysExMessageHash( std::vector <unsigned char> vNewMessage, bool blnFake)
 {
 			MIDI myMIDI( vNewMessage, true);
 return myMIDI.MIDIHash();
@@ -948,7 +948,7 @@ return nData2;
 }
 
 
-std::vector <unsigned char> DefineMessageDialog::GetNibblesFromHash( std::string strMsgHash)
+std::vector <unsigned char> DefineMessageDialog::GetNibblesFromHash( std::wstring strMsgHash)
 {
 std::vector <unsigned char> vNewNibbles;
 
@@ -958,12 +958,12 @@ if (strMsgHash.substr( 0, 1).compare( strNibbleHashPrefix) != 0)
 	return vNewNibbles;
 }
 
-std::string strByte;
+std::wstring strByte;
 
 // Ignore the first character ("N"), which is the message type identifier
 for (unsigned int i = 1; i < strMsgHash.length(); i++)
 {
-std::string strChar = strMsgHash.substr( i, 1);	
+std::wstring strChar = strMsgHash.substr( i, 1);	
 	
 if (strChar.compare( HASH_DELIMITER) == 0)
 	{
@@ -1000,9 +1000,9 @@ return vNewNibbles;
 }
 
 
-std::string DefineMessageDialog::NibblesToHex( std::vector <unsigned char> vNewNibbles)
+std::wstring DefineMessageDialog::NibblesToHex( std::vector <unsigned char> vNewNibbles)
 {
-std::string strOut;
+std::wstring strOut;
 
 for (unsigned int i = 0; i < vNewNibbles.size(); i++)
 {
@@ -1140,7 +1140,7 @@ if (myInputBox->ShowModal() == wxID_OK)
 {
 std::wstring wstrNewByte = myInputBox->GetText();
 	
-if (IsSingleHexByteWString( wstrNewByte))
+if (IsSingleHexByteString( wstrNewByte))
 {
 	long lTemp;
 	wxString wxstrTemp( wstrNewByte);
@@ -1148,7 +1148,7 @@ if (IsSingleHexByteWString( wstrNewByte))
 	vSysExAddressBytes.push_back( (unsigned char) lTemp);
 
 // Update the display
-std::string strMessage = BytesToHex( vSysExHeader);
+std::wstring strMessage = BytesToHex( vSysExHeader);
 strMessage.append( BytesToHex( vSysExAddressBytes));
 rbtxtSysEx->SetValue( strMessage);
 }  // end if valid hex
@@ -1173,7 +1173,7 @@ void DefineMessageDialog::OnRemoveSysExByte( wxCommandEvent& event)
 	{
 			vSysExAddressBytes.pop_back();
 // Update the display
-std::string strMessage = BytesToHex( vSysExHeader);
+std::wstring strMessage = BytesToHex( vSysExHeader);
 strMessage.append( BytesToHex( vSysExAddressBytes));
 rbtxtSysEx->SetValue( strMessage);
 rbtxtSysEx->Refresh();
@@ -1189,7 +1189,7 @@ if (myInputBox->ShowModal() == wxID_OK)
 {
 	std::wstring wstrNewNibble = myInputBox->GetText();
 	
-if (IsHexNibbleWString( wstrNewNibble))
+if (IsHexNibbleString( wstrNewNibble))
 {
 long lTemp;
 	wxString wxstrTemp( wstrNewNibble);
@@ -1202,7 +1202,7 @@ rbtxtNibble->Refresh();
 }  // end if valid hex nibble 
 else
 	{
-if (IsWNibbleWildCard( wstrNewNibble))
+if (IsNibbleWildCard( wstrNewNibble))
 {
 	vNibbles.push_back( (unsigned char) NIBBLE_WILD_CARD_MARKER.at( 0));
 // Update the display
@@ -1212,7 +1212,7 @@ rbtxtNibble->SetValue( wstrMessage);
 rbtxtNibble->Refresh();
 }
 
-		else if (IsWHexNibbleRange( wstrNewNibble))
+		else if (IsHexNibbleRange( wstrNewNibble))
 {
 	vNibbles.push_back( (unsigned char) NIBBLE_RANGE_MARKER.at( 0));
 
@@ -1253,7 +1253,7 @@ void DefineMessageDialog::OnRemoveNibble( wxCommandEvent& event)
 	{
 			vNibbles.pop_back();
 // Update the display
-std::string strMessage = NibblesToHex( vNibbles);
+std::wstring strMessage = NibblesToHex( vNibbles);
 rbtxtNibble->SetValue( strMessage);
 rbtxtNibble->Refresh();
 	}

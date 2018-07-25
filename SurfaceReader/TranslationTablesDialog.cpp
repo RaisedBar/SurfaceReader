@@ -7,7 +7,7 @@
 #include "TranslationTablesDialog.h"
 
 
-TranslationTablesDialog::TranslationTablesDialog( const wxString& title, std::string strHash, boost::shared_ptr<SurfaceProtocol> pProtocol)
+TranslationTablesDialog::TranslationTablesDialog( const wxString& title, std::wstring strHash, boost::shared_ptr<SurfaceProtocol> pProtocol)
        : wxDialog(NULL, -1, title, wxDefaultPosition, wxSize(250, 230)),
 	   pMyProtocol( new SurfaceProtocol())
 {  
@@ -62,7 +62,7 @@ bool TranslationTablesDialog::IsValidTableID()
 }
 
 
-std::string TranslationTablesDialog::GetTableID()
+std::wstring TranslationTablesDialog::GetTableID()
 {
 	return pMyProtocol->GetTranslationTableID( lbxTables->GetStringSelection().ToStdWstring());
 }
@@ -115,7 +115,7 @@ DefineTranslationTable * myTableDlg = new DefineTranslationTable( wstrTablesTitl
 		{
 			if (myTableDlg->IsValidTableDefinition())
 	{
-		std::string strTableID = myTableDlg->GetTableID();
+		std::wstring strTableID = myTableDlg->GetTableID();
 		std::pair <std::wstring, std::map <unsigned char, std::wstring> > myPair;
 		myPair = std::make_pair( wstrTableName, myTableDlg->GetCharacterMap());
 pMyProtocol->SetTranslationTable( strTableID, myPair);
@@ -137,7 +137,7 @@ void TranslationTablesDialog::OnDeleteTable( wxCommandEvent& event)
 	{
 		if (		wxMessageBox( wstrDeleteTableCheck,                wstrAppTitle, wxYES_NO | wxNO_DEFAULT | wxICON_QUESTION) == wxYES) 
 		{
-			std::string strHash = pMyProtocol->GetTranslationTableID( lbxTables->GetStringSelection().ToStdWstring());
+			std::wstring strHash = pMyProtocol->GetTranslationTableID( lbxTables->GetStringSelection().ToStdWstring());
 		if (pMyProtocol->DeleteTranslationTable( strHash))
 		{
 	// Refresh list
@@ -155,7 +155,7 @@ void TranslationTablesDialog::OnEditTable( wxCommandEvent& event)
 
 	if (nSelection > -1)
 	{
-		std::string strTableID= pMyProtocol->GetTranslationTableID( lbxTables->GetStringSelection().ToStdWstring());
+		std::wstring strTableID= pMyProtocol->GetTranslationTableID( lbxTables->GetStringSelection().ToStdWstring());
 	DefineTranslationTable * myTableDlg = new DefineTranslationTable( wstrTablesTitle, strTableID, pMyProtocol);
 
 	if (myTableDlg->ShowModal() == wxID_OK) 
@@ -189,7 +189,7 @@ void TranslationTablesDialog::OnRenameTable( wxCommandEvent& event)
 	
 			if (wstrTableName.empty() == false)
 {
-	std::string strTableID= pMyProtocol->GetTranslationTableID( lbxTables->GetStringSelection().ToStdWstring());
+	std::wstring strTableID= pMyProtocol->GetTranslationTableID( lbxTables->GetStringSelection().ToStdWstring());
 pMyProtocol->SetTranslationTableName( strTableID, wstrTableName);
 
 		// Refresh list

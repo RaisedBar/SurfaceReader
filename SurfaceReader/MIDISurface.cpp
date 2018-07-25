@@ -3,6 +3,11 @@
 
 #include "MIDISurface.h"
 #include "SurfaceFrame.h"
+#include <filesystem>
+#include "RBPathFuncs.h"
+
+using namespace std::experimental::filesystem;
+using namespace RaisedBar::PathFunctions;
 
 
 MIDISurface::MIDISurface( SurfaceFrame * pParent, ActiveProduct apProduct, boost::shared_ptr<ProtocolCollection> pProtocols, boost::shared_ptr<AppCollection> pApps)
@@ -26,10 +31,10 @@ vDisplayBuffer.clear();
 
 // Generate a new surface ID 
 						boost::uuids::uuid myUUID = boost::uuids::random_generator()(); 
-	mySurfaceID = boost::lexical_cast <std::string> (myUUID); 	
+	mySurfaceID = boost::lexical_cast <std::wstring> (myUUID); 	
 
 // Logging
-boost::filesystem::path myPath = LogPath();
+std::experimental::filesystem::path myPath = LogPath();
 myPath /= mySurfaceID.append( strLogExtension);
 boost::log::add_file_log( myPath.generic_string(), boost::log::keywords::rotation_size = 10 * 1024 * 1024, boost::log::keywords::time_based_rotation = boost::log::sinks::file::rotation_at_time_point(0, 0, 0), boost::log::keywords::format = "[%TimeStamp%]: %Message%"); //create a log file.
 boost::log::add_common_attributes(); //add common attributes see documentation.
@@ -61,7 +66,7 @@ vDisplayBuffer.clear();
 
 // Generate a new surface ID 
 						boost::uuids::uuid myUUID = boost::uuids::random_generator()(); 
-	mySurfaceID = boost::lexical_cast <std::string> (myUUID); 	
+	mySurfaceID = boost::lexical_cast <std::wstring> (myUUID); 	
 
 // Logging
 boost::filesystem::path myPath = LogPath();
@@ -112,7 +117,7 @@ vDisplayBuffer.clear();
 
 // Generate a new surface ID 
 						boost::uuids::uuid myUUID = boost::uuids::random_generator()(); 
-	mySurfaceID = boost::lexical_cast <std::string> (myUUID); 	
+	mySurfaceID = boost::lexical_cast <std::wstring> (myUUID); 	
 
 // Logging
 boost::filesystem::path myPath = LogPath();
@@ -127,7 +132,7 @@ m_DisplayMIDIIn->setCallback( &DisplayCallback, (void*) this);
 }
 
 
-	MIDISurface::MIDISurface(SurfaceFrame * pParent, ActiveProduct apProduct, std::wstring wstrName, std::string myNewProtocolID, boost::shared_ptr<ProtocolCollection> pProtocols, boost::shared_ptr<AppCollection> pApps) 
+	MIDISurface::MIDISurface(SurfaceFrame * pParent, ActiveProduct apProduct, std::wstring wstrName, std::wstring myNewProtocolID, boost::shared_ptr<ProtocolCollection> pProtocols, boost::shared_ptr<AppCollection> pApps) 
 : 
 	MIDIWidget( wstrName),
 				pMyProtocols( new ProtocolCollection()),
@@ -147,7 +152,7 @@ vDisplayBuffer.clear();
 
 // Generate a new surface ID 
 boost::uuids::uuid myUUID = boost::uuids::random_generator()(); 
-	mySurfaceID = boost::lexical_cast <std::string> (myUUID); 	
+	mySurfaceID = boost::lexical_cast <std::wstring> (myUUID); 	
 
 // Logging
 boost::filesystem::path myPath = LogPath();
@@ -165,7 +170,7 @@ m_DisplayMIDIIn->setCallback( &DisplayCallback, (void*) this);
 }
 
 	
-MIDISurface::MIDISurface( SurfaceFrame * pParent, ActiveProduct apProduct, std::wstring wstrName, std::string strNewProtocolID, int nHWIn, int nHWOut, int nDisplayIn, int nDisplayOut, boost::shared_ptr<ProtocolCollection> pProtocols, boost::shared_ptr<AppCollection> pApps)
+MIDISurface::MIDISurface( SurfaceFrame * pParent, ActiveProduct apProduct, std::wstring wstrName, std::wstring strNewProtocolID, int nHWIn, int nHWOut, int nDisplayIn, int nDisplayOut, boost::shared_ptr<ProtocolCollection> pProtocols, boost::shared_ptr<AppCollection> pApps)
 				        : 
 MIDIWidget(wstrName, nHWIn, nHWOut, nDisplayIn, nDisplayOut),
 								pMyProtocols( new ProtocolCollection()),
@@ -185,7 +190,7 @@ vDisplayBuffer.clear();
 
 				// Generate a new surface ID 
 boost::uuids::uuid myUUID = boost::uuids::random_generator()(); 
-	mySurfaceID = boost::lexical_cast <std::string> (myUUID); 	
+	mySurfaceID = boost::lexical_cast <std::wstring> (myUUID); 	
 
 // Logging
 boost::filesystem::path myPath = LogPath();
@@ -234,18 +239,18 @@ void MIDISurface::SetSurfaceName( std::wstring wstrName)
 }
 
 
-std::string MIDISurface::GetSurfaceID()
+std::wstring MIDISurface::GetSurfaceID()
 		{ 
 			return mySurfaceID;
 	}
 	
-	std::string MIDISurface::GetProtocolID()
+	std::wstring MIDISurface::GetProtocolID()
 	{
 		return myProtocolID;
 	}
 
 
-	void MIDISurface::SetProtocolID( std::string myNewProtocolID)
+	void MIDISurface::SetProtocolID( std::wstring myNewProtocolID)
 	{
 		myProtocolID = myNewProtocolID;
 	}
@@ -347,7 +352,7 @@ for (unsigned int i = nStart; i < myMessage.size(); i++)
 nDisplayMessages++;
 
 // Attempt to identify the display
-std::pair <DisplayDefinition, std::string> myDisplayPair; 
+std::pair <DisplayDefinition, std::wstring> myDisplayPair; 
 	
 try
 	{
@@ -362,7 +367,7 @@ catch( ...)
 								if (blnFound)
 									{
 // Cope with linked displays (i.e. multiple messages to refer to a single physical display
-std::string strLinkedHash = myDisplayPair.first.GetLinkedDisplayHash();										
+std::wstring strLinkedHash = myDisplayPair.first.GetLinkedDisplayHash();										
 										
 if (strLinkedHash.empty() == false)
 										{
@@ -402,7 +407,7 @@ wstrDisplayInfo.append( myDisplayPair.first.GetLabel());
 SurfaceAction myAction;
 unsigned int nDisplayState = 0;
 MIDI myMIDI( vDisplayBuffer, false);
-std::string strHash = myDisplayPair.second;
+std::wstring strHash = myDisplayPair.second;
 
 if (strHash.substr( 0, 1).compare( strNibbleHashPrefix) == 0)
 {
@@ -594,7 +599,7 @@ case Mode( ID_LIVE_MODE): //process message in live mode.
 		{
 			try
 				{
-std::pair <MessageDefinition, std::string> myHardwarePair;
+std::pair <MessageDefinition, std::wstring> myHardwarePair;
 myHardwarePair = IdentifyHardwareControl( vHardwareBuffer, &myProtocol);
 
 if (myHardwarePair.second.empty())
@@ -641,7 +646,7 @@ else
 {
 try
 	{
-		std::pair <MessageDefinition, std::string> myHardwarePair;
+		std::pair <MessageDefinition, std::wstring> myHardwarePair;
 myHardwarePair = IdentifyHardwareControl( vHardwareBuffer, &myProtocol);
 
 if (myHardwarePair.second.empty())
@@ -652,7 +657,7 @@ blnFound = true;
 // Calculate the value/state of the control
 unsigned int nControlState = 0;
 MIDI myMIDI( vHardwareBuffer, false);
-std::string strHash = myHardwarePair.second;
+std::wstring strHash = myHardwarePair.second;
 
 if (strHash.substr( 0, 1).compare( strNibbleHashPrefix) == 0)
 {
@@ -685,7 +690,7 @@ std::wstring wstrOut;
 
 try
 				{
-std::pair <MessageDefinition, std::string> myHardwarePair;
+std::pair <MessageDefinition, std::wstring> myHardwarePair;
 myHardwarePair = IdentifyHardwareControl( vHardwareBuffer, &myProtocol);
 
 if (myHardwarePair.second.empty())
@@ -696,7 +701,7 @@ blnFound = true;
 // Calculate the value/state of the control
 unsigned int nControlState = 0;
 MIDI myMIDI( vHardwareBuffer, false);
-std::string strHash = myHardwarePair.second;
+std::wstring strHash = myHardwarePair.second;
 
 if (strHash.substr( 0, 1).compare( strNibbleHashPrefix) == 0)
 {
@@ -735,7 +740,7 @@ break;
 		{
 			try
 				{
-std::pair <MessageDefinition, std::string> myHardwarePair;
+std::pair <MessageDefinition, std::wstring> myHardwarePair;
 myHardwarePair = IdentifyHardwareControl( vHardwareBuffer, &myProtocol);
 
 if (myHardwarePair.second.empty())
@@ -746,7 +751,7 @@ blnFound = true;
 // Calculate the value/state of the control
 unsigned int nControlState = 0;
 MIDI myMIDI( vHardwareBuffer, false);
-std::string strHash = myHardwarePair.second;
+std::wstring strHash = myHardwarePair.second;
 
 if (strHash.substr( 0, 1).compare( strNibbleHashPrefix) == 0)
 {
@@ -823,9 +828,9 @@ if (vBytes.at( i) != 0)
 		
 	if (pDisplay->IsUniCode())
 	{
-LogIt( "Calling UniCoded");
+LogIt(L"Calling UniCoded");
 wstrOut = UniCoded( vUniCode);
-		LogIt( "UniCoded complete");
+		LogIt(L"UniCoded complete");
 	}
 		}  // end if SysEx display
 else  
@@ -855,7 +860,7 @@ else
 }
 
 
-void MIDISurface::SetDisplayText( std::wstring wstrLabel, std::wstring wstrText, bool blnCursorFromLeft, bool blnLEDLamp, int nDisplayLength, int nLineCount, SurfaceProtocol * pProtocol, std::string strTranslationID)
+void MIDISurface::SetDisplayText( std::wstring wstrLabel, std::wstring wstrText, bool blnCursorFromLeft, bool blnLEDLamp, int nDisplayLength, int nLineCount, SurfaceProtocol * pProtocol, std::wstring strTranslationID)
 {
 if (blnCursorFromLeft == false)
 	{
@@ -879,7 +884,7 @@ UpdateUI( it->first, blnLEDLamp, nDisplayLength, nLineCount, pProtocol, strTrans
 }
 
 
-void MIDISurface::SetDisplayText( std::wstring wstrLabel, int nCursorPosition, std::wstring wstrNewText, bool blnCursorFromLeft, bool blnLEDLamp, int nDisplayLength, int nLineCount, SurfaceProtocol * pProtocol, std::string strTranslationID)
+void MIDISurface::SetDisplayText( std::wstring wstrLabel, int nCursorPosition, std::wstring wstrNewText, bool blnCursorFromLeft, bool blnLEDLamp, int nDisplayLength, int nLineCount, SurfaceProtocol * pProtocol, std::wstring strTranslationID)
 {
 std::map <std::wstring, std::wstring>::iterator it;
 it = myDisplays.find( wstrLabel);
@@ -910,7 +915,7 @@ void MIDISurface::SetAutoMap( bool blnNovation)
 }
 
 
-bool MIDISurface::IsNoteMessage( std::string strHash)
+bool MIDISurface::IsNoteMessage( std::wstring strHash)
 {
 	if (strHash.substr( 0, 3).compare( strNoteOn) == 0) 
 	{
@@ -923,7 +928,7 @@ else
 }
 			
 
-bool MIDISurface::IsNoteOffMessage( std::string strHash, int nDataValue)
+bool MIDISurface::IsNoteOffMessage( std::wstring strHash, int nDataValue)
 {
 if ((IsNoteMessage( strHash)) 
 	&& (nDataValue == 0))
@@ -937,7 +942,7 @@ else
 }
 
 
-std::wstring MIDISurface::GetActionString( SurfaceAction myAction, MessageDefinition myMessageDefinition, std::string strHash, int nControlState, SurfaceProtocol * pProtocol, AppConfig * pAppConfig, std::vector <unsigned char> vBuffer)
+std::wstring MIDISurface::GetActionString( SurfaceAction myAction, MessageDefinition myMessageDefinition, std::wstring strHash, int nControlState, SurfaceProtocol * pProtocol, AppConfig * pAppConfig, std::vector <unsigned char> vBuffer)
 		{
 switch ( myAction.GetSurfaceActionType())
 {
@@ -1379,7 +1384,7 @@ break;
 	}
 
 
-std::wstring MIDISurface::GetControlLabelString( MessageDefinition * myDefinition, std::string strHash, int nDataValue, AppConfig * pAppConfig)
+std::wstring MIDISurface::GetControlLabelString( MessageDefinition * myDefinition, std::wstring strHash, int nDataValue, AppConfig * pAppConfig)
 {
 	// Is this a note off?
 	if (IsNoteOffMessage( strHash, nDataValue))
@@ -1401,7 +1406,7 @@ std::vector <unsigned char> vBytes;
 }
 
 
-std::wstring MIDISurface::GetControlLabelPlusStateString( MessageDefinition * myDefinition, std::string strHash, int nDataValue, AppConfig * pAppConfig)
+std::wstring MIDISurface::GetControlLabelPlusStateString( MessageDefinition * myDefinition, std::wstring strHash, int nDataValue, AppConfig * pAppConfig)
 {
 				if ((IsNoteMessage( strHash))
 					&& (IsNoteOffMessage( strHash, nDataValue)))
@@ -1425,7 +1430,7 @@ if (wstrOut.empty() == false)
 }
 
 
-std::wstring MIDISurface::GetLEDString( std::string strHash, DisplayDefinition * pDisplay, SurfaceProtocol * pProtocol, int nDataValue)
+std::wstring MIDISurface::GetLEDString( std::wstring strHash, DisplayDefinition * pDisplay, SurfaceProtocol * pProtocol, int nDataValue)
 {
 std::wstring wstrOut = pDisplay->GetLabel();
 		wstrOut.append( wstrSpace);
@@ -1450,12 +1455,11 @@ vValues.push_back( (unsigned char) nDataValue);
 std::wstring MIDISurface::GetDisplayString( SurfaceAction myAction, AppConfig * pAppConfig, int nDataValue)
 {
 	// Get the protocol information so that we can decode correctly 
-std::string strProtocolID = GetProtocolID();
+std::wstring strProtocolID = GetProtocolID();
 SurfaceProtocol myProtocol = pMyProtocols->GetProtocol( strProtocolID);
 
 const int DISPLAY_NAME_PARAM = 0;
-wxString wxstrHash = myAction.GetParameter( DISPLAY_NAME_PARAM).second;
-std::string strDisplayHash = wxstrHash.ToStdString();
+std::wstring strDisplayHash = myAction.GetParameter(DISPLAY_NAME_PARAM).second;
 DisplayDefinition myDisplay;
 
 try
@@ -1485,7 +1489,7 @@ wstrOut.append( wstrText);
 				}
 				else  // text display
 				{
-					std::string strTranslationID = myDisplay.GetCharacterTranslationID();
+					std::wstring strTranslationID = myDisplay.GetCharacterTranslationID();
 std::wstring wstrDisplayText = GetDisplayText( wstrDisplayName);
 
 if (wstrDisplayText.empty())
@@ -1504,11 +1508,10 @@ else
 std::wstring MIDISurface::GetDisplayLineString( SurfaceAction myAction, AppConfig * pAppConfig)
 {
 // Get the protocol information so that we can decode correctly 
-std::string strProtocolID = this->GetProtocolID();
+std::wstring strProtocolID = this->GetProtocolID();
 SurfaceProtocol myProtocol = pMyProtocols->GetProtocol( strProtocolID);
 const int DISPLAY_NAME_PARAM = 0;
-wxString wxstrHash = myAction.GetParameter( DISPLAY_NAME_PARAM).second;
-std::string strDisplayHash = wxstrHash.ToStdString();
+std::wstring strDisplayHash = myAction.GetParameter(DISPLAY_NAME_PARAM).second;
 		
 const int DISPLAY_LINE_PARAM = 1;
 std::wstring wstrDisplayLine = myAction.GetParameter( DISPLAY_LINE_PARAM).second;
@@ -1545,11 +1548,11 @@ std::wstring MIDISurface::GetDisplayStripString( SurfaceAction myAction, AppConf
 SurfaceProtocol myProtocol; 
 	
 	// Get the protocol information so that we can decode correctly 
-std::string strProtocolID = GetProtocolID();
+std::wstring strProtocolID = GetProtocolID();
 
 if (strProtocolID.empty())
 	{
-LogIt( "Empty protocol ID in GetDisplayStripString");
+LogIt(L"Empty protocol ID in GetDisplayStripString");
 return wstrEmpty;
 }
 
@@ -1559,18 +1562,18 @@ try
 	}
 	catch( ...)
 	{
-		LogIt( "Protocol not found in GetDisplayStripString");
+		LogIt(L"Protocol not found in GetDisplayStripString");
 		return wstrEmpty;
 	}
 
 const int DISPLAY_NAME_PARAM = 0;
 wxString wxstrHash = myAction.GetParameter( DISPLAY_NAME_PARAM).second;
-std::string strDisplayHash = wxstrHash.ToStdString();
+std::wstring strDisplayHash = NarrowToWideString(wxstrHash.ToStdString());
 DisplayDefinition myDisplay;
 
 if (strDisplayHash.empty())
 	{
-		LogIt( "Empty display hash in GetDisplayStripString");
+		LogIt(L"Empty display hash in GetDisplayStripString");
 		return wstrEmpty;
 }
 
@@ -1580,9 +1583,9 @@ myDisplay = myProtocol.GetDisplay( strDisplayHash);
 }
 catch( ...)
 {
-std::string strOut = "Display not found";
+std::wstring strOut = L"Display not found";
 strOut.append( strDisplayHash);
-strOut.append( " in GetDisplayStripString");
+strOut.append(L" in GetDisplayStripString");
 LogIt( strOut);
 return wstrEmpty;
 }
@@ -1601,7 +1604,7 @@ LogIt( wstrOut);
 }
 		catch( ...)
 			{
-LogIt( "Failed to convert display strip to a long value in GetDisplayStripString.");
+LogIt(L"Failed to convert display strip to a long value in GetDisplayStripString.");
 return wstrEmpty;
 		}
 		
@@ -1625,7 +1628,7 @@ int nLineLength = nLength / nLines;
 		}
 
 		std::wstring wstrDisplayName;
-std::string strLinkedHash = myDisplay.GetLinkedDisplayHash();
+std::wstring strLinkedHash = myDisplay.GetLinkedDisplayHash();
 
 if (strLinkedHash.empty())
 {
@@ -1709,11 +1712,10 @@ return wstrOut;
 std::wstring MIDISurface::GetDisplaySubstring( SurfaceAction myAction, AppConfig * pAppConfig)
 {
 // Get the protocol information so that we can decode correctly 
-std::string strProtocolID = this->GetProtocolID();
+std::wstring strProtocolID = this->GetProtocolID();
 SurfaceProtocol myProtocol = pMyProtocols->GetProtocol( strProtocolID);
 const int DISPLAY_NAME_PARAM = 0;
-wxString wxstrHash = myAction.GetParameter( DISPLAY_NAME_PARAM).second;
-std::string strDisplayHash = wxstrHash.ToStdString();
+std::wstring strDisplayHash = myAction.GetParameter(DISPLAY_NAME_PARAM).second;
 std::wstring wstrDisplayName = myProtocol.GetDisplay( strDisplayHash).GetLabel();
 	int nLength = myProtocol.GetDisplay( strDisplayHash).GetDisplayLength();
 std::wstring wstrDisplayText = GetDisplayText( wstrDisplayName);
@@ -1744,14 +1746,14 @@ nSubLength--;
 
 std::wstring MIDISurface::GetLEDString( SurfaceAction myAction, AppConfig * pAppConfig, int nDataValue)
 {
-	LogIt( "In GetLEDString");
+	LogIt(L"In GetLEDString");
 
 	// Get the protocol information so that we can decode correctly 
-std::string strProtocolID = this->GetProtocolID();
+std::wstring strProtocolID = this->GetProtocolID();
 
 if (strProtocolID.empty())
 	{
-		LogIt( "Empty protocol ID");
+		LogIt( L"Empty protocol ID");
 		return wstrEmpty;
 }
 
@@ -1763,18 +1765,18 @@ if (strProtocolID.empty())
 			}
 			catch( ...)
 			{
-				LogIt( "Protocol not found");
+				LogIt(L"Protocol not found");
+				LogIt(L"Protocol not found");
 				return wstrEmpty;
 			}
 
 const int DISPLAY_NAME_PARAM = 0;
-wxString wxstrHash = myAction.GetParameter( DISPLAY_NAME_PARAM).second;
-std::string strDisplayHash = wxstrHash.ToStdString();
+std::wstring strDisplayHash = myAction.GetParameter(DISPLAY_NAME_PARAM).second;
 
 
 if (strDisplayHash.empty())
 	{
-		LogIt( "Empty display hash");
+		LogIt( L"Empty display hash");
 return wstrEmpty;
 }
 
@@ -1786,7 +1788,7 @@ try
 }
 catch( ...)
 	{
-		LogIt( "Display not found");
+		LogIt( L"Display not found");
 		return wstrEmpty;
 }
 
@@ -1829,14 +1831,14 @@ default:
 
 if (blnReadIt)
 {
-	LogIt( "ReadIt = true");
+	LogIt(L"ReadIt = true");
 	wstrOut = wstrDisplayName;
 wstrOut.append( wstrSpace);
 wstrOut.append( wstrText);
 								}  // end if blnReadIt
 else
 {
-LogIt( "ReadIt = false");
+LogIt(L"ReadIt = false");
 }
 		}  // end if empty display string
 
@@ -2007,7 +2009,7 @@ pMyParent->GetEventHandler()->AddPendingEvent( event );
 }
 
 
-		void MIDISurface::UpdateUI( std::wstring wstrLabel, bool blnLEDLamp, int nDisplayLength, int nLineCount, SurfaceProtocol * pProtocol, std::string strTranslationID)
+		void MIDISurface::UpdateUI( std::wstring wstrLabel, bool blnLEDLamp, int nDisplayLength, int nLineCount, SurfaceProtocol * pProtocol, std::wstring strTranslationID)
 	{
 		if ( wstrLabel.empty())
 			{
@@ -2032,7 +2034,7 @@ myAppConfig = pMyApps->GetAppConfig( myAppConfigID);
 }
 else
 {
-std::string strNewHash = myAppConfig.GetDisplayHash( wstrLabel);
+std::wstring strNewHash = myAppConfig.GetDisplayHash( wstrLabel);
 
 if (strNewHash.empty())
  {
@@ -2059,9 +2061,9 @@ pMyParent->GetEventHandler()->AddPendingEvent( event );
 	}
 
 
-		void MIDISurface::UpdateDisplay( std::pair <DisplayDefinition, std::string> myDisplayPair, std::vector <unsigned char> myMessage, SurfaceProtocol * myProtocol)
+		void MIDISurface::UpdateDisplay( std::pair <DisplayDefinition, std::wstring> myDisplayPair, std::vector <unsigned char> myMessage, SurfaceProtocol * myProtocol)
 {
-							std::string strMsg = strEmpty;
+							std::wstring strMsg = strEmpty;
 							// Update the display contents
 if (myDisplayPair.first.IsLEDLamp())
 {
@@ -2078,16 +2080,16 @@ for (unsigned int i = nHeaderLength; i < (myMessage.size() -1); i++)
 	vState.push_back( myMessage.at( i));
 }  // end for
 
-strMsg = "LED value = [";
+strMsg = L"LED value = [";
 
 for (unsigned int i = 0; i < vState.size(); i++)
 {
 int nValue = vState.at( i);
-strMsg.append( boost::lexical_cast <std::string> (nValue));
-strMsg.append( ",");
+strMsg.append( boost::lexical_cast <std::wstring> (nValue));
+strMsg.append(L",");
 }
 
-strMsg.append( "]");
+strMsg.append(L"]");
 LogIt( strMsg);
 				}
 	else  // Not SysEx
@@ -2203,7 +2205,7 @@ else  // cursor position provided
 }
 
 
-std::pair <int, int> MIDISurface::GetCursorInfo( std::string strHash, std::vector <unsigned char> myMessage, DisplayDefinition * myDisplay, SurfaceProtocol * pProtocol)
+std::pair <int, int> MIDISurface::GetCursorInfo( std::wstring strHash, std::vector <unsigned char> myMessage, DisplayDefinition * myDisplay, SurfaceProtocol * pProtocol)
 {
 	bool blnCursorFromLeft = myDisplay->IsCursorFromLeft();
 	std::pair <int, int> myPair;
@@ -2302,7 +2304,7 @@ return myPair;
 }
 
 
-void MIDISurface::ProcessLiveModeMessage( std::pair <MessageDefinition, std::string> myHardwarePair, SurfaceProtocol * pProtocol, AppConfig * pAppConfig, unsigned int nControlValue, std::vector <unsigned char> vBuffer)
+void MIDISurface::ProcessLiveModeMessage( std::pair <MessageDefinition, std::wstring> myHardwarePair, SurfaceProtocol * pProtocol, AppConfig * pAppConfig, unsigned int nControlValue, std::vector <unsigned char> vBuffer)
 {
 std::wstring wstrOut( wstrEmpty);
 
@@ -2384,20 +2386,20 @@ Speak( wstrOut, true);
 }
 
 
-std::pair <DisplayDefinition, std::string> MIDISurface::IdentifyDisplay( std::vector <unsigned char> vMessageBuffer, AppConfig * pAppConfig)
+std::pair <DisplayDefinition, std::wstring> MIDISurface::IdentifyDisplay( std::vector <unsigned char> vMessageBuffer, AppConfig * pAppConfig)
 {
 // Try and identify the display based on the buffered data
 		MIDI myMIDI( vMessageBuffer, false);
 
 // Get the protocol information so that we can decode correctly 
-std::string strProtocolID = GetProtocolID();
+std::wstring strProtocolID = GetProtocolID();
 SurfaceProtocol myProtocol = pMyProtocols->GetProtocol( strProtocolID);
 
-std::pair <DisplayDefinition, std::string> myDisplayPair;
+std::pair <DisplayDefinition, std::wstring> myDisplayPair;
 DisplayDefinition myDisplay;
 
 // Check for any matching nibble-addressed display
-std::string strHash = myMIDI.NibbledShortMIDIHash( vMessageBuffer, (vMessageBuffer.size() *2));
+std::wstring strHash = myMIDI.NibbledShortMIDIHash( vMessageBuffer, (vMessageBuffer.size() *2));
 
 try
 	{
@@ -2471,16 +2473,16 @@ return myDisplayPair;
 }
 
 
-std::pair <MessageDefinition, std::string> MIDISurface::IdentifyHardwareControl( std::vector <unsigned char> vMessageBuffer, SurfaceProtocol * pProtocol)
+std::pair <MessageDefinition, std::wstring> MIDISurface::IdentifyHardwareControl( std::vector <unsigned char> vMessageBuffer, SurfaceProtocol * pProtocol)
 {
 // Try and identify the control based on the buffered data
-std::pair <MessageDefinition, std::string> myHardwarePair;
+std::pair <MessageDefinition, std::wstring> myHardwarePair;
 MessageDefinition myControlDefinition;
 MIDI myMIDI( vMessageBuffer, false);
 bool blnFound = false;
 
 // Check for any matching nibble-addressed hardware controls
-std::string strHash = myMIDI.NibbledShortMIDIHash( vMessageBuffer, (vMessageBuffer.size() *2));
+std::wstring strHash = myMIDI.NibbledShortMIDIHash( vMessageBuffer, (vMessageBuffer.size() *2));
 
 try
 	{
@@ -2526,7 +2528,7 @@ myHardwarePair = std::make_pair( myControlDefinition, strHash);
 }
 
 
-bool MIDISurface::ProcessIDModeMessage( std::string strHash, MessageDefinition myMessageDefinition, SurfaceProtocol * pProtocol, AppConfig * pAppConfig, unsigned int nControlState, std::vector <unsigned char> vBuffer)
+bool MIDISurface::ProcessIDModeMessage( std::wstring strHash, MessageDefinition myMessageDefinition, SurfaceProtocol * pProtocol, AppConfig * pAppConfig, unsigned int nControlState, std::vector <unsigned char> vBuffer)
 {
 bool blnFound = false;
 std::wstring wstrOut( wstrEmpty);
@@ -2570,7 +2572,7 @@ return blnFound;
 }
 
 
-bool MIDISurface::ProcessConfigModeMessage( std::string strHash, MessageDefinition myMessageDefinition, SurfaceProtocol * pProtocol, AppConfig * pAppConfig, unsigned int nControlState, std::vector <unsigned char> vBuffer)
+bool MIDISurface::ProcessConfigModeMessage( std::wstring strHash, MessageDefinition myMessageDefinition, SurfaceProtocol * pProtocol, AppConfig * pAppConfig, unsigned int nControlState, std::vector <unsigned char> vBuffer)
 {
 bool blnFound = false;
 
@@ -2578,7 +2580,7 @@ return blnFound;
 }
 
 
-void MIDISurface::ProcessScreenReaderModeMessage( std::string strHash, MessageDefinition myMessageDefinition, SurfaceProtocol * pProtocol, AppConfig * pAppConfig, unsigned int nControlValue, std::vector <unsigned char> vBuffer)
+void MIDISurface::ProcessScreenReaderModeMessage( std::wstring strHash, MessageDefinition myMessageDefinition, SurfaceProtocol * pProtocol, AppConfig * pAppConfig, unsigned int nControlValue, std::vector <unsigned char> vBuffer)
 {
 std::wstring wstrOut( wstrEmpty);
 
@@ -2751,8 +2753,8 @@ try
 }
 catch ( RtMidiError &errMsg)
 {
-std::string strLog = "Hardware send error: ";
-strLog.append( errMsg.getMessage());
+std::wstring strLog =L"Hardware send error: ";
+strLog.append(NarrowToWideString(errMsg.getMessage()));
 strLog.append( BytesToHex( *pMessage));
 LogIt( strLog);
 }
@@ -2768,8 +2770,8 @@ m_DisplayMIDIOut->sendMessage( pMessage);
 }
 catch ( RtMidiError &errMsg)
 {
-std::string strLog = "Display send error: ";
-strLog.append( errMsg.getMessage());
+std::wstring strLog =L"Display send error: ";
+strLog.append(NarrowToWideString(errMsg.getMessage()));
 strLog.append( BytesToHex( *pMessage));
 LogIt( strLog);
 }
@@ -2896,7 +2898,7 @@ bool MIDISurface::ResumeDisplayProcessing()
 }
 
 
-void MIDISurface::LogIt( std::string strMessage)
+void MIDISurface::LogIt( std::wstring strMessage)
 {
 	SurfaceProtocol myProtocol;
 	
@@ -2924,12 +2926,6 @@ else
 }
 
 
-void MIDISurface::LogIt( std::wstring wstrMessage)
-{
-	std::string strMessage( wstrMessage.begin(), wstrMessage.end());
-this->LogIt( strMessage);
-}
-
 
 std::wstring MIDISurface::UniCoded( std::vector <unsigned char> vBytes)
 {
@@ -2940,9 +2936,9 @@ unsigned int nSize = vBytes.size();
 
 if ((nSize % 4) > 0)
 {
-	std::string strMsg = "Vbytes.size() = ";
-	strMsg.append( boost::lexical_cast <std::string> (nSize));
-	strMsg.append( ", which is not a multiple of 4");
+	std::wstring strMsg =L"Vbytes.size() = ";
+	strMsg.append( boost::lexical_cast <std::wstring> (nSize));
+	strMsg.append(L", which is not a multiple of 4");
 	LogIt( strMsg);
 	return wstrOut;
 }
@@ -3013,7 +3009,7 @@ break;
 	void HardwareCallback(double deltatime, std::vector< unsigned char > *message, void *pSurface) 
 {
 MIDISurface * pMySurface = (MIDISurface*) pSurface;
-	std::string strLog = "Hardware received ";
+	std::wstring strLog =L"Hardware received ";
 strLog.append( BytesToHex( * message));
 pMySurface->LogIt( strLog);
 	
@@ -3031,7 +3027,7 @@ void DisplayCallback(double deltatime, std::vector< unsigned char > *message, vo
 {
 MIDISurface * pMySurface = (MIDISurface*) pSurface;
 
-std::string strLog = "Display received ";
+std::wstring strLog =L"Display received ";
 strLog.append( BytesToHex( * message));
 pMySurface->LogIt( strLog);
 

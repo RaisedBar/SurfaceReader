@@ -28,13 +28,13 @@
 class ProtocolChooserDialog: public wxDialog
 {
 public:
-ProtocolChooserDialog( const wxString& title, std::string strProtocolID, boost::shared_ptr <ProtocolCollection> pProtocols);
+ProtocolChooserDialog( const wxString& title, std::wstring strProtocolID, boost::shared_ptr <ProtocolCollection> pProtocols);
 ~ProtocolChooserDialog();
 
-std::string GetProtocolID();
+std::wstring GetProtocolID();
 
 private:
-	void ListProtocols( std::string strMyProtocolID);
+	void ListProtocols( std::wstring strMyProtocolID);
 	
 	// Event handlers:
 void OnListSelect( wxCommandEvent& event);

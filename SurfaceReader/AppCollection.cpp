@@ -193,7 +193,7 @@ for (it = myAppConfigs.begin(); it != myAppConfigs.end(); it++)
 }
 
 
-void AppCollection::UpdateDisplays( std::wstring wstrProtocolID, std::map <std::string , DisplayDefinition> myNewDisplays)
+void AppCollection::UpdateDisplays( std::wstring wstrProtocolID, std::map <std::wstring , DisplayDefinition> myNewDisplays)
 {
 std::map <std::pair <std::wstring, std::wstring>, AppConfig>::iterator it;
 

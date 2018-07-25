@@ -46,28 +46,28 @@ class DefineMessageDialog: public wxDialog
 {
 public:
 DefineMessageDialog( const wxString& title, const wxString &ControlLabel, std::vector <unsigned char> vHeader);
-DefineMessageDialog(const wxString & title, const wxString &ControlLabel, std::vector <unsigned char> vHeader, std::string strHash);
+DefineMessageDialog(const wxString & title, const wxString &ControlLabel, std::vector <unsigned char> vHeader, std::wstring strHash);
        ~DefineMessageDialog();
 
-std::string GetMessageHash();
+std::wstring GetMessageHash();
 std::vector <unsigned char> GetSysExAddressBytes();
 std::vector <unsigned char> GetNibbles();
 
 DECLARE_EVENT_TABLE()
 
 private:
-int MessageType( std::string strMsgHash);
+int MessageType( std::wstring strMsgHash);
 void InitUI( int nType);
-std::string GetSingleMessageHash( std::vector <unsigned char> myMessage);
-std::string DoubleMessageHash( std::vector <unsigned char> myMSBMessage, std::vector <unsigned char> myLSBMessage);
-std::string SysExMessageHash( std::vector <unsigned char> myMessage, bool blnFake);	
+std::wstring GetSingleMessageHash( std::vector <unsigned char> myMessage);
+std::wstring DoubleMessageHash( std::vector <unsigned char> myMSBMessage, std::vector <unsigned char> myLSBMessage);
+std::wstring SysExMessageHash( std::vector <unsigned char> myMessage, bool blnFake);	
 
 unsigned char GetChannelFromHash(std::string strMsgHash);
 unsigned char GetData1FromHash(std::string strMsgHash);
 unsigned char GetData2FromHash(std::string strMsgHash);
 // std::vector <unsigned char> GetSysExAddressBytesFromHash(std::string strMsgHash, unsigned int nHeaderLength);
-std::vector <unsigned char> GetNibblesFromHash( std::string strMsgHash);
-std::string NibblesToHex( std::vector <unsigned char> vNewNibbles);
+std::vector <unsigned char> GetNibblesFromHash( std::wstring strMsgHash);
+std::wstring NibblesToHex( std::vector <unsigned char> vNewNibbles);
 
 void EnableCommandEdits();
 void DisableCommandEdits();
@@ -117,7 +117,7 @@ wxButton * btnAddByte, * btnRemoveByte, *btnAddNibble, * btnRemoveNibble;
 
   // Internal storage
     int nMessageType;
-std::string strHash;
+std::wstring strHash;
 std::vector <unsigned char> vSysExHeader;
 		std::vector <unsigned char> vSysExAddressBytes;
 std::vector <unsigned char> vNibbles;

@@ -7,7 +7,7 @@
 #include "ControlStatesDialog.h"
 
 
-ControlStatesDialog::ControlStatesDialog( const wxString& title, std::string strHash, MessageDefinition * pMessage, std::vector <unsigned char> vSysExHeader)
+ControlStatesDialog::ControlStatesDialog( const wxString& title, std::wstring strHash, MessageDefinition * pMessage, std::vector <unsigned char> vSysExHeader)
        : wxDialog(NULL, -1, title, wxDefaultPosition, wxSize(250, 230))
 {  
 strMyHash = strHash;

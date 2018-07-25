@@ -85,7 +85,7 @@ Centre();
 
 // Constructor for editing an existing display
 
-DefineDisplayDialog::DefineDisplayDialog( const wxString& title, const wxString &ControlLabel, const std::string &strDisplayHash, DisplayDefinition myDisplay, boost::shared_ptr<SurfaceProtocol> pProtocol)
+DefineDisplayDialog::DefineDisplayDialog( const wxString& title, const wxString &ControlLabel, const std::wstring &strDisplayHash, DisplayDefinition myDisplay, boost::shared_ptr<SurfaceProtocol> pProtocol)
 :
 		wxDialog(NULL, -1, title, wxDefaultPosition, wxSize(250, 230)),
 	   pMyProtocol( new SurfaceProtocol ()),
@@ -246,7 +246,7 @@ long DefineDisplayDialog::GetStripCount() const
 }
 
 
-std::string DefineDisplayDialog::GetDisplayHash() const
+std::wstring DefineDisplayDialog::GetDisplayHash() const
 {
 return strHash;
 }
