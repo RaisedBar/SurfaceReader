@@ -4,13 +4,9 @@
 #define RB_STRING_FUNCS_H
 
 #pragma once
-#include <boost/algorithm/hex.hpp>
-
-#include <boost/lexical_cast.hpp>
-using boost::lexical_cast;
-using boost::bad_lexical_cast;
 
 #include <string>
+#include <vector>
 #include "SRConstants.h"
 
 

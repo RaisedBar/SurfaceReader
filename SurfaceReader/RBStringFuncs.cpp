@@ -3,6 +3,10 @@
 #include "RBStringFuncs.h"
 #include <algorithm>
 #include <boost/locale.hpp>
+#include <boost/algorithm/hex.hpp>
+#include <boost/lexical_cast.hpp>
+using boost::lexical_cast;
+using boost::bad_lexical_cast;
 
 using namespace std;
 using namespace boost::locale::conv;
@@ -104,7 +108,10 @@ wstring ByteToHex(unsigned int nByte)
 wstring BytesToHex(vector <unsigned char> vBytes)
 {
 	wstring strResult;
-	copy(begin(vBytes), end(vBytes), begin(strResult));
+	
+	for (const unsigned char & ch : vBytes)
+		strResult.append(ByteToHex(ch));
+		
 	return strResult;
 }
 

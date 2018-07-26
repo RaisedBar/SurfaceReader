@@ -2,6 +2,7 @@
 //Implementation of the MessageDefinition Class.
 
 #include "MessageDefinition.h"
+#include <boost/lexical_cast.hpp>
 
 	
 MessageDefinition::MessageDefinition()
