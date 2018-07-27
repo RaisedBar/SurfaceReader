@@ -108,7 +108,7 @@ typedef std::map<int, boost::any>::iterator ActionInfoTypeIterator;
 /// <summary> A vector of <see cref="ActionInfoType"/> containing all available actions for the currently active access technology. </summary>
 typedef std::vector<ActionInfoType > ActionCollectionType; 
 typedef std::vector<ActionInfoType >::iterator ActionCollectionTypeIterator; 
-typedef std::map < std::pair< std::wstring, std::wstring>, ActionCollectionType> JawsCacheType;
+typedef std::map < std::pair< std::wstring, std::string>, ActionCollectionType> JawsCacheType;
 
 // <summary> the available action fields. </summary>
 /// <remarks> These fields are unique to the access technology that is currently active. They define the fields available in the <see cref="ActionInfoType"/>
