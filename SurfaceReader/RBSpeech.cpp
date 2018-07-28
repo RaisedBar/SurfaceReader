@@ -10,6 +10,8 @@
 //Raised bar includes.
 #include "RBPathFuncs.h"
 using namespace RaisedBar::PathFunctions;
+//boost includes.
+#include <boost/foreach.hpp>
 
 bool FindProcessByName(const wchar_t * wstrProcessName)
 {
@@ -2098,12 +2100,12 @@ LExit:
 		return hReturnValue;
 	}
 	
-	HRESULT RBSpeech::ListHotSpotsInSet(std::wstring SetName, std::vector<std::string>& Spots)
+	HRESULT RBSpeech::ListHotSpotsInSet(std::wstring SetName, std::vector<std::wstring>& Spots)
 	{
 		HRESULT hReturnValue =S_OK;
 		ActiveProduct CurrentProduct;
 		DolphinProduct SpecificDolphinProduct;
-		property_tree::ptree IniTree; //used to store hsc information.
+		property_tree::wptree IniTree; //used to store hsc information.
 		boost::property_tree::ptree::assoc_iterator it;	 
 	char SetNameStr[MAX_PATH] ="";
 		wxMBConvStrictUTF8 ConvertString; //used to convert to ansi later on.
@@ -2128,19 +2130,19 @@ ExitOnFailure(hReturnValue, "No product is active.");
 			Spots.clear();
 		Spots.reserve(IniTree.size()); //reserve memory equal to the number of spots in the current set.
 		//now iterate the spots.
-			BOOST_FOREACH(property_tree::ptree::value_type &v, IniTree)
+			BOOST_FOREACH(property_tree::wptree::value_type &v, IniTree)
 			{
 				if (!v.first.empty())
 				{ //the key has some text in.
 					if (!boost::algorithm::iequals(v.first, "main")) { //section is not main
-						std::string Path =v.first;
-						Path.append(".hidden");
+						std::wstring Path =v.first;
+						Path.append(L".hidden");
 						int IsHidden =IniTree.get(Path, 0);
 						if (IsHidden ==0)
 						{ //spot is not hidden.
 							Path =v.first;
-							Path.append(".label");
-							std::string SpotLabel =IniTree.get(Path, v.first);
+							Path.append(L".label");
+							std::wstring SpotLabel =IniTree.get(Path, v.first);
 						Spots.push_back(SpotLabel);
 						} //end hidden.
 						} //end is not main.
@@ -2155,7 +2157,7 @@ LExit:
 		return hReturnValue;
 	}
 
-	HRESULT RBSpeech::ListHotSpotsInCurrentSet(std::vector<std::string>& Spots)
+	HRESULT RBSpeech::ListHotSpotsInCurrentSet(std::vector<std::wstring>& Spots)
 {
 	HRESULT hReturnValue =S_OK;
 ActiveProduct CurrentProduct;
