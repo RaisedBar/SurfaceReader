@@ -19,7 +19,6 @@
 #include "RBStringFuncs.h"
 
 #include <boost/shared_ptr.hpp>
-#include <boost/foreach.hpp>
 #include <boost/any.hpp>
 using boost::any_cast;
 

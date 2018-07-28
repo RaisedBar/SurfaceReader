@@ -13,7 +13,7 @@
 #include <wx/string.h>
 #include <vector>
 #include <map>
-#include <boost/foreach.hpp>
+
 #include "WIX Include.h"
 #include <wx/msw/winundef.h> 
 
@@ -56,7 +56,7 @@ bool ListSections(std::vector<wxString>* Sections)
 	{
 		std::vector<wxString> IniSections;
 	IniSections.reserve(IniTree.size());
-	BOOST_FOREACH(boost::property_tree::ptree::value_type &v, IniTree)
+	for(boost::property_tree::ptree::value_type &v : IniTree)
 		IniSections.push_back(v.first);
 FunctionResult =true;
 	}

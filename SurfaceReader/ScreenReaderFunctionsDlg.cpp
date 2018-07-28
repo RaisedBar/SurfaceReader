@@ -136,7 +136,7 @@ ActionInfoType ScreenReaderFunctionsDlg::GetAction( std::wstring wstrFunctionNam
                 ActionInfoType CurrentAction; 
 ActionCollectionType Actions;
 //Actions equals the second of the cache.
-BOOST_FOREACH( CurrentAction, Actions)
+for(ActionInfoType CurrentAction : Actions)
 {
 	// if (CurrentAction[ 0].As <std::wstring>().compare( wstrFunctionName) == 0)
 std::wstring wstrActionString = AsWString( CurrentAction[ 0]); 	
@@ -261,7 +261,7 @@ return;
 lbxActionNames->Clear();
 
 // Populate the list here...
-BOOST_FOREACH(std::wstring spot, Hotspots)
+for(std::wstring spot : Hotspots)
 lbxActionNames->Append(spot);
 #endif
 }
@@ -371,7 +371,7 @@ try
 ActionInfoTypeIterator it2;
 std::wstring wstrName;
 	
-BOOST_FOREACH(CurrentAction, myActionCollection)
+for(ActionInfoType CurrentAction : myActionCollection)
 {
 			it2 =CurrentAction.find(0);
 		
@@ -521,7 +521,7 @@ std::pair< std::wstring, std::wstring> myIndexPair;
 }  // end catch
 
 //iterate through the vector of actions, the second item in the ActionInfoType pair.
-BOOST_FOREACH(CurrentAction, myActionCollection)
+for(ActionInfoType CurrentAction : myActionCollection)
 	{
 			it2 =CurrentAction.find(nField);
 		
