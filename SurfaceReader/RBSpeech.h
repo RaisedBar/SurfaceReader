@@ -24,7 +24,6 @@
 
 //boost includes.
 #include <boost/any.hpp>
-#include <boost/assign/list_of.hpp>
 #include <boost/shared_ptr.hpp>
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/ini_parser.hpp>
@@ -112,8 +111,8 @@ typedef std::map < std::pair< std::wstring, std::wstring>, ActionCollectionType>
 // <summary> the available action fields. </summary>
 /// <remarks> These fields are unique to the access technology that is currently active. They define the fields available in the <see cref="ActionInfoType"/>
 /// Further documentation can be found in the respective Get*Actions methods. </remarks>
-typedef std::map<wxString, int> AvailableActionFieldsType;
-typedef std::map<wxString, int>::iterator AvailableActionFieldsIterator;
+typedef std::map<std::wstring, int> AvailableActionFieldsType;
+typedef std::map<std::wstring, int>::iterator AvailableActionFieldsIterator;
 typedef pair<AvailableActionFieldsType, ActionCollectionType > AvailableActionsType; //Available actions pair.
 
 /// <summary> 

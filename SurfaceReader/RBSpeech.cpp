@@ -174,7 +174,15 @@ HRESULT hReturnValue =S_OK;
 AvailableActionsType JawsActions;
 ActionCollectionType Actions;
 ActionCollectionTypeIterator NewEnd =Actions.begin();
-AvailableActionFieldsType Fields =boost::assign::map_list_of("Name", 0)("Synopsis", 1)("Description", 2)("Returns", 3)("Parameters", 4)("Category", 5)("Type", 6);
+const AvailableActionFieldsType Fields{
+	{L"Name", 0},
+	{L"Synopsis", 1},
+{L"Description", 2},
+{L"Returns", 3},
+{ L"Parameters", 4},
+{ L"Category", 5},
+{L"Type", 6} };
+
 ActionInfoType CurrentAction;
 std::vector<JawsFunction> AvailableJawsFunctions;
 wstring UserScriptFolder; 
