@@ -10,8 +10,11 @@
 //Raised bar includes.
 #include "RBPathFuncs.h"
 using namespace RaisedBar::PathFunctions;
+
 //boost includes.
 
+//c++ standard includes.
+using namespace std::experimental::filesystem;
 
 bool FindProcessByName(const wchar_t * wstrProcessName)
 {
@@ -178,11 +181,11 @@ wstring UserScriptFolder;
 wstring SharedScriptFolder; 
 wstring DefaultScriptFile; 
 wstring ApplicationScriptFile; 
-wxFileName JSDFile;
+path JSDFile;
 wxVariant FunctionResult;
 			boost::property_tree::ptree IniTree; //used to store environment information.
 			std::wstring JAWSFunctionCallString =L"GetCurrentJAWSEnvironment(\"%s\")"; //used to hold the call to JAWS.
-				wxFileName IniFile; //file to store the hsc information.
+				path IniFile; //file to store the hsc information.
 			ActiveProduct CurrentProduct;
 	DolphinProduct SpecificDolphinProduct;
 	hReturnValue =GetActiveProduct(CurrentProduct, SpecificDolphinProduct);
@@ -195,7 +198,7 @@ wxVariant FunctionResult;
 //Process files based on the enum.
 					int CurrentFileBeingProcessed;
 wstring TestDir =wxEmptyString;
-					wxFileName CurrentFile; 
+					path CurrentFile; 
 					int FreedomScientificDirectoryPosition =-1;
 					for(CurrentFileBeingProcessed =JsdFileToStartProcessing; CurrentFileBeingProcessed <=PROCESS_DEFAULT_SYSTEM_DEFAULT_FILE; CurrentFileBeingProcessed++)
 					{
@@ -208,10 +211,10 @@ case PROCESS_NO_FILE:
 case PROCESS_USER_APP_FILE:
 	if (JsdFileToStartProcessing ==CurrentFileBeingProcessed)
 	{ //we don't need to do anything as we already have the jsd file.
-		CurrentFile.Assign(JsdFile);
+		CurrentFile =JsdFile;
 	}
 	OutputDebugString(JsdFile.c_str());
-	if (CurrentFile.FileExists())
+	if (exists(CurrentFile))
 {
 LocalFunctions =ProcessJSDFile(CurrentFile);
 //Merge with the already available functions.
@@ -221,16 +224,16 @@ AvailableJawsFunctions.insert(AvailableJawsFunctions.end(), LocalFunctions.begin
 case PROCESS_DEFAULT_APP_FILE:
 if (JsdFileToStartProcessing ==CurrentFileBeingProcessed)
 	{ //we don't need to do anything as we already have the jsd file.
-		CurrentFile.Assign(JsdFile);
+		CurrentFile =JsdFile;
 }
 else { //specify the file ourselves.
 FreedomScientificDirectoryPosition =JsdFile.find(L"Freedom Scientific");	
  TestDir =wxStandardPaths::Get().GetConfigDir().Remove(wxStandardPaths::Get().GetConfigDir().find(L"SurfaceReader"));
 TestDir.append(JsdFile.substr(FreedomScientificDirectoryPosition));
 OutputDebugString(TestDir.c_str());
-CurrentFile.Assign(TestDir);
+CurrentFile =TestDir;
 } //end file processing.
-if (CurrentFile.FileExists())
+if (exists(CurrentFile))
 {
 LocalFunctions =ProcessJSDFile(CurrentFile);
 //Merge with the already available functions.
@@ -240,10 +243,9 @@ break;
 case PROCESS_USER_SYSTEM_DEFAULT_FILE:
 if (JsdFileToStartProcessing ==CurrentFileBeingProcessed)
 	{ //we don't need to do anything as we already have the jsd file.
-		CurrentFile.Assign(JsdFile);
+		CurrentFile =JsdFile;
 	}
 else { //specifically set the file/path.
-	CurrentFile.Clear();
 	//obtain the current user path.
 	TestDir =wxStandardPaths::Get().GetUserConfigDir();
 	TestDir.append(L"\\");
@@ -252,9 +254,9 @@ else { //specifically set the file/path.
  TestDir.erase(TestDir.find(wxStringTokenize(JsdFile, L"\\").Last(), FreedomScientificDirectoryPosition));
  TestDir.append(L"default.jsd");
  OutputDebugString(TestDir.c_str());
- CurrentFile.Assign(TestDir);
+ CurrentFile =TestDir;
 } //end specifically setting the filename.
-if (CurrentFile.FileExists())
+if (exists(CurrentFile))
 {
 LocalFunctions =ProcessJSDFile(CurrentFile);
 //Merge with the already available functions.
@@ -264,7 +266,7 @@ break;
 case PROCESS_DEFAULT_SYSTEM_DEFAULT_FILE:
 	if (JsdFileToStartProcessing ==CurrentFileBeingProcessed)
 	{ //we don't need to do anything as we already have the jsd file.
-		CurrentFile.Assign(JsdFile);
+		CurrentFile =JsdFile;
 	}
 else { //specify the file ourselves.
 FreedomScientificDirectoryPosition =JsdFile.find(L"Freedom Scientific");	
@@ -273,9 +275,9 @@ TestDir.append(JsdFile.substr(FreedomScientificDirectoryPosition));
 TestDir.erase(TestDir.find(wxStringTokenize(JsdFile, L"\\").Last(), FreedomScientificDirectoryPosition));
  TestDir.append(L"default.jsd");
 OutputDebugString(TestDir.c_str());
-CurrentFile.Assign(TestDir);
+CurrentFile =TestDir;
 } //end specifying file.
-if (CurrentFile.FileExists())
+if (exists(CurrentFile))
 {
 LocalFunctions =ProcessJSDFile(CurrentFile);
 //Merge with the already available functions.
@@ -348,10 +350,10 @@ LExit:
 return hReturnValue;
 }
 
-	bool RBSpeech::GetJAWSPath(wxFileName& FileName)
+	bool RBSpeech::GetJAWSPath(path& FileName)
 	{
 		bool blnReturnValue =false;
-		wxFileName InternalPath =wxEmptyString;
+		path InternalPath;
 		if (IsJAWSActive())
 		{ //JAWS is active.
 			//now obtain the JAWS window.
@@ -382,13 +384,13 @@ if (ProcessResult !=0)
 bool RBSpeech::IsJAWSRoaming()
 	{
 		bool blnReturnValue =false;
-		wxFileName JAWSPath =wxEmptyString;
+		path JAWSPath;
 		if (GetJAWSPath(JAWSPath) ==true)
 		{ //we have the jaws path.
-			JAWSPath.SetName(wxEmptyString);
-			JAWSPath.AppendDir(L"settings");
-			JAWSPath.AppendDir(L"enu");
-			if (JAWSPath.DirExists() ==true)
+			JAWSPath.remove_filename();
+			JAWSPath /=L"settings";
+			JAWSPath /=L"enu";
+			if (exists(JAWSPath))
 			{ //JAWS is roaming.
 blnReturnValue =true;
 			} //end JAWS is roaming block.
@@ -848,22 +850,21 @@ bool RBSpeech::LoadNVDAApi()
 		return true;
 	}
 	
-	wxFileName NVDADllFileName(wxStandardPaths::Get().GetExecutablePath()); //assign the executable directory.
+	path NVDADllFileName =wxStandardPaths::Get().GetExecutablePath().ToStdWstring(); //assign the executable directory.
 
 	if (wxIsPlatform64Bit())
 		{ //We are running on a 64-bit operating system--or at least as a 64-bit process.
-NVDADllFileName.SetFullName(L"nvdaControllerClient64.dll");
+NVDADllFileName /=L"nvdaControllerClient64.dll";
 	}
 	else  //32-bit.
 			{
-			NVDADllFileName.SetFullName(L"nvdaControllerClient32.dll");
+			NVDADllFileName /=L"nvdaControllerClient32.dll";
 	}
 
-			if ((NVDADllFileName.IsOk())
-&& (NVDADllFileName.FileExists()))
+			if (exists(NVDADllFileName))
 {
 	//file exists, so try to load it.
-	if (NvdaDllApi.Load(NVDADllFileName.GetFullPath())) 
+	if (NvdaDllApi.Load(NVDADllFileName.generic_wstring())) 
 	{ //successfully loaded.
 		TestIfRunning =(nvdaControllerTestIfRunningFunc)NvdaDllApi.RawGetSymbol("nvdaController_testIfRunning");
 SpeakText =(nvdaControllerSpeakTextFunc)NvdaDllApi.RawGetSymbol("nvdaController_speakText");
@@ -1718,63 +1719,34 @@ if (SystemAccessDllApi.IsLoaded())
 	return true;
 }
 			
-wxFileName SystemAccessDllFileName( wxStandardPaths::Get().GetExecutablePath()); //assign the executable directory.
+path SystemAccessDllFileName=wxStandardPaths::Get().GetExecutablePath().ToStdWstring(); //assign the executable directory.
+SystemAccessDllFileName.remove_filename();
 
 if (wxIsPlatform64Bit())
-		{ //We are running on a 64-bit operating system--or at least as a 64-bit process.
-	SystemAccessDllFileName.SetFullName(L"SAAPI64.dll");
-
-	if (SystemAccessDllFileName.IsOk())
-{ //filename is ok.
-if (SystemAccessDllFileName.FileExists())
-{
-if (SystemAccessDllApi.Load(SystemAccessDllFileName.GetFullPath()))
-				{
-					SAIsRunning =(SAIsRunningFunc)SystemAccessDllApi.RawGetSymbol("SA_IsRunning");
-SASpeak=(SASpeakFunc)SystemAccessDllApi.RawGetSymbol("SA_SayW");
-SABraille =(SABrailleFunc)SystemAccessDllApi.RawGetSymbol("SA_BrlShowTextW");
-SAStopAudio =(SAStopAudioFunc)SystemAccessDllApi.RawGetSymbol("SA_StopAudio");
-					return true;
-				} 
-else 
-{
-					return false; //file not loaded.
-				}
-			} 
-else 
-{
-				return false; //file not exists.
-			}
-	}
-} //end 64-bit.
-			else //32-bit.
-			{
-				SystemAccessDllFileName.SetFullName(L"SAAPI32.dll");
-if (SystemAccessDllFileName.IsOk())
-{ //filename is ok.
-if (SystemAccessDllFileName.FileExists())
-{
-				if (SystemAccessDllApi.Load(L"SAAPI32.dll"))
-				{
-					SAIsRunning =(SAIsRunningFunc)SystemAccessDllApi.RawGetSymbol("SA_IsRunning");
-SASpeak=(SASpeakFunc)SystemAccessDllApi.RawGetSymbol("SA_SayW");
-SABraille =(SABrailleFunc)SystemAccessDllApi.RawGetSymbol("SA_BrlShowTextW");
-SAStopAudio =(SAStopAudioFunc)SystemAccessDllApi.RawGetSymbol("SA_StopAudio");
-					return true;
-				} 
-				else 
-				{
-					return false; //file not loaded.
-				}
-			} 
-else 
-{
-				return false; //file not exists.
+{ //We are running on a 64-bit operating system--or at least as a 64-bit process.
+	SystemAccessDllFileName /= L"SAAPI64.dll";
 }
+else
+{ // we are running on a 32-bit platform.
+	SystemAccessDllFileName /= L"SAAPI32.dll";
 }
-} //end 32-bit.
 
-return false;
+if (!exists(SystemAccessDllFileName))
+{ //the dll does not exists.
+	return false;
+}
+if (SystemAccessDllApi.Load(SystemAccessDllFileName.generic_wstring()))
+{
+	SAIsRunning = (SAIsRunningFunc)SystemAccessDllApi.RawGetSymbol("SA_IsRunning");
+	SASpeak = (SASpeakFunc)SystemAccessDllApi.RawGetSymbol("SA_SayW");
+	SABraille = (SABrailleFunc)SystemAccessDllApi.RawGetSymbol("SA_BrlShowTextW");
+	SAStopAudio = (SAStopAudioFunc)SystemAccessDllApi.RawGetSymbol("SA_StopAudio");
+	return true;
+}
+else
+{
+	return false; //file not loaded.
+}
 }
 
 
@@ -2190,7 +2162,7 @@ wxVariant FunctionResult;
 			wxMBConvStrictUTF8 ConvertString; //used to convert to unicode later on.
 			property_tree::ptree IniTree; //used to store hsc information.
 			std::wstring JAWSFunctionCallString =L"GetCurrentJAWSEnvironment(\"%s\")"; //used to hold the call to JAWS.
-				wxFileName IniFile; //file to store the hsc information.
+				path IniFile; //file to store the hsc information.
 			ActiveProduct CurrentProduct;
 	DolphinProduct SpecificDolphinProduct;
 	hReturnValue =GetActiveProduct(CurrentProduct, SpecificDolphinProduct);
@@ -2198,12 +2170,12 @@ wxVariant FunctionResult;
 				switch(CurrentProduct)
 			{
 			case ID_JAWS:
-				IniFile.SetPath(AppDataPath().native());
+				IniFile =AppDataPath();
 //now, set the filename.
-IniFile.SetFullName(L"CurrentJawsEnvironment.ini");
-if (IniFile.FileExists())
+IniFile /=L"CurrentJawsEnvironment.ini";
+if (exists(IniFile))
 { //the file exists remove it.
-	ExitOnFalse(wxRemoveFile(IniFile.GetFullPath()), hReturnValue, S_FALSE, "Unable to delete the old file.");
+	ExitOnFalse(wxRemoveFile(IniFile.generic_wstring()), hReturnValue, S_FALSE, "Unable to delete the old file.");
 } //end file removal.
 replace_first(JAWSFunctionCallString, L"%s", AppDataPath().native());
 //now actually call the function.
@@ -2216,7 +2188,7 @@ replace_first(JAWSFunctionCallString, L"%s", AppDataPath().native());
 									//now, load the ini giving us hsc information, then grab the path to the current spot file.
 try
 	{
-		property_tree::ini_parser::read_ini(IniFile.GetFullPath().ToStdString(), IniTree);		
+		property_tree::ini_parser::read_ini(IniFile.generic_string(), IniTree);		
 }
 catch( ...)
 	{
@@ -2333,14 +2305,14 @@ ActionInformation =AvailableActions;
 return hReturnValue;
 }
 
-std::vector<JawsFunction> RBSpeech::ProcessJSDFile(wxFileName &File)
+std::vector<JawsFunction> RBSpeech::ProcessJSDFile(path& File)
 {
 	std::vector<JawsFunction> AvailableFunctions;
 	bool ParameterIsOptional =false;
-	if ((File.IsOk()) && (File.FileExists()))
+	if (exists(File))
 	{ //existence check.
 		wxString filecontent;
-	wxFFile scriptfile(File.GetFullPath().ToStdString().c_str());
+	wxFFile scriptfile(File.generic_wstring().c_str());
 	filecontent.clear();
 	if (scriptfile.ReadAll(&filecontent))
 	{ //start file processing.
@@ -2456,12 +2428,12 @@ void RBSpeech::SetFirstJsdFile(wstring File)
 	JsdFile =File;
 JsdFileToStartProcessing =PROCESS_NO_FILE;
 wxArrayString JsdFileTokens =wxStringTokenize(JsdFile, L"\\");
-wstring UserName =wxGetUserId();
+wstring UserName =wxGetUserId().ToStdWstring();
 int test =JsdFileTokens.Index(UserName);
 if (JsdFileTokens.Index(UserName) >0)
 { //user file is the first one.
 //determine whether it is default/application.
-wstring LastToken =JsdFileTokens.Last();
+wstring LastToken =JsdFileTokens.Last().ToStdWstring();
 	if (JsdFileTokens.Last().IsSameAs("default.jsd", false))
 		JsdFileToStartProcessing =PROCESS_USER_SYSTEM_DEFAULT_FILE;
 	else
@@ -2469,7 +2441,7 @@ JsdFileToStartProcessing =PROCESS_USER_APP_FILE;
 } //end user file.
 else { //global file.
 	//determine whether it is the default/application.
-wstring LastToken =JsdFileTokens.Last();
+wstring LastToken =JsdFileTokens.Last().ToStdWstring();
 	if (JsdFileTokens.Last().IsSameAs("default.jsd", false))
 		JsdFileToStartProcessing =PROCESS_DEFAULT_SYSTEM_DEFAULT_FILE;
 	else

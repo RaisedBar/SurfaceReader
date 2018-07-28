@@ -34,7 +34,7 @@ using boost::any_cast;
 using namespace std;
 using namespace boost; //used for assignment and EBNF parsing amongst others.
 
-#include <wx/filename.h>
+					   //WX includes.
 #include <wx/msw/ole/automtn.h>
 #include <wx/dynlib.h>
 #include <wx/stdpaths.h>
@@ -47,6 +47,8 @@ using namespace boost; //used for assignment and EBNF parsing amongst others.
 #include <wx/platform.h>
 #include <wx/msw/winundef.h> 
 
+//C++ standard includes.
+#include <filesystem>
 
 //defines.
 #define HOTSPOT_HIDDEN 1 //A hot spot is hidden.

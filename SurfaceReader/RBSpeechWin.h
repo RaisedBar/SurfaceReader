@@ -212,7 +212,8 @@ void UnloadJAWSApi(void);
 /// <param name="strText">The text to braille.</param>
 	/// <returns> Returns S_OK if the speech has been queued for brailleing, S_FALSE otherwise.</returns>
 	HRESULT JAWSBraille(wstring strText);
-/// <summary> list the available actions for JAWS. </summary>
+
+	/// <summary> list the available actions for JAWS. </summary>
 	/// <remarks> This procedure lists the available actions for the JAWS screen reader. The following are the available action fields:
 	/// 0 =Name,
 	/// 1 =Description
@@ -236,7 +237,7 @@ NewAction.insert(std::make_pair(5, Element.Parameters));
 	return NewAction;
 }
 /// <summary> Obtain the path to the current jaws executable.
-	bool GetJAWSPath(wxFileName& FileName);
+	bool GetJAWSPath(std::experimental::filesystem::path& FileName);
 	/// <summary> IsJAWSRoaming
 	/// <remarks> Check to see whether jaws is roaming. To do this we check to see whether a settings folder exists in the folder from which jaws is running. </remarks>
 	bool IsJAWSRoaming();
@@ -337,7 +338,7 @@ void UnloadSystemAccessApi(void);
 	/// <returns> Returns S_OK if the string has been queued for brailleing, S_FALSE otherwise.</returns>
 	HRESULT SystemAccessBraille(wstring strText);	
 public:
-	std::vector<JawsFunction> ProcessJSDFile(wxFileName &File);
+	std::vector<JawsFunction> ProcessJSDFile(std::experimental::filesystem::path& File);
 	/// <summary> loads the application programming interface for the active screen reader.</summery>
 	/// <returns> S_OK if the API has loaded successfully and an error code otherwise.</returns>
 	bool LoadAPI();
