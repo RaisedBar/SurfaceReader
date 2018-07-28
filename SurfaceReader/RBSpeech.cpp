@@ -11,7 +11,7 @@
 #include "RBPathFuncs.h"
 using namespace RaisedBar::PathFunctions;
 //boost includes.
-#include <boost/foreach.hpp>
+
 
 bool FindProcessByName(const wchar_t * wstrProcessName)
 {
@@ -292,7 +292,7 @@ else { //use hsc method.
 //now sort the function vector.
 //std::sort(AvailableJawsFunctions.begin(), AvailableJawsFunctions.end(), CompareJawsFunctions);
 //now iterate through and add to the vector.
-BOOST_FOREACH(JawsFunction j, AvailableJawsFunctions)
+for(JawsFunction j : AvailableJawsFunctions)
 {
 if (j.Type ==ID_TYPE_SCRIPT)
 {
@@ -2130,7 +2130,7 @@ ExitOnFailure(hReturnValue, "No product is active.");
 			Spots.clear();
 		Spots.reserve(IniTree.size()); //reserve memory equal to the number of spots in the current set.
 		//now iterate the spots.
-			BOOST_FOREACH(property_tree::wptree::value_type &v, IniTree)
+			for(property_tree::wptree::value_type &v : IniTree)
 			{
 				if (!v.first.empty())
 				{ //the key has some text in.
@@ -2348,7 +2348,7 @@ std::vector<JawsFunction> RBSpeech::ProcessJSDFile(wxFileName &File)
 		wxArrayString lines;
 		lines =wxStringTokenize(filecontent, "\n", wxTOKEN_RET_EMPTY);
 	JawsFunction newfunction;
-	BOOST_FOREACH(wxString line, lines)
+	for(wxString line : lines)
 {
 	wxArrayString tokens;
 	line.Trim(true);
