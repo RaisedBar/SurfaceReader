@@ -9,7 +9,7 @@
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/ini_parser.hpp>
 #include <boost/property_tree/exceptions.hpp>
-#include <wx/filename.h>
+#include <filesystem>
 #include <wx/string.h>
 #include <vector>
 #include <map>
@@ -26,21 +26,21 @@ IniFileUtils()
 {
 	IniTree.clear();
 }
-IniFileUtils(wxFileName Filename)
+IniFileUtils(std::experimental::filesystem::path& Filename)
 {
-	if (Filename.FileExists())
+	if (std::experimental::filesystem::exists(Filename))
 	{
 		IniTree.clear();
-		boost::property_tree::ini_parser::read_ini(Filename.GetFullPath().ToStdString(), IniTree);
+		boost::property_tree::ini_parser::read_ini(Filename.generic_string(), IniTree);
 	}
 }
 //Load file after construction.
-bool LoadFile(wxFileName Filename)
+bool LoadFile(std::experimental::filesystem::path& Filename)
 {
-	if (Filename.FileExists())
+	if (std::experimental::filesystem::exists(Filename))
 	{
 		IniTree.clear();
-		boost::property_tree::ini_parser::read_ini(Filename.GetFullPath().ToStdString(), IniTree);
+		boost::property_tree::ini_parser::read_ini(Filename.generic_string(), IniTree);
 		if (IniTree.empty())
 		return false;
 		else

@@ -14,8 +14,6 @@
 //#include "Serializer.h"
 
 //#include <wx/stdpaths.h> 
-//#include <wx/dir.h> 
-//#include <wx/filename.h>
 //#include <wx/msw/winundef.h> 
 
 
