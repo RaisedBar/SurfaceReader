@@ -12,7 +12,9 @@
 using namespace RaisedBar::PathFunctions;
 
 //boost includes.
+#include <boost/algorithm/string.hpp>
 
+//c++ standard includes.
 //c++ standard includes.
 using namespace std::experimental::filesystem;
 
