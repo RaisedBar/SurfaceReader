@@ -174,10 +174,10 @@ ActionCollectionTypeIterator NewEnd =Actions.begin();
 AvailableActionFieldsType Fields =boost::assign::map_list_of("Name", 0)("Synopsis", 1)("Description", 2)("Returns", 3)("Parameters", 4)("Category", 5)("Type", 6);
 ActionInfoType CurrentAction;
 std::vector<JawsFunction> AvailableJawsFunctions;
-wxString UserScriptFolder; 
-wxString SharedScriptFolder; 
-wxString DefaultScriptFile; 
-wxString ApplicationScriptFile; 
+wstring UserScriptFolder; 
+wstring SharedScriptFolder; 
+wstring DefaultScriptFile; 
+wstring ApplicationScriptFile; 
 wxFileName JSDFile;
 wxVariant FunctionResult;
 			boost::property_tree::ptree IniTree; //used to store environment information.
@@ -194,7 +194,7 @@ wxVariant FunctionResult;
 				{
 //Process files based on the enum.
 					int CurrentFileBeingProcessed;
-		wxString TestDir =wxEmptyString;
+wstring TestDir =wxEmptyString;
 					wxFileName CurrentFile; 
 					int FreedomScientificDirectoryPosition =-1;
 					for(CurrentFileBeingProcessed =JsdFileToStartProcessing; CurrentFileBeingProcessed <=PROCESS_DEFAULT_SYSTEM_DEFAULT_FILE; CurrentFileBeingProcessed++)
@@ -210,7 +210,7 @@ case PROCESS_USER_APP_FILE:
 	{ //we don't need to do anything as we already have the jsd file.
 		CurrentFile.Assign(JsdFile);
 	}
-	OutputDebugString(JsdFile.ToStdWstring().c_str());
+	OutputDebugString(JsdFile.c_str());
 	if (CurrentFile.FileExists())
 {
 LocalFunctions =ProcessJSDFile(CurrentFile);
@@ -224,10 +224,10 @@ if (JsdFileToStartProcessing ==CurrentFileBeingProcessed)
 		CurrentFile.Assign(JsdFile);
 }
 else { //specify the file ourselves.
-FreedomScientificDirectoryPosition =JsdFile.find("Freedom Scientific");	
+FreedomScientificDirectoryPosition =JsdFile.find(L"Freedom Scientific");	
  TestDir =wxStandardPaths::Get().GetConfigDir().Remove(wxStandardPaths::Get().GetConfigDir().find(L"SurfaceReader"));
-TestDir.append(JsdFile.Right(JsdFile.length()-FreedomScientificDirectoryPosition));
-OutputDebugString(TestDir.ToStdWstring().c_str());
+TestDir.append(JsdFile.substr(FreedomScientificDirectoryPosition));
+OutputDebugString(TestDir.c_str());
 CurrentFile.Assign(TestDir);
 } //end file processing.
 if (CurrentFile.FileExists())
@@ -246,12 +246,12 @@ else { //specifically set the file/path.
 	CurrentFile.Clear();
 	//obtain the current user path.
 	TestDir =wxStandardPaths::Get().GetUserConfigDir();
-	TestDir.append("\\");
-	FreedomScientificDirectoryPosition =JsdFile.find("Freedom Scientific");	
- TestDir.append(JsdFile.Right(JsdFile.length()-FreedomScientificDirectoryPosition));
- TestDir.Remove(TestDir.find(wxStringTokenize(JsdFile, L"\\").Last(), FreedomScientificDirectoryPosition));
- TestDir.Append(L"default.jsd");
- OutputDebugString(TestDir.ToStdWstring().c_str());
+	TestDir.append(L"\\");
+	FreedomScientificDirectoryPosition =JsdFile.find(L"Freedom Scientific");	
+ TestDir.append(JsdFile.substr(FreedomScientificDirectoryPosition));
+ TestDir.erase(TestDir.find(wxStringTokenize(JsdFile, L"\\").Last(), FreedomScientificDirectoryPosition));
+ TestDir.append(L"default.jsd");
+ OutputDebugString(TestDir.c_str());
  CurrentFile.Assign(TestDir);
 } //end specifically setting the filename.
 if (CurrentFile.FileExists())
@@ -267,12 +267,12 @@ case PROCESS_DEFAULT_SYSTEM_DEFAULT_FILE:
 		CurrentFile.Assign(JsdFile);
 	}
 else { //specify the file ourselves.
-FreedomScientificDirectoryPosition =JsdFile.find("Freedom Scientific");	
+FreedomScientificDirectoryPosition =JsdFile.find(L"Freedom Scientific");	
  TestDir =wxStandardPaths::Get().GetConfigDir().Remove(wxStandardPaths::Get().GetConfigDir().find(L"SurfaceReader"));
-TestDir.append(JsdFile.Right(JsdFile.length()-FreedomScientificDirectoryPosition));
-TestDir.Remove(TestDir.find(wxStringTokenize(JsdFile, L"\\").Last(), FreedomScientificDirectoryPosition));
- TestDir.Append(L"default.jsd");
-OutputDebugString(TestDir.ToStdWstring().c_str());
+TestDir.append(JsdFile.substr(FreedomScientificDirectoryPosition));
+TestDir.erase(TestDir.find(wxStringTokenize(JsdFile, L"\\").Last(), FreedomScientificDirectoryPosition));
+ TestDir.append(L"default.jsd");
+OutputDebugString(TestDir.c_str());
 CurrentFile.Assign(TestDir);
 } //end specifying file.
 if (CurrentFile.FileExists())
@@ -2450,17 +2450,18 @@ else if (line.length() ==0)
 	} //end existence check.		
 return AvailableFunctions;
 }
-void RBSpeech::SetFirstJsdFile(wxString File)
+
+void RBSpeech::SetFirstJsdFile(wstring File)
 {
 	JsdFile =File;
 JsdFileToStartProcessing =PROCESS_NO_FILE;
 wxArrayString JsdFileTokens =wxStringTokenize(JsdFile, L"\\");
-wxString UserName =wxGetUserId();
+wstring UserName =wxGetUserId();
 int test =JsdFileTokens.Index(UserName);
 if (JsdFileTokens.Index(UserName) >0)
 { //user file is the first one.
 //determine whether it is default/application.
-	wxString LastToken =JsdFileTokens.Last();
+wstring LastToken =JsdFileTokens.Last();
 	if (JsdFileTokens.Last().IsSameAs("default.jsd", false))
 		JsdFileToStartProcessing =PROCESS_USER_SYSTEM_DEFAULT_FILE;
 	else
@@ -2468,7 +2469,7 @@ JsdFileToStartProcessing =PROCESS_USER_APP_FILE;
 } //end user file.
 else { //global file.
 	//determine whether it is the default/application.
-	wxString LastToken =JsdFileTokens.Last();
+wstring LastToken =JsdFileTokens.Last();
 	if (JsdFileTokens.Last().IsSameAs("default.jsd", false))
 		JsdFileToStartProcessing =PROCESS_DEFAULT_SYSTEM_DEFAULT_FILE;
 	else
@@ -2477,27 +2478,30 @@ JsdFileToStartProcessing =PROCESS_DEFAULT_APP_FILE;
 return;
 }
 
-wxString RBSpeech::GetFirstJsdFile(void)
+wstring RBSpeech::GetFirstJsdFile(void)
 {
 	return JsdFile;
 }
 void RBSpeech::ClearJsdFile()
 {
-	JsdFile =wxEmptyString;
+	JsdFile.clear();
 JsdFileToStartProcessing =PROCESS_NO_FILE;
 }
-void RBSpeech::SetHscFile(wxString File)
+
+void RBSpeech::SetHscFile(wstring File)
 {
 HscFile =File;
 return;
 }
-wxString RBSpeech::GetHscFile(void)
+
+wstring RBSpeech::GetHscFile(void)
 {
 return HscFile;
 }
+
 void RBSpeech::ClearHscFile()
 {
-HscFile =wxEmptyString;
+	HscFile.clear();
 return;
 }
 

@@ -42,7 +42,6 @@ using namespace boost; //used for assignment and EBNF parsing amongst others.
 #include <wx/filefn.h>
 #include <wx/platinfo.h>
 #include <wx/ffile.h>
-#include <wx/string.h>
 #include <wx/tokenzr.h>
 #include <wx/arrstr.h>
 #include <wx/platform.h>

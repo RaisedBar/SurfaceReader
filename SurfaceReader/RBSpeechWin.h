@@ -182,8 +182,8 @@ Wineyes::_Application *WinEyesApplication; //Window-Eyes 7 and above.
 	///This variable doesn't tell us whether the speech is muted according to the underlying access technology. If this is required this can be added at a later date.
 	/// </remarks>
 	HRESULT FShouldSpeak;
-wxString JsdFile;
-wxString HscFile;
+	std::wstring JsdFile;
+std::wstring HscFile;
 	ProcessJsdFileType JsdFileToStartProcessing;
 	
 	
@@ -349,11 +349,11 @@ HRESULT ListHotSpotsInSet(std::wstring SetName, std::vector<std::wstring>& Spots
 HRESULT ListHotSpotsInCurrentSet(std::vector<std::wstring>& Spots);
 HRESULT GetActiveHotSpotSet(std::wstring& ActiveSet);
 HRESULT ExecuteHotSpot(std::wstring Set, std::wstring SpotName);
-void SetFirstJsdFile(wxString File);
-wxString GetFirstJsdFile(void);
+void SetFirstJsdFile(std::wstring File);
+std::wstring GetFirstJsdFile(void);
 void ClearJsdFile();
-void SetHscFile(wxString File);
-wxString GetHscFile(void);
+void SetHscFile(std::wstring File);
+std::wstring GetHscFile(void);
 void ClearHscFile();
 	
 	/// <summary> Obtain the currently active speech product. </summary>
