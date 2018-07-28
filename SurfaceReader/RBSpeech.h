@@ -39,7 +39,6 @@ using namespace boost; //used for assignment and EBNF parsing amongst others.
 #include <wx/dynlib.h>
 #include <wx/stdpaths.h>
 #include <wx/utils.h> 
-#include <wx/filefn.h>
 #include <wx/platinfo.h>
 #include <wx/ffile.h>
 #include <wx/tokenzr.h>

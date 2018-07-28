@@ -2024,7 +2024,7 @@ HRESULT RBSpeech::IsHotSpotInSet(std::wstring SetName, std::wstring SpotName)
 		wxMBConvStrictUTF8 ConvertString; //used to convert to ansi later on.
 	ExitOnTrue(SetName.empty(), hReturnValue, S_FALSE, "No hot spot set has been provided.");
 	ExitOnTrue(SpotName.empty(), hReturnValue, S_FALSE, "No hot spot name has been provided.");
-	ExitOnFalse(wxFileExists(SetName), hReturnValue, S_FALSE, "The hot spot set does not exist.");
+	ExitOnFalse(exists(SetName), hReturnValue, S_FALSE, "The hot spot set does not exist.");
 		hReturnValue =GetActiveProduct(CurrentProduct, SpecificDolphinProduct);
 	ExitOnFailure(hReturnValue, "No product is active.");
 	switch(CurrentProduct)
@@ -2082,7 +2082,7 @@ LExit:
 	char SetNameStr[MAX_PATH] ="";
 		wxMBConvStrictUTF8 ConvertString; //used to convert to ansi later on.
 	ExitOnTrue(SetName.empty(), hReturnValue, S_FALSE, "No hot spot set has been provided.");
-	ExitOnFalse(wxFileExists(SetName), hReturnValue, S_FALSE, "The hot spot set does not exist.");
+	ExitOnFalse(exists(SetName), hReturnValue, S_FALSE, "The hot spot set does not exist.");
 	hReturnValue =GetActiveProduct(CurrentProduct, SpecificDolphinProduct);
 ExitOnFailure(hReturnValue, "No product is active.");
 	switch(CurrentProduct)
@@ -2175,7 +2175,7 @@ wxVariant FunctionResult;
 IniFile /=L"CurrentJawsEnvironment.ini";
 if (exists(IniFile))
 { //the file exists remove it.
-	ExitOnFalse(wxRemoveFile(IniFile.generic_wstring()), hReturnValue, S_FALSE, "Unable to delete the old file.");
+	ExitOnFalse(remove(IniFile.generic_wstring()), hReturnValue, S_FALSE, "Unable to delete the old file.");
 } //end file removal.
 replace_first(JAWSFunctionCallString, L"%s", AppDataPath().native());
 //now actually call the function.
