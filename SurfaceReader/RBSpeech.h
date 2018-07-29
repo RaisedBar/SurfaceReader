@@ -30,7 +30,6 @@ using namespace std;
 using namespace boost; //used for assignment and EBNF parsing amongst others.
 
 					   //WX includes.
-#include <wx/msw/ole/automtn.h>
 #include <wx/dynlib.h>
 #include <wx/stdpaths.h>
 #include <wx/platinfo.h>

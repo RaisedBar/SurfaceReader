@@ -20,6 +20,9 @@ using namespace std::experimental::filesystem;
 #include <procutil.h>
 #include "WIX Include.h"
 
+//COM includes.
+#include <comutil.h>
+
 HRESULT IsPlatform64Bit()
 {
 	HRESULT hr = S_OK;
@@ -88,102 +91,84 @@ bool RBSpeech::IsJAWSActive()
 
 bool RBSpeech::LoadJAWSApi()
 {
+	HRESULT hr =S_OK;
 //first initialize com for the current thread.
 CoInitializeEx(0, COINIT_APARTMENTTHREADED); 
-//Now obtain an instance of the required co class. Ths instance will only create itself once.
-	if (SUCCEEDED(JawsAPI.GetInstance(wxT("FreedomSci.JawsApi"), wxAutomationInstance_CreateIfNeeded)))
-	{
-		return true;
-	} 
-	else {
-		return false;
-	}
-	}
+//Now obtain an instance of the required co class.
+CComPtr<IDispatch> lpTDispatch;
+CComBSTR bJawsApiClsid = L"FreedomSci.JawsApi";
+lpTDispatch.CoCreateInstance(bJawsApiClsid);
+JawsAPI = lpTDispatch;
+lpTDispatch.Release();
+//LExit:
+return hr;
+}
 
 void RBSpeech::UnloadJAWSApi(void)
 {
-// Dolphin API always loaded, so must unload
+	// Dolphin API always loaded, so must unload
 	this->UnloadDolphinApi();
-
+//Now release the jawsServer pointer.
+	JawsAPI.Release();
 //Now uninitialize com.
-	//release the used IDispatch pointer.
-	//Release the dispatch pointer held in the JawsAPI automation object. Currently this is a hack, there is no method to do this in the automation object, need to file a wx bug.
-	/*
-	IDispatch* ReleaseDisp;
-ReleaseDisp =(IDispatch*)JawsAPI.GetDispatchPtr();
-ReleaseDisp->Release();
 	CoUninitialize();	
-*/
-	// test
-	// JawsAPI.~wxAutomationObject();
 	return;
 }
 	
 HRESULT RBSpeech::JAWSSpeak(wstring strText, BOOL blnSilence)
 {
-	HRESULT hReturnValue =S_OK;
-	wxVariant FunctionResult;
-/*
-std::wstring wstrFunctionCall = L"Say( ";
-wstrFunctionCall.append( wstrDoubleQuotes);
-wstrFunctionCall.append( strText);
-wstrFunctionCall.append( wstrDoubleQuotes);
-wstrFunctionCall.append( L", 1)");
-// wstrFunctionCall.append( L", OT_CONTROL_TYPE)");
-*/
+	HRESULT hr =S_OK;
+	CComVariant vFunctionResult;
 
 	//check to see that the message to be spoken actually contains some text.
-ExitOnTrue(strText.empty(), hReturnValue, __HRESULT_FROM_WIN32(ERROR_BAD_ARGUMENTS), "No text has been specified.");
+ExitOnTrue(strText.empty(), hr, __HRESULT_FROM_WIN32(ERROR_BAD_ARGUMENTS), "No text has been specified.");
 
 LoadJAWSApi();
-	FunctionResult = JawsAPI.CallMethod( L"SayString", strText, blnSilence);	
-	// FunctionResult = JawsAPI.CallMethod( wstrFunctionCall); 
-
-if (!FunctionResult.IsType(wxT("BOOL")))
-			{ //BOOL expected, but not found.
-				// UnloadJAWSApi();
-ExitFunctionWithMessageAndStatusCode(hReturnValue, S_FALSE, "A Boolean was not returned but was expected.");
-			} //end BOOL check.
-						// UnloadJAWSApi();
-ExitOnFalse(FunctionResult.GetBool(), hReturnValue, S_FALSE, "Jaws did not speak the text.");
+hr = JawsAPI.Invoke2(_bstr_t("SayString"), &_variant_t(strText.c_str()), &_variant_t(blnSilence), &vFunctionResult);
+ExitOnFailure(hr, "An error occured whilst speaking a string through JAWS.");
+ExitIfValueNotEqualToSuppliedValue(vFunctionResult.vt, VT_BOOL, hr, S_FALSE, "A boolean variant type was expected whilst speaking through JAWS, but was not returned.");
+ExitOnFalse(vFunctionResult.bVal, hr, S_FALSE, "Jaws did not speak the text.");
 LExit:
-return hReturnValue;
+//Unload JAWS.
+return hr;
 }
 	
 HRESULT RBSpeech::JAWSSilence(void)
 	{
-HRESULT hReturnValue =S_OK;
-	wxVariant FunctionResult;
-	//Call jaws.
-	FunctionResult =JawsAPI.CallMethod(L"StopString");
-						if (!FunctionResult.IsType(wxT("BOOL")))
-			{ //BOOL expected, but not found.
-				ExitFunctionWithMessageAndStatusCode(hReturnValue, S_FALSE, "A BOOLean was not returned but was expected.");
-			} //end BOOL check.
-ExitOnFalse(FunctionResult.GetBool(), hReturnValue, S_FALSE, "Jaws did not stop the speech.");
+	HRESULT hr = S_OK;
+	CComVariant vFunctionResult;
+
+	LoadJAWSApi();
+	hr = JawsAPI.Invoke0(_bstr_t("StopString"), &vFunctionResult);
+	ExitOnFailure(hr, "An error occured whilst silencing speech through JAWS.");
+	ExitIfValueNotEqualToSuppliedValue(vFunctionResult.vt, VT_BOOL, hr, S_FALSE, "A boolean variant type was expected whilst silencing speech through JAWS, but was not returned.");
+	ExitOnFalse(vFunctionResult.bVal, hr, S_FALSE, "Jaws did not silence speech.");
 LExit:
-return hReturnValue;
+	//Unload JAWS.
+	return hr;
 	}
 	
 HRESULT RBSpeech::JAWSBraille(wstring strText)
 { 
-HRESULT hReturnValue =S_OK;
-	wxVariant FunctionResult;
+HRESULT hr =S_OK;
+CComVariant vFunctionResult;
+
+LoadJAWSApi();
+
 	std::wstring FunctionStr =L"BrailleMessage(";
 //Check to see that the message to be spoken actually contains some text.
-ExitOnTrue(strText.empty(), hReturnValue, __HRESULT_FROM_WIN32(ERROR_BAD_ARGUMENTS), "No text has been specified.");
+ExitOnTrue(strText.empty(), hr, __HRESULT_FROM_WIN32(ERROR_BAD_ARGUMENTS), "No text has been specified.");
 //now, append to the FunctionStr.
-	FunctionStr.append(strText);
-	FunctionStr.append(L", 0, 2000)");
-	FunctionResult =JawsAPI.CallMethod(L"RunFunction", 1, FunctionStr);					
-	if (!FunctionResult.IsType(wxT("BOOL")))
-			{ //BOOL expected, but now found.
-				ExitFunctionWithMessageAndStatusCode(hReturnValue, S_FALSE, "A BOOLean was not returned but was expected.");
-			} //end BOOL check.
-ExitOnFalse(FunctionResult.GetBool(), hReturnValue, S_FALSE, "Jaws did not braille the text.");
+	FunctionStr +strText;
+	FunctionStr +L", 0, 2000)";
+	hr = JawsAPI.Invoke1(_bstr_t(L"RunFunction"), &_variant_t(FunctionStr.c_str()), &vFunctionResult);
+	ExitOnFailure(hr, "An error occured whilst brailling text through JAWS.");
+	ExitIfValueNotEqualToSuppliedValue(vFunctionResult.vt, VT_BOOL, hr, S_FALSE, "A boolean variant type was expected whilst brailling text through JAWS, but was not returned.");
+	ExitOnFalse(vFunctionResult.bVal, hr, S_FALSE, "Jaws did not braille the text.");
 LExit:
-return hReturnValue;
-}
+	//Unload JAWS.
+	return hr;
+	}
 	
 HRESULT RBSpeech::GetAvailableJAWSActions(AvailableActionsType& ActionInformation)
 {
@@ -207,7 +192,6 @@ wstring SharedScriptFolder;
 wstring DefaultScriptFile; 
 wstring ApplicationScriptFile; 
 path JSDFile;
-wxVariant FunctionResult;
 			std::wstring JAWSFunctionCallString =L"GetCurrentJAWSEnvironment(\"%s\")"; //used to hold the call to JAWS.
 				path IniFile; //file to store the hsc information.
 			ActiveProduct CurrentProduct;
@@ -359,19 +343,22 @@ return hReturnValue;
 
 HRESULT RBSpeech::ExecuteJAWSAction(std::wstring Action, ScreenReaderActionType Type)
 {
-HRESULT hReturnValue =S_FALSE;
-wxVariant FunctionResult;
-if (Type ==ID_SCRIPT)
-FunctionResult =JawsAPI.CallMethod(L"RunScript", 1, Action);					
-else if (Type ==ID_FUNCTION)
-	FunctionResult =JawsAPI.CallMethod(L"RunFunction", 1, Action);					
-if (!FunctionResult.IsType(wxT("BOOL")))
-			{ //BOOL expected, but now found.
-				ExitFunctionWithMessageAndStatusCode(hReturnValue, S_FALSE, "A BOOLean was not returned but was expected.");
-			} //end BOOL check.
-ExitOnFalse(FunctionResult.GetBool(), hReturnValue, S_FALSE, "Jaws did not braille the text.");
+	HRESULT hr = S_OK;
+	CComVariant vFunctionResult;
+	
+	LoadJAWSApi();
+	
+	if (Type == ID_SCRIPT)
+		hr = JawsAPI.Invoke1(_bstr_t(L"RunScript"), &_variant_t(Action.c_str()), &vFunctionResult);
+	else if (Type == ID_FUNCTION)
+		hr = JawsAPI.Invoke1(_bstr_t(L"RunFunction"), &_variant_t(Action.c_str()), &vFunctionResult);
+	
+	ExitOnFailure(hr, "An error occured whilst running either a script or function through JAWS.");
+	ExitIfValueNotEqualToSuppliedValue(vFunctionResult.vt, VT_BOOL, hr, S_FALSE, "A boolean variant type was expected whilst running a script or function text through JAWS, but was not returned.");
+	ExitOnFalse(vFunctionResult.bVal, hr, S_FALSE, "Jaws did not run therequested script or function.");
 LExit:
-return hReturnValue;
+	//Unload JAWS.
+	return hr;
 }
 
 	bool RBSpeech::GetJAWSPath(path& FileName)
