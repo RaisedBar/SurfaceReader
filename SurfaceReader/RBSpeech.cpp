@@ -3,9 +3,6 @@
 #include "RBSpeech.h"
 
 #ifdef __WINDOWS__ 
-#include <TlHelp32.h>
-// #include <WinBase.h> // on Windows XP, Windows Server 2003, Windows Vista, Windows 7, Windows Server 2008 and Windows Server 2008 R2(include Windows.h); 
-#include <Processthreadsapi.h> // on Windows 8 and Windows Server 2012
 
 //Raised bar includes.
 #include "RBPathFuncs.h"
@@ -16,32 +13,23 @@ using namespace RaisedBar::PathFunctions;
 #include <boost/algorithm/string/replace.hpp>
 using namespace boost::algorithm;
 
-
-//c++ standard includes.
-//c++ standard includes.
+//c++ standard includes and usings.
 using namespace std::experimental::filesystem;
+//WiX includes.
+#include <procutil.h>
+#include "WIX Include.h"
 
-bool FindProcessByName(const wchar_t * wstrProcessName)
+HRESULT FindProcessByName(const __in_z LPCWSTR wzExeName)
 {
-	PROCESSENTRY32 entry;
-	entry.dwSize = sizeof(PROCESSENTRY32);
-		HANDLE snapshot = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, NULL);
-
-	if (Process32First(snapshot, &entry) == TRUE)
-	{
-		while (Process32Next(snapshot, &entry) == TRUE)
-		{
-			if (_tcsicmp(entry.szExeFile, wstrProcessName) == 0)
-			{
-				CloseHandle(snapshot);
-				return true;
-			}
-		}
+	HRESULT hr = S_OK;
+	DWORD* dwProcesses;
+	DWORD cProcessCount = 0;
+	hr = ProcFindAllIdsFromExeName(wzExeName, &dwProcesses, &cProcessCount);
+	ExitOnFailure(hr, "Unable to retrieve the processes.");
+	ExitOnSpecificValue(0, cProcessCount, hr, S_FALSE, "The process requested is not running.");
+LExit:
+	return hr;
 	}
-
-	CloseHandle(snapshot);
-	return false;
-}
 
 RBSpeech::RBSpeech(void)
 {
