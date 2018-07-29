@@ -24,8 +24,6 @@
 
 //boost includes.
 #include <boost/any.hpp>
-#include <boost/property_tree/ptree.hpp>
-#include <boost/property_tree/ini_parser.hpp>
 #include <boost/optional/optional.hpp>
 using boost::any_cast;
 using namespace std;

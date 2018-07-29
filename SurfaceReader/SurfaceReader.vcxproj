@@ -183,7 +183,6 @@
     <ClInclude Include="MIDISurface.h" />
     <ClInclude Include="MIDIWidget.h" />
     <ClInclude Include="NewSurfaceDialog.h" />
-    <ClInclude Include="ParseIniFile.h" />
     <ClInclude Include="ParseJsdFile.h" />
     <ClInclude Include="Protocol.h" />
     <ClInclude Include="ProtocolChooserDialog.h" />

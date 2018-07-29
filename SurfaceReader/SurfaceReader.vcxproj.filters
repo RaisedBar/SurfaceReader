@@ -120,9 +120,6 @@
     <ClInclude Include="NewSurfaceDialog.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ParseIniFile.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="ParseJsdFile.h">
       <Filter>Header Files</Filter>
     </ClInclude>

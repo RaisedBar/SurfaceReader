@@ -15,6 +15,7 @@ using namespace boost::algorithm;
 
 //c++ standard includes and usings.
 using namespace std::experimental::filesystem;
+
 //WiX includes.
 #include <procutil.h>
 #include "WIX Include.h"
@@ -59,7 +60,6 @@ LExit:
 RBSpeech::RBSpeech(void)
 {
 }
-
 
 RBSpeech::~RBSpeech(void)
 {}
@@ -208,7 +208,6 @@ wstring DefaultScriptFile;
 wstring ApplicationScriptFile; 
 path JSDFile;
 wxVariant FunctionResult;
-			boost::property_tree::ptree IniTree; //used to store environment information.
 			std::wstring JAWSFunctionCallString =L"GetCurrentJAWSEnvironment(\"%s\")"; //used to hold the call to JAWS.
 				path IniFile; //file to store the hsc information.
 			ActiveProduct CurrentProduct;
