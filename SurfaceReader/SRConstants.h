@@ -571,7 +571,6 @@ const std::wstring wstrAvailableScreenReaderFunctionsTitle = L"Available Screen 
 // Product names
 			const std::wstring wstrNone = L"None";
 			const std::wstring wstrJaws = L"Jaws";
-			const std::wstring wstrWE = L"Window Eyes";
 			const std::wstring wstrDolphin = L"Dolphin";
 const std::wstring wstrNVDA = L"NVDA";
 const std::wstring wstrSA = L"System Access";

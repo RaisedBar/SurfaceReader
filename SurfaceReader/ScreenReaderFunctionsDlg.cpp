@@ -295,13 +295,6 @@ case ID_SYSTEMACCESS:
 		ListSAActions();
 	}
 	break;
-
-case ID_WindowEyes:
-	{
-		ListWindowEyesActions();
-	}
-	break;
-
 case ID_NVDA:
 	{
 		ListNVDAActions();

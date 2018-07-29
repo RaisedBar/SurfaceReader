@@ -124,8 +124,6 @@ enum ActiveProduct
 		ID_JAWS, 
 	/// <summary>System Access is active.</summary>
 		ID_SYSTEMACCESS, 
-	/// <summary>Window-Eyes is active.</summary>
-		ID_WindowEyes, 
 	/// <summary>Non-Visual Desktop Access is active.</summary>
 		ID_NVDA, 
 	/// <summary>A Dolphin product is active.</summary>
@@ -179,10 +177,7 @@ ID_SUPERNOVA_NOT_RESPONDING =7,
 //Action types enum.
 enum ScreenReaderActionType 
 {
-ID_HOTKEY, //Window-Eyes hotkeys.
-ID_REGISTERED_HOTKEY, //Window-Eyes hotkeys.
-ID_CURSORKEY, //Window-Eyes cursor key.
-ID_ACTION, //DolphinAction.
+ID_ACTION =3, //DolphinAction.
 ID_DOLPHIN_SCRIPT, //Dolphin script.
 ID_SCRIPT, //Jaws scripts.
 ID_FUNCTION //jaws void functions.

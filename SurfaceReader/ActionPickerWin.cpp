@@ -456,13 +456,6 @@ case ID_SYSTEMACCESS:
 		ListSAActions();
 	}
 	break;
-
-case ID_WindowEyes:
-	{
-		ListWindowEyesActions();
-	}
-	break;
-
 case ID_NVDA:
 	{
 		ListNVDAActions();
@@ -548,11 +541,6 @@ return;
 		
 void ActionPicker::ListSAActions()
 {}
-
-	
-void ActionPicker::ListWindowEyesActions()
-{}
-
 
 void ActionPicker::ListNVDAActions()
 {}
