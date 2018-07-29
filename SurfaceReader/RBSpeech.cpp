@@ -19,6 +19,31 @@ using namespace std::experimental::filesystem;
 #include <procutil.h>
 #include "WIX Include.h"
 
+HRESULT IsPlatform64Bit()
+{
+	HRESULT hr = S_OK;
+#if !defined(_WIN64) || !defined(__x86_64__)
+	// Win32
+	// 32-bit programs run on both 32-bit and 64-bit Windows so check.
+	BOOL is64Bit = false;
+	hr = ProcWow64(GetCurrentProcess(), &is64Bit);
+	ExitOnFailure(hr, "Unable to retrieve the process bitness.");
+	ExitOnFalse(is64Bit, hr, S_FALSE, "The process is 32-bit.");
+#endif
+LExit:
+	return hr;
+}
+
+HRESULT  GetWindowsUsername(__out_z LPWSTR* psczUserName)
+{
+	HRESULT hr = S_OK;
+	DWORD dwSize = 1024;
+	bool bResult = GetUserName(psczUserName[0], &dwSize);
+	ExitOnFalse(bResult, hr, S_FALSE, "Unable to retrieve the username.");
+LExit:
+	return hr;
+}
+	
 HRESULT FindProcessByName(const __in_z LPCWSTR wzExeName)
 {
 	HRESULT hr = S_OK;
@@ -853,7 +878,7 @@ bool RBSpeech::LoadNVDAApi()
 	
 	path NVDADllFileName =wxStandardPaths::Get().GetExecutablePath().ToStdWstring(); //assign the executable directory.
 
-	if (wxIsPlatform64Bit())
+	if (IsPlatform64Bit() ==S_OK)
 		{ //We are running on a 64-bit operating system--or at least as a 64-bit process.
 NVDADllFileName /=L"nvdaControllerClient64.dll";
 	}
@@ -1723,7 +1748,7 @@ if (SystemAccessDllApi.IsLoaded())
 path SystemAccessDllFileName=wxStandardPaths::Get().GetExecutablePath().ToStdWstring(); //assign the executable directory.
 SystemAccessDllFileName.remove_filename();
 
-if (wxIsPlatform64Bit())
+if (IsPlatform64Bit() ==S_OK)
 { //We are running on a 64-bit operating system--or at least as a 64-bit process.
 	SystemAccessDllFileName /= L"SAAPI64.dll";
 }
@@ -2429,7 +2454,9 @@ void RBSpeech::SetFirstJsdFile(wstring File)
 	JsdFile =File;
 JsdFileToStartProcessing =PROCESS_NO_FILE;
 wxArrayString JsdFileTokens =wxStringTokenize(JsdFile, L"\\");
-wstring UserName =wxGetUserId().ToStdWstring();
+LPWSTR lpszUserName[1024];
+HRESULT hr = GetWindowsUsername(&lpszUserName[0]);
+wstring UserName = lpszUserName[0];
 int test =JsdFileTokens.Index(UserName);
 if (JsdFileTokens.Index(UserName) >0)
 { //user file is the first one.
