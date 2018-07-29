@@ -152,7 +152,6 @@ void ShowLog(std::experimental::filesystem::path myPath, bool blnIsEncrypted);
 
 	void OnDisplayUpdate(wxCommandEvent& event);
 	void onSpeechUpdate(wxCommandEvent& event);
-void onHotSpotCall(wxCommandEvent& event);
 void onScreenReaderCall(wxCommandEvent& event);
 void onStatusUpdate(wxCommandEvent& event);
     

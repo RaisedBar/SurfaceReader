@@ -191,36 +191,10 @@ wxFileDialog myFileDialog( this, wstrJawsJSDPrompt, wxEmptyString, wxEmptyString
 }
 
 
-std::wstring ScreenReaderFunctionsDlg::GetHSCFileName()
-{
-wxFileDialog myFileDialog( this, wstrHSCPrompt, wxEmptyString, wxEmptyString, HSC_FILE_TEMPLATE, wxFD_OPEN|wxFD_FILE_MUST_EXIST);
-
-			myFileDialog.CentreOnParent();
-			myFileDialog.SetDirectory(ProtocolPath().generic_wstring());
-
-    if (myFileDialog.ShowModal() == wxID_OK)
-    {
-		return myFileDialog.GetPath().ToStdWstring();
-	}
-	else
-	{
-		std::wstring wstrEmpty;
-		wstrEmpty.clear();
-		return wstrEmpty;
-	}
-}
-
-
 void ScreenReaderFunctionsDlg::ListAvailableActions( SurfaceActionType mySAType)
 {
 switch (mySAType)
 {
-case RunHotSpot:
-	{
-		ListHotSpots();
-	}
-	break;
-	
 case 	RunScreenReaderFunction:
 	{
 		ListScreenReaderActions();
@@ -232,38 +206,6 @@ default:
 	}
 break;
 }  // end switch
-}
-
-
-void ScreenReaderFunctionsDlg::ListHotSpots()
-{
-#ifdef __WINDOWS__
-	std::wstring wstrHSCFileName = GetHSCFileName();
-
-	if (wstrHSCFileName.empty())
-{
-wxMessageBox( wstrNoHotSpotBindingError, wstrErrorTitle, wxOK | wxICON_ERROR);
-return;
-}
-
-wstrTargetFileName = wstrHSCFileName;
-std::vector<std::wstring> Hotspots;
-pMySpeech->ClearHscFile();
-pMySpeech->SetHscFile(wstrHSCFileName);
-HRESULT hr =pMySpeech->ListHotSpotsInSet(wstrHSCFileName, Hotspots);
-
-if (hr == S_FALSE)
-{
-	wxMessageBox( wstrHSCParsingError, wstrErrorTitle, wxOK | wxICON_ERROR);
-return;
-}
-
-lbxActionNames->Clear();
-
-// Populate the list here...
-for(std::wstring spot : Hotspots)
-lbxActionNames->Append(spot);
-#endif
 }
 
 

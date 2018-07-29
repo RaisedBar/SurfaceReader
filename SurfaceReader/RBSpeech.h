@@ -26,7 +26,6 @@
 #include <boost/any.hpp>
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/ini_parser.hpp>
-//#include <boost/algorithm/string.hpp>
 #include <boost/optional/optional.hpp>
 using boost::any_cast;
 using namespace std;
@@ -181,14 +180,6 @@ ID_ACTION =3, //DolphinAction.
 ID_DOLPHIN_SCRIPT, //Dolphin script.
 ID_SCRIPT, //Jaws scripts.
 ID_FUNCTION //jaws void functions.
-};
-
-//Hot spot clicker install state enum.
-enum HSCInstallState 
-{
-	STATE_NOT_INSTALLED,
-	STATE_OLDER_VERSION_INSTALLED,
-	STATE_INSTALLED
 };
 
 // Variant-handling

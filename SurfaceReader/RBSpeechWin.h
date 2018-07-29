@@ -137,7 +137,6 @@ const std::wstring wstrLineViewWholeWindows = L"Line View Whole Windows";
 /* Speech utilities class allowing other applications to output speech to any supported access technology. 
 The following access technologies arre supported:
 JAWS For Windows (version 8 or later).
-Window-Eyes.
 Any product from Dolphin Computer Access.
 System Access.
 Non-Visual Desktop Access.
@@ -176,7 +175,6 @@ SAStopAudioFunc SAStopAudio;
 	/// </remarks>
 	HRESULT FShouldSpeak;
 	std::wstring JsdFile;
-std::wstring HscFile;
 	ProcessJsdFileType JsdFileToStartProcessing;
 	
 	
@@ -234,10 +232,6 @@ NewAction.insert(std::make_pair(5, Element.Parameters));
 	/// <summary> IsJAWSRoaming
 	/// <remarks> Check to see whether jaws is roaming. To do this we check to see whether a settings folder exists in the folder from which jaws is running. </remarks>
 	bool IsJAWSRoaming();
-	/// <summary> Determine whether Hot Spot Clicker is installed.
-	HSCInstallState IsHSCInstalled();
-	/// <summary> Installs hotspot clicker 212.
-	BOOL InstallHSC();
 	/// <summary> Determine whether Non-Visual Desktop Access is currently active in memory. </summary>
 	/// <returns> returns S_OK if Non-Visual Desktop Access is active, S_FALSE otherwise. </returns>
 bool IsNVDAActive();
@@ -306,19 +300,9 @@ public:
 	/// <returns> S_OK if the API has loaded successfully and an error code otherwise.</returns>
 	bool LoadAPI();
 void UnloadAPI();
-	/// <summary> 
-	HRESULT IsHotSpotInSet(std::wstring SetName, std::wstring SpotName);
-	HRESULT IsHotSpotInCurrentSet(std::wstring SpotName);
-HRESULT ListHotSpotsInSet(std::wstring SetName, std::vector<std::wstring>& Spots);
-HRESULT ListHotSpotsInCurrentSet(std::vector<std::wstring>& Spots);
-HRESULT GetActiveHotSpotSet(std::wstring& ActiveSet);
-HRESULT ExecuteHotSpot(std::wstring Set, std::wstring SpotName);
 void SetFirstJsdFile(std::wstring File);
 std::wstring GetFirstJsdFile(void);
 void ClearJsdFile();
-void SetHscFile(std::wstring File);
-std::wstring GetHscFile(void);
-void ClearHscFile();
 	
 	/// <summary> Obtain the currently active speech product. </summary>
 	/// <returns> return S_OK if a product was active S_FALSE otherwise. </returns>

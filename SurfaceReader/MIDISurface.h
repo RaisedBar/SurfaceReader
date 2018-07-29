@@ -209,43 +209,6 @@ bool blnIsLEDLamp;
 int nLineCount;
 };
 
-
-class HotSpotObject: public wxObject
-{
-public:
-HotSpotObject():
-	  m_SpotName( wstrEmpty),
-	  m_HSCFileName( wstrEmpty)
-	  	  {};
-
-~HotSpotObject()
-{};
-
-void SetSpotName( std::wstring wstrSpotName)
-{
-	m_SpotName = wstrSpotName;
-}
-
-std::wstring GetSpotName()
-{
-return m_SpotName;
-}
-
-void SetHSCFileName( std::wstring wstrNewFileName)
-{
-	m_HSCFileName = wstrNewFileName;
-}
-
-std::wstring GetHSCFileName()
-{
-return m_HSCFileName;
-}
-
-private:
-	std::wstring m_SpotName, m_HSCFileName;
-	};
-
-
 class SRFunctionObject: public wxObject
 {
 public:
@@ -367,7 +330,6 @@ std::wstring GetDisplaySubstring( SurfaceAction myAction, AppConfig * pAppConfig
 std::wstring GetLEDString( SurfaceAction myAction, AppConfig * pAppConfig, int nDataValue);
 	std::wstring GetSpeakString( SurfaceAction myAction, AppConfig * pAppConfig);
 void ProcessChangeSurfaceMode( SurfaceAction myAction);
-void ProcessRunHotSpot( SurfaceAction myAction, AppConfig * pAppConfig);
 void ProcessRunScreenReaderFunction( SurfaceAction myAction, AppConfig * pAppConfig);
 std::wstring GetMIDIInfoString( bool blnIsEncrypted, SurfaceAction myAction, AppConfig * pAppConfig, std::vector <unsigned char> vBuffer);
 std::wstring DecodeText( std::vector <unsigned char> vBytes, SurfaceProtocol * pProtocol, DisplayDefinition * myDisplay);

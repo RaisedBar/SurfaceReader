@@ -59,15 +59,12 @@ private:
 void ToggleButtons();
 ActionCollectionType GetCachedJawsActionsListItem( std::wstring wstrAppName, std::wstring strProtocolID);
 std::wstring GetJawsJSDFileName();
-std::wstring GetHSCFileName();
-
 #ifdef __WINDOWS__
 // std::vector<JAWSParameter> GetJawsParameters(std::wstring wstrAction);
 boost::shared_ptr <JawsParametersType> GetJawsParameters(std::wstring wstrAction);
 #endif
 
 	void ListAvailableActions( SurfaceActionType mySAType);
-void ListHotSpots();
 void ListScreenReaderActions();
 #ifdef __WINDOWS__
 void ListJawsActions();
@@ -113,7 +110,6 @@ boost::shared_ptr<JawsCacheType> pMyJawsCache;
 #endif
 
 std::wstring wstrJSDFileName;
-std::wstring wstrHSCFileName();
 std::wstring wstrTargetFileName;
 std::wstring wstrArguments;
 

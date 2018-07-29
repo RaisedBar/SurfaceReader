@@ -620,7 +620,6 @@ const wchar_t wxucFullStop = 46;
 // Event ID values
 const int SPEECH_UPDATE_ID = 100000;
 const int SURFACE_UPDATE_ID = 100001;
-const int HOT_SPOT_CALL_ID = 100002;
 const int SCREEN_READER_FUNCTION_CALL_ID = 100003;
 const int STATUS_UPDATE_ID = 100004;
 #endif // SR_CONSTANTS_H

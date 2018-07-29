@@ -1259,7 +1259,6 @@ return wstrEmpty;
 }
 else  // note on
 {
-ProcessRunHotSpot( myAction, pAppConfig);
 return wstrEmpty;
 }
 }
@@ -1267,7 +1266,6 @@ else  // other than note on/off
 {
 	if (nControlState > MIDI_NOTE_OFF_VELOCITY)   // 0 usually used to indicate "off"
 		{
-ProcessRunHotSpot( myAction, pAppConfig);
 return wstrEmpty;
 }
 	else  // "on"
@@ -1880,34 +1878,6 @@ myCurrentMode = static_cast <Mode> (nMode);
 Speak( wstrMode, false);
 	this->UpdateStatusBar( wstrMode);
 }
-
-
-void MIDISurface::ProcessRunHotSpot( SurfaceAction myAction, AppConfig * pAppConfig)
-{
-	if (myAction.GetParameterCount() != 2)
-	{
-		return;
-	}
-
-	std::wstring wstrHSCFileName = myAction.GetParameter( 0).second;
-	std::wstring wstrSpotName = myAction.GetParameter( 1).second;
-
-	if ((wstrHSCFileName.empty())
-		|| (wstrSpotName.empty()))
-	{
-		return;
-	}
-
-HotSpotObject * pHSCObj = new HotSpotObject();
-pHSCObj->SetHSCFileName( wstrHSCFileName);
-pHSCObj->SetSpotName( wstrSpotName);
-
-wxCommandEvent event( wxEVT_COMMAND_TEXT_UPDATED, HOT_SPOT_CALL_ID);
-event.SetEventObject( pHSCObj);
-pMyParent->GetEventHandler()->AddPendingEvent( event );
-// delete pHSCObj;
-}
-
 
 void MIDISurface::ProcessRunScreenReaderFunction( SurfaceAction myAction, AppConfig * pAppConfig)
 {

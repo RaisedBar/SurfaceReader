@@ -2725,16 +2725,6 @@ pSRFunctionObj = 		dynamic_cast <SRFunctionObject*> (event.GetEventObject());
 HRESULT hr = Speech->ExecuteAction( pSRFunctionObj->GetFunctionName(), pSRFunctionObj->GetActionType());
 }
 
-
-void SurfaceFrame::onHotSpotCall(wxCommandEvent& event)
-    {
-HotSpotObject * pHSC = new HotSpotObject();
-pHSC = 		dynamic_cast <HotSpotObject*> (event.GetEventObject());
-
-HRESULT hr = Speech->ExecuteHotSpot( pHSC->GetHSCFileName(), pHSC->GetSpotName());
-} 
-
-
 void SurfaceFrame::OnDisplayUpdate(wxCommandEvent& event)
 {
 DisplayObject * pDisplay = dynamic_cast <DisplayObject*> (event.GetEventObject());
@@ -2862,8 +2852,6 @@ void SurfaceFrame::OnToggleDisplays( wxCommandEvent& event)
 EVT_COMMAND(SURFACE_UPDATE_ID, wxEVT_COMMAND_TEXT_UPDATED, SurfaceFrame::OnDisplayUpdate)
 	// Speech update from a surface
 EVT_COMMAND  (SPEECH_UPDATE_ID, wxEVT_COMMAND_TEXT_UPDATED, SurfaceFrame::onSpeechUpdate)
-// Call a hot spot
-	EVT_COMMAND(HOT_SPOT_CALL_ID, wxEVT_COMMAND_TEXT_UPDATED, SurfaceFrame::onHotSpotCall)
 // Call a screen-reader function
 	EVT_COMMAND(SCREEN_READER_FUNCTION_CALL_ID, wxEVT_COMMAND_TEXT_UPDATED, SurfaceFrame::onScreenReaderCall)
 // Update the status bar
