@@ -58,7 +58,6 @@ LExit:
 
 RBSpeech::RBSpeech(void)
 {
-WinEyesApplication =NULL;
 }
 
 
@@ -474,381 +473,6 @@ if (MsiQueryProductStateW(L"c1093f38-9866-431e-a942-f786a1b8e8c0") ==INSTALLSTAT
 			return blnReturnValue;
 		}
 
-	//Window-Eyes specific private functions.
-bool RBSpeech::IsWindowEyesActive()
-{
-if ((FindWindow(L"GWMExternalControl", L"External Control")) && (LoadWindowEyesApi())) 
-{
-	return true;
-} else {
-	return false;
-}
-}
-
-bool RBSpeech::LoadWindowEyesApi()
-{
-bool bReturnValue =false;
-if (WinEyesApplication !=NULL)
-{ 
-bReturnValue =true;
-}
-if (WinEyesApplication ==NULL)
-{ //load window-eyes com object.
-		CoInitializeEx(0, COINIT_APARTMENTTHREADED); 
-		if (SUCCEEDED(CoCreateInstance( Wineyes::CLSID_Application, NULL, CLSCTX_LOCAL_SERVER | CLSCTX_INPROC_SERVER, Wineyes::IID__Application, (void **)&WinEyesApplication)))
-bReturnValue =true;
-}
-return bReturnValue;
-}
-
-void RBSpeech::UnloadWindowEyesApi(void)
-{
-	if (WinEyesApplication !=NULL)
-	{ //unload v7.
-		ReleaseObject(WinEyesApplication);
-		WinEyesApplication =NULL;
-	} //end unloading v7.
-	CoUninitialize();	
-	return;
-}
-	
-HRESULT RBSpeech::WindowEyesSpeak( wstring strText, BOOL blnSilence)
-	{
-HRESULT hReturnValue =S_OK;
-BSTR bs =NULL; //string used later for speaking.	
-Wineyes::_Speech* speech =NULL;
-VARIANT vMissing; 
-//check to see that the message to be spoken actually contains some text.
-// ExitOnTrue( strText.empty(), hReturnValue, __HRESULT_FROM_WIN32(ERROR_BAD_ARGUMENTS), "No text has been specified.");
-if (strText.empty())
-	{
-return S_FALSE;
-}
-
-if (blnSilence)
-{ //Silence speech before attempting to speak.
- ExitOnFailure(WindowEyesSilence(), "Window-Eyes Silence Failed.");
-} //end silence block.
-
-//Convert the string to a BSTR.
-bs = SysAllocStringLen( strText.data(), strText.size()); 
-ExitOnNull(bs, hReturnValue, S_FALSE, "The string was unable to be converted, not enough memory exists.");
-		 
-if (WinEyesApplication !=NULL)
-	{ //Use v7.
-					hReturnValue =WinEyesApplication->get_Speech(&speech);
-					ExitOnFailure(hReturnValue, "Unable to obtain the Window-Eyes speech object.");
-					//We have obtained the speech object.
-						// a VARIANT with a type of VT_ERROR and an error code of DISP_E_PARAMNOTFOUND is used to 
-// indicate a missing optional parameter.
-VariantInit( &vMissing );
-vMissing.vt = VT_ERROR;
-vMissing.scode = DISP_E_PARAMNOTFOUND;
-//now speak.
-hReturnValue =speech->Speak(bs, vMissing);
-ExitOnFailure(hReturnValue, "Unable to perform the actual speech through Window-Eyes.");
-	ReleaseObject(speech);
-		} //end using v7.
-LExit:
-		//Clean up regardless of outcome.
-		SysFreeString(bs); //free the BSTR.                    
-VariantClear( &vMissing ); // not strictly necessary for this variant type, but a good habit to get into.		
-		return hReturnValue;
-}
-		
-	HRESULT RBSpeech::WindowEyesSilence(void)
-		{
-			HRESULT hReturnValue =S_OK;
-			Wineyes::_Speech* speech =NULL;
- if (WinEyesApplication !=NULL)
-	{ //Use v7.
-					hReturnValue =WinEyesApplication->get_Speech(&speech);
-					ExitOnFailure(hReturnValue, "Unable to access speech object of v7."); 
-hReturnValue =speech->Silence();
-ExitOnFailure(hReturnValue, "Failed to Silence using v7.");
-	} //end using v7.
-LExit:
-ReleaseObject(speech);
-return hReturnValue;
-		}
-		
-	HRESULT RBSpeech::WindowEyesBraille(wstring strText)
-		{
-			HRESULT hReturnValue =S_OK;
-			BSTR bs =NULL;
-			VARIANT vMissing; //Again use a variant to deal with missing parameters. See the WindowEyesSpeak method for more details.
-			Wineyes::_Braille* braille = NULL;//Check to see that the message to be brailled actually contains some text.
-	ExitOnTrue(strText.empty(), hReturnValue, __HRESULT_FROM_WIN32(ERROR_BAD_ARGUMENTS), "No text has been specified.");
-		//check to see if v6 is being used, braille is not available with this version.
-	ExitOnNull(WinEyesApplication, hReturnValue, S_FALSE, "A fatal error has occured.");		
-// Tim test
-	// Wineyes::_Braille* braille =NULL;
-hReturnValue =WinEyesApplication->get_Braille((Wineyes::Braille**)&braille);
-ExitOnFailure(hReturnValue, "Unable to obtain the braille interface.");
-	//Convert the string to a BSTR.
-	bs = SysAllocStringLen(strText.data(), strText.size()); 
-VariantInit( &vMissing );                    
-                    vMissing.vt = VT_ERROR;
-                    vMissing.scode = DISP_E_PARAMNOTFOUND;
-	hReturnValue =braille->Display(bs, vMissing, vMissing);
-		ExitOnFailure(hReturnValue, "Braille from Window-Eyes failed.");
-	LExit:	
-	SysFreeString(bs); //Free the BSTR.
-	VariantClear( &vMissing ); // not strictly necessary for this variant type, but a good habit to get into.
-	ReleaseObject(braille);
-	return hReturnValue;
-	}
-
-HRESULT RBSpeech::GetAvailableWindowEyesActions(AvailableActionsType& ActionInformation)
-{
-	HRESULT hReturnValue;
-		Wineyes::SetFile* ActiveSetFile = NULL;
-	Wineyes::Hotkeys *WinEyesHotkeys = NULL; //Hotkeys object.
-	Wineyes::Hotkey* Hotkey = NULL; //Hotkey object.
-	Wineyes::CursorKeys* CursorKeys = NULL; //Cursorkeys object.HRESULT hReturnValue = S_FALSE;
-	Wineyes::CursorKey* CursorKey = NULL; //Cursorkey object.
-	Wineyes::CursorKeyAction* CursorKeyAction = NULL; //CursorkeyAction object.
-	Wineyes::RegisteredHotkeys *RegisteredHotkeys = NULL;
-	Wineyes::RegisteredHotkey *RegisteredHotkey = NULL;
-	Wineyes::LoadedScript* HotkeyScript = NULL;
-	long Index = 0; //store the Hotkey, CursorKey or RegisteredHotkey we are currently accessing.
-	long Count =0; //store the count of the Hotkeys, CursorKeys or RegisteredHotkeys collection we are iterating.
-	// Tim test
-	// Wineyes::SetFile* ActiveSetFile;				
-	// Wineyes::Hotkeys *WinEyesHotkeys; //Hotkeys object.
-	//Wineyes::Hotkey* Hotkey; //Hotkey object.
-AvailableActionFieldsType AvailableWindowEyesActionFields;
-ActionCollectionType WindowEyesActionCollection; //store all action information for window-eyes.
-	ActionInfoType CurrentAction; //Store an individual action.
-	std::vector<std::wstring> CursorKeyActionDescriptions; //store cursor key action descriptions.	
-	BSTR HotkeyDescription =NULL; //Hotkey description.
-		Wineyes::HotkeyID HotkeyID;
-			VARIANT vTemp;
-			Wineyes::_Key* Key=NULL;
-			BSTR KeyName =NULL;
-			Wineyes::_Keyboard* Keyboard =NULL;
-			// Tim test
-//			Wineyes::RegisteredHotkeys *RegisteredHotkeys;
-// 			Wineyes::RegisteredHotkey *RegisteredHotkey;
-//			Wineyes::LoadedScript* HotkeyScript;
-			BSTR ScriptName = NULL;
-			// Tim test
-			//Wineyes::CursorKeys* CursorKeys; //Cursorkeys object.
-//	Wineyes::CursorKey* CursorKey; //Cursorkey object.
-	//Wineyes::CursorKeyAction* CursorKeyAction; //CursorkeyAction object.
-	ExitOnNull(WinEyesApplication, hReturnValue, S_FALSE, "Fatal Error.");	
-		//add the description, Name and type int/strings.
-AvailableWindowEyesActionFields.clear();
-// AvailableWindowEyesActionFields =boost::assign::map_list_of(L"Name", 0)(L"Description", 1)(L"Action Type", 2)(L"Key Name", 3)(L"Script name", 4)(L"Cursor key actions", 5);
-AvailableWindowEyesActionFields.insert( std::make_pair( L"Name", 0));
-AvailableWindowEyesActionFields.insert(std::make_pair(L"Description", 1));
-AvailableWindowEyesActionFields.insert(std::make_pair(L"Action Type", 2));
-AvailableWindowEyesActionFields.insert(std::make_pair(L"Key Name", 3));
-AvailableWindowEyesActionFields.insert(std::make_pair(L"Script name", 4));
-AvailableWindowEyesActionFields.insert(std::make_pair(L"Cursor key actions", 5));
-
-//first, obtain a SetFile object.
-hReturnValue =WinEyesApplication->get_ActiveSettings(&ActiveSetFile);
-ExitOnFailure(hReturnValue, "Accessing a set file object failed.");
-	//Now, obtain a Hotkeys object from the ActiveSetFile object.
-hReturnValue =ActiveSetFile->get_Hotkeys(&WinEyesHotkeys);
-ExitOnFailure(hReturnValue, "Accessing a hotkeys object failed.");
-Index =0;
-Count =0;
-hReturnValue =WinEyesHotkeys->get_Count(&Count); //Obtain the count of hotkeys.
-ExitOnFailure(hReturnValue, "Accessing the count of hotkeys failed.");
-		//Now, iterate through the hotkeys.
-for(Index =0; Index <=Count; Index++)
-{ //start iteration.
-//Obtain a hotkey object.
-	hReturnValue =WinEyesHotkeys->Item(Index, &Hotkey);
-//use the SUCCEEDED macro, don't exit.
-	if (SUCCEEDED(hReturnValue))
-	{ //start hotkey processing.
-			CurrentAction.clear();
-			CurrentAction.insert(std::make_pair(2, boost::any(ID_HOTKEY)));
-			hReturnValue =Hotkey->get_Description(&HotkeyDescription);
-			if (SUCCEEDED(hReturnValue))
-			{ //add the hotkey description to the map.
-									CurrentAction.insert(std::make_pair(1, boost::any((LPCWSTR)HotkeyDescription)));
-					SysFreeString(HotkeyDescription);
-			} //add hotkey description to the map.
-					hReturnValue =Hotkey->get_ID(&HotkeyID);
-			if (SUCCEEDED(hReturnValue))
-			{ //add the hotkey id to the map--this is refered to as name, as this is what should be used to execute the key.
-							CurrentAction.insert(std::make_pair(0, boost::any((int)HotkeyID)));
-			} //add the hotkey id to the map.
-							//now obtain a key to determine the key stroke.
-				VariantInit(&vTemp);
-				hReturnValue =Hotkey->get_Key(&vTemp);
-				if (SUCCEEDED(hReturnValue))
-	{ //we have a key object in a variant, now convert to akey.
-	    if (vTemp.vt == VT_DISPATCH && vTemp.pdispVal)
-		{ //the variant is valid, now convert, using queryinterface.
-					hReturnValue =vTemp.pdispVal->QueryInterface( __uuidof(*Key), (void **)&Key);   
-			if (SUCCEEDED(hReturnValue))
-			   { //access the key name.
-							   hReturnValue =Key->get_Name(&KeyName);
-				   if (SUCCEEDED(hReturnValue))
-				   { //add to our data structure.
-				   					   CurrentAction.insert(std::make_pair(3, boost::any((LPWSTR)KeyName)));
-				   SysFreeString(KeyName);
-				   } //end key name adition.
-			ReleaseObject(Key);			} //end keyname access.
-		} //end valid variant conversion.				
-				} //end variant to key conversion.
-							VariantClear(&vTemp);
-				ReleaseObject(Hotkey);
-	} //end hotkey processing.
-	WindowEyesActionCollection.push_back(CurrentAction);
-} //end iteration.
-ReleaseObject(WinEyesHotkeys);
-//now move to the Cursorkeys.
-//Obtain a CursorKeys object for the active set file.
-hReturnValue =ActiveSetFile->get_CursorKeys(&CursorKeys);
-if (SUCCEEDED(hReturnValue))
-{ //We successfully obtained a CursorKeys object.
-	CurrentAction.clear();
-	Count =0;
-	hReturnValue =CursorKeys->get_Count(&Count);
-	if (SUCCEEDED(hReturnValue))
-	{ //we have the count of CursorKeys.
-		Index =0;
-		for (Index =0; Index <=Count; Index++)
-		{ //iterate through the Cursor keys.
-			//Obtain a CursorKey.
-			hReturnValue =CursorKeys->Item(Index, &CursorKey);
-			if (SUCCEEDED(hReturnValue))
-			{ //we've now obtained a CursorKey.
-				CurrentAction.insert(std::make_pair(2, boost::any(ID_CURSORKEY)));
-				//now obtain a key to determine the key stroke.
-				VariantInit(&vTemp);
-				hReturnValue =CursorKey->get_Key(&vTemp);
-				if (SUCCEEDED(hReturnValue))
-	{ //we have a key object in a variant, now convert to akey.
-	    if (vTemp.vt == VT_DISPATCH && vTemp.pdispVal)
-		{ //the variant is valid, now convert, using queryinterface.
-					hReturnValue =vTemp.pdispVal->QueryInterface( __uuidof(*Key), (void **)&Key);   
-			if (SUCCEEDED(hReturnValue))
-			   { //access the key name.
-							   hReturnValue =Key->get_Name(&KeyName);
-				   if (SUCCEEDED(hReturnValue))
-				   { //add to our data structure.
-				   					   CurrentAction.insert(std::make_pair(3, boost::any((LPWSTR)KeyName)));
-				   SysFreeString(KeyName);
-				   } //end key name adition.
-			ReleaseObject(Key);			} //end keyname access.
-		} //end valid variant conversion.				
-				} //end variant to key conversion.
-							VariantClear(&vTemp);
-				CursorKeyActionDescriptions.clear();
-				hReturnValue =CursorKey->get_FirstAction(&CursorKeyAction);
-				if (SUCCEEDED(hReturnValue))
-				{ //we now have a first cursor key action.
-					hReturnValue =CursorKeyAction->get_Description(&KeyName);
-					if (SUCCEEDED(hReturnValue))
-					{ //add to the vector.
-						CursorKeyActionDescriptions.push_back((LPWSTR)KeyName);
-					SysFreeString(KeyName);
-					} //end vector adition.
-					ReleaseObject(CursorKeyAction);
-				} //end use of cursor key action for the first action.
-				hReturnValue =CursorKey->get_SecondAction(&CursorKeyAction);
-				if (SUCCEEDED(hReturnValue))
-				{ //we now have a second cursor key action.
-					hReturnValue =CursorKeyAction->get_Description(&KeyName);
-					if (SUCCEEDED(hReturnValue))
-					{ //add to the vector.
-						CursorKeyActionDescriptions.push_back((LPWSTR)KeyName);
-					SysFreeString(KeyName);
-					} //end vector adition.
-					ReleaseObject(CursorKeyAction);
-				} //end use of cursor key action for the second action.
-				CurrentAction.insert(std::make_pair(6, boost::any(CursorKeyActionDescriptions)));
-				WindowEyesActionCollection.push_back(CurrentAction);
-				ReleaseObject(CursorKey);
-			} //end We obtained a cursor key.
-		} //End cursor key iteration.
-	} //end obtaining the count.
-	ReleaseObject(CursorKeys);
-} //end we successfully a CursorKeys object.
-ReleaseObject(ActiveSetFile); //release the active set file.
-//now we move to the registered hotkeys.
-//these are hotkeys registered by a script.
-hReturnValue =WinEyesApplication->get_Keyboard((Wineyes::_Keyboard**)&Keyboard);
-if (SUCCEEDED(hReturnValue))
-{ //We now have a keyboard object.
-	//obtain a RegisteredHotkeys object.
-	hReturnValue =Keyboard->RegisteredHotkeys(&RegisteredHotkeys);
-	if (SUCCEEDED(hReturnValue))
-	{ //We now have a RegisteredHotkeys collection.
-		//obtain count.
-		hReturnValue =RegisteredHotkeys->get_Count(&Count);
-		if (SUCCEEDED(hReturnValue))
-		{ //we now have the count.
-			//now iterate.
-			for (Index =0; Index <=Count; Index++)
-			{ //for loop for registered hotkeys.
-				CurrentAction.clear();
-				//obtain a registered hotkey.
-				hReturnValue =RegisteredHotkeys->Item(Index, &RegisteredHotkey);
-				if (SUCCEEDED(hReturnValue))
-				{ //We now have a registered hotkey.
-					CurrentAction.insert(std::make_pair(2, boost::any(ID_REGISTERED_HOTKEY)));
-					hReturnValue =RegisteredHotkey->get_Key(&Key); //obtain a key.
-					if (SUCCEEDED(hReturnValue))
-					{ //use the key to obtain the key stroke.
-													   hReturnValue =Key->get_Name(&KeyName);
-				   if (SUCCEEDED(hReturnValue))
-				   { //add to our data structure.
-				   					   CurrentAction.insert(std::make_pair(3, boost::any((LPWSTR)KeyName)));
-				   SysFreeString(KeyName);
-				   } //end key name adition.
-						ReleaseObject(Key);
-					} //end obtain the keystroke.
-					//now obtain a script object.
-					hReturnValue =RegisteredHotkey->get_Script(&HotkeyScript);
-					if (SUCCEEDED(hReturnValue))
-					{ //obtain the name.
-						HotkeyScript->get_Name(&ScriptName);
-						CurrentAction.insert(std::make_pair(3, boost::any((LPWSTR)ScriptName)));
-						SysFreeString(ScriptName);
-						ReleaseObject(HotkeyScript);
-					} //end name obtension.
-					WindowEyesActionCollection.push_back(CurrentAction);
-					ReleaseObject(RegisteredHotkey);
-				} //We now have a registered hotkey.
-			} //end for loop.
-			} //we now have the count.
-		ReleaseObject(RegisteredHotkeys);
-	} //we now have a RegisteredHotkeys collection.
-	ReleaseObject(Keyboard);
-} ////we now have a keyboard object.
-ActionInformation =std::make_pair(AvailableWindowEyesActionFields, WindowEyesActionCollection);
-LExit:
-ReleaseObject(ActiveSetFile);				
-ReleaseObject(WinEyesHotkeys);
-ReleaseObject(Hotkey);
-SysFreeString(HotkeyDescription);
-VariantClear(&vTemp);
-ReleaseObject(Key);
-SysFreeString(KeyName);
-ReleaseObject(Keyboard);
-ReleaseObject(RegisteredHotkeys);
-ReleaseObject(RegisteredHotkey);
-ReleaseObject(HotkeyScript);
-SysFreeString(ScriptName);
-ReleaseObject(CursorKeys);
-ReleaseObject(CursorKey);
-//ReleaseObject(CursorKeyActions);
-ReleaseObject(CursorKeyAction);
-return hReturnValue;
-}
-
-	HRESULT RBSpeech::ExecuteWindowEyesAction(std::wstring& Action, ScreenReaderActionType& type)
-{
-return S_FALSE;
-}
 	//NVDA specific functions.
 bool RBSpeech::IsNVDAActive()
 {
@@ -1834,13 +1458,6 @@ if (IsJAWSActive())
 { //JAWS IS ACTIVE.
 	Product = ID_JAWS;
 } //End JAWS active block.
-
-	else if (IsWindowEyesActive())
-	{ //Window-Eyes is active.
-		OutputDebugString(L"Window-Eyes Active");
-		Product =ID_WindowEyes;
-	} //end Window-Eyes active block.
-	
 else if (IsDolphinActive(ExactDolphinProduct))
 	{ //Dolphin is active.
 		Product =ID_DOLPHIN;
@@ -1886,13 +1503,6 @@ bool RBSpeech::LoadAPI()
 			return LoadJAWSApi();
 		}
 		break;
-	
-	case ID_WindowEyes:
-				{
-					return LoadWindowEyesApi();
-				}
-				break;
-	
 	case ID_NVDA:
 				{
 					return LoadNVDAApi();
@@ -1933,9 +1543,6 @@ void RBSpeech::UnloadAPI()
 	{
 	case ID_JAWS:
 		UnloadJAWSApi();
-		break;
-	case ID_WindowEyes:
-						UnloadWindowEyesApi();
 		break;
 	case ID_NVDA:
 		UnloadNVDAApi();
@@ -1986,9 +1593,6 @@ HRESULT RBSpeech::Speak(wstring strText, BOOL blnSilence, DolphinReturnCode& Ret
 	case ID_JAWS:
 		hReturnValue =JAWSSpeak(strText, blnSilence);
 		break;
-	case ID_WindowEyes:
-						hReturnValue =WindowEyesSpeak(strText, blnSilence);
-		break;
 	case ID_NVDA:
 				hReturnValue =NVDASpeak(strText, blnSilence);
 		break;
@@ -2017,9 +1621,6 @@ HRESULT RBSpeech::Silence(DolphinReturnCode& ReturnCode)
 	{
 	case ID_JAWS:
 		hReturnValue =JAWSSilence();
-		break;
-	case ID_WindowEyes:
-						hReturnValue =WindowEyesSilence();
 		break;
 	case ID_NVDA:
 				hReturnValue =NVDASilence();
@@ -2289,9 +1890,6 @@ DWORD ReturnCode =-1;
 			case ID_JAWS:
 hReturnValue =ExecuteJAWSAction(Action, Type);
 				break;
-			case ID_WindowEyes:
-hReturnValue =ExecuteWindowEyesAction(Action, Type);
-break;
 case ID_DOLPHIN:
 hReturnValue =ExecuteDolphinAction(boost::any(Action), Type, ReturnCode);
 break;
@@ -2316,9 +1914,6 @@ AvailableActionsType AvailableActions;
 			case ID_JAWS:
 hReturnValue =GetAvailableJAWSActions(AvailableActions);
 				break;
-			case ID_WindowEyes:
-hReturnValue =GetAvailableWindowEyesActions(AvailableActions);
-break;
 case ID_DOLPHIN:
 hReturnValue =GetAvailableDolphinActions(AvailableActions);
 break;

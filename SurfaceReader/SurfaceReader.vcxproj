@@ -222,7 +222,6 @@
     <ClInclude Include="TextDisplaysPage.h" />
     <ClInclude Include="TranslationTablesDialog.h" />
     <ClInclude Include="UpdateChecker.h" />
-    <ClInclude Include="wineyes.h" />
     <ClInclude Include="WIX Include.h" />
   </ItemGroup>
   <ItemGroup>
@@ -280,7 +279,6 @@
     <ClCompile Include="TextDisplaysPage.cpp" />
     <ClCompile Include="TranslationTablesDialog.cpp" />
     <ClCompile Include="UpdateChecker.cpp" />
-    <ClCompile Include="wineyes_i.c" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="SurfaceReader.rc" />

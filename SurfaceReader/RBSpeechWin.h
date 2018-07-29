@@ -21,11 +21,6 @@
 #include "apiproto.h"
 #endif
 
-//Window-Eyes includes.
-namespace Wineyes
-{
-#include "WinEyes.h"
-}
 #include <wx/msw/winundef.h> 
 
 //typedefs.
@@ -173,8 +168,6 @@ SABrailleFunc SABraille;
 SASpeakFunc SASpeak;
 SAStopAudioFunc SAStopAudio;
 
-//Window-eyes objects.
-Wineyes::_Application *WinEyesApplication; //Window-Eyes 7 and above.
 	/// <summary> 
 	/// FShouldSpeak: variable to determine whether the application should speak.
 	///</summary>
@@ -245,37 +238,7 @@ NewAction.insert(std::make_pair(5, Element.Parameters));
 	HSCInstallState IsHSCInstalled();
 	/// <summary> Installs hotspot clicker 212.
 	BOOL InstallHSC();
-	/// <summary> Determine whether Window-Eyes is currently active in memory. </summary>
-	/// <returns> returns S_OK if Window-Eyes is active, S_FALSE otherwise. </returns>
- bool IsWindowEyesActive();
-/// <summary>Loads the WindowEyes com api.</summery>
-/// <remarks> the clsid we need to use depends on the window-eyes version. Given that Window-eyes is a 32-bit process on all os's we try and obtain the vclsid associated with the version 7 release--i.e Wineyes.Application. if this fails we try and obtain the GWSpeak object. We need to do this in the order specified due to the fact that GWSpeak will also be available.</remarks>
-bool LoadWindowEyesApi();
-/// <summary> Unloads the WindowEyes api.</summery>
-void UnloadWindowEyesApi(void);
-/// <summary> Speaks a string of text from WindowEyes. </summery>
-/// <param name="strText">The text to speak.</param>
-	   /// <param name="blnSilence">Whether or not to silence the existing speech. True indicates the existing speech will be silenced, false indicates the speech will be queued as normal.</param>
-	/// <returns> Returns S_OK if the speech has been queued for speaking, S_FALSE otherwise.</returns>
-	HRESULT WindowEyesSpeak(wstring strText, BOOL blnSilence);
-/// <summary> Silences WindowEyes.</summary>
-	/// <returns> Returns S_OK if the speech has been silenced, S_FALSE otherwise.</returns>
-	HRESULT WindowEyesSilence(void);
-/// <summary> Brailles a string of text from WindowEyes. </summery>
-/// <param name="strText">The text to braille.</param>
-	/// <returns> Returns S_OK if the speech has been queued for brailleing, S_FALSE otherwise.</returns>
-	HRESULT WindowEyesBraille(wstring strText);
-	/// <summary> list the available actions for Window-Eyes. </summary>
-	/// <remarks> This procedure lists the available actions for the Window-Eyes screen reader. The following are the available action fields:
-	/// 0 =Name,
-	/// 1 =Description
-	/// 2 =type add doc here.
-	/// The right-hand side of the map is then populated with a Action info vector. </remarks>
-	/// <param>The variable in which to place the actions and there field inforamtion. this should be passed by reference by the caller.</param>
-	/// <returns>return true if the map is populated, fase otherwise. </returns>
-	HRESULT GetAvailableWindowEyesActions(AvailableActionsType& ActionInformation);
-	HRESULT ExecuteWindowEyesAction(std::wstring& Action, ScreenReaderActionType& type);
-/// <summary> Determine whether Non-Visual Desktop Access is currently active in memory. </summary>
+	/// <summary> Determine whether Non-Visual Desktop Access is currently active in memory. </summary>
 	/// <returns> returns S_OK if Non-Visual Desktop Access is active, S_FALSE otherwise. </returns>
 bool IsNVDAActive();
 /// <summary>Loads the NVDA dll.</summery>
