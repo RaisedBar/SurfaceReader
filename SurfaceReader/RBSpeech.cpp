@@ -12,7 +12,10 @@
 using namespace RaisedBar::PathFunctions;
 
 //boost includes.
-#include <boost/algorithm/string.hpp>
+#include <boost/algorithm/string/predicate.hpp>
+#include <boost/algorithm/string/replace.hpp>
+using namespace boost::algorithm;
+
 
 //c++ standard includes.
 //c++ standard includes.
@@ -2116,7 +2119,7 @@ ExitOnFailure(hReturnValue, "No product is active.");
 			{
 				if (!v.first.empty())
 				{ //the key has some text in.
-					if (!boost::algorithm::iequals(v.first, "main")) { //section is not main
+					if (!iequals(v.first, "main")) { //section is not main
 						std::wstring Path =v.first;
 						Path.append(L".hidden");
 						int IsHidden =IniTree.get(Path, 0);
