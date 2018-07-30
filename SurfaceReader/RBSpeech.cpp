@@ -4,24 +4,46 @@
 
 #ifdef __WINDOWS__ 
 
-//Raised bar includes.
-#include "RBPathFuncs.h"
-using namespace RaisedBar::PathFunctions;
-
 //boost includes.
 #include <boost/algorithm/string/predicate.hpp>
-#include <boost/algorithm/string/replace.hpp>
+#include <boost/iostreams/device/mapped_file.hpp>
+#include <boost/iostreams/stream.hpp>
+#include <boost/scope_exit.hpp>
+#include <boost/algorithm/string/trim.hpp>
+#include <boost/algorithm/string/split.hpp>
+using namespace boost::iostreams;
 using namespace boost::algorithm;
 
 //c++ standard includes and usings.
 using namespace std::experimental::filesystem;
 
+//Windows includes.
+#include <psapi.h>
+#include <ShlObj.h>
+#include <shellapi.h>
+
 //WiX includes.
 #include <procutil.h>
 #include "WIX Include.h"
+#include <shelutil.h>
+#include <strutil.h>
 
 //COM includes.
 #include <comutil.h>
+
+HRESULT GetExecutablePath(__out_z LPWSTR* psczExecutablePath)
+{
+	HRESULT hr = S_OK;
+	WCHAR wzPath[MAX_PATH];
+	
+	const int bytes = GetModuleFileName(nullptr, wzPath, MAX_PATH);
+	ExitOnSpecificValue(bytes, 0, hr, S_FALSE, "The path could not be retrieved.");
+		
+		hr = StrAllocString(psczExecutablePath, wzPath, 0);
+	ExitOnFailure1(hr, "Failed to copy executable path: %ls", wzPath);
+	LExit:
+		return S_OK;
+}
 
 HRESULT IsPlatform64Bit()
 {
@@ -172,10 +194,10 @@ LExit:
 	
 HRESULT RBSpeech::GetAvailableJAWSActions(AvailableActionsType& ActionInformation)
 {
-HRESULT hReturnValue =S_OK;
+HRESULT hr=S_OK;
 AvailableActionsType JawsActions;
 ActionCollectionType Actions;
-ActionCollectionTypeIterator NewEnd =Actions.begin();
+ActionInfoType CurrentAction;
 const AvailableActionFieldsType Fields{
 	{L"Name", 0},
 	{L"Synopsis", 1},
@@ -184,161 +206,117 @@ const AvailableActionFieldsType Fields{
 { L"Parameters", 4},
 { L"Category", 5},
 {L"Type", 6} };
+vector<JawsFunction> AvailableJawsFunctions;
+vector<JawsFunction> LocalFunctions;
+path jsdFilePath = JsdFile;
+path currentFile;
+path freedomScientificEnglishSettingsPath = L"settings/enu";
+path commonAppDataPath;
+path userAppDataPath;
+LPWSTR lpszWindowsPath = nullptr;
+//Overkill, replace with a check to see if JAWS is active.
+ActiveProduct CurrentProduct;
+DolphinProduct SpecificDolphinProduct;
+hr= GetActiveProduct(CurrentProduct, SpecificDolphinProduct);
+ExitOnFailure(hr, "No product is active.");
+ExitIfValueNotEqualToSuppliedValue(ID_JAWS, CurrentProduct, hr, E_NOTIMPL, "This method cannot complete due to the fact that JAWS is not active.");
+ExitOnSpecificValue(JsdFileToStartProcessing, PROCESS_NO_FILE, hr, E_ABORT, "Before listing JAWS actions, you need to set a JSD file to start from.");
+//Get the common application data and current users app data paths.
+hr = ShelGetFolder(&lpszWindowsPath, CSIDL_COMMON_APPDATA);
+ExitOnFailure(hr, "Unable to retrieve the common application data folder.");
+commonAppDataPath = lpszWindowsPath;
+lpszWindowsPath = nullptr;
+hr = ShelGetFolder(&lpszWindowsPath, CSIDL_APPDATA);
+ExitOnFailure(hr, "Unable to retrieve the current users application data folder.");
+userAppDataPath = lpszWindowsPath;
 
-ActionInfoType CurrentAction;
-std::vector<JawsFunction> AvailableJawsFunctions;
-wstring UserScriptFolder; 
-wstring SharedScriptFolder; 
-wstring DefaultScriptFile; 
-wstring ApplicationScriptFile; 
-path JSDFile;
-			std::wstring JAWSFunctionCallString =L"GetCurrentJAWSEnvironment(\"%s\")"; //used to hold the call to JAWS.
-				path IniFile; //file to store the hsc information.
-			ActiveProduct CurrentProduct;
-	DolphinProduct SpecificDolphinProduct;
-	hReturnValue =GetActiveProduct(CurrentProduct, SpecificDolphinProduct);
-	ExitOnFailure(hReturnValue, "No product is active.");
-				switch(CurrentProduct)
-			{
-			case ID_JAWS:
-				if (JsdFileToStartProcessing !=PROCESS_NO_FILE) 					
-				{
-//Process files based on the enum.
-					int CurrentFileBeingProcessed;
-wstring TestDir =wxEmptyString;
-					path CurrentFile; 
-					int FreedomScientificDirectoryPosition =-1;
-					for(CurrentFileBeingProcessed =JsdFileToStartProcessing; CurrentFileBeingProcessed <=PROCESS_DEFAULT_SYSTEM_DEFAULT_FILE; CurrentFileBeingProcessed++)
-					{
-						std::vector<JawsFunction> LocalFunctions;
-						switch(CurrentFileBeingProcessed)
-{
-case PROCESS_NO_FILE:
-	//should never execute.
-	break;
-case PROCESS_USER_APP_FILE:
-	if (JsdFileToStartProcessing ==CurrentFileBeingProcessed)
-	{ //we don't need to do anything as we already have the jsd file.
-		CurrentFile =JsdFile;
+for (int CurrentFileBeingProcessed = JsdFileToStartProcessing; CurrentFileBeingProcessed <= PROCESS_DEFAULT_SYSTEM_DEFAULT_FILE; CurrentFileBeingProcessed++)
+{ //Start processing the jsd files.
+	switch (CurrentFileBeingProcessed)
+	{
+	case PROCESS_USER_APP_FILE:
+		if (JsdFileToStartProcessing == CurrentFileBeingProcessed)
+		{ //we don't need to do anything as we already have the jsd file.
+			currentFile = JsdFile;
+		}
+		break;
+	case PROCESS_DEFAULT_APP_FILE:
+		if (JsdFileToStartProcessing == CurrentFileBeingProcessed)
+		{ //we don't need to do anything as we already have the jsd file.
+			currentFile = JsdFile;
+		}
+		else { //specify the file ourselves.
+			currentFile = commonAppDataPath;
+			currentFile / freedomScientificEnglishSettingsPath;
+			currentFile / jsdFilePath.filename();
+		} //End file specification.
+		break;
+	case PROCESS_USER_SYSTEM_DEFAULT_FILE:
+		if (JsdFileToStartProcessing == CurrentFileBeingProcessed)
+		{ //we don't need to do anything as we already have the jsd file.
+			currentFile = JsdFile;
+		}
+		else { //specify the file ourselves.
+			currentFile = userAppDataPath;
+			currentFile / freedomScientificEnglishSettingsPath;
+			currentFile / L"default.jsd";
+		} //End file specification.
+		break;
+	case PROCESS_DEFAULT_SYSTEM_DEFAULT_FILE:
+		if (JsdFileToStartProcessing == CurrentFileBeingProcessed)
+		{ //we don't need to do anything as we already have the jsd file.
+			currentFile = JsdFile;
+		}
+		else { //specify the file ourselves.
+			currentFile = commonAppDataPath;
+			currentFile / freedomScientificEnglishSettingsPath;
+			currentFile / L"default.jsd";
+		} //End file specification.
+		break;
+	default: 
+		break;
 	}
-	OutputDebugString(JsdFile.c_str());
-	if (exists(CurrentFile))
-{
-LocalFunctions =ProcessJSDFile(CurrentFile);
-//Merge with the already available functions.
-AvailableJawsFunctions.insert(AvailableJawsFunctions.end(), LocalFunctions.begin(), LocalFunctions.end());
+
+	//now, actually process the required jsd file.
+	if (exists(currentFile))
+	{
+		LocalFunctions = ProcessJSDFile(currentFile);
+		//Merge with the already available functions.
+		AvailableJawsFunctions.insert(AvailableJawsFunctions.end(), LocalFunctions.begin(), LocalFunctions.end());
 	} //end parsing jsd file.
-	break;
-case PROCESS_DEFAULT_APP_FILE:
-if (JsdFileToStartProcessing ==CurrentFileBeingProcessed)
-	{ //we don't need to do anything as we already have the jsd file.
-		CurrentFile =JsdFile;
-}
-else { //specify the file ourselves.
-FreedomScientificDirectoryPosition =JsdFile.find(L"Freedom Scientific");	
- TestDir =wxStandardPaths::Get().GetConfigDir().Remove(wxStandardPaths::Get().GetConfigDir().find(L"SurfaceReader"));
-TestDir.append(JsdFile.substr(FreedomScientificDirectoryPosition));
-OutputDebugString(TestDir.c_str());
-CurrentFile =TestDir;
-} //end file processing.
-if (exists(CurrentFile))
-{
-LocalFunctions =ProcessJSDFile(CurrentFile);
-//Merge with the already available functions.
-AvailableJawsFunctions.insert(AvailableJawsFunctions.end(), LocalFunctions.begin(), LocalFunctions.end());
-} //end parsing jsd file.
-break;
-case PROCESS_USER_SYSTEM_DEFAULT_FILE:
-if (JsdFileToStartProcessing ==CurrentFileBeingProcessed)
-	{ //we don't need to do anything as we already have the jsd file.
-		CurrentFile =JsdFile;
-	}
-else { //specifically set the file/path.
-	//obtain the current user path.
-	TestDir =wxStandardPaths::Get().GetUserConfigDir();
-	TestDir.append(L"\\");
-	FreedomScientificDirectoryPosition =JsdFile.find(L"Freedom Scientific");	
- TestDir.append(JsdFile.substr(FreedomScientificDirectoryPosition));
- TestDir.erase(TestDir.find(wxStringTokenize(JsdFile, L"\\").Last(), FreedomScientificDirectoryPosition));
- TestDir.append(L"default.jsd");
- OutputDebugString(TestDir.c_str());
- CurrentFile =TestDir;
-} //end specifically setting the filename.
-if (exists(CurrentFile))
-{
-LocalFunctions =ProcessJSDFile(CurrentFile);
-//Merge with the already available functions.
-AvailableJawsFunctions.insert(AvailableJawsFunctions.end(), LocalFunctions.begin(), LocalFunctions.end());
-} //end parsing jsd file.
-break;
-case PROCESS_DEFAULT_SYSTEM_DEFAULT_FILE:
-	if (JsdFileToStartProcessing ==CurrentFileBeingProcessed)
-	{ //we don't need to do anything as we already have the jsd file.
-		CurrentFile =JsdFile;
-	}
-else { //specify the file ourselves.
-FreedomScientificDirectoryPosition =JsdFile.find(L"Freedom Scientific");	
- TestDir =wxStandardPaths::Get().GetConfigDir().Remove(wxStandardPaths::Get().GetConfigDir().find(L"SurfaceReader"));
-TestDir.append(JsdFile.substr(FreedomScientificDirectoryPosition));
-TestDir.erase(TestDir.find(wxStringTokenize(JsdFile, L"\\").Last(), FreedomScientificDirectoryPosition));
- TestDir.append(L"default.jsd");
-OutputDebugString(TestDir.c_str());
-CurrentFile =TestDir;
-} //end specifying file.
-if (exists(CurrentFile))
-{
-LocalFunctions =ProcessJSDFile(CurrentFile);
-//Merge with the already available functions.
-AvailableJawsFunctions.insert(AvailableJawsFunctions.end(), LocalFunctions.begin(), LocalFunctions.end());
-} //end parsing jsd file.
-	break;
-default:
-				break;
-					};
-					} //end for loop
-				} //end jsd file processing.
-else { //use hsc method.
-} //end hsc method.
-//now sort the function vector.
-//std::sort(AvailableJawsFunctions.begin(), AvailableJawsFunctions.end(), CompareJawsFunctions);
-//now iterate through and add to the vector.
-for(JawsFunction j : AvailableJawsFunctions)
-{
-if (j.Type ==ID_TYPE_SCRIPT)
-{
-	CurrentAction.clear();
-	// CurrentAction = boost::assign::map_list_of(0, j.Name)(1, j.Synopsis)(2, j.Description)(5, j.Category);
-	CurrentAction.insert(std::make_pair(0, j.Name));
-	CurrentAction.insert(std::make_pair(1, j.Synopsis));
-	CurrentAction.insert(std::make_pair(2, j.Description));
-	CurrentAction.insert(std::make_pair(3, j.Returns));	
-	CurrentAction.insert(std::make_pair(4, j.Parameters));
-	CurrentAction.insert( std::make_pair( 5, j.Category));
-	CurrentAction.insert(std::make_pair(6, ID_SCRIPT));
-	Actions.push_back(CurrentAction);
-}
-	else if ((j.Type ==ID_TYPE_FUNCTION) && (j.Returns.DataType.IsSameAs("void", false)))
-{
-		CurrentAction.clear();
-		//  CurrentAction = boost::assign::map_list_of(0, j.Name)(1, j.Synopsis)(2, j.Description)(5, j.Category);
-
-		CurrentAction.insert( std::make_pair( 0, j.Name));
-
-	CurrentAction.insert(std::make_pair(3, j.Returns));	
-	CurrentAction.insert(std::make_pair(4, j.Parameters));
-	CurrentAction.insert(std::make_pair(6, ID_FUNCTION));
-	Actions.push_back(CurrentAction);
-}
-} //end foreach.
-JawsActions =std::make_pair(Fields, Actions);
-ActionInformation =JawsActions;
-break;
-default:
-hReturnValue =E_NOTIMPL;
-break;
-				};
+	  //now iterate through and add to the vector.
+	for (JawsFunction j : AvailableJawsFunctions)
+	{
+		if (j.Type == ID_TYPE_SCRIPT)
+		{
+			CurrentAction = {
+				{ 0, j.Name},
+				{ 1, j.Synopsis},
+			{ 2, j.Description},
+			{ 3, j.Returns},
+			{ 4, j.Parameters},
+			{5, j.Category},
+			{6, ID_SCRIPT} };
+			Actions.push_back(CurrentAction);
+		}
+		else if (j.Type == ID_TYPE_FUNCTION&& (j.Returns.is_initialized() && j.Returns.value().DataType =="void"))
+		{
+			CurrentAction = {
+				{0, j.Name},
+			{ 1, j.Synopsis },
+			{ 2, j.Description },
+			{3, j.Returns},
+			{4, j.Parameters},
+			{ 5, j.Category },
+			{6, ID_FUNCTION} };
+			Actions.push_back(CurrentAction);
+		}
+	} //End vector adition.
+} //end processing the jsd files.
+JawsActions = { Fields, Actions };
+ActionInformation = JawsActions;
 LExit:
-return hReturnValue;
+return hr;
 }
 
 HRESULT RBSpeech::ExecuteJAWSAction(std::wstring Action, ScreenReaderActionType Type)
@@ -435,9 +413,12 @@ bool RBSpeech::LoadNVDAApi()
 	{
 		return true;
 	}
-	
-	path NVDADllFileName =wxStandardPaths::Get().GetExecutablePath().ToStdWstring(); //assign the executable directory.
+	LPWSTR lpSZExecutablePath[1024];
+	HRESULT hr = GetExecutablePath(&lpSZExecutablePath[0]);
 
+	path NVDADllFileName = lpSZExecutablePath;
+	NVDADllFileName.remove_filename();
+	
 	if (IsPlatform64Bit() ==S_OK)
 		{ //We are running on a 64-bit operating system--or at least as a 64-bit process.
 NVDADllFileName /=L"nvdaControllerClient64.dll";
@@ -1304,8 +1285,11 @@ if (SystemAccessDllApi.IsLoaded())
 {
 	return true;
 }
-			
-path SystemAccessDllFileName=wxStandardPaths::Get().GetExecutablePath().ToStdWstring(); //assign the executable directory.
+
+LPWSTR lpSZExecutablePath[1024];
+HRESULT hr = GetExecutablePath(&lpSZExecutablePath[0]);
+
+path SystemAccessDllFileName = lpSZExecutablePath;
 SystemAccessDllFileName.remove_filename();
 
 if (IsPlatform64Bit() ==S_OK)
@@ -1626,150 +1610,143 @@ ActionInformation =AvailableActions;
 return hReturnValue;
 }
 
-std::vector<JawsFunction> RBSpeech::ProcessJSDFile(path& File)
+std::vector<JawsFunction> RBSpeech::ProcessJSDFile(path& file)
 {
-	std::vector<JawsFunction> AvailableFunctions;
+	vector<JawsFunction> AvailableFunctions;
 	bool ParameterIsOptional =false;
-	if (exists(File))
+	if (exists(file))
 	{ //existence check.
-		wxString filecontent;
-	wxFFile scriptfile(File.generic_wstring().c_str());
-	filecontent.clear();
-	if (scriptfile.ReadAll(&filecontent))
-	{ //start file processing.
-		filecontent.Trim(true);
-		wxArrayString lines;
-		lines =wxStringTokenize(filecontent, "\n", wxTOKEN_RET_EMPTY);
-	JawsFunction newfunction;
-	for(wxString line : lines)
-{
-	wxArrayString tokens;
-	line.Trim(true);
-	if (line.Left(3).IsSameAs(":sc", false))
-	{ //script and name
-//Clear all variables as we're starting a new script.
-		tokens.Clear();
-		ParameterIsOptional =false;
-		newfunction.Type =ID_TYPE_NONE;
-		newfunction.Category.clear();
-		newfunction.Description.clear();
-		newfunction.Name.clear();
-		newfunction.Synopsis.clear();
-		//start setting variables.
-		newfunction.Type =ID_TYPE_SCRIPT;
-		//retrieve the name.
-tokens =wxStringTokenize(line, " ");
-if (tokens.Count() ==2)
-{ //access the name.
-newfunction.Name =tokens.Last();
-} //access the name.
-} //end script and name.
-		else if (line.Left(3).IsSameAs(":fu", false))
-	{ //function and name
-//Clear all variables as we're starting a new script.
-		tokens.Clear();
-		newfunction.Type =ID_TYPE_NONE;
-		ParameterIsOptional =false;
-		newfunction.Category.clear();
-		newfunction.Description.clear();
-		newfunction.Name.clear();
-		newfunction.Synopsis.clear();
-		//start setting variables.
-		newfunction.Type =ID_TYPE_FUNCTION;
-		//retrieve the name.
-tokens =wxStringTokenize(line, " ");
-if (tokens.Count() ==2)
-{ //access the name.
-newfunction.Name =tokens.Last();
-} //access the name.
-} //end function and name.
-	else if (line.Left(3).IsSameAs(":sy", false))
-	{ //synopsis.
-		newfunction.Synopsis =line.AfterFirst(wxUniChar(32));
-	} //end synopsis.
-else if (line.Left(3).IsSameAs(":de", false))
-{ //Description.
-	newfunction.Description =line.AfterFirst(wxUniChar(32));
-	} //end description.
-else if (line.Left(3).IsSameAs(":op", false))
-{ //optional parameter.
-	ParameterIsOptional =true;
-} //Optional parameter.
-else if (line.Left(3).IsSameAs(":pa", false))
-{ //Parameter.
-JAWSParameter CurrentParam;
-CurrentParam.Optional =ParameterIsOptional;
-if (line.Contains(L"/"))
-{ //parameter with a name.
-	tokens.clear();
-	tokens =wxStringTokenize(line.AfterFirst(wxUniChar(32)), "/");
-	if (tokens.Count() ==2)
-	{ //process.
-		CurrentParam.DataType =tokens.front();
-		CurrentParam.Name =tokens.Last().BeforeFirst(wxUniChar(32));
-		CurrentParam.Description =tokens.Last().AfterFirst(wxUniChar(32));
-	} //end parameter processing.
-} //end param with a name.
-else { //parameter without a name.
-tokens.clear();
-	tokens =wxStringTokenize(line.AfterFirst(wxUniChar(32)), " ");
-	if (tokens.Count() >=2)
-	{ //process.
-		CurrentParam.DataType =tokens.front();
-		CurrentParam.Description =line.Right(line.AfterFirst(wxUniChar(32)).length() -tokens.front().length()-1);
-	} //end parameter processing.
-} //end parameter without a name.
-newfunction.Parameters.push_back(CurrentParam);
-ParameterIsOptional =false;
-} //end parameter
-else if (line.Left(3).IsSameAs(":re", false)) 
-{ //return value.
-	tokens.clear();
-	tokens =wxStringTokenize(line.AfterFirst(wxUniChar(32)), " ");
-	newfunction.Returns.DataType =tokens.front();
-	newfunction.Returns.Description =line.Right(line.AfterFirst(wxUniChar(32)).length() -tokens.front().length()-1);
-} //return value.
-else if (line.Left(3).IsSameAs(":ca", false))
-	{ //Category.
-		newfunction.Category =line.AfterFirst(wxUniChar(32));
-} //end category.
-else if (line.length() ==0)
-{ //blank line, ass to vector.
-	//now add this to the vector.
-		AvailableFunctions.push_back(newfunction);
-} //end vector adition.
-}
-	} //end processing.
+		mapped_file_source mappedJsdFile(file.generic_string());
+		stream<mapped_file_source> mappedJsdFileStream(mappedJsdFile, std::ios::binary);
+		BOOST_SCOPE_EXIT(&mappedJsdFile, &mappedJsdFileStream, &ParameterIsOptional, &AvailableFunctions)
+		{ //this block ensures the mapped file and stream are closed.
+			JawsFunction newfunction;
+			string line;
+			while (getline(mappedJsdFileStream, line))
+			{
+				vector<wstring> splitLineVector;
+				wstring processingLine = NarrowToWideString(trim_copy(line));
+				if (istarts_with(processingLine, L":sc"))
+				{
+					//Clear all variables as we're starting a new script.
+					ParameterIsOptional = false;
+					newfunction.Type = ID_TYPE_NONE;
+					newfunction.Category.clear();
+					newfunction.Description.clear();
+					newfunction.Name.clear();
+					newfunction.Synopsis.clear();
+					newfunction.Parameters.clear();
+					newfunction.Returns = boost::none;
+					//start setting variables.
+					newfunction.Type = ID_TYPE_SCRIPT;
+					//retrieve the name.
+					newfunction.Name = processingLine.substr(processingLine.find(L" ")+1);
+					} //end script and name.
+				else if (istarts_with(processingLine, L":fu"))
+				{ //function and name
+					ParameterIsOptional = false;
+					newfunction.Type = ID_TYPE_NONE;
+					newfunction.Category.clear();
+					newfunction.Description.clear();
+					newfunction.Name.clear();
+					newfunction.Synopsis.clear();
+					newfunction.Parameters.clear();
+					newfunction.Returns = boost::none;
+					//start setting variables.
+					newfunction.Type = ID_TYPE_FUNCTION;
+					//retrieve the name.
+					newfunction.Name = processingLine.substr(processingLine.find(L" ") + 1);
+				} //end function and name.
+				else if (istarts_with(processingLine, L":sy"))
+				{ //synopsis.
+					newfunction.Synopsis = processingLine.substr(processingLine.find(L" "));
+				} //end synopsis.
+				else if (istarts_with(processingLine, L":de"))
+				{ //Description.
+					newfunction.Description = processingLine.substr(processingLine.find(L" "));
+				} //end description.
+				else if (istarts_with(processingLine, L":op"))
+				{ //optional parameter.
+					ParameterIsOptional = true;
+				} //Optional parameter.
+				else if (istarts_with(processingLine, L":pa"))
+				{ //Parameter processing.
+					JAWSParameter CurrentParam;
+					CurrentParam.Optional = ParameterIsOptional;
+						if (contains(processingLine, L"/"))
+					{ //parameter with a name.
+							splitLineVector.clear();
+							split(splitLineVector, processingLine.substr(processingLine.find(L" ")), is_any_of(L"/"));
+						if (splitLineVector.size() == 2)
+						{ //process.
+							CurrentParam.DataType = splitLineVector.front();
+							CurrentParam.Name = splitLineVector.back().substr(0, splitLineVector.back().find(L" "));
+							CurrentParam.Description = splitLineVector.back().substr(splitLineVector.back().find(L" "));
+						} //end parameter processing.
+					} //end param with a name.
+					else { //parameter without a name.
+						splitLineVector.clear();
+						split(splitLineVector, processingLine.substr(processingLine.find(L" ")), is_any_of(L" "));
+						if (splitLineVector.size() >= 2)
+						{ //process.
+							CurrentParam.DataType = splitLineVector.front();
+							CurrentParam.Description = splitLineVector.back();
+						} //end parameter processing.
+					} //end parameter without a name.
+					newfunction.Parameters.push_back(CurrentParam);
+					ParameterIsOptional = false;
+				} //end parameter processing.
+				else if (istarts_with(processingLine, L":re"))
+				{ //Return value. 
+					split(splitLineVector, processingLine.substr(processingLine.find(L" ")), is_any_of(L" "));
+					JawsReturnInfo info;
+					info.DataType = splitLineVector.front();
+					info.Description = splitLineVector.back();
+					newfunction.Returns = info;
+				} //end return value.
+				else if (istarts_with(processingLine, L":ca"))
+				{ //Process the category
+					newfunction.Category = processingLine.substr(processingLine.find(L" "));
+				} //End category processing.
+				else if (processingLine.empty())
+				{ //blank line, add to vector.
+				  //now add this to the vector.
+					AvailableFunctions.push_back(newfunction);
+				} //end vector adition.
+				} //end line processing.
+	
+			mappedJsdFileStream.close();
+			mappedJsdFile.close();
+		} BOOST_SCOPE_EXIT_END
 	} //end existence check.		
 return AvailableFunctions;
 }
 
 void RBSpeech::SetFirstJsdFile(wstring File)
 {
-	JsdFile =File;
-JsdFileToStartProcessing =PROCESS_NO_FILE;
-wxArrayString JsdFileTokens =wxStringTokenize(JsdFile, L"\\");
-LPWSTR lpszUserName[1024];
-HRESULT hr = GetWindowsUsername(&lpszUserName[0]);
-wstring UserName = lpszUserName[0];
-int test =JsdFileTokens.Index(UserName);
-if (JsdFileTokens.Index(UserName) >0)
-{ //user file is the first one.
-//determine whether it is default/application.
-wstring LastToken =JsdFileTokens.Last().ToStdWstring();
-	if (JsdFileTokens.Last().IsSameAs("default.jsd", false))
-		JsdFileToStartProcessing =PROCESS_USER_SYSTEM_DEFAULT_FILE;
-	else
-JsdFileToStartProcessing =PROCESS_USER_APP_FILE;
-} //end user file.
-else { //global file.
-	//determine whether it is the default/application.
-wstring LastToken =JsdFileTokens.Last().ToStdWstring();
-	if (JsdFileTokens.Last().IsSameAs("default.jsd", false))
-		JsdFileToStartProcessing =PROCESS_DEFAULT_SYSTEM_DEFAULT_FILE;
-	else
-JsdFileToStartProcessing =PROCESS_DEFAULT_APP_FILE;
-} //end global file.
+	LPWSTR lpszUserName[1024];
+	HRESULT hr = GetWindowsUsername(&lpszUserName[0]);
+	wstring UserName = lpszUserName[0];
+	JsdFile = File;
+	JsdFileToStartProcessing = PROCESS_NO_FILE;
+	path jsdFilePath = JsdFile;
+	vector<wstring> jsdFilePathParts;
+	for (auto& part : jsdFilePath)
+		jsdFilePathParts.push_back(part.filename().generic_wstring());
+	if (find(jsdFilePathParts.begin(), jsdFilePathParts.end(), UserName) != jsdFilePathParts.end())
+	{ //user file is the first one.
+		if (iequals(jsdFilePathParts.back(), L"default.jsd"))
+			JsdFileToStartProcessing = PROCESS_USER_SYSTEM_DEFAULT_FILE;
+		else
+			JsdFileToStartProcessing = PROCESS_USER_APP_FILE;
+	} //end user file.
+	else { //global file.
+		   //determine whether it is the default/application.
+		if (iequals(jsdFilePathParts.back(), L"default.jsd"))
+			JsdFileToStartProcessing = PROCESS_DEFAULT_SYSTEM_DEFAULT_FILE;
+		else
+			JsdFileToStartProcessing = PROCESS_DEFAULT_APP_FILE;
+	}//end global file.
 return;
 }
 
@@ -1777,6 +1754,7 @@ wstring RBSpeech::GetFirstJsdFile(void)
 {
 	return JsdFile;
 }
+
 void RBSpeech::ClearJsdFile()
 {
 	JsdFile.clear();

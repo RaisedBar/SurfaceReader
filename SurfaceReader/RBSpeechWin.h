@@ -6,16 +6,16 @@
 #define RB_SPEECH_WIN_H
 
 #pragma once
+#include <boost/algorithm/string/predicate.hpp>
+#include <boost/function.hpp>
 
 #include <windows.h>
 #include <ole2.h>
 #include <atlbase.h>
 #include <wx/msw/winundef.h> 
-#include <Psapi.h>
 #include <wx/msw/winundef.h> 
 
 //msi/wix includes.
-#include <Msi.h>
 #include "WIX Include.h"
 
 // Dolphin includes
@@ -156,8 +156,9 @@ private:
 	CComDispatchDriver JawsAPI;
 	
 	//NVDA.
-		wxDynamicLibrary NvdaDllApi;
-		nvdaControllerTestIfRunningFunc TestIfRunning;
+	wxDynamicLibrary NvdaDllApi;
+		
+	nvdaControllerTestIfRunningFunc TestIfRunning;
 nvdaControllerCancelSpeechFunc CancelSpeech;
 nvdaControllerSpeakTextFunc SpeakText;
 nvdaControllerBrailleMessageFunc BrailleMessage;
@@ -342,14 +343,14 @@ bool blnMuted;
 //Comparison functions.
 inline bool CompareJawsFunctions(JawsFunction f1, JawsFunction f2)
 {
-	return f1.Name.IsSameAs(f2.Name, false);
+	return iequals(f1.Name, f2.Name);
 }
 inline bool IsNotVoid(JawsFunction f1)
 {
 	if (f1.Type ==ID_TYPE_SCRIPT)
 		return true;
 	else {
-		return f1.Returns.DataType.IsSameAs("void", false);
+		return boost::algorithm::iequals(f1.Returns.get().DataType, "void");
 	}
 }
 

@@ -10,7 +10,7 @@
 #define ExitIfValueGreaterThanSuppliedValue(p, v, x, e, s)   if (v > p) { x = e; Dutil_RootFailure(__FILE__, __LINE__, x); ExitTrace(x, s);  goto LExit; }
 #define ExitIfValueLessThanOrEqualToSuppliedValue(p, v, x, e, s)   if (v <= p) { x = e; Dutil_RootFailure(__FILE__, __LINE__, x); ExitTrace(x, s);  goto LExit; }
 #define ExitIfValueLessThanSuppliedValue(p, v, x, e, s)   if (v < p) { x = e; Dutil_RootFailure(__FILE__, __LINE__, x); ExitTrace(x, s);  goto LExit; }
-#define ExitIfValueNotEqualToSuppliedValue(p, v, x, e, s)   if (v != p) { x = e; Dutil_RootFailure(__FILE__, __LINE__, x); ExitTrace(x, s);  goto LExit; }
+#define ExitIfValueNotEqualToSuppliedValue(p, v, x, e, s)   if (p != v) { x = e; Dutil_RootFailure(__FILE__, __LINE__, x); ExitTrace(x, s);  goto LExit; }
 #define ExitFunctionWithMessage(x, s)   { ExitTrace(x, s);  goto LExit; }
 #define ExitFunctionWithMessageAndStatusCode(x, e, s)  { x = e; Dutil_RootFailure(__FILE__, __LINE__, x); ExitTrace(x, s);  goto LExit; }
 #define ExitOnNotNull(p, x, e, s)   if (NULL != p) { x = e; Dutil_RootFailure(__FILE__, __LINE__, x); ExitTrace(x, s);  goto LExit; }

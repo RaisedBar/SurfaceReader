@@ -31,12 +31,7 @@ using namespace boost; //used for assignment and EBNF parsing amongst others.
 
 					   //WX includes.
 #include <wx/dynlib.h>
-#include <wx/stdpaths.h>
-#include <wx/platinfo.h>
-#include <wx/ffile.h>
-#include <wx/tokenzr.h>
 #include <wx/arrstr.h>
-#include <wx/platform.h>
 #include <wx/msw/winundef.h> 
 
 //C++ standard includes.
@@ -51,17 +46,16 @@ struct JAWSParameter
 	{
 		Optional =false;
 	}
-// 	BOOL Optional;
 	bool Optional;
-wxString DataType;
-wxString Description;
-wxString Name;
+std::wstring DataType;
+std::wstring Description;
+wstring Name;
 };
 
 struct JawsReturnInfo
 {
-	wxString DataType;
-wxString Description;
+	std::wstring DataType;
+std::wstring Description ;
 };
 
 //enum defining the jsd file to start processing.
@@ -84,13 +78,13 @@ enum FunctionType
 
 struct JawsFunction 
 {
-	wxString Name; //function/script name.
-	wxString Synopsis; //Synopsis of the script/function.
-	wxString Description; //the function/scripts  description.
-	wxString Category; //the function/script category.
+	std::wstring Name; //function/script name.
+	std::wstring Description; //the function/scripts  description.
+	std::wstring Synopsis; //Synopsis of the script/function.
+	std::wstring Category; //the function/script category.
 	FunctionType Type;
 std::vector<JAWSParameter> Parameters;
-JawsReturnInfo Returns;
+boost::optional<JawsReturnInfo> Returns;
 };
 
 /// <summary> The type containing a single entry for an access technology action. </summary>
