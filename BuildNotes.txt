@@ -1,0 +1,28 @@
+All:
+include path:
+C:\Program Files (x86)\WiX Toolset v3.11\SDK\VS2017\inc\;C:\Program Files\rtmidi\;C:\wxWidgets-3.1.0\lib\vc_lib\mswud\;C:\wxWidgets-3.1.0\include\;C:\Program Files\boost\;C:\Program Files\crypto++\;
+
+Preprocessor:
+Definitions = _CRT_SECURE_NO_WARNINGS;__WINDOWS_MM__;
+
+set code generation to MT or MTD
+
+Language:
+Conformance Mode = No
+
+disabled precompiled headers
+
+win32 debug:
+Lib path:
+C:\Program Files\rtmidi\lib\X86\;C:\wxWidgets-3.1.0\lib\vc_lib\;C:\Program Files\boost\stage\lib\;C:\Program Files (x86)\WiX Toolset v3.11\SDK\VS2017\lib\x86\;C:\Program Files\crypto++\Win32\Output\Debug\;
+
+win32 release:
+additionals:
+Msi.lib;Rpcrt4.lib;comctl32.lib;winmm.lib;dolapi.lib;rtmidi.lib;cryptlib.lib;dutil.lib;wxmsw31u_adv.lib;wxzlib.lib;wxpng.lib;wxmsw31u_core.lib;wxbase31u.lib;
+
+X64 debug:
+additionals:
+
+X64 release:
+additionals:
+winmm.lib;rtmidi.lib;cryptlib.lib;dutil.lib;wxmsw31u_adv.lib;wxzlib.lib;wxpng.lib;wxmsw31u_core.lib;wxbase31u.lib

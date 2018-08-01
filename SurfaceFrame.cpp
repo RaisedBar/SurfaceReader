@@ -1168,7 +1168,7 @@ for (directory_iterator i( myPath); i != end_itr; ++i )
 			continue;
 	}
 
-bool blnSuccess = true;
+bool blnSuccess = false;
 		SurfaceProtocol myProtocol;
 
 // Is this a user-created file?

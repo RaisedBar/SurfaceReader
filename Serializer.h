@@ -161,6 +161,8 @@ remove(ProcessingPath);
 						} //end path removal.
 				throw RBException( wstrFileLoadExceptionError);
 	}
-return Data;
+
+	SerializingType Data2(Data);
+	return Data2;
 }
 #endif
