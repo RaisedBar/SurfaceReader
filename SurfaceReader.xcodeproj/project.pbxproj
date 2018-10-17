@@ -59,14 +59,12 @@
 		2275FD731FA1DC1F005BB7EC /* MIDIDialog.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2275FCEC1FA1DC13005BB7EC /* MIDIDialog.cpp */; };
 		2275FD741FA1DC1F005BB7EC /* AppConfigChooserDialog.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2275FCEF1FA1DC13005BB7EC /* AppConfigChooserDialog.cpp */; };
 		2275FD751FA1DC1F005BB7EC /* RBStringFuncs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2275FCF01FA1DC14005BB7EC /* RBStringFuncs.cpp */; };
-		2275FD781FA1DC1F005BB7EC /* sample.aps in Resources */ = {isa = PBXBuildFile; fileRef = 2275FCF51FA1DC14005BB7EC /* sample.aps */; };
 		2275FD791FA1DC1F005BB7EC /* DefineCharDialog.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2275FCF71FA1DC14005BB7EC /* DefineCharDialog.cpp */; };
 		2275FD7A1FA1DC1F005BB7EC /* SRTaskBar.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2275FCF81FA1DC15005BB7EC /* SRTaskBar.cpp */; };
 		2275FD7C1FA1DC1F005BB7EC /* MIDISurface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2275FCFF1FA1DC16005BB7EC /* MIDISurface.cpp */; };
 		2275FD7D1FA1DC1F005BB7EC /* wx_small.xpm in Resources */ = {isa = PBXBuildFile; fileRef = 2275FD001FA1DC16005BB7EC /* wx_small.xpm */; };
 		2275FD801FA1DC1F005BB7EC /* ControlStatesDialog.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2275FD091FA1DC17005BB7EC /* ControlStatesDialog.cpp */; };
 		2275FD811FA1DC1F005BB7EC /* DisplayStatesDialog.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2275FD0A1FA1DC17005BB7EC /* DisplayStatesDialog.cpp */; };
-		2275FD831FA1DC1F005BB7EC /* RBSpeech.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2275FD0D1FA1DC17005BB7EC /* RBSpeech.cpp */; };
 		2275FD841FA1DC1F005BB7EC /* ActionPickerMac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2275FD0E1FA1DC17005BB7EC /* ActionPickerMac.cpp */; };
 		2275FD851FA1DC1F005BB7EC /* sample.rc in Resources */ = {isa = PBXBuildFile; fileRef = 2275FD0F1FA1DC17005BB7EC /* sample.rc */; };
 		2275FD861FA1DC1F005BB7EC /* ScreenReaderFunctionsDlg.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2275FD111FA1DC18005BB7EC /* ScreenReaderFunctionsDlg.cpp */; };
@@ -89,7 +87,6 @@
 		2275FDA11FA1DC1F005BB7EC /* sample.ico in Resources */ = {isa = PBXBuildFile; fileRef = 2275FD411FA1DC1E005BB7EC /* sample.ico */; };
 		2275FDA31FA1DC1F005BB7EC /* DefineDisplayDlg.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2275FD431FA1DC1E005BB7EC /* DefineDisplayDlg.cpp */; };
 		2275FDA51FA1DC1F005BB7EC /* LEDLampsPage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2275FD471FA1DC1E005BB7EC /* LEDLampsPage.cpp */; };
-		22F04E65204071D80072AC24 /* libboost_filesystem.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 22F04E64204071D80072AC24 /* libboost_filesystem.dylib */; };
 		22F04E67204072AC0072AC24 /* libcryptopp.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 22F04E66204072AB0072AC24 /* libcryptopp.a */; };
 		8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
 /* End PBXBuildFile section */
@@ -98,7 +95,6 @@
 		1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
 		13E42FB307B3F0F600E4EEF1 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = /System/Library/Frameworks/CoreData.framework; sourceTree = "<absolute>"; };
 		2210D5981FA1FA05005184A6 /* SurfaceReader-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "SurfaceReader-Info.plist"; sourceTree = SOURCE_ROOT; };
-		2210D59A1FA1FAC5005184A6 /* SurfaceReader_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SurfaceReader_Prefix.pch; sourceTree = SOURCE_ROOT; };
 		222D60362040AD75001BFFDD /* libboost_regex.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libboost_regex.a; path = ../../../../../../usr/local/boost/stage/lib/libboost_regex.a; sourceTree = "<group>"; };
 		222D603A2040AEFC001BFFDD /* libboost_log_setup.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libboost_log_setup.a; path = ../../../../../../usr/local/boost/stage/lib/libboost_log_setup.a; sourceTree = "<group>"; };
 		224A0C51142C75AC0013150D /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = System/Library/Frameworks/CoreFoundation.framework; sourceTree = SDKROOT; };
@@ -117,6 +113,7 @@
 		22517A341427533300BD6581 /* libboost_system.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = libboost_system.dylib; sourceTree = "<group>"; };
 		22523F1315AE11AE004072AE /* libcryptopp.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libcryptopp.a; path = ../libcryptopp.a; sourceTree = SOURCE_ROOT; };
 		2254DCEA1FA1F909008F84E6 /* InfoPlist.strings */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; path = InfoPlist.strings; sourceTree = SOURCE_ROOT; };
+		226714512114B2DA00599052 /* SurfaceReader_Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SurfaceReader_Prefix.pch; sourceTree = "<group>"; };
 		2275FCA11FA1DC0C005BB7EC /* ScreenReaderParametersDlg.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScreenReaderParametersDlg.h; sourceTree = SOURCE_ROOT; };
 		2275FCA21FA1DC0C005BB7EC /* LEDLampsPage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LEDLampsPage.h; sourceTree = SOURCE_ROOT; };
 		2275FCA31FA1DC0C005BB7EC /* ScreenReaderFunctionsDlg.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScreenReaderFunctionsDlg.h; sourceTree = SOURCE_ROOT; };
@@ -158,7 +155,6 @@
 		2275FCCD1FA1DC0F005BB7EC /* SpeechParameters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SpeechParameters.h; sourceTree = SOURCE_ROOT; };
 		2275FCCF1FA1DC10005BB7EC /* DefineStateDialog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DefineStateDialog.h; sourceTree = SOURCE_ROOT; };
 		2275FCD01FA1DC10005BB7EC /* SurfaceWizard.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SurfaceWizard.cpp; sourceTree = SOURCE_ROOT; };
-		2275FCD21FA1DC10005BB7EC /* RBSpeechCarbon.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RBSpeechCarbon.h; sourceTree = SOURCE_ROOT; };
 		2275FCD31FA1DC10005BB7EC /* ActionPickerModels.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ActionPickerModels.h; sourceTree = SOURCE_ROOT; };
 		2275FCD41FA1DC10005BB7EC /* ScreenReaderParametersDlg.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScreenReaderParametersDlg.cpp; sourceTree = SOURCE_ROOT; };
 		2275FCD51FA1DC10005BB7EC /* ActionPickerMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ActionPickerMac.h; sourceTree = SOURCE_ROOT; };
@@ -184,7 +180,6 @@
 		2275FCF01FA1DC14005BB7EC /* RBStringFuncs.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RBStringFuncs.cpp; sourceTree = SOURCE_ROOT; };
 		2275FCF11FA1DC14005BB7EC /* DefineLEDLampDlg.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DefineLEDLampDlg.h; sourceTree = SOURCE_ROOT; };
 		2275FCF31FA1DC14005BB7EC /* RBInputBox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RBInputBox.h; sourceTree = SOURCE_ROOT; };
-		2275FCF51FA1DC14005BB7EC /* sample.aps */ = {isa = PBXFileReference; lastKnownFileType = file; path = sample.aps; sourceTree = SOURCE_ROOT; };
 		2275FCF61FA1DC14005BB7EC /* SpeechDialog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SpeechDialog.h; sourceTree = SOURCE_ROOT; };
 		2275FCF71FA1DC14005BB7EC /* DefineCharDialog.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DefineCharDialog.cpp; sourceTree = SOURCE_ROOT; };
 		2275FCF81FA1DC15005BB7EC /* SRTaskBar.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SRTaskBar.cpp; sourceTree = SOURCE_ROOT; };
@@ -204,7 +199,6 @@
 		2275FD091FA1DC17005BB7EC /* ControlStatesDialog.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ControlStatesDialog.cpp; sourceTree = SOURCE_ROOT; };
 		2275FD0A1FA1DC17005BB7EC /* DisplayStatesDialog.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DisplayStatesDialog.cpp; sourceTree = SOURCE_ROOT; };
 		2275FD0C1FA1DC17005BB7EC /* RBException.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RBException.h; sourceTree = SOURCE_ROOT; };
-		2275FD0D1FA1DC17005BB7EC /* RBSpeech.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RBSpeech.cpp; sourceTree = SOURCE_ROOT; };
 		2275FD0E1FA1DC17005BB7EC /* ActionPickerMac.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ActionPickerMac.cpp; sourceTree = SOURCE_ROOT; };
 		2275FD0F1FA1DC17005BB7EC /* sample.rc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = sample.rc; sourceTree = SOURCE_ROOT; };
 		2275FD101FA1DC18005BB7EC /* EditProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EditProtocol.h; sourceTree = SOURCE_ROOT; };
@@ -234,7 +228,6 @@
 		2275FD2D1FA1DC1B005BB7EC /* DefineLEDLampDlg.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DefineLEDLampDlg.cpp; sourceTree = SOURCE_ROOT; };
 		2275FD2F1FA1DC1B005BB7EC /* MessageDefinition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MessageDefinition.h; sourceTree = SOURCE_ROOT; };
 		2275FD311FA1DC1C005BB7EC /* ProtocolChooserDialog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProtocolChooserDialog.h; sourceTree = SOURCE_ROOT; };
-		2275FD331FA1DC1C005BB7EC /* RBSpeechCocoa.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RBSpeechCocoa.h; sourceTree = SOURCE_ROOT; };
 		2275FD351FA1DC1C005BB7EC /* SurfaceReaderHelp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SurfaceReaderHelp.h; sourceTree = SOURCE_ROOT; };
 		2275FD361FA1DC1C005BB7EC /* AppConfig.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AppConfig.cpp; sourceTree = SOURCE_ROOT; };
 		2275FD371FA1DC1C005BB7EC /* UpdateChecker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UpdateChecker.cpp; sourceTree = SOURCE_ROOT; };
@@ -250,10 +243,8 @@
 		2275FD471FA1DC1E005BB7EC /* LEDLampsPage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LEDLampsPage.cpp; sourceTree = SOURCE_ROOT; };
 		2275FD481FA1DC1F005BB7EC /* RBSpeech.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RBSpeech.h; sourceTree = SOURCE_ROOT; };
 		2275FD491FA1DC1F005BB7EC /* apiproto.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = apiproto.h; sourceTree = SOURCE_ROOT; };
-		22F04E64204071D80072AC24 /* libboost_filesystem.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libboost_filesystem.dylib; path = ../../../../../../usr/local/boost/stage/lib/libboost_filesystem.dylib; sourceTree = "<group>"; };
 		22F04E66204072AB0072AC24 /* libcryptopp.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libcryptopp.a; path = ../../../../../../usr/local/cryptopp/libcryptopp.a; sourceTree = "<group>"; };
 		256AC3D80F4B6AC300CF3369 /* SurfaceReaderAppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SurfaceReaderAppDelegate.h; sourceTree = "<group>"; };
-		256AC3F00F4B6AF500CF3369 /* SurfaceReader_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SurfaceReader_Prefix.pch; sourceTree = "<group>"; };
 		29B97324FDCFA39411CA2CEA /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
 		29B97325FDCFA39411CA2CEA /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
 		8D1107320486CEB800E47090 /* SurfaceReader.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SurfaceReader.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -270,7 +261,6 @@
 				225178FA14274E0F00BD6581 /* libboost_filesystem.dylib in Frameworks */,
 				22517A22142750E700BD6581 /* libboost_serialization.a in Frameworks */,
 				22517A23142750E700BD6581 /* libboost_serialization.dylib in Frameworks */,
-				22F04E65204071D80072AC24 /* libboost_filesystem.dylib in Frameworks */,
 				22517A281427520C00BD6581 /* libboost_thread.a in Frameworks */,
 				22517A291427520C00BD6581 /* libboost_thread.dylib in Frameworks */,
 				22517A2E142752CC00BD6581 /* libboost_wserialization.a in Frameworks */,
@@ -339,7 +329,6 @@
 		2254DCE81FA1F896008F84E6 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				2210D59A1FA1FAC5005184A6 /* SurfaceReader_Prefix.pch */,
 				2210D5981FA1FA05005184A6 /* SurfaceReader-Info.plist */,
 				2254DCEA1FA1F909008F84E6 /* InfoPlist.strings */,
 			);
@@ -424,18 +413,14 @@
 				2275FD0C1FA1DC17005BB7EC /* RBException.h */,
 				2275FCC41FA1DC0E005BB7EC /* RBInputBox.cpp */,
 				2275FCF31FA1DC14005BB7EC /* RBInputBox.h */,
-				2275FD0D1FA1DC17005BB7EC /* RBSpeech.cpp */,
 				2275FD481FA1DC1F005BB7EC /* RBSpeech.h */,
 				2275FCD71FA1DC10005BB7EC /* RBSpeech.mm */,
-				2275FCD21FA1DC10005BB7EC /* RBSpeechCarbon.h */,
-				2275FD331FA1DC1C005BB7EC /* RBSpeechCocoa.h */,
 				2275FCF01FA1DC14005BB7EC /* RBStringFuncs.cpp */,
 				2275FCE51FA1DC12005BB7EC /* RBStringFuncs.h */,
 				2275FD391FA1DC1D005BB7EC /* RBTextCtrl.h */,
 				2275FCAF1FA1DC0C005BB7EC /* RBWizardPage.cpp */,
 				2275FD141FA1DC18005BB7EC /* RBWizardPage.h */,
 				2275FD221FA1DC1A005BB7EC /* sample_os2.ico */,
-				2275FCF51FA1DC14005BB7EC /* sample.aps */,
 				2275FD411FA1DC1E005BB7EC /* sample.ico */,
 				2275FCCA1FA1DC0F005BB7EC /* sample.r */,
 				2275FD0F1FA1DC17005BB7EC /* sample.rc */,
@@ -489,29 +474,20 @@
 		29B97314FDCFA39411CA2CEA /* MDR */ = {
 			isa = PBXGroup;
 			children = (
+				226714512114B2DA00599052 /* SurfaceReader_Prefix.pch */,
 				2254DCE81FA1F896008F84E6 /* Resources */,
 				2275FCA01FA1DAA9005BB7EC /* Source */,
 				080E96DDFE201D6D7F000001 /* Classes */,
-				29B97315FDCFA39411CA2CEA /* Other Sources */,
 				29B97323FDCFA39411CA2CEA /* Frameworks */,
 				19C28FACFE9D520D11CA2CBB /* Products */,
 				222D603A2040AEFC001BFFDD /* libboost_log_setup.a */,
 				222D60362040AD75001BFFDD /* libboost_regex.a */,
 				22F04E66204072AB0072AC24 /* libcryptopp.a */,
-				22F04E64204071D80072AC24 /* libboost_filesystem.dylib */,
 				224A0C8E142C76F80013150D /* CoreAudio.framework */,
 				224A0C90142C771B0013150D /* CoreMIDI.framework */,
 				224A0C92142C77530013150D /* CoreServices.framework */,
 			);
 			name = MDR;
-			sourceTree = "<group>";
-		};
-		29B97315FDCFA39411CA2CEA /* Other Sources */ = {
-			isa = PBXGroup;
-			children = (
-				256AC3F00F4B6AF500CF3369 /* SurfaceReader_Prefix.pch */,
-			);
-			name = "Other Sources";
 			sourceTree = "<group>";
 		};
 		29B97323FDCFA39411CA2CEA /* Frameworks */ = {
@@ -550,7 +526,7 @@
 		29B97313FDCFA39411CA2CEA /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0900;
+				LastUpgradeCheck = 0940;
 			};
 			buildConfigurationList = C01FCF4E08A954540054247B /* Build configuration list for PBXProject "SurfaceReader" */;
 			compatibilityVersion = "Xcode 3.1";
@@ -581,7 +557,6 @@
 				2275FDA11FA1DC1F005BB7EC /* sample.ico in Resources */,
 				2275FD531FA1DC1F005BB7EC /* sample.rc4 in Resources */,
 				2275FD851FA1DC1F005BB7EC /* sample.rc in Resources */,
-				2275FD781FA1DC1F005BB7EC /* sample.aps in Resources */,
 				2275FD5F1FA1DC1F005BB7EC /* sample.rcO in Resources */,
 				2275FD941FA1DC1F005BB7EC /* null.xpm in Resources */,
 				2275FD601FA1DC1F005BB7EC /* smile.xpm in Resources */,
@@ -630,7 +605,6 @@
 				2275FD7A1FA1DC1F005BB7EC /* SRTaskBar.cpp in Sources */,
 				2275FD5A1FA1DC1F005BB7EC /* RBInputBox.cpp in Sources */,
 				2275FD731FA1DC1F005BB7EC /* MIDIDialog.cpp in Sources */,
-				2275FD831FA1DC1F005BB7EC /* RBSpeech.cpp in Sources */,
 				2275FD5C1FA1DC1F005BB7EC /* DefineTranslationTable.cpp in Sources */,
 				2275FD4B1FA1DC1F005BB7EC /* ActionsPageModels.cpp in Sources */,
 				2275FD9F1FA1DC1F005BB7EC /* TextDisplaysPage.cpp in Sources */,
@@ -661,6 +635,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ENABLE_OBJC_WEAK = YES;
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
@@ -711,6 +686,7 @@
 					"-lpthread",
 					"-liconv",
 				);
+				PRECOMPS_INCLUDE_HEADERS_FROM_BUILT_PRODUCTS_DIR = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.yourcompany.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = SurfaceReader;
 				SCAN_ALL_SOURCE_FILES_FOR_INCLUDES = NO;
@@ -723,6 +699,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ENABLE_OBJC_WEAK = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -738,6 +715,7 @@
 					/usr/local/boost/stage/lib,
 					/usr/local/cryptopp,
 				);
+				PRECOMPS_INCLUDE_HEADERS_FROM_BUILT_PRODUCTS_DIR = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.yourcompany.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = SurfaceReader;
 				SDKROOT = macosx;
@@ -752,11 +730,13 @@
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
 				CLANG_WARN_STRICT_PROTOTYPES = YES;
@@ -851,11 +831,13 @@
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
 				CLANG_WARN_STRICT_PROTOTYPES = YES;

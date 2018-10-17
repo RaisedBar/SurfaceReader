@@ -1,4 +1,4 @@
-﻿//Serializer.h
+//Serializer.h
 // Serialization/DeSerialization for the mdr.
 //Copyright (©) S R Farrow/T A Burgess, 2010-2012, All Rights Reserved.
 
