@@ -734,7 +734,7 @@ SurfaceParameters myParameters;
 
 		try
 			{
-				myParameters = LoadData <SurfaceParameters> ( i->path(), false);
+				// myParameters = LoadData <SurfaceParameters> ( i->path(), false);
 		}
 		catch(...)
 		{
@@ -1177,7 +1177,8 @@ bool blnSuccess = true;
 	// File matches, so try to load it
 				try
 			{
-								myProtocol = LoadData <SurfaceProtocol> (i->path(), false);
+								// myProtocol = LoadData <SurfaceProtocol> (i->path(), false);
+					RestoreProtocol( myProtocol, i->path());
 blnSuccess = true;
 				}
 		catch(...)
@@ -1195,7 +1196,7 @@ vFailedFiles.push_back( i->path().filename().generic_string());
 	// File matches, so try to load it
 	try
 			{
-				myProtocol = LoadData <SurfaceProtocol> ( i->path(), true);
+				// myProtocol = LoadData <SurfaceProtocol> ( i->path(), true);
 				blnSuccess = true;
 	}
 		catch(...)
@@ -1371,18 +1372,22 @@ Protocols->Add( *pProtocol);
 // Save the updated protocol collection
 SaveProtocols();
 
-// Add a new Surface to the Surface array
-int 	nHIn = myProtocolWizard.GetSurfaceParameters().GetHardwareInID();
-int nHOut = myProtocolWizard.GetSurfaceParameters().GetHardwareOutID();
-int nDisplayIn = myProtocolWizard.GetSurfaceParameters().GetDisplayInID();
-int nDisplayOut = myProtocolWizard.GetSurfaceParameters().GetDisplayOutID();
-	// Get port names for validation
-std::string strHIn = myProtocolWizard.GetSurfaceParameters().GetHardwareInName();
-std::string strHOut = myProtocolWizard.GetSurfaceParameters().GetHardwareOutName();
-std::string strDisplayIn = myProtocolWizard.GetSurfaceParameters().GetDisplayInName();
-std::string strDisplayOut = myProtocolWizard.GetSurfaceParameters().GetDisplayOutName();
-	
-// Update the surface list
+// Add a new Surface to the Surface vector
+ActiveProduct myProduct;
+DolphinProduct dpProduct;
+Speech->GetActiveProduct(myProduct, dpProduct);
+
+SurfacePointer pSurface(new MIDISurface(this, myProduct, &myProtocolWizard.GetSurfaceParameters(), Protocols, Apps));
+SurfacePointers.push_back(pSurface);
+
+// Activate the new surface
+bool blnResult = true;
+if (OpenSurfacePorts(SurfacePointers.back()) == false)
+{
+	blnResult = false;
+}
+
+		// Update the surface list
 lbxSurfaces->Append( SurfacePointers.back()->GetSurfaceName());
 
 	// Make sure that the correct menu options are enabled
@@ -1391,14 +1396,6 @@ lbxSurfaces->Append( SurfacePointers.back()->GetSurfaceName());
 UpdateStatusBar();
 
 		// Activate the new surface
-SurfacePointers.back()->SetHardwareInID( nHIn);
-SurfacePointers.back()->SetHardwareOutID( nHOut);
-SurfacePointers.back()->SetDisplayInID( nDisplayIn);
-SurfacePointers.back()->SetDisplayOutID( nDisplayOut);
-SurfacePointers.back()->SetHardwareInName( strHIn);
-SurfacePointers.back()->SetHardwareOutName( strHOut);
-SurfacePointers.back()->SetDisplayInName( strDisplayIn);
-SurfacePointers.back()->SetDisplayOutName( strDisplayOut);
 OpenSurfacePorts( SurfacePointers.back());
 	SaveSurfaces();
 	}  // end if protocol name is unique
@@ -1704,7 +1701,8 @@ if (nMySelection < 0)   // No selection in list box
 catch( RBException &myException)
 {
 			#ifdef __WINDOWS__ 
-OutputDebugString( myException.what());
+// OutputDebugString( myException.what());
+wxMessageBox(myException.what(), wstrErrorTitle, wxOK | wxICON_ERROR);
 					#endif
 
 wxMessageBox( wstrNoAppConfigError, wstrErrorTitle, wxOK | wxICON_ERROR);
@@ -2641,18 +2639,25 @@ bool SurfaceFrame::LoadOptions()
 		boost::filesystem::path myPath( AppDataPath());
 myPath /= wstrOptionsFileName;
 
-try
-				{
-					myOptions = LoadData <SurfaceReaderOptions> (myPath, false);
-blnResult = true;
+if ((exists(myPath))
+	&& (is_regular_file(myPath)))
+{
+	try
+	{
+		myOptions = LoadData <SurfaceReaderOptions>(myPath, false);
+		blnResult = true;
+	}
+	catch (RBException &myException)
+	{
+		wxMessageBox(myException.what(), wstrErrorTitle, wxOK | wxICON_ERROR);
+	}  // end catch
 }
-					catch ( RBException &myException)
-		{
-			#ifdef __WINDOWS__ 
-OutputDebugString( myException.what());
-					#endif
-					}  // end catch
-// #endif
+else
+{
+	// Don't worry if the file doesn't exist, it will be created when needed
+	blnResult = true;
+}
+
 return blnResult;
 }
 

@@ -25,17 +25,19 @@
 //#include <wx/msw/winundef.h> 
 
 //#include <boost/archive/xml_woarchive.hpp>
-//#include <boost/archive/xml_wiarchive.hpp>
-//#include <boost/config.hpp>
-//#include <boost/preprocessor/stringize.hpp>
-//#include <boost/serialization/string.hpp>
-//#include <boost/serialization/map.hpp>
-//#include <boost/serialization/utility.hpp>
-//#include <boost/serialization/split_member.hpp>
-//#include <boost/serialization/tracking.hpp>
-//#include <boost/serialization/base_object.hpp>
-//#include <boost/serialization/nvp.hpp>
-//#include <boost/serialization/export.hpp>
+#include <boost/archive/xml_wiarchive.hpp>
+#include <boost/config.hpp>
+#include <boost/preprocessor/stringize.hpp>
+#include <boost/serialization/string.hpp>
+#include <boost/serialization/map.hpp>
+#include <boost/serialization/utility.hpp>
+#include <boost/serialization/split_member.hpp>
+#include <boost/serialization/tracking.hpp>
+#include <boost/serialization/base_object.hpp>
+#include <boost/serialization/nvp.hpp>
+#include <boost/serialization/export.hpp>
+#include <boost/serialization/version.hpp>
+
 
 //#include <wx/msgdlg.h>
 //#include <wx/msw/winundef.h> 
@@ -69,14 +71,16 @@ std::string GetLinkedDisplayHash();
 void SetLinkedDisplayHash( std::string strLinkedHash);
 
 private:
-	friend std::ostream & operator<<( std::ostream &os, const DisplayDefinition &DD);
-friend std::istream & operator>>( std::istream &is, const DisplayDefinition &DD);
-friend class boost::serialization::access;
-    
+	friend std::ostream & operator<<(std::ostream &os, const DisplayDefinition &DD);
+	friend std::istream & operator>>(std::istream &is, const DisplayDefinition &DD);
+	friend class boost::serialization::access;
+
 	template<class Archive>
-void serialize( Archive & myArchive, const unsigned int version)
+	void serialize(Archive & myArchive, const unsigned int version)
 	{
-const char * cLabelTag = "Label";
+try
+{
+	const char * cLabelTag = "Label";
 myArchive & boost::serialization::make_nvp( cLabelTag, wstrLabel);
 const char * cAddressBytesTag = "SysExAddressBytes";
 myArchive & boost::serialization::make_nvp( cAddressBytesTag, vSysExAddressBytes);
@@ -114,6 +118,11 @@ if(version > 2)
 const char * cLinkedHashTag = "LinkedTo";
 myArchive & boost::serialization::make_nvp( cLinkedHashTag, strLinkedDisplayHash);
 }
+}  // end try
+catch (...)
+{
+	throw ID_LOAD_DATA_EXCEPTION;
+}  // end catch
 }
 
 // Internal storage

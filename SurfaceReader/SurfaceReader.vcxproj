@@ -84,11 +84,13 @@
     <LinkIncremental>false</LinkIncremental>
     <IncludePath>C:\Program Files (x86)\WiX Toolset v3.11\SDK\VS2017\inc\;C:\Program Files\rtmidi\;C:\wxWidgets-3.1.0\lib\vc_lib\mswud\;C:\wxWidgets-3.1.0\include\;C:\Program Files\boost\;C:\Program Files\crypto++\;$(IncludePath)</IncludePath>
     <LibraryPath>C:\Program Files\rtmidi\lib\X86;C:\wxWidgets-3.1.0\lib\vc_lib;C:\Program Files\boost\stage\lib\;C:\Program Files (x86)\WiX Toolset v3.11\SDK\VS2017\lib\x86\;C:\Program Files\crypto++\Win32\Output\release\;$(VC_LibraryPath_x86);$(WindowsSDK_LibraryPath_x86);$(NETFXKitsDir)Lib\um\x86</LibraryPath>
+    <OutDir>..\files\x86</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
     <IncludePath>C:\Program Files (x86)\WiX Toolset v3.11\SDK\VS2017\inc\;C:\Program Files\rtmidi\;C:\wxWidgets-3.1.0\lib\vc_lib\mswud\;C:\wxWidgets-3.1.0\include\;C:\Program Files\boost\;C:\Program Files\crypto++\;$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
     <LibraryPath>C:\Program Files\rtmidi\lib\X64\;C:\wxWidgets-3.1.0\lib\vc_x64_lib\;C:\Program Files\boost\stage\lib\;C:\Program Files (x86)\WiX Toolset v3.11\SDK\VS2017\lib\x64\;C:\Program Files\crypto++\x64\Output\release\;$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);$(NETFXKitsDir)Lib\um\x64</LibraryPath>
+    <OutDir>..\files\x64</OutDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>

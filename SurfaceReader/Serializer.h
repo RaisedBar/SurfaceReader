@@ -129,10 +129,13 @@ else
 template <class SerializingType>
 SerializingType LoadData(const path& myFile, bool blnIsEncrypted)
  {
-	 	 //Check file existance.
+	SerializingType Data;
+	//Check file existance.
 	 if ((! exists( myFile)) || (! is_regular_file( myFile)))
 { //file doesn't exist.
-				throw RBException( wstrFileDoesNotExistError);
+		 std::wstring wstrError = myFile.generic_path().generic_wstring();
+		 // .append(wstrFileDoesNotExistError);
+throw RBException(wstrError);
 	 }
 	boost::filesystem::path ProcessingPath =myFile;	
 	 if (blnIsEncrypted)
@@ -142,7 +145,6 @@ SerializingType LoadData(const path& myFile, bool blnIsEncrypted)
 	 } //end encryption.
 		boost::filesystem::wifstream WInputStream(ProcessingPath.generic_wstring());
 	 boost::archive::xml_wiarchive archive( WInputStream);
-	 SerializingType Data;
 try
 	{
 archive >> BOOST_SERIALIZATION_NVP(Data);
@@ -163,4 +165,7 @@ remove(ProcessingPath);
 	}
 return Data;
 }
+
+
+
 #endif

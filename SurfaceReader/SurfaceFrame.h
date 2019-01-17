@@ -7,6 +7,27 @@
 
 #pragma once
 
+// Test includes
+#include "Protocol.h"
+#include <iomanip>
+#include <iostream>
+#include <fstream>
+#include <string>
+
+// #include <cstdio> // remove
+#include <boost/config.hpp>
+#if defined(BOOST_NO_STDC_NAMESPACE)
+namespace std {
+	using ::remove;
+}
+#endif
+
+// #include <boost/archive/tmpdir.hpp>
+#include <boost/archive/xml_iarchive.hpp>
+#include <boost/archive/xml_oarchive.hpp>
+
+// end test includes
+
 #include "RBSpeech.h"
 #include "SurfaceReaderHelp.h"
 
@@ -117,7 +138,25 @@ bool GetStartSized();
 void Shutdown();
     
 private:
-bool InitData();
+	void RestoreProtocol(SurfaceProtocol &s, const path filename)
+	{
+		// open the archive
+		std::ifstream ifs(filename.c_str());
+		assert(ifs.good());
+		boost::archive::xml_iarchive ia(ifs);
+
+		// restore the protocol from the archive
+		try
+		{
+			ia >> BOOST_SERIALIZATION_NVP(s);
+		}
+		catch (...)
+		{
+			wxMessageBox(wxString::Format("%s", "error loading archive"), wstrErrorTitle, wxOK | wxICON_ERROR);
+		}
+	};
+
+	bool InitData();
 void ClearDisplays();
 void AddDisplay( std::wstring wstrLabel);
 void SetDisplayText( std::wstring wstrLabel, std::string strDisplayText);
