@@ -22,7 +22,7 @@
     <VCProjectVersion>15.0</VCProjectVersion>
     <ProjectGuid>{1C13AB1F-4A21-4A59-B248-59E0EC6243B9}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <WindowsTargetPlatformVersion>10.0.10240.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -56,43 +56,47 @@
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\..\..\..\wxWidgets-3.1.2\wxwidgets.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\..\..\..\wxWidgets-3.1.2\wxwidgets.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\..\..\..\wxWidgets-3.1.2\wxwidgets.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\..\..\..\wxWidgets-3.1.2\wxwidgets.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);c:\wxwidgets-3.1.0\include;c:\wxwidgets-3.1.0\include\msvc;c:\program files\boost;c:\program files (x86)\visual leak detector\include;c:\program files\crypto++;c:\program files\rtmidi;C:\program files (x86)\WiX Toolset v3.11\SDK\VS2017\inc;</IncludePath>
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);c:\program files\boost;c:\program files (x86)\visual leak detector\include;c:\program files\crypto++;c:\program files\rtmidi;C:\program files (x86)\WiX Toolset v3.11\SDK\VS2017\inc;</IncludePath>
     <SourcePath>$(VC_SourcePath);c:\program files\rtmidi;</SourcePath>
-    <LibraryPath>$(VC_LibraryPath_x86);$(WindowsSDK_LibraryPath_x86);$(NETFXKitsDir)Lib\um\x86;.\lib;c:\wxwidgets-3.1.0\lib\vc_lib;c:\program files\boost\stage\lib;C:\program files\crypto++\win32\Output\Debug;C:\program files (x86)\WiX Toolset v3.11\SDK\VS2017\lib\x86;c:\program files\rtmidi\lib\x86;c:\program files (x86)\visual leak detector\lib\win32;</LibraryPath>
+    <LibraryPath>$(VC_LibraryPath_x86);$(WindowsSDK_LibraryPath_x86);$(NETFXKitsDir)Lib\um\x86;.\lib;c:\program files\boost\stage\lib;C:\program files\crypto++\win32\Output\Debug;C:\program files (x86)\WiX Toolset v3.11\SDK\VS2017\lib\x86;c:\program files\rtmidi\lib\x86;c:\program files (x86)\visual leak detector\lib\win32;</LibraryPath>
     <OutDir>$(SolutionDir)files\x86\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);c:\wxwidgets-3.1.0\include;c:\wxwidgets-3.1.0\include\msvc;c:\program files\boost;c:\program files (x86)\visual leak detector\include;c:\program files\crypto++;c:\program files\rtmidi;C:\program files (x86)\WiX Toolset v3.11\SDK\VS2017\inc;</IncludePath>
-    <LibraryPath>$(VC_LibraryPath_x86);$(WindowsSDK_LibraryPath_x86);$(NETFXKitsDir)Lib\um\x86;.\lib;c:\wxwidgets-3.1.0\lib\vc_lib;c:\program files\boost\stage\lib;C:\program files\crypto++\win32\Output\Release;C:\program files (x86)\WiX Toolset v3.11\SDK\VS2017\lib\x86;c:\program files\rtmidi\lib\x86;c:\program files (x86)\visual leak detector\lib\win32;</LibraryPath>
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);c:\program files\boost;c:\program files (x86)\visual leak detector\include;c:\program files\crypto++;c:\program files\rtmidi;C:\program files (x86)\WiX Toolset v3.11\SDK\VS2017\inc;</IncludePath>
+    <LibraryPath>$(VC_LibraryPath_x86);$(WindowsSDK_LibraryPath_x86);$(NETFXKitsDir)Lib\um\x86;.\lib;c:\program files\boost\stage\lib;C:\program files\crypto++\win32\Output\Release;C:\program files (x86)\WiX Toolset v3.11\SDK\VS2017\lib\x86;c:\program files\rtmidi\lib\x86;c:\program files (x86)\visual leak detector\lib\win32;</LibraryPath>
     <OutDir>$(SolutionDir)files\x86\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);c:\wxwidgets-3.1.0\include;c:\wxwidgets-3.1.0\include\msvc;c:\program files\boost;c:\program files (x86)\visual leak detector\include;c:\program files\crypto++;c:\program files\rtmidi;C:\program files (x86)\WiX Toolset v3.11\SDK\VS2017\inc;</IncludePath>
-    <LibraryPath>$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);$(NETFXKitsDir)Lib\um\x64;C:\wxWidgets-3.1.0\lib\vc_x64_lib;C:\program files\Boost\stage\lib;C:\program files\crypto++\x64\Output\release;C:\program files (x86)\WiX Toolset v3.11\SDK\VS2017\lib\x64;c:\program files\rtmidi\lib\x64;</LibraryPath>
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);c:\program files\boost;c:\program files (x86)\visual leak detector\include;c:\program files\crypto++;c:\program files\rtmidi;C:\program files (x86)\WiX Toolset v3.11\SDK\VS2017\inc;</IncludePath>
+    <LibraryPath>$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);$(NETFXKitsDir)Lib\um\x64;C:\program files\Boost\stage\lib;C:\program files\crypto++\x64\Output\release;C:\program files (x86)\WiX Toolset v3.11\SDK\VS2017\lib\x64;c:\program files\rtmidi\lib\x64;</LibraryPath>
     <OutDir>$(SolutionDir)files\x64\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);c:\wxwidgets-3.1.0\include;c:\wxwidgets-3.1.0\include\msvc;c:\program files\boost;c:\program files (x86)\visual leak detector\include;c:\program files\crypto++;c:\program files\rtmidi;C:\program files (x86)\WiX Toolset v3.11\SDK\VS2017\inc;</IncludePath>
-    <LibraryPath>$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);$(NETFXKitsDir)Lib\um\x64;C:\wxWidgets-3.1.0\lib\vc_x64_lib;C:\program files\Boost\stage\lib;C:\program files\crypto++\x64\Output\Debug;C:\program files (x86)\WiX Toolset v3.11\SDK\VS2017\lib\x64;c:\program files\rtmidi\lib\x64;</LibraryPath>
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);c:\program files\boost;c:\program files (x86)\visual leak detector\include;c:\program files\crypto++;c:\program files\rtmidi;C:\program files (x86)\WiX Toolset v3.11\SDK\VS2017\inc;</IncludePath>
+    <LibraryPath>$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);$(NETFXKitsDir)Lib\um\x64;C:\program files\Boost\stage\lib;C:\program files\crypto++\x64\Output\Debug;C:\program files (x86)\WiX Toolset v3.11\SDK\VS2017\lib\x64;c:\program files\rtmidi\lib\x64;</LibraryPath>
     <OutDir>$(SolutionDir)X64\debug\</OutDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
-      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_UNICODE; _CRT_SECURE_NO_WARNINGS;</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
