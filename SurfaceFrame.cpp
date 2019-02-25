@@ -730,63 +730,57 @@ for (directory_iterator i( myPath); i != end_itr; ++i )
 	{
 	// File matches, so try to load it
 		bool blnSuccess = true;
-SurfaceParameters myParameters;
-
 		try
 			{
-				myParameters = LoadData <SurfaceParameters> ( i->path(), false);
+			SurfaceParameters myParameters{ LoadData <SurfaceParameters>(i->path(), false) };
+			bool blnProtocolExists = Protocols->ProtocolExists(myParameters.GetProtocolID());
+
+			if (blnProtocolExists)
+			{
+				// Look up the name strings for the loaded AppConfig and Protocol
+				try
+				{
+					myParameters.SetAppConfigName(Apps->GetAppConfig(myParameters.GetAppConfigID().first, myParameters.GetAppConfigID().second).GetAppName());
+				}
+				catch (...)
+				{
+					myParameters.SetAppConfigName(wstrEmpty);
+				}
+
+				try
+				{
+					myParameters.SetProtocolName(Protocols->GetProtocol(myParameters.GetProtocolID()).GetProtocolName());
+				}
+				catch (...)
+				{
+					myParameters.SetProtocolName(wstrEmpty);
+				}
+
+				// Add the new surface to the master vector
+				ActiveProduct myProduct;
+				DolphinProduct dpProduct;
+				Speech->GetActiveProduct(myProduct, dpProduct);
+
+				SurfacePointer pSurface(new MIDISurface(this, myProduct, &myParameters, Protocols, Apps));
+				SurfacePointers.push_back(pSurface);
+
+				// Activate the new surface
+				if (OpenSurfacePorts(SurfacePointers.back()) == false)
+				{
+					blnResult = false;
+				}
+
+				// Update the surface list
+				lbxSurfaces->Append(SurfacePointers.at(SurfacePointers.size() - 1)->GetSurfaceName());
+			}  // end if protocol exists
 		}
-		catch(...)
+		catch (boost::archive::archive_exception & myException)
 		{
 blnSuccess = false;
 blnResult = false;
 vFailedFiles.push_back( i->path().filename().generic_string());
 		}
-
-			if (blnSuccess)
-				{
-				bool blnProtocolExists = Protocols->ProtocolExists( myParameters.GetProtocolID());
-				
-if (blnProtocolExists)
-				{
-					// Look up the name strings for the loaded AppConfig and Protocol
-					try
-						{
-							myParameters.SetAppConfigName( Apps->GetAppConfig( myParameters.GetAppConfigID().first, myParameters.GetAppConfigID().second).GetAppName());
-					}
-					catch( ...)
-					{
-						myParameters.SetAppConfigName( wstrEmpty);
-					}
-
-try
-	{
-		myParameters.SetProtocolName( Protocols->GetProtocol( myParameters.GetProtocolID()).GetProtocolName());
-}
-catch( ...)
-{
-	myParameters.SetProtocolName( wstrEmpty);
-}
-
-					// Add the new surface to the master vector
-ActiveProduct myProduct;
-DolphinProduct dpProduct;
-										Speech->GetActiveProduct( myProduct, dpProduct);
-
-						SurfacePointer pSurface( new MIDISurface(this, myProduct, &myParameters, Protocols, Apps));
-					SurfacePointers.push_back( pSurface);
-					
-// Activate the new surface
-if (OpenSurfacePorts( SurfacePointers.back()) == false)
-{
-	blnResult = false;
-}
-
-					// Update the surface list
-lbxSurfaces->Append( SurfacePointers.at( SurfacePointers.size() -1)->GetSurfaceName());
-}  // end if protocol exists
-			}  // end if blnSuccess
-					}  // end if match
+}  // end if match
 }  // end for
     
 // Display the names of any files that failed to load
@@ -888,7 +882,7 @@ path myPath( AppConfigPath());
 		  return;
   }
           
-DeleteAppConfigFiles();
+// DeleteAppConfigFiles();
 
 		for ( int i = 0; i < Apps->Count(); i++)
 {
@@ -898,8 +892,7 @@ std::string strProtocolID = Apps->GetAppConfigItem( i).GetProtocolID();
 		bool blnEncrypted = Protocols->GetProtocol(strProtocolID).IsEncrypted();
 	AppConfig myAppConfig;
 	
-
-	if (blnEncrypted)
+		if (blnEncrypted)
 	{
 		wstrFileName.append( wstrPROTECTED_APP_CONFIG_EXTENSION);
 	}
@@ -959,21 +952,18 @@ for (directory_iterator i( myPath); i != end_itr; ++i )
 			continue;
 	}
 
-bool blnSuccess = false;
-AppConfig myAppConfig; 
-
-// Is this a user-created file?
 	if (i->path().filename().extension() == wstrUserAppConfigFileExtension.c_str())
 	{
-	// File matches, so try to load it
-				try
+		try
 			{
-				myAppConfig = LoadData <AppConfig> (i->path(), false);						
-				blnSuccess = true;
-		}
-		catch(...)
+					AppConfig myAppConfig{ LoadData <AppConfig>(i->path(), false) };
+					// Add the new configuration to the collection
+					std::string strProtocolID = myAppConfig.GetProtocolID();
+					std::wstring wstrProtocolID(strProtocolID.begin(), strProtocolID.end());
+					Apps->Add(myAppConfig.GetAppName(), wstrProtocolID, myAppConfig);
+}
+				catch (boost::archive::archive_exception & myException)
 		{
-blnSuccess = false;
 blnResult = false;
 vFailedFiles.push_back( i->path().filename().generic_string());
 		}
@@ -986,25 +976,19 @@ vFailedFiles.push_back( i->path().filename().generic_string());
 	// File matches, so try to load it
 						try
 			{
-				myAppConfig = LoadData <AppConfig> (i->path(), true);
-				blnSuccess = true;
-		}
-		catch(...)
+							AppConfig myAppConfig{ LoadData <AppConfig>(i->path(), true) };
+							// Add the new configuration to the collection
+							std::string strProtocolID = myAppConfig.GetProtocolID();
+							std::wstring wstrProtocolID(strProtocolID.begin(), strProtocolID.end());
+							Apps->Add(myAppConfig.GetAppName(), wstrProtocolID, myAppConfig);
+						}
+						catch (boost::archive::archive_exception & myException)
 		{
-blnSuccess = false;
 blnResult = false;
 vFailedFiles.push_back( i->path().filename().generic_string());
 		}
 					}  // end if copy-protected
 	}  // end else: if user file
-
-if (blnSuccess)
-				{
-				// Add the new configuration to the collection
-std::string strProtocolID= myAppConfig.GetProtocolID();
-std::wstring wstrProtocolID( strProtocolID.begin(), strProtocolID.end());
-				Apps->Add( myAppConfig.GetAppName(), wstrProtocolID, myAppConfig);		
-}  // end if blnSuccess
 }  // end for
     
 // Display the names of any files that failed to load
@@ -1101,7 +1085,7 @@ path myPath( ProtocolPath());
 		  return;
   }
           
-DeleteProtocolFiles();
+// DeleteProtocolFiles();
 
 for (int i = 0; i < Protocols->count(); i++)
 {
@@ -1136,7 +1120,7 @@ SaveData <SurfaceProtocol> (myProtocol, myPath, false);
 bool SurfaceFrame::LoadProtocols()
 {
 	bool blnResult = true;
-	path myPath( ProtocolPath().c_str());
+			path myPath( ProtocolPath().c_str());
 std::vector <std::string> vFailedFiles;
 
 try
@@ -1169,21 +1153,21 @@ for (directory_iterator i( myPath); i != end_itr; ++i )
 	}
 
 bool blnSuccess = true;
-		SurfaceProtocol myProtocol;
-
-// Is this a user-created file?
+		// Is this a user-created file?
 	if (i->path().filename().extension() == wstrUSER_PROTOCOL_EXTENSION.c_str())
 	{
 	// File matches, so try to load it
 				try
 			{
-								myProtocol = LoadData <SurfaceProtocol> (i->path(), false);
-blnSuccess = true;
+					SurfaceProtocol myProtocol{ LoadData <SurfaceProtocol>(i->path(), false) };
+					// Add the new protocol to the collection
+					int nCount = Protocols->count();
+					Protocols->Add(myProtocol);
 				}
-		catch(...)
-		{
-blnSuccess = false;
-blnResult = false;
+				catch (boost::archive::archive_exception & myException)
+				{
+					wxMessageBox(myException.what(), wstrErrorTitle, wxOK | wxICON_ERROR);
+				blnResult = false;
 vFailedFiles.push_back( i->path().filename().generic_string());
 		}
 		}  // if user file
@@ -1195,24 +1179,19 @@ vFailedFiles.push_back( i->path().filename().generic_string());
 	// File matches, so try to load it
 	try
 			{
-				myProtocol = LoadData <SurfaceProtocol> ( i->path(), true);
-				blnSuccess = true;
+		SurfaceProtocol myProtocol{ LoadData <SurfaceProtocol>(i->path(), true) };
+		// Add the new protocol to the collection
+		int nCount = Protocols->count();
+		Protocols->Add(myProtocol);
 	}
-		catch(...)
-		{
-blnSuccess = false;
-blnResult = false;
+	catch (RBException & myException)
+	{
+		wxMessageBox(myException.what(), wstrErrorTitle, wxOK | wxICON_ERROR);
+	blnResult = false;
 vFailedFiles.push_back( i->path().filename().generic_string());
 		}  // end catch
 		}  // end if copy-protected match
 	}  // end else: if user protocol
-
-if (blnSuccess)
-				{
-				// Add the new protocol to the collection
-					int nCount = Protocols->count();
-Protocols->Add( myProtocol);		
-}  // end if blnSuccess
 }  // end for
     
 // Display the names of any files that failed to load
@@ -1371,18 +1350,22 @@ Protocols->Add( *pProtocol);
 // Save the updated protocol collection
 SaveProtocols();
 
-// Add a new Surface to the Surface array
-int 	nHIn = myProtocolWizard.GetSurfaceParameters().GetHardwareInID();
-int nHOut = myProtocolWizard.GetSurfaceParameters().GetHardwareOutID();
-int nDisplayIn = myProtocolWizard.GetSurfaceParameters().GetDisplayInID();
-int nDisplayOut = myProtocolWizard.GetSurfaceParameters().GetDisplayOutID();
-	// Get port names for validation
-std::string strHIn = myProtocolWizard.GetSurfaceParameters().GetHardwareInName();
-std::string strHOut = myProtocolWizard.GetSurfaceParameters().GetHardwareOutName();
-std::string strDisplayIn = myProtocolWizard.GetSurfaceParameters().GetDisplayInName();
-std::string strDisplayOut = myProtocolWizard.GetSurfaceParameters().GetDisplayOutName();
-	
-// Update the surface list
+// Add a new Surface to the Surface vector
+ActiveProduct myProduct;
+DolphinProduct dpProduct;
+Speech->GetActiveProduct(myProduct, dpProduct);
+
+SurfacePointer pSurface(new MIDISurface(this, myProduct, &myProtocolWizard.GetSurfaceParameters(), Protocols, Apps));
+SurfacePointers.push_back(pSurface);
+
+// Activate the new surface
+bool blnResult = true;
+if (OpenSurfacePorts(SurfacePointers.back()) == false)
+{
+	blnResult = false;
+}
+
+		// Update the surface list
 lbxSurfaces->Append( SurfacePointers.back()->GetSurfaceName());
 
 	// Make sure that the correct menu options are enabled
@@ -1391,14 +1374,6 @@ lbxSurfaces->Append( SurfacePointers.back()->GetSurfaceName());
 UpdateStatusBar();
 
 		// Activate the new surface
-SurfacePointers.back()->SetHardwareInID( nHIn);
-SurfacePointers.back()->SetHardwareOutID( nHOut);
-SurfacePointers.back()->SetDisplayInID( nDisplayIn);
-SurfacePointers.back()->SetDisplayOutID( nDisplayOut);
-SurfacePointers.back()->SetHardwareInName( strHIn);
-SurfacePointers.back()->SetHardwareOutName( strHOut);
-SurfacePointers.back()->SetDisplayInName( strDisplayIn);
-SurfacePointers.back()->SetDisplayOutName( strDisplayOut);
 OpenSurfacePorts( SurfacePointers.back());
 	SaveSurfaces();
 	}  // end if protocol name is unique
@@ -1704,7 +1679,8 @@ if (nMySelection < 0)   // No selection in list box
 catch( RBException &myException)
 {
 			#ifdef __WINDOWS__ 
-OutputDebugString( myException.what());
+// OutputDebugString( myException.what());
+wxMessageBox(myException.what(), wstrErrorTitle, wxOK | wxICON_ERROR);
 					#endif
 
 wxMessageBox( wstrNoAppConfigError, wstrErrorTitle, wxOK | wxICON_ERROR);
@@ -2641,18 +2617,25 @@ bool SurfaceFrame::LoadOptions()
 		boost::filesystem::path myPath( AppDataPath());
 myPath /= wstrOptionsFileName;
 
-try
-				{
-					myOptions = LoadData <SurfaceReaderOptions> (myPath, false);
-blnResult = true;
+if ((exists(myPath))
+	&& (is_regular_file(myPath)))
+{
+	try
+	{
+		SurfaceReaderOptions myOptions{ LoadData <SurfaceReaderOptions>(myPath, false) };
+		blnResult = true;
+	}
+	catch (RBException &myException)
+	{
+		wxMessageBox(myException.what(), wstrErrorTitle, wxOK | wxICON_ERROR);
+	}  // end catch
 }
-					catch ( RBException &myException)
-		{
-			#ifdef __WINDOWS__ 
-OutputDebugString( myException.what());
-					#endif
-					}  // end catch
-// #endif
+else
+{
+	// Don't worry if the file doesn't exist, it will be created when needed
+	blnResult = true;
+}
+
 return blnResult;
 }
 

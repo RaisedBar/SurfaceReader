@@ -164,7 +164,6 @@
     <ClCompile Include=".\DisplaysPage.cpp" />
     <ClCompile Include=".\DisplayStatesDialog.cpp" />
     <ClCompile Include=".\EditProtocol.cpp" />
-    <ClCompile Include=".\Encryption.cpp" />
     <ClCompile Include=".\gwspeak_i.c" />
     <ClCompile Include=".\HardwarePage.cpp" />
     <ClCompile Include=".\LEDLampsPage.cpp" />
@@ -219,7 +218,6 @@
     <ClInclude Include=".\DisplaysPage.h" />
     <ClInclude Include=".\DisplayStatesDialog.h" />
     <ClInclude Include=".\EditProtocol.h" />
-    <ClInclude Include=".\Encryption.h" />
     <ClInclude Include=".\gwspeak.h" />
     <ClInclude Include=".\HardwarePage.h" />
     <ClInclude Include=".\jfwapi.h" />
@@ -269,6 +267,7 @@
     <ClInclude Include=".\UpdateChecker.h" />
     <ClInclude Include=".\wineyes.h" />
     <ClInclude Include=".\apiproto.h" />
+    <ClInclude Include="FileCorrecter.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include=".\sample.rc" />

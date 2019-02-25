@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
 <!DOCTYPE boost_serialization>
-<boost_serialization signature="serialization::archive" version="9">
+<boost_serialization signature="serialization::archive" version="17">
 <Data class_id="0" tracking_level="0" version="2">
 	<ProtocolName>Tranzport</ProtocolName>
 	<Encrypted>0</Encrypted>
@@ -403,7 +403,7 @@
 		<item_version>0</item_version>
 		<item class_id="9" tracking_level="0" version="0">
 			<first>X240.0.1.64.16.0.</first>
-			<second class_id="10" tracking_level="0" version="0">
+			<second class_id="10" tracking_level="0" version="3">
 				<Label>lcd</Label>
 				<SysExAddressBytes>
 					<count>1</count>
@@ -424,6 +424,9 @@
 				<LEDLamp>0</LEDLamp>
 				<TranslationID></TranslationID>
 				<CursorOffset>6</CursorOffset>
+				<CursorFromLeft>1</CursorFromLeft>
+				<Unicode>0</Unicode>
+				<LinkedTo></LinkedTo>
 			</second>
 		</item>
 	</DisplayMessages>
@@ -435,3 +438,4 @@
 	<MessageBufferSize>0</MessageBufferSize>
 	<DropExtraStatusBytes>0</DropExtraStatusBytes>
 </Data>
+</boost_serialization>
