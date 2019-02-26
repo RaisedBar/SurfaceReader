@@ -22,7 +22,6 @@
 
 #include <boost/shared_ptr.hpp>
 
-//#include <wx/platform.h>
 #include <wx/wizard.h>
 #include <wx/accel.h>
 #include <wx/frame.h>

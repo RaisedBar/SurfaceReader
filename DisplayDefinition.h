@@ -9,37 +9,8 @@
 
 #pragma once
 
-
-//#include <fstream>
-//#include <iostream>
-//#include <vector>
-//#include <stdint.h>
-//#include <stdlib.h>
-
-//#include "RBEnums.hpp"
-//#include "SurfaceActions.hpp"
 #include "MessageDefinition.h"
 #include "MIDI.h"
-
-//#include <RtMidi.h>
-//#include <wx/msw/winundef.h> 
-
-//#include <boost/archive/xml_woarchive.hpp>
-//#include <boost/archive/xml_wiarchive.hpp>
-//#include <boost/config.hpp>
-//#include <boost/preprocessor/stringize.hpp>
-//#include <boost/serialization/string.hpp>
-//#include <boost/serialization/map.hpp>
-//#include <boost/serialization/utility.hpp>
-//#include <boost/serialization/split_member.hpp>
-//#include <boost/serialization/tracking.hpp>
-//#include <boost/serialization/base_object.hpp>
-//#include <boost/serialization/nvp.hpp>
-//#include <boost/serialization/export.hpp>
-
-//#include <wx/msgdlg.h>
-//#include <wx/msw/winundef.h> 
-
 
 class DisplayDefinition: public MessageDefinition
 {

@@ -7,33 +7,20 @@
 
 #pragma once
 
+// https://embeddedartistry.com/blog/2017/2/1/c11-implementing-a-dispatch-queue-using-stdfunction
 #include "RBSpeech.h"
 #include "SurfaceReaderHelp.h"
-
-//#include <string>
-//#include <vector>
-//#include <map>
-//#include <iostream>
-
-//#include <SRConstants.hpp>
-//#include <RBStringFuncs.hpp>
-//#include <RBEnums.hpp>
 #include "AppConfigChooserDialog.h"
 #include "AppConfigWizard.h"
-// #include "DisplayReportDlg.h"
 #include "EditProtocol.h"
-// #include "MessageDefinition.h"
 #include "ProtocolChooserDialog.h"
 #include "ProtocolWizard.h"
 #include "RBTextCtrl.h"
-//#include "Serializer.h"
-// #include "RBException.h"
 #include "AppCollection.h"
 #include "MIDISurface.h"
 #include "ProtocolCollection.h"
 #include "SROptions.h"
 #include "SurfaceList.h"
-// #include "SurfaceParameters.h"
 #include "SurfaceWizard.h"
 #include "UpdateChecker.h"
 
@@ -41,13 +28,9 @@
 #include "SpeechDialog.h"
 #endif
 
-//#include <boost/foreach.hpp>
-
 #define BOOST_FILESYSTEM_VERSION 3
-//#include <boost/filesystem.hpp>
 using namespace boost::filesystem;
 
-// #include <wx/wx.h>
 #include <wx/panel.h>
 #include <wx/accel.h>
 #include <wx/frame.h>

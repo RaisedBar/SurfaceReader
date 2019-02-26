@@ -18,10 +18,7 @@
 		#include <boost/uuid/uuid.hpp>
 		#include <boost/uuid/uuid_io.hpp>         // streaming operators etc. 
 #include <boost/uuid/uuid_serialize.hpp>
-
 #include <wx/string.h>
-//#include <wx/msw/winundef.h> 
-
 
 const int RB_NO_DISPLAY_DEFINITION = -2;
 const int RB_NO_CONTROL_DEFINITION = -3;

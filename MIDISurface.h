@@ -12,18 +12,7 @@
 #include "SurfaceParameters.h"
 #include "ProtocolCollection.h"
 #include "AppCollection.h"
-//#include "AppConfig.h"
-//#include "Protocol.h"
-//#include "MIDI.h"
-//#include "RBException.h"
 
-//#include <boost/shared_ptr.hpp>
-//#include <boost/algorithm/string.hpp>
-//#include <boost/version.hpp>
-//#include <boost/uuid/uuid.hpp>
-//#include <boost/lexical_cast.hpp>
-//#include <boost/filesystem.hpp>
-//#include <boost/log/core.hpp>
 #include <boost/log/trivial.hpp>
 #include <boost/log/expressions.hpp>
 #include <boost/log/sinks/text_file_backend.hpp>
@@ -31,12 +20,7 @@
 #include <boost/log/utility/setup/common_attributes.hpp>
 #include <boost/log/sources/severity_logger.hpp>
 #include <boost/log/sources/record_ostream.hpp>
-//using boost::lexical_cast;
-//using boost::bad_lexical_cast;
 
-//#include <wx/platform.h>
-
-// #if defined(__WINDOWS_MM__)
 #ifdef __WINDOWS__ 
 #include <windows.h>
 #define SLEEP( milliseconds ) Sleep( (DWORD) milliseconds )

@@ -5,11 +5,6 @@
 
 #include "SurfaceReader.h"
 
-#ifdef __WINDOWS__ 
-// #include <vld.h>
-#endif
-
-
 IMPLEMENT_APP( SurfaceReaderApp)
 
 	SurfaceFrame * mySurfaceFrame = NULL;

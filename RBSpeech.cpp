@@ -4,7 +4,6 @@
 
 #ifdef __WINDOWS__ 
 #include <TlHelp32.h>
-// #include <WinBase.h> // on Windows XP, Windows Server 2003, Windows Vista, Windows 7, Windows Server 2008 and Windows Server 2008 R2(include Windows.h); 
 #include <Processthreadsapi.h> // on Windows 8 and Windows Server 2012
 
 

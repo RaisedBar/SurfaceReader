@@ -5,15 +5,7 @@
 
 #pragma once
 
-//#include <map>
-//#include <vector>
-
 #include "AppConfig.h"
-//#include "RBException.h"
-
-//#include <wx/arrstr.h> 
-//#include <wx/msw/winundef.h> 
-
 
 //AppCollection class, holding AppConfigs.
 class AppCollection

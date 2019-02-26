@@ -18,8 +18,6 @@
 #include <wx/sizer.h>
 #include <wx/dialog.h>
 #include <wx/button.h>
-//#include <wx/msw/winundef.h> 
-
 
 class DisplayReportDlg: public wxDialog
 {

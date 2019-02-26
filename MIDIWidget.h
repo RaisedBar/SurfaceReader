@@ -16,23 +16,11 @@
 #include "SRConstants.h"
 #include "RBException.h"
 #include "MIDI.h"
-//#include "RBStringFuncs.h"
-
-#ifdef __WINDOWS__ 
-//Windows includes.
-//#include <windows.h>
-//#include <wx/msw/winundef.h> 
-#endif  // if windows/Mac
 
 #include <RtMidi.h>
-//#include <wx/msw/winundef.h> 
 
-//#include <boost/algorithm/string.hpp>
 #include <boost/serialization/nvp.hpp>
 #include <boost/serialization/access.hpp>
-
-//#include <wx/msgdlg.h>
-//#include <wx/msw/winundef.h> 
 
 //Control surface Modes
 enum Mode

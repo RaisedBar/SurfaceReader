@@ -7,17 +7,7 @@
 
 #pragma once
 
-//#include <map>
-
 #include "Protocol.h"
-//#include "SRConstants.h"
-//#include "Serializer.h"
-
-//#include <wx/stdpaths.h> 
-//#include <wx/dir.h> 
-//#include <wx/filename.h>
-//#include <wx/msw/winundef.h> 
-
 
 //ProtocolCollection class, holding Protocols.
 class	ProtocolCollection

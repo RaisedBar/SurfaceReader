@@ -3,10 +3,6 @@
 
 #include "SurfaceFrame.h"
 
-#ifdef __WINDOWS__
-// #include <vld.h>
-#endif
-
 #include "smile.xpm"
 #include "sample.xpm"
 
