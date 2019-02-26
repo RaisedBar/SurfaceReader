@@ -3023,7 +3023,8 @@ if ((pMySurface->GetWidgetMode() == ID_LIVE_MODE)
 {
 	pMySurface->SendHardwareMessage( message);
 }			
-		pMySurface->AnalyseHardwareMessage( * message);    
+		// pMySurface->AnalyseHardwareMessage( * message);    
+SpeechQueue.dispatch([] {pMySurface->AnalyseHardwareMessage(*message); });
 }
 
 
@@ -3036,7 +3037,8 @@ strLog.append( BytesToHex( * message));
 pMySurface->LogIt( strLog);
 
 pMySurface->SendDisplayMessage( message);
-			pMySurface->AnalyseDisplayMessage( * message);    
+			// pMySurface->AnalyseDisplayMessage( * message);    
+SpeechQueue.dispatch([] {pMySurface->AnalyseDisplayMessage(*message); });
 }
 
 

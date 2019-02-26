@@ -7,6 +7,7 @@
 
 #pragma once
 
+// 
 // https://embeddedartistry.com/blog/2017/2/1/c11-implementing-a-dispatch-queue-using-stdfunction
 #include "RBSpeech.h"
 #include "SurfaceReaderHelp.h"
@@ -23,6 +24,7 @@
 #include "SurfaceList.h"
 #include "SurfaceWizard.h"
 #include "UpdateChecker.h"
+#include "Queue.h"
 
 #ifdef __WXOSX_COCOA__
 #include "SpeechDialog.h"
@@ -66,6 +68,8 @@ wxBoxSizer * ElementSizer;
 RBTextCtrl * DisplayContents;
 };
 
+// Queue to handle processing of messages
+dispatch_queue SpeechQ;
 
 class myTaskBarIcon : public wxTaskBarIcon
 {

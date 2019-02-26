@@ -2,10 +2,8 @@
 
 
 #include "SurfaceFrame.h"
-
 #include "smile.xpm"
 #include "sample.xpm"
-
 
 // Implementation of the task bar/dock handling
 
@@ -75,7 +73,9 @@ JawsCache(new JawsCacheType()),
 Protocols( new ProtocolCollection()),
 Apps( new AppCollection()),
 blnEncryptionMode( EncryptionMode),
-blnLogging( false)
+blnLogging( false),
+// Create a queue for processing of hardware messages and display messages
+SpeechQ(1)
 {
 	// Load user options
 	LoadOptions();

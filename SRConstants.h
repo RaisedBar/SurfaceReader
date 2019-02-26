@@ -622,6 +622,10 @@ const std::wstring wstrAllFilesTemplate = L"*.*";
 // Unicode characters
 const wxUniChar wxucFullStop = 46;
 
+// Queue constants
+const int HARDWARE_QUEUE = 1;
+const int DISPLAY_QUEUE = 2;
+
 // Event ID values
 const int SPEECH_UPDATE_ID = 100000;
 const int SURFACE_UPDATE_ID = 100001;

@@ -111,7 +111,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
-      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_SCL_SECURE_NO_WARNINGS;__WINDOWS_MM__;WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_WIN32_WINNT=0x0601;_CRT_SECURE_NO_WARNINGS;_SCL_SECURE_NO_WARNINGS;__WINDOWS_MM__;WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
@@ -197,6 +197,7 @@
     <ClCompile Include=".\TranslationTablesDialog.cpp" />
     <ClCompile Include=".\UpdateChecker.cpp" />
     <ClCompile Include=".\wineyes_i.c" />
+    <ClCompile Include="queue.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include=".\ActionPickerWin.h" />
@@ -268,6 +269,7 @@
     <ClInclude Include=".\wineyes.h" />
     <ClInclude Include=".\apiproto.h" />
     <ClInclude Include="FileCorrecter.h" />
+    <ClInclude Include="Queue.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include=".\sample.rc" />
