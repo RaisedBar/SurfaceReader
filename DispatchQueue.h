@@ -2,7 +2,8 @@
 // Asynchronous despatch queue
 // https://embeddedartistry.com/blog/2017/2/1/c11-implementing-a-dispatch-queue-using-stdfunction
 
-#pragma once
+#ifndef DISPATCH_QUEUE_H
+#define DISPATCH_QUEUE_H
 
 #include <thread> 
 #include <functional> 
@@ -108,3 +109,4 @@ private:
 		} while (!quit_);
 	};
 };
+#endif
