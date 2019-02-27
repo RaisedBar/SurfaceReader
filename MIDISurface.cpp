@@ -3,7 +3,7 @@
 
 #include "MIDISurface.h"
 #include "SurfaceFrame.h"
-#include "Queue.h"
+#include "DispatchQueue.h"
 
 MIDISurface::MIDISurface( SurfaceFrame * pParent, ActiveProduct apProduct, boost::shared_ptr<ProtocolCollection> pProtocols, boost::shared_ptr<AppCollection> pApps)
 		:

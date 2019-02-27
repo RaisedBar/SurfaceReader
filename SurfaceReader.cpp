@@ -4,7 +4,7 @@
 
 
 #include "SurfaceReader.h"
-#include "Queue.h"
+#include "DispatchQueue.h"
 
 // Queue to handle processing of messages - only creates 1 thread
 dispatch_queue SpeechQ(1);
