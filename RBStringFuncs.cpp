@@ -21,12 +21,12 @@ bool IsAllHexChars(std::string strIn)
 }
 
 
-boost::filesystem::path AppDataPath()
+std::experimental::filesystem::path AppDataPath()
 {
 #ifdef __WINDOWS__
-	boost::filesystem::path myPath = wxStandardPaths::Get().GetConfigDir().ToStdWstring();
+	std::experimental::filesystem::path myPath = wxStandardPaths::Get().GetConfigDir().ToStdWstring();
 #else
-	boost::filesystem::path myPath =wxStandardPaths::Get().GetExecutablePath().ToStdWstring();
+	std::experimental::filesystem::path myPath =wxStandardPaths::Get().GetExecutablePath().ToStdWstring();
 #endif
 		
 		if (myPath.has_filename())
@@ -39,14 +39,14 @@ boost::filesystem::path AppDataPath()
 myPath /=wstrRBCompanyName;
 	
 	// check for directory existence
-if (!boost::filesystem::exists(myPath))
+if (!std::experimental::filesystem::exists(myPath))
 	{
 		// Create the required directory
 		try
 		{
-		boost::filesystem::create_directory(myPath);
+		std::experimental::filesystem::create_directory(myPath);
 		}
-		catch(const boost::filesystem::filesystem_error& err)
+		catch(const std::experimental::filesystem::filesystem_error& err)
 		{
 				wxMessageBox( err.code().message(), wstrErrorTitle, wxOK | wxICON_EXCLAMATION);
 			}
@@ -54,14 +54,14 @@ if (!boost::filesystem::exists(myPath))
 	
 	myPath /=wstrAppTitle;
 
-	if (!boost::filesystem::exists(myPath))
+	if (!std::experimental::filesystem::exists(myPath))
 	{
 		// Create the required directory
 		try 
 			{
-				boost::filesystem::create_directory(myPath);
+				std::experimental::filesystem::create_directory(myPath);
 			}
-		catch(const boost::filesystem::filesystem_error& err)
+		catch(const std::experimental::filesystem::filesystem_error& err)
 		{
 			wxMessageBox( err.code().message(), wstrErrorTitle, wxOK | wxICON_EXCLAMATION);
 		}
@@ -72,9 +72,9 @@ if (!boost::filesystem::exists(myPath))
 }
 
 
-boost::filesystem::path HelpPath()
+std::experimental::filesystem::path HelpPath()
 {
-	boost::filesystem::path myPath = wxStandardPaths::Get().GetExecutablePath().ToStdWstring();
+	std::experimental::filesystem::path myPath = wxStandardPaths::Get().GetExecutablePath().ToStdWstring();
 
 	if (myPath.has_filename())
 	{
@@ -84,9 +84,9 @@ boost::filesystem::path HelpPath()
 #ifdef __WXOSX_COCOA__   
 	myPath /= wstrMacHelpDir;
 
-	if (!boost::filesystem::exists(myPath))
+	if (!std::experimental::filesystem::exists(myPath))
 	{
-		boost::filesystem::create_directory(myPath);
+		std::experimental::filesystem::create_directory(myPath);
 	}
 #endif
 
@@ -94,19 +94,19 @@ boost::filesystem::path HelpPath()
 }
 
 
-boost::filesystem::path AppConfigPath()
+std::experimental::filesystem::path AppConfigPath()
 {
-	boost::filesystem::path myPath = AppDataPath();
+	std::experimental::filesystem::path myPath = AppDataPath();
 myPath /=wstrAppConfigDir;
 
-if (!boost::filesystem::exists(myPath))
+if (!std::experimental::filesystem::exists(myPath))
 	{
 		// Create the required directory
 try
 		{
-			boost::filesystem::create_directory(myPath);
+			std::experimental::filesystem::create_directory(myPath);
 		}
-		catch(const boost::filesystem::filesystem_error& err)
+		catch(const std::experimental::filesystem::filesystem_error& err)
 		{
 			wxMessageBox( err.code().message(), wstrErrorTitle, wxOK | wxICON_EXCLAMATION);
 		}
@@ -116,12 +116,12 @@ try
 }
 
 
-boost::filesystem::path SpeechPath()
+std::experimental::filesystem::path SpeechPath()
 {
 #ifdef __WINDOWS__
-	boost::filesystem::path myPath = wxStandardPaths::Get().GetExecutablePath().ToStdWstring();
+	std::experimental::filesystem::path myPath = wxStandardPaths::Get().GetExecutablePath().ToStdWstring();
 #else
-	boost::filesystem::path myPath = wxStandardPaths::Get().GetExecutablePath().ToStdWstring();
+	std::experimental::filesystem::path myPath = wxStandardPaths::Get().GetExecutablePath().ToStdWstring();
 
 	if (myPath.has_filename())
 	{
@@ -130,9 +130,9 @@ boost::filesystem::path SpeechPath()
 
 	myPath /= wstrSpeechDir;
 
-	if (!boost::filesystem::exists(myPath))
+	if (!std::experimental::filesystem::exists(myPath))
 	{
-		boost::filesystem::create_directory(myPath);
+		std::experimental::filesystem::create_directory(myPath);
 	}
 #endif
 
@@ -140,19 +140,19 @@ boost::filesystem::path SpeechPath()
 }
 
 
-boost::filesystem::path ProtocolPath()
+std::experimental::filesystem::path ProtocolPath()
 {
-	boost::filesystem::path myPath = AppDataPath();
+	std::experimental::filesystem::path myPath = AppDataPath();
 	myPath /= wstrProtocolDir;
 
-	if (!boost::filesystem::exists(myPath))
+	if (!std::experimental::filesystem::exists(myPath))
 	{
 		try
 		{
 			// Create the required directory
-			boost::filesystem::create_directory(myPath);
+			std::experimental::filesystem::create_directory(myPath);
 		}
-		catch (const boost::filesystem::filesystem_error& err)
+		catch (const std::experimental::filesystem::filesystem_error& err)
 		{
 			wxMessageBox(err.code().message(), wstrErrorTitle, wxOK | wxICON_EXCLAMATION);
 		}
@@ -162,19 +162,19 @@ boost::filesystem::path ProtocolPath()
 }
 
 
-boost::filesystem::path SurfacePath()
+std::experimental::filesystem::path SurfacePath()
 {
-	boost::filesystem::path myPath = AppDataPath();
+	std::experimental::filesystem::path myPath = AppDataPath();
 myPath /=wstrSurfaceDir;
 
-if (!boost::filesystem::exists(myPath))
+if (!std::experimental::filesystem::exists(myPath))
 	{
 		try
 		{
 			// Create the required directory
-		boost::filesystem::create_directory(myPath);
+		std::experimental::filesystem::create_directory(myPath);
 	}
-		catch(const boost::filesystem::filesystem_error& err)
+		catch(const std::experimental::filesystem::filesystem_error& err)
 		{
 			wxMessageBox( err.code().message(), wstrErrorTitle, wxOK | wxICON_EXCLAMATION);
 		}
@@ -184,19 +184,19 @@ if (!boost::filesystem::exists(myPath))
 	}
 
 
-boost::filesystem::path LogPath()
+std::experimental::filesystem::path LogPath()
 {
-	boost::filesystem::path myPath = AppDataPath();
+	std::experimental::filesystem::path myPath = AppDataPath();
 	myPath /= wstrLogDir;
 
-	if (!boost::filesystem::exists(myPath))
+	if (!std::experimental::filesystem::exists(myPath))
 	{
 		// Create the required directory
 		try
 		{
-			boost::filesystem::create_directory(myPath);
+			std::experimental::filesystem::create_directory(myPath);
 		}
-		catch (const boost::filesystem::filesystem_error& err)
+		catch (const std::experimental::filesystem::filesystem_error& err)
 		{
 			wxMessageBox(err.code().message(), wstrErrorTitle, wxOK | wxICON_EXCLAMATION);
 		}

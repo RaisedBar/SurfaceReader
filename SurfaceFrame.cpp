@@ -73,16 +73,14 @@ JawsCache(new JawsCacheType()),
 Protocols( new ProtocolCollection()),
 Apps( new AppCollection()),
 blnEncryptionMode( EncryptionMode),
-blnLogging( false),
-// Create a queue for processing of hardware messages and display messages
-SpeechQ(1)
+blnLogging( false)
 {
 	// Load user options
 	LoadOptions();
 
 	// Initialise the help system
 #ifdef __WINDOWS__
-path myHelpPath( HelpPath());
+std::experimental::filesystem::path myHelpPath( HelpPath());
 wstrHelpFileName = HelpPath().generic_wstring();
 	wstrHelpFileName.append( wstrCHMHelpFile);
 pHelpController = new wxCHMHelpController;
@@ -95,11 +93,6 @@ wxMessageBox( wstrHelpInitError, wstrErrorTitle, wxOK | wxICON_ERROR);
 	std::wstring wstrHelpURL = PathToURL( HelpPath().generic_wstring());
 // 	wstrHelpFileName = "SurfaceReader.htb";
 pHelpController = new wxExtHelpController;
-
-	// Required for wxWidgets HTML help
-// wxFileSystem::AddHandler( new wxZipFSHandler);
-
-// pHelpController = new wxHtmlHelpController;
 
 if (! pHelpController->Initialize( HelpPath().generic_string()))
 		{
@@ -582,11 +575,11 @@ Close( true);
 
 bool SurfaceFrame::DeleteSurfaceFiles()
 	{
-		    path myPath( SurfacePath());
+		    std::experimental::filesystem::path myPath( SurfacePath());
 	
   try
   {
-    if (! exists( myPath))    // does the path actually exist?
+    if (! std::experimental::filesystem::exists( myPath))    // does the path actually exist?
     {
       return false;
 	}  // if exists
@@ -596,16 +589,16 @@ bool SurfaceFrame::DeleteSurfaceFiles()
 	  return false;
 	}  // if directory
 	}  // end try
-  catch (const filesystem_error &error)
+  catch (const std::experimental::filesystem::filesystem_error &error)
   {
     	  wxMessageBox( error.what(), wstrErrorTitle, wxOK | wxICON_ERROR);
 		  return false;
   }
           
 // Directory exists so process the contents
-  directory_iterator end_itr; // Default ctor yields past-the-end
+  std::experimental::filesystem::directory_iterator end_itr; // Default ctor yields past-the-end
 
-for (directory_iterator i( myPath); i != end_itr; ++i )
+for (std::experimental::filesystem::directory_iterator i( myPath); i != end_itr; ++i )
 {
     // Skip if not a file
     if (! is_regular_file( i->status() ) ) 
@@ -619,9 +612,9 @@ for (directory_iterator i( myPath); i != end_itr; ++i )
 	// File matches, so delete it
 		try
 		{
-			boost::filesystem::remove(i->path());
+			std::experimental::filesystem::remove(i->path());
 		}
-				catch (const filesystem_error &error)
+				catch (const std::experimental::filesystem::filesystem_error &error)
 					{
 						wxMessageBox(error.what(), wstrErrorTitle, wxOK | wxICON_ERROR);
 												return false;
@@ -634,11 +627,11 @@ return true;
 
 void SurfaceFrame::SaveSurfaces()
 {
-path myPath( SurfacePath());
+std::experimental::filesystem::path myPath( SurfacePath());
 	
   try
   {
-    if (! exists( myPath))    // does the path actually exist?
+    if (! std::experimental::filesystem::exists( myPath))    // does the path actually exist?
     {
       return;
 	}  // if exists
@@ -648,7 +641,7 @@ path myPath( SurfacePath());
 	  return;
 	}  // if directory
 	}  // end try
-  catch (const filesystem_error &error)
+  catch (const std::experimental::filesystem::filesystem_error &error)
   {
     	  wxMessageBox( error.what(), wstrErrorTitle, wxOK | wxICON_ERROR);
 		  return;
@@ -689,31 +682,31 @@ SaveData <SurfaceParameters> (myParameters, myPath, false);
 bool SurfaceFrame::LoadSurfaces()
 {
 	bool blnResult = true;
-path myPath( SurfacePath());
+std::experimental::filesystem::path myPath( SurfacePath());
 std::vector <std::string> vFailedFiles;
 
 try
   {
-    if (! exists( myPath))    // does the path actually exist?
+    if (! std::experimental::filesystem::exists( myPath))    // does the path actually exist?
     {
       return false;
 	}  // if exists
 	
-	if (! is_directory( myPath))      // myPath must be a directory?
+	if (! std::experimental::filesystem::is_directory( myPath))      // myPath must be a directory?
       {
 	  return false;
 	}  // if directory
 	}  // end try
-  catch (const filesystem_error &error)
+  catch (const std::experimental::filesystem::filesystem_error &error)
   {
     	  wxMessageBox( error.what(), wstrErrorTitle, wxOK | wxICON_ERROR);
 return false;
   }
           
 // Directory exists so process the contents
-  directory_iterator end_itr; // Default ctor yields past-the-end
+  std::experimental::filesystem::directory_iterator end_itr; // Default ctor yields past-the-end
 
-for (directory_iterator i( myPath); i != end_itr; ++i )
+for (std::experimental::filesystem::directory_iterator i( myPath); i != end_itr; ++i )
 {
     // Skip if not a file
     if (! is_regular_file( i->status() ) ) 
@@ -805,11 +798,11 @@ return blnResult;
 
 bool SurfaceFrame::DeleteAppConfigFiles()
 	{
-			path myPath( AppConfigPath());
+			std::experimental::filesystem::path myPath( AppConfigPath());
 	
   try
   {
-    if (! exists( myPath))    // does the path actually exist?
+    if (! std::experimental::filesystem::exists( myPath))    // does the path actually exist?
     {
       return false;
 	}  // if exists
@@ -819,19 +812,19 @@ bool SurfaceFrame::DeleteAppConfigFiles()
 	  return false;
 	}  // if directory
 	}  // end try
-  catch (const filesystem_error &error)
+  catch (const std::experimental::filesystem::filesystem_error &error)
   {
     	  wxMessageBox( error.what(), wstrErrorTitle, wxOK | wxICON_ERROR);
 		  return false;
   }
           
 // Directory exists so process the contents
-  directory_iterator end_itr; // Default ctor yields past-the-end
+  std::experimental::filesystem::directory_iterator end_itr; // Default ctor yields past-the-end
 
-for (directory_iterator i( myPath); i != end_itr; ++i )
+for (std::experimental::filesystem::directory_iterator i( myPath); i != end_itr; ++i )
 {
     // Skip if not a file
-    if (! is_regular_file( i->status() ) ) 
+    if (! std::experimental::filesystem::is_regular_file( i->status() ) ) 
 		{
 			continue;
 	}
@@ -843,9 +836,9 @@ for (directory_iterator i( myPath); i != end_itr; ++i )
 				// File matches, so delete it
 		try
 		{
-			boost::filesystem::remove(i->path());
+			std::experimental::filesystem::remove(i->path());
 		}
-		catch (const filesystem_error &error)
+		catch (const std::experimental::filesystem::filesystem_error &error)
 		{
 			wxMessageBox(error.what(), wstrErrorTitle, wxOK | wxICON_ERROR);
 			return false;
@@ -858,11 +851,11 @@ return true;
 
 void SurfaceFrame::SaveAppConfigs()
 {
-path myPath( AppConfigPath());
+std::experimental::filesystem::path myPath( AppConfigPath());
 	
   try
   {
-    if (! exists( myPath))    // does the path actually exist?
+    if (! std::experimental::filesystem::exists( myPath))    // does the path actually exist?
     {
       return;
 	}  // if exists
@@ -872,7 +865,7 @@ path myPath( AppConfigPath());
 	  return;
 	}  // if directory
 	  }  // end try
-  catch (const filesystem_error &error)
+  catch (const std::experimental::filesystem::filesystem_error &error)
   {
     	  wxMessageBox( error.what(), wstrErrorTitle, wxOK | wxICON_ERROR);
 		  return;
@@ -916,12 +909,12 @@ SaveData <AppConfig> ( myAppConfig, myPath, false);
 bool SurfaceFrame::LoadAppConfigs()
 {
 bool blnResult = true;
-path myPath( AppConfigPath());
+std::experimental::filesystem::path myPath( AppConfigPath());
 std::vector <std::string> vFailedFiles;
 
 try
   {
-    if (! exists( myPath))    // does the path actually exist?
+    if (! std::experimental::filesystem::exists( myPath))    // does the path actually exist?
     {
       return false;
 	}  // if exists
@@ -931,19 +924,19 @@ try
 	  return false;
 	}  // if directory
 	}  // end try
-  catch (const filesystem_error &error)
+  catch (const std::experimental::filesystem::filesystem_error &error)
   {
     	  wxMessageBox( error.what(), wstrErrorTitle, wxOK | wxICON_ERROR);
 return false;
   }
           
 // Directory exists so process the contents
-  directory_iterator end_itr; // Default ctor yields past-the-end
+  std::experimental::filesystem::directory_iterator end_itr; // Default ctor yields past-the-end
 
-for (directory_iterator i( myPath); i != end_itr; ++i )
+for (std::experimental::filesystem::directory_iterator i( myPath); i != end_itr; ++i )
 {
     // Skip if not a file
-    if (! is_regular_file( i->status() ) ) 
+    if (! std::experimental::filesystem::is_regular_file( i->status() ) ) 
 		{
 			continue;
 	}
@@ -1008,11 +1001,11 @@ wxMessageBox( wstrErrorText, wstrErrorTitle, wxOK | wxICON_ERROR);
 
 bool SurfaceFrame::DeleteProtocolFiles()
 	{
-		path myPath( ProtocolPath());
+		std::experimental::filesystem::path myPath( ProtocolPath());
 	
   try
   {
-    if (! exists( myPath))    // does the path actually exist?
+    if (! std::experimental::filesystem::exists( myPath))    // does the path actually exist?
     {
       return false;
 	}  // if exists
@@ -1022,19 +1015,19 @@ bool SurfaceFrame::DeleteProtocolFiles()
 	  return false;
 	}  // if directory
 	}  // end try
-  catch (const filesystem_error &error)
+  catch (const std::experimental::filesystem::filesystem_error &error)
   {
     	  wxMessageBox( error.what(), wstrErrorTitle, wxOK | wxICON_ERROR);
 		  return false;
   }
           
 // Directory exists so process the contents
-  directory_iterator end_itr; // Default ctor yields past-the-end
+  std::experimental::filesystem::directory_iterator end_itr; // Default ctor yields past-the-end
 
-for (directory_iterator i( myPath); i != end_itr; ++i )
+for (std::experimental::filesystem::directory_iterator i( myPath); i != end_itr; ++i )
 {
     // Skip if not a file
-    if (! is_regular_file( i->status() ) ) 
+    if (! std::experimental::filesystem::is_regular_file( i->status() ) ) 
 		{
 			continue;
 	}
@@ -1046,9 +1039,9 @@ for (directory_iterator i( myPath); i != end_itr; ++i )
 	// File matches, so delete it
 		try
 		{
-			boost::filesystem::remove(i->path());
+			std::experimental::filesystem::remove(i->path());
 		}
-				catch (const filesystem_error &error)
+				catch (const std::experimental::filesystem::filesystem_error &error)
 			{
 				wxMessageBox(error.what(), wstrErrorTitle, wxOK | wxICON_ERROR);
 				return false;
@@ -1061,11 +1054,11 @@ for (directory_iterator i( myPath); i != end_itr; ++i )
 
 void SurfaceFrame::SaveProtocols()
 {
-path myPath( ProtocolPath());
+std::experimental::filesystem::path myPath( ProtocolPath());
 	
   try
   {
-    if (! exists( myPath))    // does the path actually exist?
+    if (! std::experimental::filesystem::exists( myPath))    // does the path actually exist?
     {
       return;
 	}  // if exists
@@ -1075,7 +1068,7 @@ path myPath( ProtocolPath());
 	  return;
 	}  // if directory
 	}  // end try
-  catch (const filesystem_error &error)
+  catch (const std::experimental::filesystem::filesystem_error &error)
   {
     	  wxMessageBox( error.what(), wstrErrorTitle, wxOK | wxICON_ERROR);
 		  return;
@@ -1116,12 +1109,12 @@ SaveData <SurfaceProtocol> (myProtocol, myPath, false);
 bool SurfaceFrame::LoadProtocols()
 {
 	bool blnResult = true;
-			path myPath( ProtocolPath().c_str());
+			std::experimental::filesystem::path myPath( ProtocolPath().c_str());
 std::vector <std::string> vFailedFiles;
 
 try
   {
-    if (! exists( myPath))    // does the path actually exist?
+    if (! std::experimental::filesystem::exists( myPath))    // does the path actually exist?
     {
       return false;
 	}  // if exists
@@ -1131,19 +1124,19 @@ try
 	  return false;
 	}  // if directory
 	}  // end try
-  catch (const filesystem_error &error)
+  catch (const std::experimental::filesystem::filesystem_error &error)
   {
     	  wxMessageBox( error.what(), wstrErrorTitle, wxOK | wxICON_ERROR);
 return false;
   }
           
 // Directory exists so process the contents
-  directory_iterator end_itr; // Default ctor yields past-the-end
+  std::experimental::filesystem::directory_iterator end_itr; // Default ctor yields past-the-end
 
-for (directory_iterator i( myPath); i != end_itr; ++i )
+for (std::experimental::filesystem::directory_iterator i( myPath); i != end_itr; ++i )
 {
     // Skip if not a file
-    if (! is_regular_file( i->status() ) ) 
+    if (! std::experimental::filesystem::is_regular_file( i->status() ) ) 
 		{
 			continue;
 	}
@@ -1213,14 +1206,13 @@ void SurfaceFrame::AddDisplay( std::wstring wstrDisplayLabel)
 {}
 
 
-bool SurfaceFrame::CopyDir( boost::filesystem::path const & source, boost::filesystem::path const & destination)
+bool SurfaceFrame::CopyDir( std::experimental::filesystem::path const & source, std::experimental::filesystem::path const & destination)
 {
-    namespace fs = boost::filesystem;
-    try
+        try
     {
         // Check whether the function call is valid
-        if ((! fs::exists(source)) 
-			||  (!fs::is_directory(source)))
+        if ((! std::experimental::filesystem::exists(source)) 
+			||  (!std::experimental::filesystem::is_directory(source)))
 {
             std::string strErr = "Source directory ";
 			strErr.append( source.string());
@@ -1229,7 +1221,7 @@ bool SurfaceFrame::CopyDir( boost::filesystem::path const & source, boost::files
 			return false;
         }
         
-if(fs::exists( destination))
+if(std::experimental::filesystem::exists( destination))
         {
             std::string strErr = "Destination directory ";
 			strErr.append( destination.string());
@@ -1239,7 +1231,7 @@ return false;
         }
 
 // Create the destination directory
-        if(!fs::create_directory(destination))
+        if(!std::experimental::filesystem::create_directory(destination))
         {
             std::string strErr = "Unable to create destination directory";
 			strErr.append( destination.string());
@@ -1247,7 +1239,7 @@ return false;
 return false;
         }
     }
-    catch(fs::filesystem_error const & e)
+    catch(std::experimental::filesystem::filesystem_error const & e)
     {
         std::string strErr = e.what();
 		wxMessageBox( strErr, wstrErrorTitle, wxOK | wxICON_ERROR);	
@@ -1255,14 +1247,14 @@ return false;
     }
     // Iterate through the source directory
     for(
-        fs::directory_iterator file(source);
-        file != fs::directory_iterator(); ++file
+        std::experimental::filesystem::directory_iterator file(source);
+        file != std::experimental::filesystem::directory_iterator(); ++file
     )
     {
         try
         {
-            fs::path current(file->path());
-            if(fs::is_directory(current))
+            std::experimental::filesystem::path current(file->path());
+            if(std::experimental::filesystem::is_directory(current))
             {
                 // Found directory: Recursion
                 if(! CopyDir( current, destination / current.filename()))
@@ -1273,10 +1265,10 @@ return false;
             else
             {
                 // Found file: Copy
-                fs::copy_file( current, destination / current.filename());
+                std::experimental::filesystem::copy_file( current, destination / current.filename());
             }
         }
-        catch(fs::filesystem_error const & e)
+        catch(std::experimental::filesystem::filesystem_error const & e)
         {
             std::string strErr = e.what();
         	wxMessageBox( strErr, wstrErrorTitle, wxOK | wxICON_ERROR);	
@@ -1286,7 +1278,7 @@ return false;
 }
 
 
-void SurfaceFrame::ShowLog( boost::filesystem::path myPath, bool blnIsEncrypted)
+void SurfaceFrame::ShowLog( std::experimental::filesystem::path myPath, bool blnIsEncrypted)
 {
 	std::ifstream myFile( myPath.generic_string().c_str());
 	std::string strContents;
@@ -1491,12 +1483,12 @@ void SurfaceFrame::OnImportProtocol( wxCommandEvent& event)
 
         if (myFileImportDlg.ShowModal() == wxID_OK)
     {
-path mySourcePath( myFileImportDlg.GetPath());
-	  		 path myTargetPath( ProtocolPath());
+std::experimental::filesystem::path mySourcePath( myFileImportDlg.GetPath().ToStdString());
+	  		 std::experimental::filesystem::path myTargetPath( ProtocolPath());
 		  myTargetPath /= myFileImportDlg.GetFilename().ToStdWstring();
 
-if ((exists( myTargetPath))    
-&& (! is_directory( myTargetPath)))
+if ((std::experimental::filesystem::exists( myTargetPath))    
+&& (! std::experimental::filesystem::is_directory( myTargetPath)))
       {
 		  std::string strErr = myTargetPath.generic_string();
 		  strErr.append( strOverwritePrompt);
@@ -1509,7 +1501,7 @@ return;
 
 		  try
 	{
-		copy_file( mySourcePath, myTargetPath, copy_option::overwrite_if_exists);
+		copy_file( mySourcePath, myTargetPath, std::experimental::filesystem::copy_options::overwrite_existing);
 }
 		catch( ...)
 		{
@@ -1530,12 +1522,13 @@ void SurfaceFrame::OnImportAppConfig( wxCommandEvent& event)
 
         if (myFileImportDlg.ShowModal() == wxID_OK)
     {
-path mySourcePath( myFileImportDlg.GetPath());
-	  		 path myTargetPath( AppConfigPath());
+std::experimental::filesystem::path mySourcePath( myFileImportDlg.GetPath().ToStdString());
+	  		 std::experimental::filesystem::path myTargetPath( AppConfigPath());
+
 		  myTargetPath /= myFileImportDlg.GetFilename().ToStdWstring();
 
-if ((exists( myTargetPath))    
-&& (! is_directory( myTargetPath)))
+if ((std::experimental::filesystem::exists( myTargetPath))    
+&& (! std::experimental::filesystem::is_directory( myTargetPath)))
       {
 		  std::string strErr = myTargetPath.generic_string();
 		  strErr.append( strOverwritePrompt);
@@ -1548,7 +1541,7 @@ return;
 
 		  try
 	{
-		copy_file( mySourcePath, myTargetPath, copy_option::overwrite_if_exists);
+		copy_file( mySourcePath, myTargetPath, std::experimental::filesystem::copy_options::overwrite_existing);
 }
 		catch( ...)
 		{
@@ -1564,16 +1557,16 @@ return;
 
 void SurfaceFrame::OnExportProtocol( wxCommandEvent& event)
 {
-path mySourcePath( ProtocolPath());
+std::experimental::filesystem::path mySourcePath( ProtocolPath());
 wxDirDialog myFileExportDlg(this, wstrExportProtocolPrompt, mySourcePath.generic_string(), wxDD_DEFAULT_STYLE | wxDD_DIR_MUST_EXIST);
 myFileExportDlg.CenterOnParent();
 
         if (myFileExportDlg.ShowModal() == wxID_OK)
     {
-		path myTargetPath( myFileExportDlg.GetPath());
+		std::experimental::filesystem::path myTargetPath( myFileExportDlg.GetPath().ToStdString());
 
-if ((exists( myTargetPath))    
-&& (is_directory( myTargetPath)))
+if ((std::experimental::filesystem::exists( myTargetPath))    
+&& (std::experimental::filesystem::is_directory( myTargetPath)))
         {
 myTargetPath /= wstrProtocolDir;
 
@@ -1596,16 +1589,16 @@ try
 
 void SurfaceFrame::OnExportAppConfig( wxCommandEvent& event)
 {
-path mySourcePath( AppConfigPath());
+std::experimental::filesystem::path mySourcePath( AppConfigPath());
 wxDirDialog myFileExportDlg(this, wstrExportProtocolPrompt, mySourcePath.generic_string(), wxDD_DEFAULT_STYLE | wxDD_DIR_MUST_EXIST);
 myFileExportDlg.CenterOnParent();
 
         if (myFileExportDlg.ShowModal() == wxID_OK)
     {
-		path myTargetPath( myFileExportDlg.GetPath());
+		std::experimental::filesystem::path myTargetPath( myFileExportDlg.GetPath().ToStdString());
 
-if ((exists( myTargetPath))    
-&& (is_directory( myTargetPath)))
+if ((std::experimental::filesystem::exists( myTargetPath))    
+&& (std::experimental::filesystem::is_directory( myTargetPath)))
         {
 myTargetPath /= wstrAppConfigDir;
 
@@ -2432,7 +2425,7 @@ return;
 		else
 		{
 			// Decrypt and display the log
-boost::filesystem::path myPath = LogPath();
+std::experimental::filesystem::path myPath = LogPath();
 std::string strFileName = lbxSurfaces->GetStringSelection().ToStdString();
 strFileName.append( strLogExtension);
 myPath /= strFileName;
@@ -2442,7 +2435,7 @@ ShowLog( myPath, true);
 	else
 	{
 		// Display the log
-		boost::filesystem::path myPath = LogPath();
+		std::experimental::filesystem::path myPath = LogPath();
 		std::string strFileName = lbxSurfaces->GetStringSelection().ToStdString();
 strFileName.append( strLogExtension);
 myPath /= strFileName;
@@ -2457,7 +2450,7 @@ void SurfaceFrame::OnHelpContents(wxCommandEvent& event)
 	{
 		pHelpController->DisplayContents();
 	}
-	catch (const filesystem_error &error)
+	catch (const std::experimental::filesystem::filesystem_error &error)
 				{
 					wxMessageBox(error.what(), wstrErrorTitle, wxOK | wxICON_ERROR);
 									}
@@ -2610,10 +2603,10 @@ myReport->Destroy();
 bool SurfaceFrame::LoadOptions()
 {
 	    bool blnResult = false;
-		boost::filesystem::path myPath( AppDataPath());
+		std::experimental::filesystem::path myPath( AppDataPath());
 myPath /= wstrOptionsFileName;
 
-if ((exists(myPath))
+if ((std::experimental::filesystem::exists(myPath))
 	&& (is_regular_file(myPath)))
 {
 	try
@@ -2639,11 +2632,11 @@ return blnResult;
 bool SurfaceFrame::SaveOptions()
 {
 	bool blnResult = false;
-	path myPath( AppDataPath());
+	std::experimental::filesystem::path myPath( AppDataPath());
 	
 	try
 	{
-		if (! exists( myPath))    // does the path actually exist?
+		if (! std::experimental::filesystem::exists( myPath))    // does the path actually exist?
 		{
 			return blnResult;
 		}  // if exists
@@ -2653,7 +2646,7 @@ bool SurfaceFrame::SaveOptions()
 			return blnResult;
 		}  // if directory
 	}  // end try
-	catch (const filesystem_error &error)
+	catch (const std::experimental::filesystem::filesystem_error &error)
 	{
 		wxMessageBox( error.what(), wstrErrorTitle, wxOK | wxICON_ERROR);
 		return blnResult;

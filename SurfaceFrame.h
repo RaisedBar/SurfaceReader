@@ -1,14 +1,13 @@
 // SurfaceFrame.h
 
-// #define _SCL_SECURE_NO_WARNINGS
-
 #ifndef SURFACE_FRAME_H
 #define SURFACE_FRAME_H
 
 #pragma once
 
 // 
-// https://embeddedartistry.com/blog/2017/2/1/c11-implementing-a-dispatch-queue-using-stdfunction
+#include <filesystem>
+
 #include "RBSpeech.h"
 #include "SurfaceReaderHelp.h"
 #include "AppConfigChooserDialog.h"
@@ -24,14 +23,10 @@
 #include "SurfaceList.h"
 #include "SurfaceWizard.h"
 #include "UpdateChecker.h"
-#include "Queue.h"
 
 #ifdef __WXOSX_COCOA__
 #include "SpeechDialog.h"
 #endif
-
-#define BOOST_FILESYSTEM_VERSION 3
-using namespace boost::filesystem;
 
 #include <wx/panel.h>
 #include <wx/accel.h>
@@ -67,9 +62,6 @@ wxBoxSizer * ElementSizer;
 	wxStaticText * DisplayLabel;
 RBTextCtrl * DisplayContents;
 };
-
-// Queue to handle processing of messages
-dispatch_queue SpeechQ;
 
 class myTaskBarIcon : public wxTaskBarIcon
 {
@@ -120,7 +112,7 @@ std::string GetPortErrorReport(SurfacePointer pMySurface);
 		void CloseAllSurfaces();
 
 bool IsSurfaceNameUnique( std::wstring wstrName);
-bool CopyDir( boost::filesystem::path const & source, boost::filesystem::path const & destination);
+bool CopyDir( std::experimental::filesystem::path const & source, std::experimental::filesystem::path const & destination);
 
 bool DeleteAppConfigFiles();
 void SaveAppConfigs();
@@ -137,7 +129,7 @@ bool LoadSurfaces();
 	bool LoadOptions();
 	bool SaveOptions();
 
-void ShowLog( boost::filesystem::path myPath, bool blnIsEncrypted);
+void ShowLog( std::experimental::filesystem::path myPath, bool blnIsEncrypted);
 
 // event handlers 
 

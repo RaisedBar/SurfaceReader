@@ -1,7 +1,5 @@
 // MIDISurface.h
 
-// #define _SCL_SECURE_NO_WARNINGS
-
 #ifndef MIDI_SURFACE_H
 #define MIDI_SURFACE_H
 
@@ -20,6 +18,7 @@
 #include <boost/log/utility/setup/common_attributes.hpp>
 #include <boost/log/sources/severity_logger.hpp>
 #include <boost/log/sources/record_ostream.hpp>
+#include <boost/shared_ptr.hpp>
 
 #ifdef __WINDOWS__ 
 #include <windows.h>

@@ -1,5 +1,6 @@
 // queue.h
 // Asynchronous despatch queue
+// https://embeddedartistry.com/blog/2017/2/1/c11-implementing-a-dispatch-queue-using-stdfunction
 
 #pragma once
 

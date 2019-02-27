@@ -2039,7 +2039,7 @@ HRESULT RBSpeech::IsHotSpotInSet(std::wstring SetName, std::wstring SpotName)
 	HRESULT hReturnValue =S_OK;
 	ActiveProduct CurrentProduct;
 	DolphinProduct SpecificDolphinProduct;
-	property_tree::ptree IniTree; //used to store hsc information.
+	boost::property_tree::ptree IniTree; //used to store hsc information.
 		boost::property_tree::ptree::assoc_iterator it;	 
 	char SetNameStr[MAX_PATH] ="";
 	char SpotNameStr[MAX_PATH] ="";
@@ -2053,7 +2053,7 @@ HRESULT RBSpeech::IsHotSpotInSet(std::wstring SetName, std::wstring SpotName)
 	{
 	case ID_JAWS:
 		ConvertString.FromWChar(&SetNameStr[0], MAX_PATH, SetName.c_str(), SetName.size());
-		property_tree::ini_parser::read_ini(&SetNameStr[0], IniTree);		
+		boost::property_tree::ini_parser::read_ini(&SetNameStr[0], IniTree);		
 		//try and find the key.
 		ConvertString.FromWChar(&SpotNameStr[0], MAX_PATH, SpotName.c_str(), SpotName.size());
 		it =IniTree.find(&SpotNameStr[0]);
@@ -2099,7 +2099,7 @@ LExit:
 		HRESULT hReturnValue =S_OK;
 		ActiveProduct CurrentProduct;
 		DolphinProduct SpecificDolphinProduct;
-		property_tree::ptree IniTree; //used to store hsc information.
+		boost::property_tree::ptree IniTree; //used to store hsc information.
 		boost::property_tree::ptree::assoc_iterator it;	 
 	char SetNameStr[MAX_PATH] ="";
 		wxMBConvStrictUTF8 ConvertString; //used to convert to ansi later on.
@@ -2113,7 +2113,7 @@ ExitOnFailure(hReturnValue, "No product is active.");
 		ConvertString.FromWChar(&SetNameStr[0], MAX_PATH, SetName.c_str(), SetName.size());
 		try
 			{
-				property_tree::ini_parser::read_ini(SetNameStr, IniTree);		
+				boost::property_tree::ini_parser::read_ini(SetNameStr, IniTree);		
 		}
 		catch( ...)
 			{
@@ -2124,7 +2124,7 @@ ExitOnFailure(hReturnValue, "No product is active.");
 			Spots.clear();
 		Spots.reserve(IniTree.size()); //reserve memory equal to the number of spots in the current set.
 		//now iterate the spots.
-			BOOST_FOREACH(property_tree::ptree::value_type &v, IniTree)
+			BOOST_FOREACH( boost::property_tree::ptree::value_type &v, IniTree)
 			{
 				if (!v.first.empty())
 				{ //the key has some text in.
@@ -2178,11 +2178,11 @@ LExit:
 	HRESULT RBSpeech::GetActiveHotSpotSet(std::wstring& ActiveSet)
 {
 HRESULT hReturnValue =S_OK;
-optional<std::string> CurrentSpotStringOptional;			
+boost::optional<std::string> CurrentSpotStringOptional;			
 wxVariant FunctionResult;
 			wchar_t ConvertedSpotString[MAX_PATH];
 			wxMBConvStrictUTF8 ConvertString; //used to convert to unicode later on.
-			property_tree::ptree IniTree; //used to store hsc information.
+			boost::property_tree::ptree IniTree; //used to store hsc information.
 			std::wstring JAWSFunctionCallString =L"GetCurrentJAWSEnvironment(\"%s\")"; //used to hold the call to JAWS.
 				wxFileName IniFile; //file to store the hsc information.
 			ActiveProduct CurrentProduct;
@@ -2199,7 +2199,7 @@ if (IniFile.FileExists())
 { //the file exists remove it.
 	ExitOnFalse(wxRemoveFile(IniFile.GetFullPath()), hReturnValue, S_FALSE, "Unable to delete the old file.");
 } //end file removal.
-replace_first(JAWSFunctionCallString, L"%s", AppDataPath().native());
+boost::replace_first(JAWSFunctionCallString, L"%s", AppDataPath().native());
 //now actually call the function.
 	        FunctionResult =JawsAPI.CallMethod(L"RunFunction", 1, JAWSFunctionCallString);
 									if (!FunctionResult.IsType(wxT("BOOL")))
@@ -2210,7 +2210,7 @@ replace_first(JAWSFunctionCallString, L"%s", AppDataPath().native());
 									//now, load the ini giving us hsc information, then grab the path to the current spot file.
 try
 	{
-		property_tree::ini_parser::read_ini(IniFile.GetFullPath().ToStdString(), IniTree);		
+		boost::property_tree::ini_parser::read_ini(IniFile.GetFullPath().ToStdString(), IniTree);		
 }
 catch( ...)
 	{
@@ -2248,7 +2248,7 @@ return hReturnValue;
 				hReturnValue =IsHotSpotInSet(Set, SpotName);
 				ExitOnFailure(hReturnValue, "The provided hot spot doesn't exist in the provided hot spot set.");
 				//now create the requisite information to call a jaws function.
-				replace_first(JAWSFunctionCallString, L"%s", SpotName);
+				boost::replace_first(JAWSFunctionCallString, L"%s", SpotName);
 				// testing only
 JAWSFunctionCallString =L"TypeKey( \"Control+Alt+T\")"; //used to hold the call to JAWS.				
 				//now call the function.

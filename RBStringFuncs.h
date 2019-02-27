@@ -7,18 +7,14 @@
 
 #include <boost/algorithm/string.hpp>
 #include <boost/algorithm/hex.hpp>
-#include <boost/filesystem.hpp>
 #include <boost/regex.hpp>
 #include <boost/algorithm/string/regex.hpp>
 #include <boost/lexical_cast.hpp>
 using boost::lexical_cast;
 using boost::bad_lexical_cast;
-// using namespace boost;
 
 #include <string>
-//#include <algorithm>
-//#include <vector>
-//#include <iomanip>
+#include <filesystem>
 using namespace std;
 
 
@@ -34,13 +30,13 @@ using namespace std;
 
 // String-handling functions
 
-boost::filesystem::path AppDataPath();
-boost::filesystem::path HelpPath();
-boost::filesystem::path AppConfigPath();
-boost::filesystem::path SpeechPath();
-boost::filesystem::path ProtocolPath();
-boost::filesystem::path SurfacePath();
-boost::filesystem::path LogPath();
+std::experimental::filesystem::path AppDataPath();
+std::experimental::filesystem::path HelpPath();
+std::experimental::filesystem::path AppConfigPath();
+std::experimental::filesystem::path SpeechPath();
+std::experimental::filesystem::path ProtocolPath();
+std::experimental::filesystem::path SurfacePath();
+std::experimental::filesystem::path LogPath();
 std::wstring PathToURL( std::wstring wxstrPath);
 
 std::wstring StripWSpaces( std::wstring wstrIn);

@@ -1,5 +1,5 @@
 // SurfaceList.h
-// Derivative of wxListBox
+// Derived from wxListBox
 
 // #define _SCL_SECURE_NO_WARNINGS
 
@@ -8,18 +8,17 @@
 
 #pragma once
 
-//#include <vector>
+// #include <vector>
 
 #include "DisplayReportDlg.h"
-//#include "ProtocolCollection.h"
+#include "ProtocolCollection.h"
 #include "MIDISurface.h"
-//#include "DisplayDefinition.h"
+#include "DisplayDefinition.h"
 
-//#include <boost/shared_ptr.hpp>
+#include <boost/shared_ptr.hpp>
 
 #include <wx/listbox.h>
-//#include <wx/msgdlg.h>
-//#include <wx/msw/winundef.h> 
+#include <wx/msw/winundef.h> 
 
 const int ENTER_KEY_CODE = 13;
 

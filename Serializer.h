@@ -12,19 +12,21 @@
 #include <stdlib.h>
 #include <string>
 #include <iostream>
+#include <fstream>
+#include <experimental/filesystem>
 
 //internal
 #include "SRConstants.h"
 #include "RBException.h"
-#include "FileCorrecter.h"
+// #include "FileCorrecter.h"
 
 //boost filesystem headers.
-#define BOOST_FILESYSTEM_VERSION 3
-#include <boost/filesystem/fstream.hpp>
-#include <boost/filesystem.hpp>
+// #define BOOST_FILESYSTEM_VERSION 3
+// #include <boost/filesystem/fstream.hpp>
+// #include <boost/filesystem.hpp>
 
 //boost sharedPtr headers.
-#include <boost/shared_ptr.hpp>
+// #include <boost/shared_ptr.hpp>
 //Boost xml serialization headers.
 #include <boost/archive/xml_wiarchive.hpp>
 #include <boost/archive/xml_woarchive.hpp>
@@ -36,7 +38,7 @@
 #include <boost/Serialization/Map.hpp>
 #include <boost/serialization/shared_ptr.hpp>
 #include <boost/Serialization/nvp.hpp>
-using namespace boost::filesystem;
+
 
 //crypto++.
 #include <base64.h>
@@ -48,7 +50,7 @@ using namespace boost::filesystem;
 //Template method for serializing specific data types.
 
 template <class SerializingType>
-void SaveData(SerializingType Data, path myFile, bool blnEncrypt)
+void SaveData(SerializingType Data, std::experimental::filesystem::path myFile, bool blnEncrypt)
  {
 //Check file existance.
 	 if ((exists( myFile))    
@@ -59,20 +61,20 @@ void SaveData(SerializingType Data, path myFile, bool blnEncrypt)
 {
 	remove( myFile);
 			 }
-catch (const filesystem_error &error)
+catch (const std::experimental::filesystem::filesystem_error &error)
 {
 	throw RBException(error.what());
 	return;
 	}
 	 }
 	 
-	path pTempFileName = myFile;
+	std::experimental::filesystem::path pTempFileName = myFile;
 	 
 	try
 	{
 		pTempFileName.replace_extension( wstrTEMPORARY_FILE_EXTENSION);
 }
-catch (const filesystem_error &error)
+catch (const std::experimental::filesystem::filesystem_error &error)
 {
 	throw RBException(error.what());
 	return;
@@ -81,11 +83,11 @@ catch (const filesystem_error &error)
 	 try
 {
 		 //Create a WOfstream to serialize the data.
-		 boost::filesystem::wofstream OutputStream(pTempFileName);
+		 wofstream OutputStream(pTempFileName);
 		 		 boost::archive::xml_woarchive Archive(OutputStream); //create an archive and assign the file stream.
 		Archive << BOOST_SERIALIZATION_NVP(Data);
 }
-catch (const filesystem_error &error)
+catch (const std::experimental::filesystem::filesystem_error &error)
 {
 	throw RBException(error.what());
 	return;
@@ -99,7 +101,7 @@ if (blnEncrypt)
 		CryptoPP::FileSource(pTempFileName.generic_string().c_str(), true, new CryptoPP::Base64Encoder(new CryptoPP::FileSink( myFile.generic_string().c_str())));
 		remove(pTempFileName);
 	}
-	catch (const filesystem_error &error)
+	catch (const std::experimental::filesystem::filesystem_error &error)
 	{
 		remove(pTempFileName);
 		throw RBException(error.what());
@@ -112,7 +114,7 @@ else  //Not encrypted, so just rename.
 	{
 		rename(pTempFileName, myFile);
 	}
-	catch (const filesystem_error &error)
+	catch (const std::experimental::filesystem::filesystem_error &error)
 	{
 		throw RBException(error.what());
 		return;
@@ -124,18 +126,18 @@ else  //Not encrypted, so just rename.
 //load data. 
 //takes a filename, and loads the data returning the serializing type in the template.
 template <class SerializingType>
-SerializingType LoadData(const path& myFile, bool blnIsEncrypted)
+SerializingType LoadData(const std::experimental::filesystem::path& myFile, bool blnIsEncrypted)
  {
 	SerializingType Data;
 	
 	//Check file existance.
 	 if ((! exists( myFile)) || (! is_regular_file( myFile)))
 { //file doesn't exist.
-		 std::wstring wstrError = myFile.generic_path().generic_wstring();
+		 std::wstring wstrError = myFile.generic_wstring();
 		 throw RBException(wstrError);
 	 }
 	
-	 boost::filesystem::path ProcessingPath =myFile;	
+	 std::experimental::filesystem::path ProcessingPath =myFile;	
 	 	 if (blnIsEncrypted)
 		{ //the file is encrypted.
 		ProcessingPath.replace_extension(strTEMPORARY_FILE_EXTENSION);
@@ -157,7 +159,7 @@ SerializingType LoadData(const path& myFile, bool blnIsEncrypted)
 		 		 try
 			{
 				{
-					boost::filesystem::wifstream WInputStream(ProcessingPath.generic_wstring());
+					wifstream WInputStream(ProcessingPath.generic_wstring());
 					boost::archive::xml_wiarchive archive(WInputStream);
 					archive >> BOOST_SERIALIZATION_NVP(Data);
 				}

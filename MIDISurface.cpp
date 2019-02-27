@@ -3,7 +3,7 @@
 
 #include "MIDISurface.h"
 #include "SurfaceFrame.h"
-
+#include "Queue.h"
 
 MIDISurface::MIDISurface( SurfaceFrame * pParent, ActiveProduct apProduct, boost::shared_ptr<ProtocolCollection> pProtocols, boost::shared_ptr<AppCollection> pApps)
 		:
@@ -29,7 +29,7 @@ vDisplayBuffer.clear();
 	mySurfaceID = boost::lexical_cast <std::string> (myUUID); 	
 
 // Logging
-boost::filesystem::path myPath = LogPath();
+std::experimental::filesystem::path myPath = LogPath();
 myPath /= mySurfaceID.append( strLogExtension);
 boost::log::add_file_log( myPath.generic_string(), boost::log::keywords::rotation_size = 10 * 1024 * 1024, boost::log::keywords::time_based_rotation = boost::log::sinks::file::rotation_at_time_point(0, 0, 0), boost::log::keywords::format = "[%TimeStamp%]: %Message%"); //create a log file.
 boost::log::add_common_attributes(); //add common attributes see documentation.
@@ -64,7 +64,7 @@ vDisplayBuffer.clear();
 	mySurfaceID = boost::lexical_cast <std::string> (myUUID); 	
 
 // Logging
-boost::filesystem::path myPath = LogPath();
+std::experimental::filesystem::path myPath = LogPath();
 myPath /= myParameters->GetSurfaceName().append( wstrLogExtension);
 boost::log::add_file_log( myPath.generic_string(), boost::log::keywords::rotation_size = 10 * 1024 * 1024, boost::log::keywords::time_based_rotation = boost::log::sinks::file::rotation_at_time_point(0, 0, 0), boost::log::keywords::format = "[%TimeStamp%]: %Message%"); //create a log file.
 boost::log::add_common_attributes(); //add common attributes see documentation.
@@ -115,7 +115,7 @@ vDisplayBuffer.clear();
 	mySurfaceID = boost::lexical_cast <std::string> (myUUID); 	
 
 // Logging
-boost::filesystem::path myPath = LogPath();
+std::experimental::filesystem::path myPath = LogPath();
 myPath /= wstrName.append( wstrLogExtension);
 boost::log::add_file_log( myPath.generic_string(), boost::log::keywords::rotation_size = 10 * 1024 * 1024, boost::log::keywords::time_based_rotation = boost::log::sinks::file::rotation_at_time_point(0, 0, 0), boost::log::keywords::format = "[%TimeStamp%]: %Message%"); //create a log file.
 boost::log::add_common_attributes(); //add common attributes see documentation.
@@ -150,7 +150,7 @@ boost::uuids::uuid myUUID = boost::uuids::random_generator()();
 	mySurfaceID = boost::lexical_cast <std::string> (myUUID); 	
 
 // Logging
-boost::filesystem::path myPath = LogPath();
+std::experimental::filesystem::path myPath = LogPath();
 myPath /= wstrName.append( wstrLogExtension);
 boost::log::add_file_log( myPath.generic_string(), boost::log::keywords::rotation_size = 10 * 1024 * 1024, boost::log::keywords::time_based_rotation = boost::log::sinks::file::rotation_at_time_point(0, 0, 0), boost::log::keywords::format = "[%TimeStamp%]: %Message%"); //create a log file.
 boost::log::add_common_attributes(); //add common attributes see documentation.
@@ -188,7 +188,7 @@ boost::uuids::uuid myUUID = boost::uuids::random_generator()();
 	mySurfaceID = boost::lexical_cast <std::string> (myUUID); 	
 
 // Logging
-boost::filesystem::path myPath = LogPath();
+std::experimental::filesystem::path myPath = LogPath();
 myPath /= wstrName.append( wstrLogExtension);
 boost::log::add_file_log( myPath.generic_string(), boost::log::keywords::rotation_size = 10 * 1024 * 1024, boost::log::keywords::time_based_rotation = boost::log::sinks::file::rotation_at_time_point(0, 0, 0), boost::log::keywords::format = "[%TimeStamp%]: %Message%"); //create a log file.
 boost::log::add_common_attributes(); //add common attributes see documentation.
@@ -3008,6 +3008,9 @@ break;
 }
 
 
+// Queue to handle processing of messages - only creates 1 thread
+extern dispatch_queue SpeechQ;
+
 // Callbacks
 
 	void HardwareCallback(double deltatime, std::vector< unsigned char > *message, void *pSurface) 
@@ -3024,11 +3027,11 @@ if ((pMySurface->GetWidgetMode() == ID_LIVE_MODE)
 	pMySurface->SendHardwareMessage( message);
 }			
 		// pMySurface->AnalyseHardwareMessage( * message);    
-SpeechQueue.dispatch([] {pMySurface->AnalyseHardwareMessage(*message); });
+SpeechQ.dispatch([=] {pMySurface->AnalyseHardwareMessage(*message); });
 }
 
 
-void DisplayCallback(double deltatime, std::vector< unsigned char > *message, void *pSurface) 
+	void DisplayCallback(double deltatime, std::vector< unsigned char > *message, void *pSurface)
 {
 MIDISurface * pMySurface = (MIDISurface*) pSurface;
 
@@ -3038,7 +3041,7 @@ pMySurface->LogIt( strLog);
 
 pMySurface->SendDisplayMessage( message);
 			// pMySurface->AnalyseDisplayMessage( * message);    
-SpeechQueue.dispatch([] {pMySurface->AnalyseDisplayMessage(*message); });
+SpeechQ.dispatch([=] {pMySurface->AnalyseDisplayMessage(*message); });
 }
 
 
