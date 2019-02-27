@@ -7,9 +7,11 @@ dispatch_queue::dispatch_queue(size_t thread_cnt)
 	:
 		threads_(thread_cnt)
 {
-	for (size_t i = 0; i < threads_.size(); i++)
+	std::vector<std::thread>::iterator it;
+
+	for (it = threads_.begin(); it != threads_.end(); it++)
 	{
-		threads_[i] = std::thread(&dispatch_queue::dispatch_thread_handler, this);
+		* it = std::thread(&dispatch_queue::dispatch_thread_handler, this);
 	}
 }
 
@@ -24,13 +26,14 @@ dispatch_queue::~dispatch_queue()
 	cv_.notify_all();
 
 	// Wait for threads to finish before we exit 
-	for (size_t i = 0; i < threads_.size(); i++)
-	{
-		if (threads_[i].joinable())
+	std::vector<std::thread>::iterator it;
+
+	for (it = threads_.begin(); it != threads_.end(); it++)
 		{
-			// printf("Destructor: Joining thread %zu until completion\n", i);
-			threads_[i].join();
-		}
+		if (it->joinable())
+		{
+			it->join();
+					}
 	}
 }
 
