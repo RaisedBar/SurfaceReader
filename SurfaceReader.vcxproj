@@ -197,7 +197,6 @@
     <ClCompile Include=".\TranslationTablesDialog.cpp" />
     <ClCompile Include=".\UpdateChecker.cpp" />
     <ClCompile Include=".\wineyes_i.c" />
-    <ClCompile Include="queue.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include=".\ActionPickerWin.h" />
@@ -269,7 +268,7 @@
     <ClInclude Include=".\wineyes.h" />
     <ClInclude Include=".\apiproto.h" />
     <ClInclude Include="FileCorrecter.h" />
-    <ClInclude Include="Queue.h" />
+    <ClInclude Include="DispatchQueue.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include=".\sample.rc" />
