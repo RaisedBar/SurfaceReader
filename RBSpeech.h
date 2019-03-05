@@ -128,8 +128,6 @@ enum ActiveProduct
 		ID_JAWS, 
 	/// <summary>System Access is active.</summary>
 		ID_SYSTEMACCESS, 
-	/// <summary>Window-Eyes is active.</summary>
-		ID_WindowEyes, 
 	/// <summary>Non-Visual Desktop Access is active.</summary>
 		ID_NVDA, 
 	/// <summary>A Dolphin product is active.</summary>

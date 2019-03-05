@@ -59,7 +59,6 @@ void ListScreenReaderActions( SurfaceActionType mySAType, wxTreeItemId wxtIDCurr
 void ListScreenReaderParameters();
 void ListJawsActions();
 		void ListSAActions();
-	void ListWindowEyesActions();
 void ListNVDAActions();
 		void ListDolphinActions();
 

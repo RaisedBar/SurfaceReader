@@ -294,12 +294,6 @@ case ID_SYSTEMACCESS:
 	}
 	break;
 
-case ID_WindowEyes:
-	{
-		ListWindowEyesActions();
-	}
-	break;
-
 case ID_NVDA:
 	{
 		ListNVDAActions();
@@ -567,11 +561,6 @@ void ScreenReaderFunctionsDlg::ListSAActions()
 		{
 			return;
 		}
-
-void ScreenReaderFunctionsDlg::ListWindowEyesActions()
-	{
-		return;
-	}
 
 void ScreenReaderFunctionsDlg::ListNVDAActions()
 {

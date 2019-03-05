@@ -428,11 +428,6 @@ if (wstrName.compare( wstrSA) == 0)
 		return ID_SYSTEMACCESS;
 	}
 	
-if (wstrName.compare( wstrWE) == 0)
-{
-		return ID_WindowEyes;
-	}
-	
 if (wstrName.compare( wstrNVDA) == 0)
 {
 		return ID_NVDA;
@@ -1291,12 +1286,6 @@ case ID_JAWS:
 case ID_SYSTEMACCESS:
 	{
 		return wstrSA;
-	}
-	break;
-
-case ID_WindowEyes:
-	{
-		return wstrWE;
 	}
 	break;
 

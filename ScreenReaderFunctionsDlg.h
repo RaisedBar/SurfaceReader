@@ -73,7 +73,6 @@ void ListScreenReaderActions();
 #ifdef __WINDOWS__
 void ListJawsActions();
 		void ListSAActions();
-	void ListWindowEyesActions();
 void ListNVDAActions();
 		void ListDolphinActions();
 #endif
