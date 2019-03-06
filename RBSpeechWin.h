@@ -174,8 +174,8 @@ SAStopAudioFunc SAStopAudio;
 	///This variable doesn't tell us whether the speech is muted according to the underlying access technology. If this is required this can be added at a later date.
 	/// </remarks>
 	HRESULT FShouldSpeak;
-wxString JsdFile;
-wxString HscFile;
+std::wstring JsdFile;
+std::wstring HscFile;
 	ProcessJsdFileType JsdFileToStartProcessing;
 	
 	
@@ -311,11 +311,11 @@ HRESULT ListHotSpotsInSet(std::wstring SetName, std::vector<std::string>& Spots)
 HRESULT ListHotSpotsInCurrentSet(std::vector<std::string>& Spots);
 HRESULT GetActiveHotSpotSet(std::wstring& ActiveSet);
 HRESULT ExecuteHotSpot(std::wstring Set, std::wstring SpotName);
-void SetFirstJsdFile(wxString File);
-wxString GetFirstJsdFile(void);
+void SetFirstJsdFile(std::wstring );
+std::wstring GetFirstJsdFile(void);
 void ClearJsdFile();
-void SetHscFile(wxString File);
-wxString GetHscFile(void);
+void SetHscFile(std::wstring File);
+std::wstring GetHscFile(void);
 void ClearHscFile();
 	
 	/// <summary> Obtain the currently active speech product. </summary>
@@ -354,14 +354,14 @@ bool blnMuted;
 //Comparison functions.
 inline bool CompareJawsFunctions(JawsFunction f1, JawsFunction f2)
 {
-	return f1.Name.IsSameAs(f2.Name, false);
+	return f1.Name.compare(f2.Name) ==0;
 }
 inline bool IsNotVoid(JawsFunction f1)
 {
 	if (f1.Type ==ID_TYPE_SCRIPT)
 		return true;
 	else {
-		return f1.Returns.DataType.IsSameAs("void", false);
+		return f1.Returns.DataType.compare(L"void") ==0;
 	}
 }
 

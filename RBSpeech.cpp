@@ -164,7 +164,7 @@ HRESULT hReturnValue =S_OK;
 AvailableActionsType JawsActions;
 ActionCollectionType Actions;
 ActionCollectionTypeIterator NewEnd =Actions.begin();
-AvailableActionFieldsType Fields =boost::assign::map_list_of("Name", 0)("Synopsis", 1)("Description", 2)("Returns", 3)("Parameters", 4)("Category", 5)("Type", 6);
+AvailableActionFieldsType Fields =boost::assign::map_list_of(L"Name", 0)(L"Synopsis", 1)(L"Description", 2)(L"Returns", 3)(L"Parameters", 4)(L"Category", 5)(L"Type", 6);
 ActionInfoType CurrentAction;
 std::vector<JawsFunction> AvailableJawsFunctions;
 wxString UserScriptFolder; 
@@ -203,7 +203,7 @@ case PROCESS_USER_APP_FILE:
 	{ //we don't need to do anything as we already have the jsd file.
 		CurrentFile.Assign(JsdFile);
 	}
-	OutputDebugString(JsdFile.ToStdWstring().c_str());
+	OutputDebugString(JsdFile.c_str());
 	if (CurrentFile.FileExists())
 {
 LocalFunctions =ProcessJSDFile(CurrentFile);
@@ -217,9 +217,9 @@ if (JsdFileToStartProcessing ==CurrentFileBeingProcessed)
 		CurrentFile.Assign(JsdFile);
 }
 else { //specify the file ourselves.
-FreedomScientificDirectoryPosition =JsdFile.find("Freedom Scientific");	
+FreedomScientificDirectoryPosition =JsdFile.find(L"Freedom Scientific");	
  TestDir =wxStandardPaths::Get().GetConfigDir().Remove(wxStandardPaths::Get().GetConfigDir().find(L"SurfaceReader"));
-TestDir.append(JsdFile.Right(JsdFile.length()-FreedomScientificDirectoryPosition));
+TestDir.append(JsdFile.substr(JsdFile.length()-FreedomScientificDirectoryPosition));
 OutputDebugString(TestDir.ToStdWstring().c_str());
 CurrentFile.Assign(TestDir);
 } //end file processing.
@@ -240,8 +240,8 @@ else { //specifically set the file/path.
 	//obtain the current user path.
 	TestDir =wxStandardPaths::Get().GetUserConfigDir();
 	TestDir.append("\\");
-	FreedomScientificDirectoryPosition =JsdFile.find("Freedom Scientific");	
- TestDir.append(JsdFile.Right(JsdFile.length()-FreedomScientificDirectoryPosition));
+	FreedomScientificDirectoryPosition =JsdFile.find(L"Freedom Scientific");	
+ TestDir.append(JsdFile.substr(JsdFile.length()-FreedomScientificDirectoryPosition));
  TestDir.Remove(TestDir.find(wxStringTokenize(JsdFile, L"\\").Last(), FreedomScientificDirectoryPosition));
  TestDir.Append(L"default.jsd");
  OutputDebugString(TestDir.ToStdWstring().c_str());
@@ -260,9 +260,9 @@ case PROCESS_DEFAULT_SYSTEM_DEFAULT_FILE:
 		CurrentFile.Assign(JsdFile);
 	}
 else { //specify the file ourselves.
-FreedomScientificDirectoryPosition =JsdFile.find("Freedom Scientific");	
+FreedomScientificDirectoryPosition =JsdFile.find(L"Freedom Scientific");	
  TestDir =wxStandardPaths::Get().GetConfigDir().Remove(wxStandardPaths::Get().GetConfigDir().find(L"SurfaceReader"));
-TestDir.append(JsdFile.Right(JsdFile.length()-FreedomScientificDirectoryPosition));
+TestDir.append(JsdFile.substr(JsdFile.length()-FreedomScientificDirectoryPosition));
 TestDir.Remove(TestDir.find(wxStringTokenize(JsdFile, L"\\").Last(), FreedomScientificDirectoryPosition));
  TestDir.Append(L"default.jsd");
 OutputDebugString(TestDir.ToStdWstring().c_str());
@@ -300,7 +300,7 @@ if (j.Type ==ID_TYPE_SCRIPT)
 	CurrentAction.insert(std::make_pair(6, ID_SCRIPT));
 	Actions.push_back(CurrentAction);
 }
-	else if ((j.Type ==ID_TYPE_FUNCTION) && (j.Returns.DataType.IsSameAs("void", false)))
+	else if ((j.Type ==ID_TYPE_FUNCTION) && (j.Returns.DataType.compare(L"void") ==0))
 {
 		CurrentAction.clear();
 		//  CurrentAction = boost::assign::map_list_of(0, j.Name)(1, j.Synopsis)(2, j.Description)(5, j.Category);
@@ -2019,9 +2019,9 @@ else if (line.length() ==0)
 	} //end existence check.		
 return AvailableFunctions;
 }
-void RBSpeech::SetFirstJsdFile(wxString File)
+void RBSpeech::SetFirstJsdFile(std::wstring file)
 {
-	JsdFile =File;
+	JsdFile =file;
 JsdFileToStartProcessing =PROCESS_NO_FILE;
 wxArrayString JsdFileTokens =wxStringTokenize(JsdFile, L"\\");
 wxString UserName =wxGetUserId();
@@ -2046,7 +2046,7 @@ JsdFileToStartProcessing =PROCESS_DEFAULT_APP_FILE;
 return;
 }
 
-wxString RBSpeech::GetFirstJsdFile(void)
+std::wstring RBSpeech::GetFirstJsdFile(void)
 {
 	return JsdFile;
 }
@@ -2055,15 +2055,17 @@ void RBSpeech::ClearJsdFile()
 	JsdFile =wxEmptyString;
 JsdFileToStartProcessing =PROCESS_NO_FILE;
 }
-void RBSpeech::SetHscFile(wxString File)
+void RBSpeech::SetHscFile(std::wstring File)
 {
 HscFile =File;
 return;
 }
-wxString RBSpeech::GetHscFile(void)
+
+std::wstring RBSpeech::GetHscFile(void)
 {
 return HscFile;
 }
+
 void RBSpeech::ClearHscFile()
 {
 HscFile =wxEmptyString;

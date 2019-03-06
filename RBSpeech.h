@@ -39,13 +39,10 @@ using namespace std;
 #include <wx/msw/ole/automtn.h>
 #include <wx/dynlib.h>
 #include <wx/stdpaths.h>
-#include <wx/utils.h> 
+#include <wx/ffile.h>
 #include <wx/filefn.h>
 #include <wx/platinfo.h>
-#include <wx/ffile.h>
-#include <wx/string.h>
 #include <wx/tokenzr.h>
-#include <wx/arrstr.h>
 #include <wx/platform.h>
 #include <wx/msw/winundef.h> 
 
@@ -61,15 +58,15 @@ struct JAWSParameter
 	}
 // 	BOOL Optional;
 	bool Optional;
-wxString DataType;
-wxString Description;
-wxString Name;
+std::wstring DataType;
+std::wstring Description;
+std::wstring Name;
 };
 
 struct JawsReturnInfo
 {
-	wxString DataType;
-wxString Description;
+	std::wstring DataType;
+std::wstring Description;
 };
 
 //enum defining the jsd file to start processing.
@@ -92,10 +89,10 @@ enum FunctionType
 
 struct JawsFunction 
 {
-	wxString Name; //function/script name.
-	wxString Synopsis; //Synopsis of the script/function.
-	wxString Description; //the function/scripts  description.
-	wxString Category; //the function/script category.
+	std::wstring Name; //function/script name.
+	std::wstring Synopsis; //Synopsis of the script/function.
+	std::wstring Description; //the function/scripts  description.
+	std::wstring Category; //the function/script category.
 	FunctionType Type;
 std::vector<JAWSParameter> Parameters;
 JawsReturnInfo Returns;
@@ -113,8 +110,8 @@ typedef std::map < std::pair< std::wstring, std::string>, ActionCollectionType> 
 // <summary> the available action fields. </summary>
 /// <remarks> These fields are unique to the access technology that is currently active. They define the fields available in the <see cref="ActionInfoType"/>
 /// Further documentation can be found in the respective Get*Actions methods. </remarks>
-typedef std::map<wxString, int> AvailableActionFieldsType;
-typedef std::map<wxString, int>::iterator AvailableActionFieldsIterator;
+typedef std::map<std::wstring, int> AvailableActionFieldsType;
+typedef std::map<std::wstring, int>::iterator AvailableActionFieldsIterator;
 typedef pair<AvailableActionFieldsType, ActionCollectionType > AvailableActionsType; //Available actions pair.
 
 /// <summary> 
