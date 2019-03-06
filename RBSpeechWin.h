@@ -162,7 +162,7 @@ nvdaControllerSpeakTextFunc SpeakText;
 nvdaControllerBrailleMessageFunc BrailleMessage;
 
 //System access dll and function pointers.
-wxDynamicLibrary SystemAccessDllApi;
+boost::dll::shared_library SystemAccessDllApi;
 SAIsRunningFunc SAIsRunning;
 SABrailleFunc SABraille;
 SASpeakFunc SASpeak;

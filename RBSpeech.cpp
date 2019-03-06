@@ -1321,7 +1321,7 @@ bool RBSpeech::LoadSystemAccessApi()
 	HRESULT hr = S_OK;
 	BOOL bIsProcess64Bit = false;
 
-	if (!SystemAccessDllApi.IsLoaded())
+	if (!SystemAccessDllApi.is_loaded())
 {
 		std::experimental::filesystem::path SystemAccessDllFileName(wxStandardPaths::Get().GetExecutablePath().ToStdWstring()); //assign the executable directory.
 		SystemAccessDllFileName.remove_filename();
@@ -1342,12 +1342,13 @@ bool RBSpeech::LoadSystemAccessApi()
 		
 		if (exists(SystemAccessDllFileName))
 		{ 
-			if (SystemAccessDllApi.Load(SystemAccessDllFileName.generic_wstring()))
+			SystemAccessDllApi.load(SystemAccessDllFileName.generic_string());
+			if (SystemAccessDllApi.is_loaded())
 			{
-				SAIsRunning = (SAIsRunningFunc)SystemAccessDllApi.RawGetSymbol("SA_IsRunning");
-				SASpeak = (SASpeakFunc)SystemAccessDllApi.RawGetSymbol("SA_SayW");
-				SABraille = (SABrailleFunc)SystemAccessDllApi.RawGetSymbol("SA_BrlShowTextW");
-				SAStopAudio = (SAStopAudioFunc)SystemAccessDllApi.RawGetSymbol("SA_StopAudio");
+				SAIsRunning =SystemAccessDllApi.get<SAIsRunningFunc>("SA_IsRunning");
+				SASpeak = SystemAccessDllApi.get<SASpeakFunc>("SA_SayW");
+				SABraille = SystemAccessDllApi.get<SABrailleFunc>("SA_BrlShowTextW");
+				SAStopAudio = SystemAccessDllApi.get<SAStopAudioFunc>("SA_StopAudio");
 				result = true;
 			}
 		}
@@ -1359,7 +1360,7 @@ bool RBSpeech::LoadSystemAccessApi()
 
 	void RBSpeech::UnloadSystemAccessApi(void)
 {
-	SystemAccessDllApi.Unload();
+	SystemAccessDllApi.unload();
 	return;
 }
 	
