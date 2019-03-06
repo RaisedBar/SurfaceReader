@@ -442,7 +442,7 @@ bool RBSpeech::LoadNVDAApi()
 {
 	HRESULT hr = S_OK;
 	BOOL bIsProcess64Bit = false;
-	if (NvdaDllApi.IsLoaded())
+	if (NvdaDllApi.is_loaded())
 	{
 		return true;
 	}
@@ -467,12 +467,13 @@ NVDADllFileName /=L"nvdaControllerClient64.dll";
 			if (exists(NVDADllFileName))
 {
 	//file exists, so try to load it.
-	if (NvdaDllApi.Load(NVDADllFileName.generic_wstring())) 
+				NvdaDllApi.load(NVDADllFileName.generic_wstring());
+				if (NvdaDllApi.is_loaded()) 
 	{ //successfully loaded.
-		TestIfRunning =(nvdaControllerTestIfRunningFunc)NvdaDllApi.RawGetSymbol("nvdaController_testIfRunning");
-SpeakText =(nvdaControllerSpeakTextFunc)NvdaDllApi.RawGetSymbol("nvdaController_speakText");
-BrailleMessage =(nvdaControllerBrailleMessageFunc)NvdaDllApi.RawGetSymbol("nvdaController_brailleMessage");
-CancelSpeech =(nvdaControllerCancelSpeechFunc)NvdaDllApi.RawGetSymbol("nvdaController_cancelSpeech");
+					TestIfRunning = NvdaDllApi.get<nvdaControllerTestIfRunningFunc>("nvdaController_testIfRunning");
+					SpeakText = NvdaDllApi.get<nvdaControllerSpeakTextFunc>("nvdaController_speakText");
+					BrailleMessage = NvdaDllApi.get<nvdaControllerBrailleMessageFunc>("nvdaController_brailleMessage");
+					CancelSpeech = NvdaDllApi.get<nvdaControllerCancelSpeechFunc>("nvdaController_cancelSpeech");
 return true;
 	}    // end if loaded
 }  // end if file not OK, or doesn't exist
@@ -484,7 +485,7 @@ return false;
 void RBSpeech::UnloadNVDAApi(void)
 {
 	//unload the nvda dll and free all functions.
-	NvdaDllApi.Unload();
+	NvdaDllApi.unload();
 return;
 }
 

@@ -155,7 +155,7 @@ private:
 	CComDispatchDriver JawsAPI;
 	
 	//NVDA.
-		wxDynamicLibrary NvdaDllApi;
+		boost::dll::shared_library NvdaDllApi;
 		nvdaControllerTestIfRunningFunc TestIfRunning;
 nvdaControllerCancelSpeechFunc CancelSpeech;
 nvdaControllerSpeakTextFunc SpeakText;

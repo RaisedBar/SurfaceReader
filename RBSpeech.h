@@ -31,12 +31,14 @@
 #include <boost/foreach.hpp>
 #include <boost/algorithm/string.hpp>
 #include <boost/optional/optional.hpp>
+#include <boost/dll/shared_library.hpp>
+#include <boost/dll/import.hpp>
 using boost::any_cast;
 using namespace std;
 // using namespace boost; //used for assignment and EBNF parsing amongst others.
 #include <wx/dynlib.h>
-#include <wx/stdpaths.h>
 #include <wx/ffile.h>
+#include <wx/stdpaths.h>
 #include <wx/tokenzr.h>
 #include <wx/msw/winundef.h> 
 
