@@ -6,6 +6,9 @@
 #include <TlHelp32.h>
 #include <Processthreadsapi.h> // on Windows 8 and Windows Server 2012
 #include <comutil.h>
+#include <procutil.h>
+#include <osutil.h>
+
 bool FindProcessByName(const wchar_t * wstrProcessName)
 {
 	PROCESSENTRY32 entry;
@@ -381,12 +384,19 @@ blnReturnValue =true;
 	HSCInstallState RBSpeech::IsHSCInstalled()
 	{
 		HSCInstallState eReturnValue =STATE_NOT_INSTALLED;
+		HRESULT hr = S_OK;
+		BOOL bIs64BitProcess = false;
+		OS_VERSION version;
+		DWORD servicePack = 0;
+		//Retrieve the OS version.
+		OsGetVersion(&version, &servicePack);
+		//Retrieve whether the process is 64-bit.
+		hr = ProcWow64(::GetCurrentProcess(), &bIs64BitProcess);
 		//first check whether an older version--pre 211 is installed.
 		//the only reliable way to check this is using a registry key check.
-wxPlatformInfo CurrentPlatform;
-CurrentPlatform.Get();
+
 		//conditionalise this on operating system, if the user is running xp we don't support 64-bit.
-		if ((CurrentPlatform.CheckOSVersion(6, 1)) && (CurrentPlatform.GetArchitecture() ==wxARCH_32))
+		if (version == OS_VERSION_WINXP && !bIs64BitProcess)
 		{ //we are using xp.
 			{ // Use a boost::scoped_ptr to ensure that raii is used to close the key when done.
     HKEY reg = NULL;
@@ -399,7 +409,7 @@ if (dwErr ==ERROR_SUCCESS)
 } //end raii scope for the key.
 		} //end xp specific block.
 		//check for at least vista.
-		else if (CurrentPlatform.CheckOSVersion(6, 0))
+		else if (version == OS_VERSION_VISTA)
 		{ //we are running vista or above.
 			//Query the wow6432node key.
 				{ // Use a boost::scoped_ptr to ensure that raii is used to close the key when done.
@@ -430,14 +440,22 @@ if (MsiQueryProductStateW(L"c1093f38-9866-431e-a942-f786a1b8e8c0") ==INSTALLSTAT
 
 bool RBSpeech::LoadNVDAApi()
 {
+	HRESULT hr = S_OK;
+	BOOL bIsProcess64Bit = false;
 	if (NvdaDllApi.IsLoaded())
 	{
 		return true;
 	}
 	
 	std::experimental::filesystem::path NVDADllFileName =wxStandardPaths::Get().GetExecutablePath().ToStdWstring(); //assign the executable directory.
+	
+	hr = ProcWow64(::GetCurrentProcess(), &bIsProcess64Bit);
+	if (hr == S_FALSE)
+	{
+		return false;
+	}
 
-	if (wxIsPlatform64Bit())
+	if (bIsProcess64Bit)
 		{ //We are running on a 64-bit operating system--or at least as a 64-bit process.
 NVDADllFileName /=L"nvdaControllerClient64.dll";
 	}
@@ -506,7 +524,6 @@ ExitOnTrue(strText.empty(), hReturnValue, __HRESULT_FROM_WIN32(ERROR_BAD_ARGUMEN
 		LExit:
 		return hReturnValue;			
 }
-
 
 //Dolphin.
 //All dolphin functions for dolphin requires us to be 32-bit.
@@ -1300,12 +1317,21 @@ bool  RBSpeech::IsSystemAccessActive()
 bool RBSpeech::LoadSystemAccessApi()
 {
 	bool result = false;
+	HRESULT hr = S_OK;
+	BOOL bIsProcess64Bit = false;
+
 	if (!SystemAccessDllApi.IsLoaded())
 {
 		std::experimental::filesystem::path SystemAccessDllFileName(wxStandardPaths::Get().GetExecutablePath().ToStdWstring()); //assign the executable directory.
 		SystemAccessDllFileName.remove_filename();
+		
+		hr = ProcWow64(::GetCurrentProcess(), &bIsProcess64Bit);
+		if (hr == S_FALSE)
+		{
+			return false;
+		}
 
-		if (wxIsPlatform64Bit())
+		if (bIsProcess64Bit)
 		{ //We are running on a 64-bit operating system--or at least as a 64-bit process.
 			SystemAccessDllFileName /= L"SAAPI64.dll";
 		}

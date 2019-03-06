@@ -37,10 +37,7 @@ using namespace std;
 #include <wx/dynlib.h>
 #include <wx/stdpaths.h>
 #include <wx/ffile.h>
-#include <wx/filefn.h>
-#include <wx/platinfo.h>
 #include <wx/tokenzr.h>
-#include <wx/platform.h>
 #include <wx/msw/winundef.h> 
 
 
