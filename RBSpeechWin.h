@@ -229,7 +229,7 @@ NewAction.insert(std::make_pair(5, Element.Parameters));
 	return NewAction;
 }
 /// <summary> Obtain the path to the current jaws executable.
-	bool GetJAWSPath(wxFileName& FileName);
+	bool GetJAWSPath(std::experimental::filesystem::path& FileName);
 	/// <summary> IsJAWSRoaming
 	/// <remarks> Check to see whether jaws is roaming. To do this we check to see whether a settings folder exists in the folder from which jaws is running. </remarks>
 	bool IsJAWSRoaming();
@@ -300,7 +300,7 @@ void UnloadSystemAccessApi(void);
 	/// <returns> Returns S_OK if the string has been queued for brailleing, S_FALSE otherwise.</returns>
 	HRESULT SystemAccessBraille(wstring strText);	
 public:
-	std::vector<JawsFunction> ProcessJSDFile(wxFileName &File);
+	std::vector<JawsFunction> ProcessJSDFile(std::experimental::filesystem::path&File);
 	/// <summary> loads the application programming interface for the active screen reader.</summery>
 	/// <returns> S_OK if the API has loaded successfully and an error code otherwise.</returns>
 	bool LoadAPI();

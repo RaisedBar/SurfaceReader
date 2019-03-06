@@ -34,8 +34,6 @@
 using boost::any_cast;
 using namespace std;
 // using namespace boost; //used for assignment and EBNF parsing amongst others.
-
-#include <wx/filename.h>
 #include <wx/dynlib.h>
 #include <wx/stdpaths.h>
 #include <wx/ffile.h>
