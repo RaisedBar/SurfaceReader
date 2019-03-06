@@ -8,6 +8,7 @@
 #pragma once
 
 #include <windows.h>
+#include <atlbase.h>
 #include <wx/msw/winundef.h> 
 #include <Psapi.h>
 #include <wx/msw/winundef.h> 
@@ -151,7 +152,7 @@ public:
 private:
 	//Dll variables and function pointers.
 	//jaws.
-	wxAutomationObject JawsAPI;
+	CComDispatchDriver JawsAPI;
 	
 	//NVDA.
 		wxDynamicLibrary NvdaDllApi;
