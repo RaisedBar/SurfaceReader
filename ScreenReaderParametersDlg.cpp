@@ -20,7 +20,7 @@ vBoxParameters = new wxBoxSizer( wxVERTICAL);
 
 for (unsigned int i = 0; i < pMySpeechParameters->size(); i++)
 {
-	std::wstring wstrPrompt = pMySpeechParameters->at( i).Name.ToStdWstring();
+	std::wstring wstrPrompt = pMySpeechParameters->at(i).Name;
 	wstrPrompt.append( wstrSpacedColon);
 AddParameter( wstrPrompt);
 }
