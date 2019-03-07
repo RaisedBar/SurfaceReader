@@ -37,7 +37,6 @@ using boost::any_cast;
 using namespace std;
 // using namespace boost; //used for assignment and EBNF parsing amongst others.
 #include <wx/stdpaths.h>
-#include <wx/tokenzr.h>
 #include <wx/msw/winundef.h> 
 
 

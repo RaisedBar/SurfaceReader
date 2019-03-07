@@ -8,6 +8,8 @@
 #include <comutil.h>
 #include <procutil.h>
 #include <osutil.h>
+#include <vector>
+#include <algorithm>
 
 bool FindProcessByName(const wchar_t * wstrProcessName)
 {
@@ -176,9 +178,10 @@ wxVariant FunctionResult;
 				{
 //Process files based on the enum.
 					int CurrentFileBeingProcessed;
-std::wstring TestDir =wxEmptyString;
+					std::wstring TestDir;
 		std::experimental::filesystem::path CurrentFile;
 					int FreedomScientificDirectoryPosition =-1;
+					std::vector<std::wstring> tokens;
 					for(CurrentFileBeingProcessed =JsdFileToStartProcessing; CurrentFileBeingProcessed <=PROCESS_DEFAULT_SYSTEM_DEFAULT_FILE; CurrentFileBeingProcessed++)
 					{
 						std::vector<JawsFunction> LocalFunctions;
@@ -230,7 +233,9 @@ else { //specifically set the file/path.
 	TestDir.append(L"\\");
 	FreedomScientificDirectoryPosition =JsdFile.find(L"Freedom Scientific");	
  TestDir.append(JsdFile.substr(JsdFile.length()-FreedomScientificDirectoryPosition));
- TestDir.erase(TestDir.find(wxStringTokenize(JsdFile, L"\\").Last(), FreedomScientificDirectoryPosition));
+ tokens.clear();
+ boost::split(tokens, JsdFile, boost::is_any_of("\\"));
+ TestDir.erase(TestDir.find(*end(tokens), FreedomScientificDirectoryPosition));
  TestDir.append(L"default.jsd");
  OutputDebugString(TestDir.c_str());
  CurrentFile=TestDir;
@@ -251,7 +256,9 @@ else { //specify the file ourselves.
 FreedomScientificDirectoryPosition =JsdFile.find(L"Freedom Scientific");	
  TestDir =wxStandardPaths::Get().GetConfigDir().Remove(wxStandardPaths::Get().GetConfigDir().find(L"SurfaceReader"));
 TestDir.append(JsdFile.substr(JsdFile.length()-FreedomScientificDirectoryPosition));
-TestDir.erase(TestDir.find(wxStringTokenize(JsdFile, L"\\").Last(), FreedomScientificDirectoryPosition));
+tokens.clear();
+boost::split(tokens, JsdFile, boost::is_any_of("\\"));
+TestDir.erase(TestDir.find(*end(tokens), FreedomScientificDirectoryPosition));
  TestDir.append(L"default.jsd");
 OutputDebugString(TestDir.c_str());
 CurrentFile =TestDir;
@@ -1609,7 +1616,7 @@ HRESULT RBSpeech::IsHotSpotInSet(std::wstring SetName, std::wstring SpotName)
 		wxMBConvStrictUTF8 ConvertString; //used to convert to ansi later on.
 	ExitOnTrue(SetName.empty(), hReturnValue, S_FALSE, "No hot spot set has been provided.");
 	ExitOnTrue(SpotName.empty(), hReturnValue, S_FALSE, "No hot spot name has been provided.");
-	ExitOnFalse(wxFileExists(SetName), hReturnValue, S_FALSE, "The hot spot set does not exist.");
+	ExitOnFalse(std::experimental::filesystem::exists(SetName), hReturnValue, S_FALSE, "The hot spot set does not exist.");
 		hReturnValue =GetActiveProduct(CurrentProduct, SpecificDolphinProduct);
 	ExitOnFailure(hReturnValue, "No product is active.");
 	switch(CurrentProduct)
@@ -1667,7 +1674,7 @@ LExit:
 	char SetNameStr[MAX_PATH] ="";
 		wxMBConvStrictUTF8 ConvertString; //used to convert to ansi later on.
 	ExitOnTrue(SetName.empty(), hReturnValue, S_FALSE, "No hot spot set has been provided.");
-	ExitOnFalse(wxFileExists(SetName), hReturnValue, S_FALSE, "The hot spot set does not exist.");
+	ExitOnFalse(std::experimental::filesystem::exists(SetName), hReturnValue, S_FALSE, "The hot spot set does not exist.");
 	hReturnValue =GetActiveProduct(CurrentProduct, SpecificDolphinProduct);
 ExitOnFailure(hReturnValue, "No product is active.");
 	switch(CurrentProduct)
@@ -2004,22 +2011,21 @@ void RBSpeech::SetFirstJsdFile(std::wstring file)
 {
 	JsdFile =file;
 JsdFileToStartProcessing =PROCESS_NO_FILE;
-wxArrayString JsdFileTokens =wxStringTokenize(JsdFile, L"\\");
+std::vector<std::wstring> JsdFileTokens;
+boost::split(JsdFileTokens, JsdFile, boost::is_any_of(L"\\"));
+
 std::wstring UserName =wxGetUserId().ToStdWstring();
-int test =JsdFileTokens.Index(UserName);
-if (JsdFileTokens.Index(UserName) >0)
+if (std::find(begin(JsdFileTokens), end(JsdFileTokens), UserName) !=end(JsdFileTokens))
 { //user file is the first one.
 //determine whether it is default/application.
-std::wstring LastToken =JsdFileTokens.Last().ToStdWstring();
-	if (JsdFileTokens.Last().IsSameAs("default.jsd", false))
+	if (JsdFileTokens.back().compare(L"default.jsd"))
 		JsdFileToStartProcessing =PROCESS_USER_SYSTEM_DEFAULT_FILE;
 	else
 JsdFileToStartProcessing =PROCESS_USER_APP_FILE;
 } //end user file.
 else { //global file.
 	//determine whether it is the default/application.
-std::wstring LastToken =JsdFileTokens.Last().ToStdWstring();
-	if (JsdFileTokens.Last().IsSameAs("default.jsd", false))
+	if (JsdFileTokens.back().compare(L"default.jsd"))
 		JsdFileToStartProcessing =PROCESS_DEFAULT_SYSTEM_DEFAULT_FILE;
 	else
 JsdFileToStartProcessing =PROCESS_DEFAULT_APP_FILE;
@@ -2033,7 +2039,7 @@ std::wstring RBSpeech::GetFirstJsdFile(void)
 }
 void RBSpeech::ClearJsdFile()
 {
-	JsdFile =wxEmptyString;
+	JsdFile =L"";
 JsdFileToStartProcessing =PROCESS_NO_FILE;
 }
 void RBSpeech::SetHscFile(std::wstring File)
@@ -2049,7 +2055,7 @@ return HscFile;
 
 void RBSpeech::ClearHscFile()
 {
-HscFile =wxEmptyString;
+HscFile =L"";
 return;
 }
 
