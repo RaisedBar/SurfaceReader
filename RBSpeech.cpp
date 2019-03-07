@@ -2129,4 +2129,23 @@ bool IsJawsParameterVector(const boost::any & operand)
     return operand.type() == typeid( std::vector <JAWSParameter>);
 }
 
+HRESULT RBSpeech::IsNVDAActive()
+{
+	if (LoadNVDAApi())
+	{
+		if (TestIfRunning() == 0)
+		{
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
+	else
+	{
+		return false;
+	}
+}
+
 #endif  // Windows

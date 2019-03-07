@@ -238,7 +238,7 @@ NewAction.insert(std::make_pair(5, Element.Parameters));
 	BOOL InstallHSC();
 	/// <summary> Determine whether Non-Visual Desktop Access is currently active in memory. </summary>
 	/// <returns> returns S_OK if Non-Visual Desktop Access is active, S_FALSE otherwise. </returns>
-bool IsNVDAActive();
+HRESULT IsNVDAActive();
 /// <summary>Loads the NVDA dll.</summery>
 /// <remarks> the dll that is required is dependent on the type of architecture (x86/x64) windows is running on. We use the wxIsPlatform64Bit function from the wxWidgets library for this.</remarks>
 bool LoadNVDAApi();

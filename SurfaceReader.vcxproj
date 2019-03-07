@@ -56,26 +56,22 @@
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="..\..\..\..\wxWidgets-3.1.2\wxwidgets.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="..\..\..\..\wxWidgets-3.1.2\wxwidgets.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="..\..\..\..\wxWidgets-3.1.2\wxwidgets.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="..\..\..\..\wxWidgets-3.1.2\wxwidgets.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);c:\program files\boost;c:\program files (x86)\visual leak detector\include;c:\program files\crypto++;c:\program files\rtmidi;C:\program files (x86)\WiX Toolset v3.11\SDK\VS2017\inc;</IncludePath>
-    <SourcePath>$(VC_SourcePath);c:\program files\rtmidi;</SourcePath>
-    <LibraryPath>$(VC_LibraryPath_x86);$(WindowsSDK_LibraryPath_x86);$(NETFXKitsDir)Lib\um\x86;.\lib;c:\program files\boost\stage\lib;C:\program files\crypto++\win32\Output\Debug;C:\program files (x86)\WiX Toolset v3.11\SDK\VS2017\lib\x86;c:\program files\rtmidi\lib\x86;c:\program files (x86)\visual leak detector\lib\win32;</LibraryPath>
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);c:\program files\boost;c:\program files (x86)\visual leak detector\include;c:\program files\crypto++;c:\program files\rtmidi;C:\program files (x86)\WiX Toolset v3.11\SDK\VS2017\inc;C:\wxWidgets-3.1.2\include;C:\wxWidgets-3.1.2\include\msvc;</IncludePath>
+    <SourcePath>$(VC_SourcePath);c:\program files\rtmidi;C:\Program Files\rtmidi;</SourcePath>
+    <LibraryPath>$(VC_LibraryPath_x86);$(WindowsSDK_LibraryPath_x86);$(NETFXKitsDir)Lib\um\x86;.\lib;c:\program files\boost\lib\32-bit;C:\program files\crypto++\win32\Output\Debug;C:\program files (x86)\WiX Toolset v3.11\SDK\VS2017\lib\x86;c:\program files\rtmidi\lib\x86;c:\program files (x86)\visual leak detector\lib\win32;C:\wxWidgets-3.1.2\lib\vc_lib;</LibraryPath>
     <OutDir>$(SolutionDir)files\x86\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -144,7 +140,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\..\Program Files\rtmidi\RtMidi.cpp" />
     <ClCompile Include=".\ActionPickerWin.cpp" />
     <ClCompile Include=".\ActionsPageWin.cpp" />
     <ClCompile Include=".\AppCollection.cpp" />
@@ -164,7 +159,6 @@
     <ClCompile Include=".\DisplaysPage.cpp" />
     <ClCompile Include=".\DisplayStatesDialog.cpp" />
     <ClCompile Include=".\EditProtocol.cpp" />
-    <ClCompile Include=".\gwspeak_i.c" />
     <ClCompile Include=".\HardwarePage.cpp" />
     <ClCompile Include=".\LEDLampsPage.cpp" />
     <ClCompile Include=".\MessageDefinition.cpp" />
@@ -196,7 +190,6 @@
     <ClCompile Include=".\TextDisplaysPage.cpp" />
     <ClCompile Include=".\TranslationTablesDialog.cpp" />
     <ClCompile Include=".\UpdateChecker.cpp" />
-    <ClCompile Include=".\wineyes_i.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include=".\ActionPickerWin.h" />
@@ -218,7 +211,6 @@
     <ClInclude Include=".\DisplaysPage.h" />
     <ClInclude Include=".\DisplayStatesDialog.h" />
     <ClInclude Include=".\EditProtocol.h" />
-    <ClInclude Include=".\gwspeak.h" />
     <ClInclude Include=".\HardwarePage.h" />
     <ClInclude Include=".\jfwapi.h" />
     <ClInclude Include=".\LEDLampsPage.h" />
@@ -243,7 +235,6 @@
     <ClInclude Include=".\RBStringFuncs.h" />
     <ClInclude Include=".\RBTextCtrl.h" />
     <ClInclude Include=".\RBWizardPage.h" />
-    <ClInclude Include=".\RtMidi.h" />
     <ClInclude Include=".\ScreenReaderFunctionsDlg.h" />
     <ClInclude Include=".\ScreenReaderParametersDlg.h" />
     <ClInclude Include=".\Serializer.h" />
@@ -265,7 +256,6 @@
     <ClInclude Include=".\TextDisplaysPage.h" />
     <ClInclude Include=".\TranslationTablesDialog.h" />
     <ClInclude Include=".\UpdateChecker.h" />
-    <ClInclude Include=".\wineyes.h" />
     <ClInclude Include=".\apiproto.h" />
     <ClInclude Include="FileCorrecter.h" />
     <ClInclude Include="DispatchQueue.h" />
