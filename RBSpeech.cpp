@@ -156,10 +156,10 @@ ActionCollectionTypeIterator NewEnd =Actions.begin();
 AvailableActionFieldsType Fields =boost::assign::map_list_of(L"Name", 0)(L"Synopsis", 1)(L"Description", 2)(L"Returns", 3)(L"Parameters", 4)(L"Category", 5)(L"Type", 6);
 ActionInfoType CurrentAction;
 std::vector<JawsFunction> AvailableJawsFunctions;
-wxString UserScriptFolder; 
-wxString SharedScriptFolder; 
-wxString DefaultScriptFile; 
-wxString ApplicationScriptFile; 
+std::wstring UserScriptFolder; 
+std::wstring SharedScriptFolder; 
+std::wstring DefaultScriptFile; 
+std::wstring ApplicationScriptFile; 
 std::experimental::filesystem::path JSDFile;
 wxVariant FunctionResult;
 			boost::property_tree::ptree IniTree; //used to store environment information.
@@ -176,7 +176,7 @@ wxVariant FunctionResult;
 				{
 //Process files based on the enum.
 					int CurrentFileBeingProcessed;
-		wxString TestDir =wxEmptyString;
+std::wstring TestDir =wxEmptyString;
 		std::experimental::filesystem::path CurrentFile;
 					int FreedomScientificDirectoryPosition =-1;
 					for(CurrentFileBeingProcessed =JsdFileToStartProcessing; CurrentFileBeingProcessed <=PROCESS_DEFAULT_SYSTEM_DEFAULT_FILE; CurrentFileBeingProcessed++)
@@ -209,8 +209,8 @@ else { //specify the file ourselves.
 FreedomScientificDirectoryPosition =JsdFile.find(L"Freedom Scientific");	
  TestDir =wxStandardPaths::Get().GetConfigDir().Remove(wxStandardPaths::Get().GetConfigDir().find(L"SurfaceReader"));
 TestDir.append(JsdFile.substr(JsdFile.length()-FreedomScientificDirectoryPosition));
-OutputDebugString(TestDir.ToStdWstring().c_str());
-CurrentFile =TestDir.ToStdString();
+OutputDebugString(TestDir.c_str());
+CurrentFile = TestDir;
 } //end file processing.
 if (exists(CurrentFile))
 {
@@ -227,13 +227,13 @@ if (JsdFileToStartProcessing ==CurrentFileBeingProcessed)
 else { //specifically set the file/path.
 	//obtain the current user path.
 	TestDir =wxStandardPaths::Get().GetUserConfigDir();
-	TestDir.append("\\");
+	TestDir.append(L"\\");
 	FreedomScientificDirectoryPosition =JsdFile.find(L"Freedom Scientific");	
  TestDir.append(JsdFile.substr(JsdFile.length()-FreedomScientificDirectoryPosition));
- TestDir.Remove(TestDir.find(wxStringTokenize(JsdFile, L"\\").Last(), FreedomScientificDirectoryPosition));
- TestDir.Append(L"default.jsd");
- OutputDebugString(TestDir.ToStdWstring().c_str());
- CurrentFile=TestDir.ToStdString();
+ TestDir.erase(TestDir.find(wxStringTokenize(JsdFile, L"\\").Last(), FreedomScientificDirectoryPosition));
+ TestDir.append(L"default.jsd");
+ OutputDebugString(TestDir.c_str());
+ CurrentFile=TestDir;
 } //end specifically setting the filename.
 if (exists(CurrentFile))
 {
@@ -251,10 +251,10 @@ else { //specify the file ourselves.
 FreedomScientificDirectoryPosition =JsdFile.find(L"Freedom Scientific");	
  TestDir =wxStandardPaths::Get().GetConfigDir().Remove(wxStandardPaths::Get().GetConfigDir().find(L"SurfaceReader"));
 TestDir.append(JsdFile.substr(JsdFile.length()-FreedomScientificDirectoryPosition));
-TestDir.Remove(TestDir.find(wxStringTokenize(JsdFile, L"\\").Last(), FreedomScientificDirectoryPosition));
- TestDir.Append(L"default.jsd");
-OutputDebugString(TestDir.ToStdWstring().c_str());
-CurrentFile =TestDir.ToStdString();
+TestDir.erase(TestDir.find(wxStringTokenize(JsdFile, L"\\").Last(), FreedomScientificDirectoryPosition));
+ TestDir.append(L"default.jsd");
+OutputDebugString(TestDir.c_str());
+CurrentFile =TestDir;
 } //end specifying file.
 if (exists(CurrentFile))
 {
@@ -1883,23 +1883,27 @@ std::vector<JawsFunction> RBSpeech::ProcessJSDFile(std::experimental::filesystem
 	bool ParameterIsOptional =false;
 	if (std::experimental::filesystem::exists(File))
 	{ //existence check.
-		wxString filecontent;
-	wxFFile scriptfile(File.generic_string().c_str());
-	filecontent.clear();
-	if (scriptfile.ReadAll(&filecontent))
-	{ //start file processing.
-		filecontent.Trim(true);
-		wxArrayString lines;
-		lines =wxStringTokenize(filecontent, "\n", wxTOKEN_RET_EMPTY);
-	JawsFunction newfunction;
-	BOOST_FOREACH(wxString line, lines)
+		std::wifstream fs(File);
+		//Read the file in to a vector.
+		std::vector<std::wstring> lines;
+		std::wstring str;
+		while (std::getline(fs, str))
+		{
+			lines.push_back(str);
+		}
+			fs.close();
+		
+			JawsFunction newfunction;
+	BOOST_FOREACH(std::wstring line, lines)
 {
-	wxArrayString tokens;
-	line.Trim(true);
-	if (line.Left(3).IsSameAs(":sc", false))
+	std::vector<std::wstring> tokens;
+	
+	boost::trim(line);
+	
+	if (line.substr(0, 3).compare(L":sc"))
 	{ //script and name
 //Clear all variables as we're starting a new script.
-		tokens.Clear();
+		tokens.clear();
 		ParameterIsOptional =false;
 		newfunction.Type =ID_TYPE_NONE;
 		newfunction.Category.clear();
@@ -1909,16 +1913,17 @@ std::vector<JawsFunction> RBSpeech::ProcessJSDFile(std::experimental::filesystem
 		//start setting variables.
 		newfunction.Type =ID_TYPE_SCRIPT;
 		//retrieve the name.
-tokens =wxStringTokenize(line, " ");
-if (tokens.Count() ==2)
+		boost::split(tokens, line, boost::is_any_of(" "));
+		
+if (tokens.size() ==2)
 { //access the name.
-newfunction.Name =tokens.Last();
+newfunction.Name =*end(tokens);
 } //access the name.
 } //end script and name.
-		else if (line.Left(3).IsSameAs(":fu", false))
+		else if (line.substr(0, 3).compare(L":fu"))
 	{ //function and name
 //Clear all variables as we're starting a new script.
-		tokens.Clear();
+		tokens.clear();
 		newfunction.Type =ID_TYPE_NONE;
 		ParameterIsOptional =false;
 		newfunction.Category.clear();
@@ -1928,61 +1933,63 @@ newfunction.Name =tokens.Last();
 		//start setting variables.
 		newfunction.Type =ID_TYPE_FUNCTION;
 		//retrieve the name.
-tokens =wxStringTokenize(line, " ");
-if (tokens.Count() ==2)
+		boost::split(tokens, line, boost::is_any_of(" "));
+if (tokens.size() ==2)
 { //access the name.
-newfunction.Name =tokens.Last();
+newfunction.Name =*end(tokens);
 } //access the name.
 } //end function and name.
-	else if (line.Left(3).IsSameAs(":sy", false))
-	{ //synopsis.
-		newfunction.Synopsis =line.AfterFirst(wxUniChar(32));
+	else if (line.substr(0, 3).compare(L":sy"))
+{ //synopsis.
+		newfunction.Synopsis =line.substr(line.find(L" "));
 	} //end synopsis.
-else if (line.Left(3).IsSameAs(":de", false))
+else if (line.substr(0, 3).compare(L":de"))
 { //Description.
-	newfunction.Description =line.AfterFirst(wxUniChar(32));
+	newfunction.Description = line.substr(line.find(L" "));
 	} //end description.
-else if (line.Left(3).IsSameAs(":op", false))
+else if (line.substr(0, 3).compare(L":op"))
 { //optional parameter.
 	ParameterIsOptional =true;
 } //Optional parameter.
-else if (line.Left(3).IsSameAs(":pa", false))
+else if (line.substr(0, 3).compare(L":pa"))
 { //Parameter.
 JAWSParameter CurrentParam;
 CurrentParam.Optional =ParameterIsOptional;
-if (line.Contains(L"/"))
+if (line.find(L"/"))
 { //parameter with a name.
 	tokens.clear();
-	tokens =wxStringTokenize(line.AfterFirst(wxUniChar(32)), "/");
-	if (tokens.Count() ==2)
+	boost::split(tokens, line, boost::is_any_of(" "));
+	if (tokens.size() ==2)
 	{ //process.
-		CurrentParam.DataType =tokens.front();
-		CurrentParam.Name =tokens.Last().BeforeFirst(wxUniChar(32));
-		CurrentParam.Description =tokens.Last().AfterFirst(wxUniChar(32));
+		CurrentParam.DataType =*begin(tokens);
+		std::wstring tokenToSplit = *end(tokens);
+		CurrentParam.Name = tokenToSplit.substr(0, tokenToSplit.find_first_of(L" "));
+		CurrentParam.Description = tokenToSplit.substr(tokenToSplit.find_first_of(L" "));
 	} //end parameter processing.
 } //end param with a name.
 else { //parameter without a name.
-tokens.clear();
-	tokens =wxStringTokenize(line.AfterFirst(wxUniChar(32)), " ");
-	if (tokens.Count() >=2)
+	tokens.clear();
+	boost::split(tokens, line, boost::is_any_of(" "));
+	if (tokens.size() >= 2)
 	{ //process.
-		CurrentParam.DataType =tokens.front();
-		CurrentParam.Description =line.Right(line.AfterFirst(wxUniChar(32)).length() -tokens.front().length()-1);
+		CurrentParam.DataType = *begin(tokens);
+		CurrentParam.Description = line.substr(CurrentParam.DataType.length());
 	} //end parameter processing.
 } //end parameter without a name.
 newfunction.Parameters.push_back(CurrentParam);
 ParameterIsOptional =false;
 } //end parameter
-else if (line.Left(3).IsSameAs(":re", false)) 
+else if (line.substr(0, 3).compare(L":re")) 
 { //return value.
-	tokens.clear();
-	tokens =wxStringTokenize(line.AfterFirst(wxUniChar(32)), " ");
-	newfunction.Returns.DataType =tokens.front();
-	newfunction.Returns.Description =line.Right(line.AfterFirst(wxUniChar(32)).length() -tokens.front().length()-1);
-} //return value.
-else if (line.Left(3).IsSameAs(":ca", false))
+		tokens.clear();
+		std::wstring stringToSplit = line.substr(line.find_first_of(L" "));
+		boost::split(tokens, stringToSplit, boost::is_any_of(" "));
+		newfunction.Returns.DataType = *begin(tokens);
+		newfunction.Returns.Description = line.substr(newfunction.Returns.DataType.length());
+	} //return value.
+else if (line.substr(0, 3).compare(L":ca"))
 	{ //Category.
-		newfunction.Category =line.AfterFirst(wxUniChar(32));
+		newfunction.Category =line.substr(line.find(L" "));
 } //end category.
 else if (line.length() ==0)
 { //blank line, ass to vector.
@@ -1990,7 +1997,6 @@ else if (line.length() ==0)
 		AvailableFunctions.push_back(newfunction);
 } //end vector adition.
 }
-	} //end processing.
 	} //end existence check.		
 return AvailableFunctions;
 }
@@ -1999,12 +2005,12 @@ void RBSpeech::SetFirstJsdFile(std::wstring file)
 	JsdFile =file;
 JsdFileToStartProcessing =PROCESS_NO_FILE;
 wxArrayString JsdFileTokens =wxStringTokenize(JsdFile, L"\\");
-wxString UserName =wxGetUserId();
+std::wstring UserName =wxGetUserId().ToStdWstring();
 int test =JsdFileTokens.Index(UserName);
 if (JsdFileTokens.Index(UserName) >0)
 { //user file is the first one.
 //determine whether it is default/application.
-	wxString LastToken =JsdFileTokens.Last();
+std::wstring LastToken =JsdFileTokens.Last().ToStdWstring();
 	if (JsdFileTokens.Last().IsSameAs("default.jsd", false))
 		JsdFileToStartProcessing =PROCESS_USER_SYSTEM_DEFAULT_FILE;
 	else
@@ -2012,7 +2018,7 @@ JsdFileToStartProcessing =PROCESS_USER_APP_FILE;
 } //end user file.
 else { //global file.
 	//determine whether it is the default/application.
-	wxString LastToken =JsdFileTokens.Last();
+std::wstring LastToken =JsdFileTokens.Last().ToStdWstring();
 	if (JsdFileTokens.Last().IsSameAs("default.jsd", false))
 		JsdFileToStartProcessing =PROCESS_DEFAULT_SYSTEM_DEFAULT_FILE;
 	else
