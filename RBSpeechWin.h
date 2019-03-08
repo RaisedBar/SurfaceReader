@@ -9,9 +9,7 @@
 
 #include <windows.h>
 #include <atlbase.h>
-#include <wx/msw/winundef.h> 
 #include <Psapi.h>
-#include <wx/msw/winundef.h> 
 
 //msi/wix includes.
 #include <Msi.h>
@@ -21,8 +19,6 @@
 #ifndef _WIN64
 #include "apiproto.h"
 #endif
-
-#include <wx/msw/winundef.h> 
 
 //typedefs.
 //Nvda.
@@ -187,12 +183,15 @@ std::wstring HscFile;
 	//Functions to perform string conversion.
 	std::wstring NarrowStringToWideString(const std::string& stringToConvert);
 	std::string WideStringToNarrowString(std::wstring& stringToConvert);
-		/// <summary> Determine whether JAWS For Windows is currently active in memory. </summary>
+		
+	//Function to get the windows user name.
+	HRESULT GetCurrentUserName(std::wstring& userName);
+	/// <summary> Determine whether JAWS For Windows is currently active in memory. </summary>
 	/// <returns> returns S_OK if JAWS is active, S_FALSE otherwise. </returns>
 bool IsJAWSActive();
 
 	/// <summary>Loads the JAWS com api.</summery>
-/// <remarks> the clsid we need to use is fixed in this case. it is FreedomSci.JawsApi. We use a wxAutomationObject class to help manage the IDispatch pointer and call methods apropriately--saves us dealing with the intricacies of things like GetIdsOfNames.</remarks>
+/// <remarks> the clsid we need to use is fixed in this case. it is FreedomSci.JawsApi. We use a CDispatchDriver class to help manage the IDispatch pointer and call methods apropriately--saves us dealing with the intricacies of things like GetIdsOfNames.</remarks>
 bool LoadJAWSApi();
 
 /// <summary> Unloads the JAWS api.</summery>
@@ -248,7 +247,7 @@ NewAction.insert(std::make_pair(5, Element.Parameters));
 	/// <returns> returns S_OK if Non-Visual Desktop Access is active, S_FALSE otherwise. </returns>
 HRESULT IsNVDAActive();
 /// <summary>Loads the NVDA dll.</summery>
-/// <remarks> the dll that is required is dependent on the type of architecture (x86/x64) windows is running on. We use the wxIsPlatform64Bit function from the wxWidgets library for this.</remarks>
+/// <remarks> the dll that is required is dependent on the type of architecture (x86/x64) windows is running on. We use the IsProcess64Bit function from the WiX toolset for this.</remarks>
 bool LoadNVDAApi();
 /// <summary> Unloads the NVDA dll.</summery>
 void UnloadNVDAApi(void);

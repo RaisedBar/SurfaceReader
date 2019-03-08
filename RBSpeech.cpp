@@ -2012,6 +2012,7 @@ else if (line.length() ==0)
 	} //end existence check.		
 return AvailableFunctions;
 }
+
 void RBSpeech::SetFirstJsdFile(std::wstring file)
 {
 	JsdFile =file;
@@ -2019,7 +2020,8 @@ JsdFileToStartProcessing =PROCESS_NO_FILE;
 std::vector<std::wstring> JsdFileTokens;
 boost::split(JsdFileTokens, JsdFile, boost::is_any_of(L"\\"));
 
-std::wstring UserName =wxGetUserId().ToStdWstring();
+std::wstring UserName;
+HRESULT hr = GetCurrentUserName(UserName);
 if (std::find(begin(JsdFileTokens), end(JsdFileTokens), UserName) !=end(JsdFileTokens))
 { //user file is the first one.
 //determine whether it is default/application.
@@ -2194,5 +2196,18 @@ std::string RBSpeech::WideStringToNarrowString(std::wstring& stringToConvert)
 	std::wstring_convert<convert_typeX, wchar_t> converterX;
 
 	return converterX.to_bytes(stringToConvert);
+}
+//Function to get the windows user name.
+HRESULT RBSpeech::GetCurrentUserName(std::wstring& userName)
+{
+	HRESULT hr = S_OK;
+#define buffCharCount 32767
+	LPWSTR lpBuffer[buffCharCount];
+	DWORD CoppiedBytes = 0;
+	bool result = GetUserName(lpBuffer[0], &CoppiedBytes);
+	ExitOnFalse(result, hr, S_FALSE, "Unable to obtain the username.");
+	userName = lpBuffer[0];
+LExit:
+	return hr;
 }
 #endif  // Windows
