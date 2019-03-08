@@ -6,8 +6,11 @@
 #include <TlHelp32.h>
 #include <Processthreadsapi.h> // on Windows 8 and Windows Server 2012
 #include <comutil.h>
+#include <strutil.h>
 #include <procutil.h>
 #include <osutil.h>
+#include <shelutil.h>
+#include <shlobj.h>
 #include <vector>
 #include <algorithm>
 
@@ -140,8 +143,6 @@ ExitOnTrue(strText.empty(), hr, __HRESULT_FROM_WIN32(ERROR_BAD_ARGUMENTS), "No t
 	FunctionStr.append(L", 0, 2000)");
 	LoadJAWSApi();
 	hr = JawsAPI.Invoke1(_bstr_t(L"RunFunction"), &_variant_t(FunctionStr.c_str()), &vFunctionResult);
-
-
 	ExitOnFailure(hr, "Executing the JAWS RunFunction function returned a failure.");
 	ExitOnFalse(vFunctionResult.vt == VT_BOOL, hr, S_FALSE, "The JAWS RunFunction function should return a boolean.");
 	ExitOnFalse(vFunctionResult.boolVal, hr, S_FALSE, "The JAWS RunFunction function could not schedule the speech.");
@@ -163,7 +164,6 @@ std::wstring SharedScriptFolder;
 std::wstring DefaultScriptFile; 
 std::wstring ApplicationScriptFile; 
 std::experimental::filesystem::path JSDFile;
-wxVariant FunctionResult;
 			boost::property_tree::ptree IniTree; //used to store environment information.
 			std::wstring JAWSFunctionCallString =L"GetCurrentJAWSEnvironment(\"%s\")"; //used to hold the call to JAWS.
 			std::experimental::filesystem::path IniFile; //file to store the hsc information.
@@ -182,6 +182,8 @@ wxVariant FunctionResult;
 		std::experimental::filesystem::path CurrentFile;
 					int FreedomScientificDirectoryPosition =-1;
 					std::vector<std::wstring> tokens;
+					std::experimental::filesystem::path applicationConfigDir;
+					hReturnValue = GetCommonAppDataPath(applicationConfigDir);
 					for(CurrentFileBeingProcessed =JsdFileToStartProcessing; CurrentFileBeingProcessed <=PROCESS_DEFAULT_SYSTEM_DEFAULT_FILE; CurrentFileBeingProcessed++)
 					{
 						std::vector<JawsFunction> LocalFunctions;
@@ -210,7 +212,7 @@ if (JsdFileToStartProcessing ==CurrentFileBeingProcessed)
 }
 else { //specify the file ourselves.
 FreedomScientificDirectoryPosition =JsdFile.find(L"Freedom Scientific");	
- TestDir =wxStandardPaths::Get().GetConfigDir().Remove(wxStandardPaths::Get().GetConfigDir().find(L"SurfaceReader"));
+TestDir = applicationConfigDir;
 TestDir.append(JsdFile.substr(JsdFile.length()-FreedomScientificDirectoryPosition));
 OutputDebugString(TestDir.c_str());
 CurrentFile = TestDir;
@@ -229,7 +231,9 @@ if (JsdFileToStartProcessing ==CurrentFileBeingProcessed)
 	}
 else { //specifically set the file/path.
 	//obtain the current user path.
-	TestDir =wxStandardPaths::Get().GetUserConfigDir();
+	std::experimental::filesystem::path userConfigDir;
+	hReturnValue = GetCurrentUsersAppDataPath(userConfigDir);
+	TestDir = userConfigDir;
 	TestDir.append(L"\\");
 	FreedomScientificDirectoryPosition =JsdFile.find(L"Freedom Scientific");	
  TestDir.append(JsdFile.substr(JsdFile.length()-FreedomScientificDirectoryPosition));
@@ -254,7 +258,7 @@ case PROCESS_DEFAULT_SYSTEM_DEFAULT_FILE:
 	}
 else { //specify the file ourselves.
 FreedomScientificDirectoryPosition =JsdFile.find(L"Freedom Scientific");	
- TestDir =wxStandardPaths::Get().GetConfigDir().Remove(wxStandardPaths::Get().GetConfigDir().find(L"SurfaceReader"));
+TestDir = applicationConfigDir;
 TestDir.append(JsdFile.substr(JsdFile.length()-FreedomScientificDirectoryPosition));
 tokens.clear();
 boost::split(tokens, JsdFile, boost::is_any_of("\\"));
@@ -454,7 +458,8 @@ bool RBSpeech::LoadNVDAApi()
 		return true;
 	}
 	
-	std::experimental::filesystem::path NVDADllFileName =wxStandardPaths::Get().GetExecutablePath().ToStdWstring(); //assign the executable directory.
+	std::experimental::filesystem::path NVDADllFileName;
+	 hr =GetExecutablePath(NVDADllFileName); //assign the executable directory.
 	
 	hr = ProcWow64(::GetCurrentProcess(), &bIsProcess64Bit);
 	if (hr == S_FALSE)
@@ -1330,7 +1335,8 @@ bool RBSpeech::LoadSystemAccessApi()
 
 	if (!SystemAccessDllApi.is_loaded())
 {
-		std::experimental::filesystem::path SystemAccessDllFileName(wxStandardPaths::Get().GetExecutablePath().ToStdWstring()); //assign the executable directory.
+		std::experimental::filesystem::path SystemAccessDllFileName;
+hr =GetExecutablePath(SystemAccessDllFileName); //assign the executable directory.
 		SystemAccessDllFileName.remove_filename();
 		
 		hr = ProcWow64(::GetCurrentProcess(), &bIsProcess64Bit);
@@ -2137,4 +2143,41 @@ HRESULT RBSpeech::IsNVDAActive()
 	}
 }
 
+//file path functions.
+HRESULT RBSpeech::GetExecutablePath(std::experimental::filesystem::path& path)
+{
+	HRESULT hr = S_OK;
+LPWSTR szFileName[MAX_PATH + 1];
+	DWORD result =GetModuleFileName(NULL, szFileName[0], MAX_PATH + 1);
+	ExitOnSpecificValue(result, 0, hr, S_FALSE, "Unable to obtain he executable name and path.");
+	path = szFileName;
+LExit:
+	ReleaseStr(szFileName);
+	return hr;
+}
+HRESULT GetCommonAppDataPath(std::experimental::filesystem::path &path)
+{
+	HRESULT hr = S_OK;
+	LPWSTR sczPath = NULL;
+	// get folder path
+	hr = ShelGetFolder(&sczPath, CSIDL_COMMON_APPDATA);
+	ExitOnRootFailure(hr, "Failed to get shell folder.");
+	path = sczPath;
+LExit:
+	ReleaseStr(sczPath);
+	return hr;
+}
+
+HRESULT RBSpeech::GetCurrentUsersAppDataPath(std::experimental::filesystem::path &path)
+{
+	HRESULT hr = S_OK;
+	LPWSTR sczPath = NULL;
+	// get folder path
+	hr = ShelGetFolder(&sczPath, CSIDL_APPDATA);
+	ExitOnRootFailure(hr, "Failed to get shell folder.");
+	path = sczPath;
+LExit:
+	ReleaseStr(sczPath);
+	return hr;
+}
 #endif  // Windows

@@ -179,7 +179,10 @@ std::wstring JsdFile;
 std::wstring HscFile;
 	ProcessJsdFileType JsdFileToStartProcessing;
 	
-	
+	//Functions to retrieve directories.
+	HRESULT GetExecutablePath(std::experimental::filesystem::path& path);
+	HRESULT GetCommonAppDataPath(std::experimental::filesystem::path &path);
+	HRESULT GetCurrentUsersAppDataPath(std::experimental::filesystem::path &path);
 	/// <summary> Determine whether JAWS For Windows is currently active in memory. </summary>
 	/// <returns> returns S_OK if JAWS is active, S_FALSE otherwise. </returns>
 bool IsJAWSActive();
