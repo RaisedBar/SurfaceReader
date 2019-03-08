@@ -8,9 +8,8 @@
 #pragma once
 
 #include <windows.h>
-#include <wx/msw/winundef.h> 
+#include <atlbase.h>
 #include <Psapi.h>
-#include <wx/msw/winundef.h> 
 
 //msi/wix includes.
 #include <Msi.h>
@@ -20,8 +19,6 @@
 #ifndef _WIN64
 #include "apiproto.h"
 #endif
-
-#include <wx/msw/winundef.h> 
 
 //typedefs.
 //Nvda.
@@ -151,17 +148,17 @@ public:
 private:
 	//Dll variables and function pointers.
 	//jaws.
-	wxAutomationObject JawsAPI;
+	CComDispatchDriver JawsAPI;
 	
 	//NVDA.
-		wxDynamicLibrary NvdaDllApi;
+		boost::dll::shared_library NvdaDllApi;
 		nvdaControllerTestIfRunningFunc TestIfRunning;
 nvdaControllerCancelSpeechFunc CancelSpeech;
 nvdaControllerSpeakTextFunc SpeakText;
 nvdaControllerBrailleMessageFunc BrailleMessage;
 
 //System access dll and function pointers.
-wxDynamicLibrary SystemAccessDllApi;
+boost::dll::shared_library SystemAccessDllApi;
 SAIsRunningFunc SAIsRunning;
 SABrailleFunc SABraille;
 SASpeakFunc SASpeak;
@@ -174,17 +171,27 @@ SAStopAudioFunc SAStopAudio;
 	///This variable doesn't tell us whether the speech is muted according to the underlying access technology. If this is required this can be added at a later date.
 	/// </remarks>
 	HRESULT FShouldSpeak;
-wxString JsdFile;
-wxString HscFile;
+std::wstring JsdFile;
+std::wstring HscFile;
 	ProcessJsdFileType JsdFileToStartProcessing;
 	
+	//Functions to retrieve directories.
+	HRESULT GetExecutablePath(std::experimental::filesystem::path& path);
+	HRESULT GetCommonAppDataPath(std::experimental::filesystem::path &path);
+	HRESULT GetCurrentUsersAppDataPath(std::experimental::filesystem::path &path);
 	
+	//Functions to perform string conversion.
+	std::wstring NarrowStringToWideString(const std::string& stringToConvert);
+	std::string WideStringToNarrowString(std::wstring& stringToConvert);
+		
+	//Function to get the windows user name.
+	HRESULT GetCurrentUserName(std::wstring& userName);
 	/// <summary> Determine whether JAWS For Windows is currently active in memory. </summary>
 	/// <returns> returns S_OK if JAWS is active, S_FALSE otherwise. </returns>
 bool IsJAWSActive();
 
 	/// <summary>Loads the JAWS com api.</summery>
-/// <remarks> the clsid we need to use is fixed in this case. it is FreedomSci.JawsApi. We use a wxAutomationObject class to help manage the IDispatch pointer and call methods apropriately--saves us dealing with the intricacies of things like GetIdsOfNames.</remarks>
+/// <remarks> the clsid we need to use is fixed in this case. it is FreedomSci.JawsApi. We use a CDispatchDriver class to help manage the IDispatch pointer and call methods apropriately--saves us dealing with the intricacies of things like GetIdsOfNames.</remarks>
 bool LoadJAWSApi();
 
 /// <summary> Unloads the JAWS api.</summery>
@@ -228,7 +235,7 @@ NewAction.insert(std::make_pair(5, Element.Parameters));
 	return NewAction;
 }
 /// <summary> Obtain the path to the current jaws executable.
-	bool GetJAWSPath(wxFileName& FileName);
+	bool GetJAWSPath(std::experimental::filesystem::path& FileName);
 	/// <summary> IsJAWSRoaming
 	/// <remarks> Check to see whether jaws is roaming. To do this we check to see whether a settings folder exists in the folder from which jaws is running. </remarks>
 	bool IsJAWSRoaming();
@@ -240,7 +247,7 @@ NewAction.insert(std::make_pair(5, Element.Parameters));
 	/// <returns> returns S_OK if Non-Visual Desktop Access is active, S_FALSE otherwise. </returns>
 HRESULT IsNVDAActive();
 /// <summary>Loads the NVDA dll.</summery>
-/// <remarks> the dll that is required is dependent on the type of architecture (x86/x64) windows is running on. We use the wxIsPlatform64Bit function from the wxWidgets library for this.</remarks>
+/// <remarks> the dll that is required is dependent on the type of architecture (x86/x64) windows is running on. We use the IsProcess64Bit function from the WiX toolset for this.</remarks>
 bool LoadNVDAApi();
 /// <summary> Unloads the NVDA dll.</summery>
 void UnloadNVDAApi(void);
@@ -299,7 +306,7 @@ void UnloadSystemAccessApi(void);
 	/// <returns> Returns S_OK if the string has been queued for brailleing, S_FALSE otherwise.</returns>
 	HRESULT SystemAccessBraille(wstring strText);	
 public:
-	std::vector<JawsFunction> ProcessJSDFile(wxFileName &File);
+	std::vector<JawsFunction> ProcessJSDFile(std::experimental::filesystem::path&File);
 	/// <summary> loads the application programming interface for the active screen reader.</summery>
 	/// <returns> S_OK if the API has loaded successfully and an error code otherwise.</returns>
 	bool LoadAPI();
@@ -311,11 +318,11 @@ HRESULT ListHotSpotsInSet(std::wstring SetName, std::vector<std::string>& Spots)
 HRESULT ListHotSpotsInCurrentSet(std::vector<std::string>& Spots);
 HRESULT GetActiveHotSpotSet(std::wstring& ActiveSet);
 HRESULT ExecuteHotSpot(std::wstring Set, std::wstring SpotName);
-void SetFirstJsdFile(wxString File);
-wxString GetFirstJsdFile(void);
+void SetFirstJsdFile(std::wstring );
+std::wstring GetFirstJsdFile(void);
 void ClearJsdFile();
-void SetHscFile(wxString File);
-wxString GetHscFile(void);
+void SetHscFile(std::wstring File);
+std::wstring GetHscFile(void);
 void ClearHscFile();
 	
 	/// <summary> Obtain the currently active speech product. </summary>
@@ -354,14 +361,14 @@ bool blnMuted;
 //Comparison functions.
 inline bool CompareJawsFunctions(JawsFunction f1, JawsFunction f2)
 {
-	return f1.Name.IsSameAs(f2.Name, false);
+	return f1.Name.compare(f2.Name) ==0;
 }
 inline bool IsNotVoid(JawsFunction f1)
 {
 	if (f1.Type ==ID_TYPE_SCRIPT)
 		return true;
 	else {
-		return f1.Returns.DataType.IsSameAs("void", false);
+		return f1.Returns.DataType.compare(L"void") ==0;
 	}
 }
 

@@ -5,7 +5,16 @@
 #ifdef __WINDOWS__ 
 #include <TlHelp32.h>
 #include <Processthreadsapi.h> // on Windows 8 and Windows Server 2012
-
+#include <comutil.h>
+#include <strutil.h>
+#include <procutil.h>
+#include <osutil.h>
+#include <shelutil.h>
+#include <shlobj.h>
+#include <vector>
+#include <algorithm>
+#include <locale>
+#include <codecvt>
 
 bool FindProcessByName(const wchar_t * wstrProcessName)
 {
@@ -61,41 +70,35 @@ bool RBSpeech::IsJAWSActive()
 
 bool RBSpeech::LoadJAWSApi()
 {
-//first initialize com for the current thread.
+	bool result = false;
+	//first initialize com for the current thread.
 CoInitializeEx(0, COINIT_APARTMENTTHREADED); 
-//Now obtain an instance of the required co class. Ths instance will only create itself once.
-	if (SUCCEEDED(JawsAPI.GetInstance(wxT("FreedomSci.JawsApi"), wxAutomationInstance_CreateIfNeeded)))
-	{
-		return true;
-	} 
-	else {
-		return false;
-	}
-	}
+//Now obtain an instance of the required co class.
+CComPtr<IDispatch> lpTDispatch;
+HRESULT hr= lpTDispatch.CoCreateInstance(_bstr_t(L"FreedomSci.JawsApi"));
+if (hr == S_OK)
+{
+	JawsAPI = lpTDispatch;
+	result = true;
+}
+return result;
+}
 
 void RBSpeech::UnloadJAWSApi(void)
 {
 // Dolphin API always loaded, so must unload
 	this->UnloadDolphinApi();
-
-//Now uninitialize com.
-	//release the used IDispatch pointer.
-	//Release the dispatch pointer held in the JawsAPI automation object. Currently this is a hack, there is no method to do this in the automation object, need to file a wx bug.
-	/*
-	IDispatch* ReleaseDisp;
-ReleaseDisp =(IDispatch*)JawsAPI.GetDispatchPtr();
-ReleaseDisp->Release();
+	//Release the JAWS API com object.
+	JawsAPI.Release();
+	//Now uninitialize com.
 	CoUninitialize();	
-*/
-	// test
-	// JawsAPI.~wxAutomationObject();
 	return;
 }
 	
 HRESULT RBSpeech::JAWSSpeak(wstring strText, BOOL blnSilence)
 {
-	HRESULT hReturnValue =S_OK;
-	wxVariant FunctionResult;
+	HRESULT hr =S_OK;
+	CComVariant vFunctionResult;
 /*
 std::wstring wstrFunctionCall = L"Say( ";
 wstrFunctionCall.append( wstrDoubleQuotes);
@@ -106,56 +109,47 @@ wstrFunctionCall.append( L", 1)");
 */
 
 	//check to see that the message to be spoken actually contains some text.
-ExitOnTrue(strText.empty(), hReturnValue, __HRESULT_FROM_WIN32(ERROR_BAD_ARGUMENTS), "No text has been specified.");
+ExitOnTrue(strText.empty(), hr, __HRESULT_FROM_WIN32(ERROR_BAD_ARGUMENTS), "No text has been specified.");
 
 LoadJAWSApi();
-	FunctionResult = JawsAPI.CallMethod( L"SayString", strText, blnSilence);	
-	// FunctionResult = JawsAPI.CallMethod( wstrFunctionCall); 
-
-if (!FunctionResult.IsType(wxT("BOOL")))
-			{ //BOOL expected, but not found.
-				// UnloadJAWSApi();
-ExitFunctionWithMessageAndStatusCode(hReturnValue, S_FALSE, "A Boolean was not returned but was expected.");
-			} //end BOOL check.
-						// UnloadJAWSApi();
-ExitOnFalse(FunctionResult.GetBool(), hReturnValue, S_FALSE, "Jaws did not speak the text.");
-LExit:
-return hReturnValue;
+	hr 	= JawsAPI.Invoke2(_bstr_t(L"SayString"), &_variant_t(strText.c_str()), &_variant_t(blnSilence), &vFunctionResult);
+	ExitOnFailure(hr, "Executing the JAWS SayString function returned a failure.");
+	ExitOnFalse(vFunctionResult.vt == VT_BOOL, hr, S_FALSE, "The JAWS SayString function should return a boolean.");
+	ExitOnFalse(vFunctionResult.boolVal, hr, S_FALSE, "The JAWS SayString function could not schedule the speech.");
+	LExit:	
+return hr;
 }
 	
 HRESULT RBSpeech::JAWSSilence(void)
 	{
-HRESULT hReturnValue =S_OK;
-	wxVariant FunctionResult;
+HRESULT hr =S_OK;
+	CComVariant vFunctionResult;
 	//Call jaws.
-	FunctionResult =JawsAPI.CallMethod(L"StopString");
-						if (!FunctionResult.IsType(wxT("BOOL")))
-			{ //BOOL expected, but not found.
-				ExitFunctionWithMessageAndStatusCode(hReturnValue, S_FALSE, "A BOOLean was not returned but was expected.");
-			} //end BOOL check.
-ExitOnFalse(FunctionResult.GetBool(), hReturnValue, S_FALSE, "Jaws did not stop the speech.");
+	hr =JawsAPI.Invoke0(_bstr_t("StopString"), &vFunctionResult);
+	ExitOnFailure(hr, "Executing the JAWS StopString function returned a failure.");
+	ExitOnFalse(vFunctionResult.vt == VT_BOOL, hr, S_FALSE, "The JAWS StopString function should return a boolean.");
+	ExitOnFalse(vFunctionResult.boolVal, hr, S_FALSE, "The JAWS StopString function could not schedule the speech.");
 LExit:
-return hReturnValue;
+	return hr;
 	}
 	
 HRESULT RBSpeech::JAWSBraille(wstring strText)
 { 
-HRESULT hReturnValue =S_OK;
-	wxVariant FunctionResult;
+HRESULT hr =S_OK;
+	CComVariant vFunctionResult;
 	std::wstring FunctionStr =L"BrailleMessage(";
 //Check to see that the message to be spoken actually contains some text.
-ExitOnTrue(strText.empty(), hReturnValue, __HRESULT_FROM_WIN32(ERROR_BAD_ARGUMENTS), "No text has been specified.");
+ExitOnTrue(strText.empty(), hr, __HRESULT_FROM_WIN32(ERROR_BAD_ARGUMENTS), "No text has been specified.");
 //now, append to the FunctionStr.
 	FunctionStr.append(strText);
 	FunctionStr.append(L", 0, 2000)");
-	FunctionResult =JawsAPI.CallMethod(L"RunFunction", 1, FunctionStr);					
-	if (!FunctionResult.IsType(wxT("BOOL")))
-			{ //BOOL expected, but now found.
-				ExitFunctionWithMessageAndStatusCode(hReturnValue, S_FALSE, "A BOOLean was not returned but was expected.");
-			} //end BOOL check.
-ExitOnFalse(FunctionResult.GetBool(), hReturnValue, S_FALSE, "Jaws did not braille the text.");
+	LoadJAWSApi();
+	hr = JawsAPI.Invoke1(_bstr_t(L"RunFunction"), &_variant_t(FunctionStr.c_str()), &vFunctionResult);
+	ExitOnFailure(hr, "Executing the JAWS RunFunction function returned a failure.");
+	ExitOnFalse(vFunctionResult.vt == VT_BOOL, hr, S_FALSE, "The JAWS RunFunction function should return a boolean.");
+	ExitOnFalse(vFunctionResult.boolVal, hr, S_FALSE, "The JAWS RunFunction function could not schedule the speech.");
 LExit:
-return hReturnValue;
+	return hr;
 }
 	
 HRESULT RBSpeech::GetAvailableJAWSActions(AvailableActionsType& ActionInformation)
@@ -164,18 +158,17 @@ HRESULT hReturnValue =S_OK;
 AvailableActionsType JawsActions;
 ActionCollectionType Actions;
 ActionCollectionTypeIterator NewEnd =Actions.begin();
-AvailableActionFieldsType Fields =boost::assign::map_list_of("Name", 0)("Synopsis", 1)("Description", 2)("Returns", 3)("Parameters", 4)("Category", 5)("Type", 6);
+AvailableActionFieldsType Fields =boost::assign::map_list_of(L"Name", 0)(L"Synopsis", 1)(L"Description", 2)(L"Returns", 3)(L"Parameters", 4)(L"Category", 5)(L"Type", 6);
 ActionInfoType CurrentAction;
 std::vector<JawsFunction> AvailableJawsFunctions;
-wxString UserScriptFolder; 
-wxString SharedScriptFolder; 
-wxString DefaultScriptFile; 
-wxString ApplicationScriptFile; 
-wxFileName JSDFile;
-wxVariant FunctionResult;
+std::wstring UserScriptFolder; 
+std::wstring SharedScriptFolder; 
+std::wstring DefaultScriptFile; 
+std::wstring ApplicationScriptFile; 
+std::experimental::filesystem::path JSDFile;
 			boost::property_tree::ptree IniTree; //used to store environment information.
 			std::wstring JAWSFunctionCallString =L"GetCurrentJAWSEnvironment(\"%s\")"; //used to hold the call to JAWS.
-				wxFileName IniFile; //file to store the hsc information.
+			std::experimental::filesystem::path IniFile; //file to store the hsc information.
 			ActiveProduct CurrentProduct;
 	DolphinProduct SpecificDolphinProduct;
 	hReturnValue =GetActiveProduct(CurrentProduct, SpecificDolphinProduct);
@@ -187,9 +180,12 @@ wxVariant FunctionResult;
 				{
 //Process files based on the enum.
 					int CurrentFileBeingProcessed;
-		wxString TestDir =wxEmptyString;
-					wxFileName CurrentFile; 
+					std::wstring TestDir;
+		std::experimental::filesystem::path CurrentFile;
 					int FreedomScientificDirectoryPosition =-1;
+					std::vector<std::wstring> tokens;
+					std::experimental::filesystem::path applicationConfigDir;
+					hReturnValue = GetCommonAppDataPath(applicationConfigDir);
 					for(CurrentFileBeingProcessed =JsdFileToStartProcessing; CurrentFileBeingProcessed <=PROCESS_DEFAULT_SYSTEM_DEFAULT_FILE; CurrentFileBeingProcessed++)
 					{
 						std::vector<JawsFunction> LocalFunctions;
@@ -201,10 +197,10 @@ case PROCESS_NO_FILE:
 case PROCESS_USER_APP_FILE:
 	if (JsdFileToStartProcessing ==CurrentFileBeingProcessed)
 	{ //we don't need to do anything as we already have the jsd file.
-		CurrentFile.Assign(JsdFile);
+		CurrentFile =JsdFile;
 	}
-	OutputDebugString(JsdFile.ToStdWstring().c_str());
-	if (CurrentFile.FileExists())
+	OutputDebugString(JsdFile.c_str());
+	if (exists(CurrentFile))
 {
 LocalFunctions =ProcessJSDFile(CurrentFile);
 //Merge with the already available functions.
@@ -214,16 +210,16 @@ AvailableJawsFunctions.insert(AvailableJawsFunctions.end(), LocalFunctions.begin
 case PROCESS_DEFAULT_APP_FILE:
 if (JsdFileToStartProcessing ==CurrentFileBeingProcessed)
 	{ //we don't need to do anything as we already have the jsd file.
-		CurrentFile.Assign(JsdFile);
+		CurrentFile =JsdFile;
 }
 else { //specify the file ourselves.
-FreedomScientificDirectoryPosition =JsdFile.find("Freedom Scientific");	
- TestDir =wxStandardPaths::Get().GetConfigDir().Remove(wxStandardPaths::Get().GetConfigDir().find(L"SurfaceReader"));
-TestDir.append(JsdFile.Right(JsdFile.length()-FreedomScientificDirectoryPosition));
-OutputDebugString(TestDir.ToStdWstring().c_str());
-CurrentFile.Assign(TestDir);
+FreedomScientificDirectoryPosition =JsdFile.find(L"Freedom Scientific");	
+TestDir = applicationConfigDir;
+TestDir.append(JsdFile.substr(JsdFile.length()-FreedomScientificDirectoryPosition));
+OutputDebugString(TestDir.c_str());
+CurrentFile = TestDir;
 } //end file processing.
-if (CurrentFile.FileExists())
+if (exists(CurrentFile))
 {
 LocalFunctions =ProcessJSDFile(CurrentFile);
 //Merge with the already available functions.
@@ -233,21 +229,24 @@ break;
 case PROCESS_USER_SYSTEM_DEFAULT_FILE:
 if (JsdFileToStartProcessing ==CurrentFileBeingProcessed)
 	{ //we don't need to do anything as we already have the jsd file.
-		CurrentFile.Assign(JsdFile);
+		CurrentFile =JsdFile;
 	}
 else { //specifically set the file/path.
-	CurrentFile.Clear();
 	//obtain the current user path.
-	TestDir =wxStandardPaths::Get().GetUserConfigDir();
-	TestDir.append("\\");
-	FreedomScientificDirectoryPosition =JsdFile.find("Freedom Scientific");	
- TestDir.append(JsdFile.Right(JsdFile.length()-FreedomScientificDirectoryPosition));
- TestDir.Remove(TestDir.find(wxStringTokenize(JsdFile, L"\\").Last(), FreedomScientificDirectoryPosition));
- TestDir.Append(L"default.jsd");
- OutputDebugString(TestDir.ToStdWstring().c_str());
- CurrentFile.Assign(TestDir);
+	std::experimental::filesystem::path userConfigDir;
+	hReturnValue = GetCurrentUsersAppDataPath(userConfigDir);
+	TestDir = userConfigDir;
+	TestDir.append(L"\\");
+	FreedomScientificDirectoryPosition =JsdFile.find(L"Freedom Scientific");	
+ TestDir.append(JsdFile.substr(JsdFile.length()-FreedomScientificDirectoryPosition));
+ tokens.clear();
+ boost::split(tokens, JsdFile, boost::is_any_of("\\"));
+ TestDir.erase(TestDir.find(*end(tokens), FreedomScientificDirectoryPosition));
+ TestDir.append(L"default.jsd");
+ OutputDebugString(TestDir.c_str());
+ CurrentFile=TestDir;
 } //end specifically setting the filename.
-if (CurrentFile.FileExists())
+if (exists(CurrentFile))
 {
 LocalFunctions =ProcessJSDFile(CurrentFile);
 //Merge with the already available functions.
@@ -257,18 +256,20 @@ break;
 case PROCESS_DEFAULT_SYSTEM_DEFAULT_FILE:
 	if (JsdFileToStartProcessing ==CurrentFileBeingProcessed)
 	{ //we don't need to do anything as we already have the jsd file.
-		CurrentFile.Assign(JsdFile);
+		CurrentFile =JsdFile;
 	}
 else { //specify the file ourselves.
-FreedomScientificDirectoryPosition =JsdFile.find("Freedom Scientific");	
- TestDir =wxStandardPaths::Get().GetConfigDir().Remove(wxStandardPaths::Get().GetConfigDir().find(L"SurfaceReader"));
-TestDir.append(JsdFile.Right(JsdFile.length()-FreedomScientificDirectoryPosition));
-TestDir.Remove(TestDir.find(wxStringTokenize(JsdFile, L"\\").Last(), FreedomScientificDirectoryPosition));
- TestDir.Append(L"default.jsd");
-OutputDebugString(TestDir.ToStdWstring().c_str());
-CurrentFile.Assign(TestDir);
+FreedomScientificDirectoryPosition =JsdFile.find(L"Freedom Scientific");	
+TestDir = applicationConfigDir;
+TestDir.append(JsdFile.substr(JsdFile.length()-FreedomScientificDirectoryPosition));
+tokens.clear();
+boost::split(tokens, JsdFile, boost::is_any_of("\\"));
+TestDir.erase(TestDir.find(*end(tokens), FreedomScientificDirectoryPosition));
+ TestDir.append(L"default.jsd");
+OutputDebugString(TestDir.c_str());
+CurrentFile =TestDir;
 } //end specifying file.
-if (CurrentFile.FileExists())
+if (exists(CurrentFile))
 {
 LocalFunctions =ProcessJSDFile(CurrentFile);
 //Merge with the already available functions.
@@ -300,7 +301,7 @@ if (j.Type ==ID_TYPE_SCRIPT)
 	CurrentAction.insert(std::make_pair(6, ID_SCRIPT));
 	Actions.push_back(CurrentAction);
 }
-	else if ((j.Type ==ID_TYPE_FUNCTION) && (j.Returns.DataType.IsSameAs("void", false)))
+	else if ((j.Type ==ID_TYPE_FUNCTION) && (j.Returns.DataType.compare(L"void") ==0))
 {
 		CurrentAction.clear();
 		//  CurrentAction = boost::assign::map_list_of(0, j.Name)(1, j.Synopsis)(2, j.Description)(5, j.Category);
@@ -326,25 +327,29 @@ return hReturnValue;
 
 HRESULT RBSpeech::ExecuteJAWSAction(std::wstring Action, ScreenReaderActionType Type)
 {
-HRESULT hReturnValue =S_FALSE;
-wxVariant FunctionResult;
-if (Type ==ID_SCRIPT)
-FunctionResult =JawsAPI.CallMethod(L"RunScript", 1, Action);					
-else if (Type ==ID_FUNCTION)
-	FunctionResult =JawsAPI.CallMethod(L"RunFunction", 1, Action);					
-if (!FunctionResult.IsType(wxT("BOOL")))
-			{ //BOOL expected, but now found.
-				ExitFunctionWithMessageAndStatusCode(hReturnValue, S_FALSE, "A BOOLean was not returned but was expected.");
-			} //end BOOL check.
-ExitOnFalse(FunctionResult.GetBool(), hReturnValue, S_FALSE, "Jaws did not braille the text.");
+HRESULT hr =S_FALSE;
+CComVariant vFunctionResult;
+LoadJAWSApi();
+if (Type == ID_SCRIPT)
+{
+	hr = JawsAPI.Invoke1(_bstr_t(L"RunScript"), &_variant_t(Action.c_str()), &vFunctionResult);
+	ExitOnFailure(hr, "Executing the JAWS RunScript function returned a failure.");
+}
+else if (Type == ID_FUNCTION)
+{
+	hr = JawsAPI.Invoke1(_bstr_t(L"RunFunction"), &_variant_t(Action.c_str()), &vFunctionResult);
+	ExitOnFailure(hr, "Executing the JAWS RunFunction function returned a failure.");
+}
+ExitOnFalse(vFunctionResult.vt == VT_BOOL, hr, S_FALSE, "Executing a JAWS action should return a boolean.");
+ExitOnFalse(vFunctionResult.boolVal, hr, S_FALSE, "The requested action execution could not be scheduled.");
 LExit:
-return hReturnValue;
+return hr;
 }
 
-	bool RBSpeech::GetJAWSPath(wxFileName& FileName)
+	bool RBSpeech::GetJAWSPath(std::experimental::filesystem::path& FileName)
 	{
 		bool blnReturnValue =false;
-		wxFileName InternalPath =wxEmptyString;
+		std::experimental::filesystem::path InternalPath;
 		if (IsJAWSActive())
 		{ //JAWS is active.
 			//now obtain the JAWS window.
@@ -375,13 +380,13 @@ if (ProcessResult !=0)
 bool RBSpeech::IsJAWSRoaming()
 	{
 		bool blnReturnValue =false;
-		wxFileName JAWSPath =wxEmptyString;
+		std::experimental::filesystem::path JAWSPath;
 		if (GetJAWSPath(JAWSPath) ==true)
 		{ //we have the jaws path.
-			JAWSPath.SetName(wxEmptyString);
-			JAWSPath.AppendDir(L"settings");
-			JAWSPath.AppendDir(L"enu");
-			if (JAWSPath.DirExists() ==true)
+			JAWSPath.remove_filename();
+			JAWSPath /=L"settings";
+			JAWSPath /=L"enu";
+			if (exists(JAWSPath))
 			{ //JAWS is roaming.
 blnReturnValue =true;
 			} //end JAWS is roaming block.
@@ -392,12 +397,19 @@ blnReturnValue =true;
 	HSCInstallState RBSpeech::IsHSCInstalled()
 	{
 		HSCInstallState eReturnValue =STATE_NOT_INSTALLED;
+		HRESULT hr = S_OK;
+		BOOL bIs64BitProcess = false;
+		OS_VERSION version;
+		DWORD servicePack = 0;
+		//Retrieve the OS version.
+		OsGetVersion(&version, &servicePack);
+		//Retrieve whether the process is 64-bit.
+		hr = ProcWow64(::GetCurrentProcess(), &bIs64BitProcess);
 		//first check whether an older version--pre 211 is installed.
 		//the only reliable way to check this is using a registry key check.
-wxPlatformInfo CurrentPlatform;
-CurrentPlatform.Get();
+
 		//conditionalise this on operating system, if the user is running xp we don't support 64-bit.
-		if ((CurrentPlatform.CheckOSVersion(6, 1)) && (CurrentPlatform.GetArchitecture() ==wxARCH_32))
+		if (version == OS_VERSION_WINXP && !bIs64BitProcess)
 		{ //we are using xp.
 			{ // Use a boost::scoped_ptr to ensure that raii is used to close the key when done.
     HKEY reg = NULL;
@@ -410,7 +422,7 @@ if (dwErr ==ERROR_SUCCESS)
 } //end raii scope for the key.
 		} //end xp specific block.
 		//check for at least vista.
-		else if (CurrentPlatform.CheckOSVersion(6, 0))
+		else if (version == OS_VERSION_VISTA)
 		{ //we are running vista or above.
 			//Query the wow6432node key.
 				{ // Use a boost::scoped_ptr to ensure that raii is used to close the key when done.
@@ -441,32 +453,41 @@ if (MsiQueryProductStateW(L"c1093f38-9866-431e-a942-f786a1b8e8c0") ==INSTALLSTAT
 
 bool RBSpeech::LoadNVDAApi()
 {
-	if (NvdaDllApi.IsLoaded())
+	HRESULT hr = S_OK;
+	BOOL bIsProcess64Bit = false;
+	if (NvdaDllApi.is_loaded())
 	{
 		return true;
 	}
 	
-	wxFileName NVDADllFileName(wxStandardPaths::Get().GetExecutablePath()); //assign the executable directory.
+	std::experimental::filesystem::path NVDADllFileName;
+	 hr =GetExecutablePath(NVDADllFileName); //assign the executable directory.
+	
+	hr = ProcWow64(::GetCurrentProcess(), &bIsProcess64Bit);
+	if (hr == S_FALSE)
+	{
+		return false;
+	}
 
-	if (wxIsPlatform64Bit())
+	if (bIsProcess64Bit)
 		{ //We are running on a 64-bit operating system--or at least as a 64-bit process.
-NVDADllFileName.SetFullName(L"nvdaControllerClient64.dll");
+NVDADllFileName /=L"nvdaControllerClient64.dll";
 	}
 	else  //32-bit.
 			{
-			NVDADllFileName.SetFullName(L"nvdaControllerClient32.dll");
+			NVDADllFileName /=L"nvdaControllerClient32.dll";
 	}
 
-			if ((NVDADllFileName.IsOk())
-&& (NVDADllFileName.FileExists()))
+			if (exists(NVDADllFileName))
 {
 	//file exists, so try to load it.
-	if (NvdaDllApi.Load(NVDADllFileName.GetFullPath())) 
+				NvdaDllApi.load(NVDADllFileName.generic_wstring());
+				if (NvdaDllApi.is_loaded()) 
 	{ //successfully loaded.
-		TestIfRunning =(nvdaControllerTestIfRunningFunc)NvdaDllApi.RawGetSymbol("nvdaController_testIfRunning");
-SpeakText =(nvdaControllerSpeakTextFunc)NvdaDllApi.RawGetSymbol("nvdaController_speakText");
-BrailleMessage =(nvdaControllerBrailleMessageFunc)NvdaDllApi.RawGetSymbol("nvdaController_brailleMessage");
-CancelSpeech =(nvdaControllerCancelSpeechFunc)NvdaDllApi.RawGetSymbol("nvdaController_cancelSpeech");
+					TestIfRunning = NvdaDllApi.get<nvdaControllerTestIfRunningFunc>("nvdaController_testIfRunning");
+					SpeakText = NvdaDllApi.get<nvdaControllerSpeakTextFunc>("nvdaController_speakText");
+					BrailleMessage = NvdaDllApi.get<nvdaControllerBrailleMessageFunc>("nvdaController_brailleMessage");
+					CancelSpeech = NvdaDllApi.get<nvdaControllerCancelSpeechFunc>("nvdaController_cancelSpeech");
 return true;
 	}    // end if loaded
 }  // end if file not OK, or doesn't exist
@@ -478,7 +499,7 @@ return false;
 void RBSpeech::UnloadNVDAApi(void)
 {
 	//unload the nvda dll and free all functions.
-	NvdaDllApi.Unload();
+	NvdaDllApi.unload();
 return;
 }
 
@@ -518,7 +539,6 @@ ExitOnTrue(strText.empty(), hReturnValue, __HRESULT_FROM_WIN32(ERROR_BAD_ARGUMEN
 		LExit:
 		return hReturnValue;			
 }
-
 
 //Dolphin.
 //All dolphin functions for dolphin requires us to be 32-bit.
@@ -1311,74 +1331,51 @@ bool  RBSpeech::IsSystemAccessActive()
 
 bool RBSpeech::LoadSystemAccessApi()
 {
-if (SystemAccessDllApi.IsLoaded())
-{
-	return true;
-}
-			
-wxFileName SystemAccessDllFileName( wxStandardPaths::Get().GetExecutablePath()); //assign the executable directory.
+	bool result = false;
+	HRESULT hr = S_OK;
+	BOOL bIsProcess64Bit = false;
 
-if (wxIsPlatform64Bit())
+	if (!SystemAccessDllApi.is_loaded())
+{
+		std::experimental::filesystem::path SystemAccessDllFileName;
+hr =GetExecutablePath(SystemAccessDllFileName); //assign the executable directory.
+		SystemAccessDllFileName.remove_filename();
+		
+		hr = ProcWow64(::GetCurrentProcess(), &bIsProcess64Bit);
+		if (hr == S_FALSE)
+		{
+			return false;
+		}
+
+		if (bIsProcess64Bit)
 		{ //We are running on a 64-bit operating system--or at least as a 64-bit process.
-	SystemAccessDllFileName.SetFullName(L"SAAPI64.dll");
-
-	if (SystemAccessDllFileName.IsOk())
-{ //filename is ok.
-if (SystemAccessDllFileName.FileExists())
-{
-if (SystemAccessDllApi.Load(SystemAccessDllFileName.GetFullPath()))
-				{
-					SAIsRunning =(SAIsRunningFunc)SystemAccessDllApi.RawGetSymbol("SA_IsRunning");
-SASpeak=(SASpeakFunc)SystemAccessDllApi.RawGetSymbol("SA_SayW");
-SABraille =(SABrailleFunc)SystemAccessDllApi.RawGetSymbol("SA_BrlShowTextW");
-SAStopAudio =(SAStopAudioFunc)SystemAccessDllApi.RawGetSymbol("SA_StopAudio");
-					return true;
-				} 
-else 
-{
-					return false; //file not loaded.
-				}
-			} 
-else 
-{
-				return false; //file not exists.
-			}
-	}
-} //end 64-bit.
-			else //32-bit.
+			SystemAccessDllFileName /= L"SAAPI64.dll";
+		}
+		else { //We are running on a 32-bit o/s.
+			SystemAccessDllFileName /= L"SAAPI32.dll";
+		}
+		
+		if (exists(SystemAccessDllFileName))
+		{ 
+			SystemAccessDllApi.load(SystemAccessDllFileName.generic_string());
+			if (SystemAccessDllApi.is_loaded())
 			{
-				SystemAccessDllFileName.SetFullName(L"SAAPI32.dll");
-if (SystemAccessDllFileName.IsOk())
-{ //filename is ok.
-if (SystemAccessDllFileName.FileExists())
-{
-				if (SystemAccessDllApi.Load(L"SAAPI32.dll"))
-				{
-					SAIsRunning =(SAIsRunningFunc)SystemAccessDllApi.RawGetSymbol("SA_IsRunning");
-SASpeak=(SASpeakFunc)SystemAccessDllApi.RawGetSymbol("SA_SayW");
-SABraille =(SABrailleFunc)SystemAccessDllApi.RawGetSymbol("SA_BrlShowTextW");
-SAStopAudio =(SAStopAudioFunc)SystemAccessDllApi.RawGetSymbol("SA_StopAudio");
-					return true;
-				} 
-				else 
-				{
-					return false; //file not loaded.
-				}
-			} 
-else 
-{
-				return false; //file not exists.
-}
-}
-} //end 32-bit.
-
-return false;
+				SAIsRunning =SystemAccessDllApi.get<SAIsRunningFunc>("SA_IsRunning");
+				SASpeak = SystemAccessDllApi.get<SASpeakFunc>("SA_SayW");
+				SABraille = SystemAccessDllApi.get<SABrailleFunc>("SA_BrlShowTextW");
+				SAStopAudio = SystemAccessDllApi.get<SAStopAudioFunc>("SA_StopAudio");
+				result = true;
+			}
+		}
+} //Dll not loaded.
+	
+	return result;
 }
 
 
 	void RBSpeech::UnloadSystemAccessApi(void)
 {
-	SystemAccessDllApi.Unload();
+	SystemAccessDllApi.unload();
 	return;
 }
 	
@@ -1622,21 +1619,20 @@ HRESULT RBSpeech::IsHotSpotInSet(std::wstring SetName, std::wstring SpotName)
 	DolphinProduct SpecificDolphinProduct;
 	boost::property_tree::ptree IniTree; //used to store hsc information.
 		boost::property_tree::ptree::assoc_iterator it;	 
-	char SetNameStr[MAX_PATH] ="";
-	char SpotNameStr[MAX_PATH] ="";
-		wxMBConvStrictUTF8 ConvertString; //used to convert to ansi later on.
+		std::string SetNameStr;
+	std::string SpotNameStr;
 	ExitOnTrue(SetName.empty(), hReturnValue, S_FALSE, "No hot spot set has been provided.");
 	ExitOnTrue(SpotName.empty(), hReturnValue, S_FALSE, "No hot spot name has been provided.");
-	ExitOnFalse(wxFileExists(SetName), hReturnValue, S_FALSE, "The hot spot set does not exist.");
+	ExitOnFalse(std::experimental::filesystem::exists(SetName), hReturnValue, S_FALSE, "The hot spot set does not exist.");
 		hReturnValue =GetActiveProduct(CurrentProduct, SpecificDolphinProduct);
 	ExitOnFailure(hReturnValue, "No product is active.");
 	switch(CurrentProduct)
 	{
 	case ID_JAWS:
-		ConvertString.FromWChar(&SetNameStr[0], MAX_PATH, SetName.c_str(), SetName.size());
+		SetNameStr = WideStringToNarrowString(SetName);
 		boost::property_tree::ini_parser::read_ini(&SetNameStr[0], IniTree);		
 		//try and find the key.
-		ConvertString.FromWChar(&SpotNameStr[0], MAX_PATH, SpotName.c_str(), SpotName.size());
+		SpotNameStr = WideStringToNarrowString(SpotName);
 		it =IniTree.find(&SpotNameStr[0]);
 		ExitOnSpecificValue(it, IniTree.not_found(), hReturnValue, S_FALSE, "The spot is not available in the active set.");
 		//now check to see if the spot is hidden, hence shouldn't be available.
@@ -1682,16 +1678,15 @@ LExit:
 		DolphinProduct SpecificDolphinProduct;
 		boost::property_tree::ptree IniTree; //used to store hsc information.
 		boost::property_tree::ptree::assoc_iterator it;	 
-	char SetNameStr[MAX_PATH] ="";
-		wxMBConvStrictUTF8 ConvertString; //used to convert to ansi later on.
+		std::string SetNameStr;
 	ExitOnTrue(SetName.empty(), hReturnValue, S_FALSE, "No hot spot set has been provided.");
-	ExitOnFalse(wxFileExists(SetName), hReturnValue, S_FALSE, "The hot spot set does not exist.");
+	ExitOnFalse(std::experimental::filesystem::exists(SetName), hReturnValue, S_FALSE, "The hot spot set does not exist.");
 	hReturnValue =GetActiveProduct(CurrentProduct, SpecificDolphinProduct);
 ExitOnFailure(hReturnValue, "No product is active.");
 	switch(CurrentProduct)
 	{
 	case ID_JAWS:
-		ConvertString.FromWChar(&SetNameStr[0], MAX_PATH, SetName.c_str(), SetName.size());
+		SetNameStr = WideStringToNarrowString(SetName);
 		try
 			{
 				boost::property_tree::ini_parser::read_ini(SetNameStr, IniTree);		
@@ -1758,40 +1753,38 @@ LExit:
 
 	HRESULT RBSpeech::GetActiveHotSpotSet(std::wstring& ActiveSet)
 {
-HRESULT hReturnValue =S_OK;
+HRESULT hr =S_OK;
 boost::optional<std::string> CurrentSpotStringOptional;			
-wxVariant FunctionResult;
-			wchar_t ConvertedSpotString[MAX_PATH];
-			wxMBConvStrictUTF8 ConvertString; //used to convert to unicode later on.
+CComVariant vFunctionResult;
+std::wstring ConvertedSpotString;
 			boost::property_tree::ptree IniTree; //used to store hsc information.
 			std::wstring JAWSFunctionCallString =L"GetCurrentJAWSEnvironment(\"%s\")"; //used to hold the call to JAWS.
-				wxFileName IniFile; //file to store the hsc information.
+				std::experimental::filesystem::path IniFile; //file to store the hsc information.
 			ActiveProduct CurrentProduct;
 	DolphinProduct SpecificDolphinProduct;
-	hReturnValue =GetActiveProduct(CurrentProduct, SpecificDolphinProduct);
-	ExitOnFailure(hReturnValue, "No product is active.");
+	hr =GetActiveProduct(CurrentProduct, SpecificDolphinProduct);
+	ExitOnFailure(hr, "No product is active.");
 				switch(CurrentProduct)
 			{
 			case ID_JAWS:
-				IniFile.SetPath(AppDataPath().native());
+				IniFile =AppDataPath().native();
 //now, set the filename.
-IniFile.SetFullName(L"CurrentJawsEnvironment.ini");
-if (IniFile.FileExists())
+IniFile /=L"CurrentJawsEnvironment.ini";
+if (exists(IniFile))
 { //the file exists remove it.
-	ExitOnFalse(wxRemoveFile(IniFile.GetFullPath()), hReturnValue, S_FALSE, "Unable to delete the old file.");
+	ExitOnFalse(std::experimental::filesystem::remove(IniFile), hr, S_FALSE, "Unable to delete the old file.");
 } //end file removal.
 boost::replace_first(JAWSFunctionCallString, L"%s", AppDataPath().native());
 //now actually call the function.
-	        FunctionResult =JawsAPI.CallMethod(L"RunFunction", 1, JAWSFunctionCallString);
-									if (!FunctionResult.IsType(wxT("BOOL")))
-			{ //Wrong type was returned.
-				ExitFunctionWithMessageAndStatusCode(FunctionResult, S_FALSE, "A BOOLean was not returned but was expected.");
-			} //end type check.
-									ExitOnFalse(FunctionResult.GetBool(), hReturnValue, S_FALSE, "Obtaining the location of hotspots  failed.");
+hr = JawsAPI.Invoke1(_bstr_t(L"RunFunction"), &_variant_t(JAWSFunctionCallString.c_str()), &vFunctionResult);
+ExitOnFailure(hr, "Executing the JAWS RunFunction function returned a failure.");
+ExitOnFalse(vFunctionResult.vt == VT_BOOL, hr, S_FALSE, "Running a JAWS function should return a boolean.");
+ExitOnFalse(vFunctionResult.boolVal, hr, S_FALSE, "Running the requested JAWS function could not be scheduled.");
+
 									//now, load the ini giving us hsc information, then grab the path to the current spot file.
 try
 	{
-		boost::property_tree::ini_parser::read_ini(IniFile.GetFullPath().ToStdString(), IniTree);		
+		boost::property_tree::ini_parser::read_ini(IniFile.generic_string(), IniTree);		
 }
 catch( ...)
 	{
@@ -1800,55 +1793,49 @@ return S_FALSE;
 
 //obtain the current spot set filename.
 									CurrentSpotStringOptional =IniTree.get_optional<std::string>("Environment.ActiveSpotFile");
-									ConvertString.ToWChar(&ConvertedSpotString[0], MAX_PATH, CurrentSpotStringOptional.get().c_str(), CurrentSpotStringOptional.get().size());
-ActiveSet =&ConvertedSpotString[0]; //Actually output.
+									ConvertedSpotString = NarrowStringToWideString(CurrentSpotStringOptional.get());
+ActiveSet =ConvertedSpotString; //Actually output.
 									break;
 			default:
-				hReturnValue =E_NOTIMPL;
+				hr =E_NOTIMPL;
 				break;
 			};
 LExit:
-return hReturnValue;
+return hr;
 }
 
 	HRESULT RBSpeech::ExecuteHotSpot(std::wstring Set, std::wstring SpotName)
 	{
-		HRESULT hReturnValue;
+		HRESULT hr =S_OK;
 		ActiveProduct CurrentProduct;
 	DolphinProduct SpecificDolphinProduct;
 		std::wstring JAWSFunctionCallString =L"HSCLookupKey( \"%s\")"; //used to hold the call to JAWS.
-		wxVariant FunctionResult;
-		ExitOnTrue(Set.empty(), hReturnValue, S_FALSE, "No hot spot set has been provided.");
-		ExitOnTrue(SpotName.empty(), hReturnValue, S_FALSE, "No hot spot name has been provided.");
-			hReturnValue =GetActiveProduct(CurrentProduct, SpecificDolphinProduct);
-	ExitOnFailure(hReturnValue, "No product is active.");
+		CComVariant vFunctionResult;
+		ExitOnTrue(Set.empty(), hr, S_FALSE, "No hot spot set has been provided.");
+		ExitOnTrue(SpotName.empty(), hr, S_FALSE, "No hot spot name has been provided.");
+			hr =GetActiveProduct(CurrentProduct, SpecificDolphinProduct);
+	ExitOnFailure(hr, "No product is active.");
 		switch(CurrentProduct)
 			{
 			case ID_JAWS:
-			//Check to see if the hotspot is in the provided set.
-				hReturnValue =IsHotSpotInSet(Set, SpotName);
-				ExitOnFailure(hReturnValue, "The provided hot spot doesn't exist in the provided hot spot set.");
+				LoadJAWSApi();
+				//Check to see if the hotspot is in the provided set.
+				hr =IsHotSpotInSet(Set, SpotName);
+				ExitOnFailure(hr, "The provided hot spot doesn't exist in the provided hot spot set.");
 				//now create the requisite information to call a jaws function.
 				boost::replace_first(JAWSFunctionCallString, L"%s", SpotName);
-				// testing only
-JAWSFunctionCallString =L"TypeKey( \"Control+Alt+T\")"; //used to hold the call to JAWS.				
 				//now call the function.
-				// FunctionResult =JawsAPI.CallMethod( L"RunFunction", JAWSFunctionCallString);
-FunctionResult =JawsAPI.CallMethod( L"RunFunction", L"Tester");
-// FunctionResult =JawsAPI.CallMethod( L"RunFunction", 1, JAWSFunctionCallString);
-
-				if (!FunctionResult.IsType(wxT("BOOL")))
-			{ //Wrong type was returned.
-				ExitFunctionWithMessageAndStatusCode(FunctionResult, S_FALSE, "A Boolean was not returned but was expected.");
-			} //end type check.
-									ExitOnFalse(FunctionResult.GetBool(), hReturnValue, S_FALSE, "Executing the hot spot provided failed.");
+				hr = JawsAPI.Invoke1(_bstr_t(L"RunFunction"), &_variant_t(JAWSFunctionCallString.c_str()), &vFunctionResult);
+				ExitOnFailure(hr, "Executing the JAWS RunFunction function returned a failure.");
+				ExitOnFalse(vFunctionResult.vt == VT_BOOL, hr, S_FALSE, "Executing a JAWS hot spot should return a boolean.");
+				ExitOnFalse(vFunctionResult.boolVal, hr, S_FALSE, "The requested hot spot execution could not be scheduled.");
 				break;
 			default:
-				hReturnValue =E_NOTIMPL;
+				hr =E_NOTIMPL;
 				break;
 		};
 LExit:
-		return hReturnValue;
+		return hr;
 	}
 
 HRESULT RBSpeech::ExecuteAction(std::wstring Action, ScreenReaderActionType Type)
@@ -1902,29 +1889,33 @@ ActionInformation =AvailableActions;
 return hReturnValue;
 }
 
-std::vector<JawsFunction> RBSpeech::ProcessJSDFile(wxFileName &File)
+std::vector<JawsFunction> RBSpeech::ProcessJSDFile(std::experimental::filesystem::path&File)
 {
 	std::vector<JawsFunction> AvailableFunctions;
 	bool ParameterIsOptional =false;
-	if ((File.IsOk()) && (File.FileExists()))
+	if (std::experimental::filesystem::exists(File))
 	{ //existence check.
-		wxString filecontent;
-	wxFFile scriptfile(File.GetFullPath().ToStdString().c_str());
-	filecontent.clear();
-	if (scriptfile.ReadAll(&filecontent))
-	{ //start file processing.
-		filecontent.Trim(true);
-		wxArrayString lines;
-		lines =wxStringTokenize(filecontent, "\n", wxTOKEN_RET_EMPTY);
-	JawsFunction newfunction;
-	BOOST_FOREACH(wxString line, lines)
+		std::wifstream fs(File);
+		//Read the file in to a vector.
+		std::vector<std::wstring> lines;
+		std::wstring str;
+		while (std::getline(fs, str))
+		{
+			lines.push_back(str);
+		}
+			fs.close();
+		
+			JawsFunction newfunction;
+	BOOST_FOREACH(std::wstring line, lines)
 {
-	wxArrayString tokens;
-	line.Trim(true);
-	if (line.Left(3).IsSameAs(":sc", false))
+	std::vector<std::wstring> tokens;
+	
+	boost::trim(line);
+	
+	if (line.substr(0, 3).compare(L":sc"))
 	{ //script and name
 //Clear all variables as we're starting a new script.
-		tokens.Clear();
+		tokens.clear();
 		ParameterIsOptional =false;
 		newfunction.Type =ID_TYPE_NONE;
 		newfunction.Category.clear();
@@ -1934,16 +1925,17 @@ std::vector<JawsFunction> RBSpeech::ProcessJSDFile(wxFileName &File)
 		//start setting variables.
 		newfunction.Type =ID_TYPE_SCRIPT;
 		//retrieve the name.
-tokens =wxStringTokenize(line, " ");
-if (tokens.Count() ==2)
+		boost::split(tokens, line, boost::is_any_of(" "));
+		
+if (tokens.size() ==2)
 { //access the name.
-newfunction.Name =tokens.Last();
+newfunction.Name =*end(tokens);
 } //access the name.
 } //end script and name.
-		else if (line.Left(3).IsSameAs(":fu", false))
+		else if (line.substr(0, 3).compare(L":fu"))
 	{ //function and name
 //Clear all variables as we're starting a new script.
-		tokens.Clear();
+		tokens.clear();
 		newfunction.Type =ID_TYPE_NONE;
 		ParameterIsOptional =false;
 		newfunction.Category.clear();
@@ -1953,61 +1945,63 @@ newfunction.Name =tokens.Last();
 		//start setting variables.
 		newfunction.Type =ID_TYPE_FUNCTION;
 		//retrieve the name.
-tokens =wxStringTokenize(line, " ");
-if (tokens.Count() ==2)
+		boost::split(tokens, line, boost::is_any_of(" "));
+if (tokens.size() ==2)
 { //access the name.
-newfunction.Name =tokens.Last();
+newfunction.Name =*end(tokens);
 } //access the name.
 } //end function and name.
-	else if (line.Left(3).IsSameAs(":sy", false))
-	{ //synopsis.
-		newfunction.Synopsis =line.AfterFirst(wxUniChar(32));
+	else if (line.substr(0, 3).compare(L":sy"))
+{ //synopsis.
+		newfunction.Synopsis =line.substr(line.find(L" "));
 	} //end synopsis.
-else if (line.Left(3).IsSameAs(":de", false))
+else if (line.substr(0, 3).compare(L":de"))
 { //Description.
-	newfunction.Description =line.AfterFirst(wxUniChar(32));
+	newfunction.Description = line.substr(line.find(L" "));
 	} //end description.
-else if (line.Left(3).IsSameAs(":op", false))
+else if (line.substr(0, 3).compare(L":op"))
 { //optional parameter.
 	ParameterIsOptional =true;
 } //Optional parameter.
-else if (line.Left(3).IsSameAs(":pa", false))
+else if (line.substr(0, 3).compare(L":pa"))
 { //Parameter.
 JAWSParameter CurrentParam;
 CurrentParam.Optional =ParameterIsOptional;
-if (line.Contains(L"/"))
+if (line.find(L"/"))
 { //parameter with a name.
 	tokens.clear();
-	tokens =wxStringTokenize(line.AfterFirst(wxUniChar(32)), "/");
-	if (tokens.Count() ==2)
+	boost::split(tokens, line, boost::is_any_of(" "));
+	if (tokens.size() ==2)
 	{ //process.
-		CurrentParam.DataType =tokens.front();
-		CurrentParam.Name =tokens.Last().BeforeFirst(wxUniChar(32));
-		CurrentParam.Description =tokens.Last().AfterFirst(wxUniChar(32));
+		CurrentParam.DataType =*begin(tokens);
+		std::wstring tokenToSplit = *end(tokens);
+		CurrentParam.Name = tokenToSplit.substr(0, tokenToSplit.find_first_of(L" "));
+		CurrentParam.Description = tokenToSplit.substr(tokenToSplit.find_first_of(L" "));
 	} //end parameter processing.
 } //end param with a name.
 else { //parameter without a name.
-tokens.clear();
-	tokens =wxStringTokenize(line.AfterFirst(wxUniChar(32)), " ");
-	if (tokens.Count() >=2)
+	tokens.clear();
+	boost::split(tokens, line, boost::is_any_of(" "));
+	if (tokens.size() >= 2)
 	{ //process.
-		CurrentParam.DataType =tokens.front();
-		CurrentParam.Description =line.Right(line.AfterFirst(wxUniChar(32)).length() -tokens.front().length()-1);
+		CurrentParam.DataType = *begin(tokens);
+		CurrentParam.Description = line.substr(CurrentParam.DataType.length());
 	} //end parameter processing.
 } //end parameter without a name.
 newfunction.Parameters.push_back(CurrentParam);
 ParameterIsOptional =false;
 } //end parameter
-else if (line.Left(3).IsSameAs(":re", false)) 
+else if (line.substr(0, 3).compare(L":re")) 
 { //return value.
-	tokens.clear();
-	tokens =wxStringTokenize(line.AfterFirst(wxUniChar(32)), " ");
-	newfunction.Returns.DataType =tokens.front();
-	newfunction.Returns.Description =line.Right(line.AfterFirst(wxUniChar(32)).length() -tokens.front().length()-1);
-} //return value.
-else if (line.Left(3).IsSameAs(":ca", false))
+		tokens.clear();
+		std::wstring stringToSplit = line.substr(line.find_first_of(L" "));
+		boost::split(tokens, stringToSplit, boost::is_any_of(" "));
+		newfunction.Returns.DataType = *begin(tokens);
+		newfunction.Returns.Description = line.substr(newfunction.Returns.DataType.length());
+	} //return value.
+else if (line.substr(0, 3).compare(L":ca"))
 	{ //Category.
-		newfunction.Category =line.AfterFirst(wxUniChar(32));
+		newfunction.Category =line.substr(line.find(L" "));
 } //end category.
 else if (line.length() ==0)
 { //blank line, ass to vector.
@@ -2015,30 +2009,30 @@ else if (line.length() ==0)
 		AvailableFunctions.push_back(newfunction);
 } //end vector adition.
 }
-	} //end processing.
 	} //end existence check.		
 return AvailableFunctions;
 }
-void RBSpeech::SetFirstJsdFile(wxString File)
+
+void RBSpeech::SetFirstJsdFile(std::wstring file)
 {
-	JsdFile =File;
+	JsdFile =file;
 JsdFileToStartProcessing =PROCESS_NO_FILE;
-wxArrayString JsdFileTokens =wxStringTokenize(JsdFile, L"\\");
-wxString UserName =wxGetUserId();
-int test =JsdFileTokens.Index(UserName);
-if (JsdFileTokens.Index(UserName) >0)
+std::vector<std::wstring> JsdFileTokens;
+boost::split(JsdFileTokens, JsdFile, boost::is_any_of(L"\\"));
+
+std::wstring UserName;
+HRESULT hr = GetCurrentUserName(UserName);
+if (std::find(begin(JsdFileTokens), end(JsdFileTokens), UserName) !=end(JsdFileTokens))
 { //user file is the first one.
 //determine whether it is default/application.
-	wxString LastToken =JsdFileTokens.Last();
-	if (JsdFileTokens.Last().IsSameAs("default.jsd", false))
+	if (JsdFileTokens.back().compare(L"default.jsd"))
 		JsdFileToStartProcessing =PROCESS_USER_SYSTEM_DEFAULT_FILE;
 	else
 JsdFileToStartProcessing =PROCESS_USER_APP_FILE;
 } //end user file.
 else { //global file.
 	//determine whether it is the default/application.
-	wxString LastToken =JsdFileTokens.Last();
-	if (JsdFileTokens.Last().IsSameAs("default.jsd", false))
+	if (JsdFileTokens.back().compare(L"default.jsd"))
 		JsdFileToStartProcessing =PROCESS_DEFAULT_SYSTEM_DEFAULT_FILE;
 	else
 JsdFileToStartProcessing =PROCESS_DEFAULT_APP_FILE;
@@ -2046,27 +2040,29 @@ JsdFileToStartProcessing =PROCESS_DEFAULT_APP_FILE;
 return;
 }
 
-wxString RBSpeech::GetFirstJsdFile(void)
+std::wstring RBSpeech::GetFirstJsdFile(void)
 {
 	return JsdFile;
 }
 void RBSpeech::ClearJsdFile()
 {
-	JsdFile =wxEmptyString;
+	JsdFile =L"";
 JsdFileToStartProcessing =PROCESS_NO_FILE;
 }
-void RBSpeech::SetHscFile(wxString File)
+void RBSpeech::SetHscFile(std::wstring File)
 {
 HscFile =File;
 return;
 }
-wxString RBSpeech::GetHscFile(void)
+
+std::wstring RBSpeech::GetHscFile(void)
 {
 return HscFile;
 }
+
 void RBSpeech::ClearHscFile()
 {
-HscFile =wxEmptyString;
+HscFile =L"";
 return;
 }
 
@@ -2148,4 +2144,70 @@ HRESULT RBSpeech::IsNVDAActive()
 	}
 }
 
+//file path functions.
+HRESULT RBSpeech::GetExecutablePath(std::experimental::filesystem::path& path)
+{
+	HRESULT hr = S_OK;
+LPWSTR szFileName[MAX_PATH + 1];
+	DWORD result =GetModuleFileName(NULL, szFileName[0], MAX_PATH + 1);
+	ExitOnSpecificValue(result, 0, hr, S_FALSE, "Unable to obtain he executable name and path.");
+	path = szFileName;
+LExit:
+	ReleaseStr(szFileName);
+	return hr;
+}
+HRESULT RBSpeech::GetCommonAppDataPath(std::experimental::filesystem::path &path)
+{
+	HRESULT hr = S_OK;
+	LPWSTR sczPath = NULL;
+	// get folder path
+	hr = ShelGetFolder(&sczPath, CSIDL_COMMON_APPDATA);
+	ExitOnRootFailure(hr, "Failed to get shell folder.");
+	path = sczPath;
+LExit:
+	ReleaseStr(sczPath);
+	return hr;
+}
+
+HRESULT RBSpeech::GetCurrentUsersAppDataPath(std::experimental::filesystem::path &path)
+{
+	HRESULT hr = S_OK;
+	LPWSTR sczPath = NULL;
+	// get folder path
+	hr = ShelGetFolder(&sczPath, CSIDL_APPDATA);
+	ExitOnRootFailure(hr, "Failed to get shell folder.");
+	path = sczPath;
+LExit:
+	ReleaseStr(sczPath);
+	return hr;
+}
+//string conversion.
+std::wstring RBSpeech::NarrowStringToWideString(const std::string& stringToConvert)
+{
+	using convert_typeX = std::codecvt_utf8<wchar_t>;
+	std::wstring_convert<convert_typeX, wchar_t> converterX;
+
+	return converterX.from_bytes(stringToConvert);
+}
+
+std::string RBSpeech::WideStringToNarrowString(std::wstring& stringToConvert)
+{
+	using convert_typeX = std::codecvt_utf8<wchar_t>;
+	std::wstring_convert<convert_typeX, wchar_t> converterX;
+
+	return converterX.to_bytes(stringToConvert);
+}
+//Function to get the windows user name.
+HRESULT RBSpeech::GetCurrentUserName(std::wstring& userName)
+{
+	HRESULT hr = S_OK;
+#define buffCharCount 32767
+	LPWSTR lpBuffer[buffCharCount];
+	DWORD CoppiedBytes = 0;
+	bool result = GetUserName(lpBuffer[0], &CoppiedBytes);
+	ExitOnFalse(result, hr, S_FALSE, "Unable to obtain the username.");
+	userName = lpBuffer[0];
+LExit:
+	return hr;
+}
 #endif  // Windows
