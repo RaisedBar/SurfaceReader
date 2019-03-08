@@ -2155,7 +2155,7 @@ LExit:
 	ReleaseStr(szFileName);
 	return hr;
 }
-HRESULT GetCommonAppDataPath(std::experimental::filesystem::path &path)
+HRESULT RBSpeech::GetCommonAppDataPath(std::experimental::filesystem::path &path)
 {
 	HRESULT hr = S_OK;
 	LPWSTR sczPath = NULL;
