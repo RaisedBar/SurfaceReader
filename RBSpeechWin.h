@@ -183,7 +183,11 @@ std::wstring HscFile;
 	HRESULT GetExecutablePath(std::experimental::filesystem::path& path);
 	HRESULT GetCommonAppDataPath(std::experimental::filesystem::path &path);
 	HRESULT GetCurrentUsersAppDataPath(std::experimental::filesystem::path &path);
-	/// <summary> Determine whether JAWS For Windows is currently active in memory. </summary>
+	
+	//Functions to perform string conversion.
+	std::wstring NarrowStringToWideString(const std::string& stringToConvert);
+	std::string WideStringToNarrowString(std::wstring& stringToConvert);
+		/// <summary> Determine whether JAWS For Windows is currently active in memory. </summary>
 	/// <returns> returns S_OK if JAWS is active, S_FALSE otherwise. </returns>
 bool IsJAWSActive();
 

@@ -13,6 +13,8 @@
 #include <shlobj.h>
 #include <vector>
 #include <algorithm>
+#include <locale>
+#include <codecvt>
 
 bool FindProcessByName(const wchar_t * wstrProcessName)
 {
@@ -1617,9 +1619,8 @@ HRESULT RBSpeech::IsHotSpotInSet(std::wstring SetName, std::wstring SpotName)
 	DolphinProduct SpecificDolphinProduct;
 	boost::property_tree::ptree IniTree; //used to store hsc information.
 		boost::property_tree::ptree::assoc_iterator it;	 
-	char SetNameStr[MAX_PATH] ="";
-	char SpotNameStr[MAX_PATH] ="";
-		wxMBConvStrictUTF8 ConvertString; //used to convert to ansi later on.
+		std::string SetNameStr;
+	std::string SpotNameStr;
 	ExitOnTrue(SetName.empty(), hReturnValue, S_FALSE, "No hot spot set has been provided.");
 	ExitOnTrue(SpotName.empty(), hReturnValue, S_FALSE, "No hot spot name has been provided.");
 	ExitOnFalse(std::experimental::filesystem::exists(SetName), hReturnValue, S_FALSE, "The hot spot set does not exist.");
@@ -1628,10 +1629,10 @@ HRESULT RBSpeech::IsHotSpotInSet(std::wstring SetName, std::wstring SpotName)
 	switch(CurrentProduct)
 	{
 	case ID_JAWS:
-		ConvertString.FromWChar(&SetNameStr[0], MAX_PATH, SetName.c_str(), SetName.size());
+		SetNameStr = WideStringToNarrowString(SetName);
 		boost::property_tree::ini_parser::read_ini(&SetNameStr[0], IniTree);		
 		//try and find the key.
-		ConvertString.FromWChar(&SpotNameStr[0], MAX_PATH, SpotName.c_str(), SpotName.size());
+		SpotNameStr = WideStringToNarrowString(SpotName);
 		it =IniTree.find(&SpotNameStr[0]);
 		ExitOnSpecificValue(it, IniTree.not_found(), hReturnValue, S_FALSE, "The spot is not available in the active set.");
 		//now check to see if the spot is hidden, hence shouldn't be available.
@@ -1677,8 +1678,7 @@ LExit:
 		DolphinProduct SpecificDolphinProduct;
 		boost::property_tree::ptree IniTree; //used to store hsc information.
 		boost::property_tree::ptree::assoc_iterator it;	 
-	char SetNameStr[MAX_PATH] ="";
-		wxMBConvStrictUTF8 ConvertString; //used to convert to ansi later on.
+		std::string SetNameStr;
 	ExitOnTrue(SetName.empty(), hReturnValue, S_FALSE, "No hot spot set has been provided.");
 	ExitOnFalse(std::experimental::filesystem::exists(SetName), hReturnValue, S_FALSE, "The hot spot set does not exist.");
 	hReturnValue =GetActiveProduct(CurrentProduct, SpecificDolphinProduct);
@@ -1686,7 +1686,7 @@ ExitOnFailure(hReturnValue, "No product is active.");
 	switch(CurrentProduct)
 	{
 	case ID_JAWS:
-		ConvertString.FromWChar(&SetNameStr[0], MAX_PATH, SetName.c_str(), SetName.size());
+		SetNameStr = WideStringToNarrowString(SetName);
 		try
 			{
 				boost::property_tree::ini_parser::read_ini(SetNameStr, IniTree);		
@@ -1756,8 +1756,7 @@ LExit:
 HRESULT hr =S_OK;
 boost::optional<std::string> CurrentSpotStringOptional;			
 CComVariant vFunctionResult;
-			wchar_t ConvertedSpotString[MAX_PATH];
-			wxMBConvStrictUTF8 ConvertString; //used to convert to unicode later on.
+std::wstring ConvertedSpotString;
 			boost::property_tree::ptree IniTree; //used to store hsc information.
 			std::wstring JAWSFunctionCallString =L"GetCurrentJAWSEnvironment(\"%s\")"; //used to hold the call to JAWS.
 				std::experimental::filesystem::path IniFile; //file to store the hsc information.
@@ -1794,8 +1793,8 @@ return S_FALSE;
 
 //obtain the current spot set filename.
 									CurrentSpotStringOptional =IniTree.get_optional<std::string>("Environment.ActiveSpotFile");
-									ConvertString.ToWChar(&ConvertedSpotString[0], MAX_PATH, CurrentSpotStringOptional.get().c_str(), CurrentSpotStringOptional.get().size());
-ActiveSet =&ConvertedSpotString[0]; //Actually output.
+									ConvertedSpotString = NarrowStringToWideString(CurrentSpotStringOptional.get());
+ActiveSet =ConvertedSpotString; //Actually output.
 									break;
 			default:
 				hr =E_NOTIMPL;
@@ -2179,5 +2178,21 @@ HRESULT RBSpeech::GetCurrentUsersAppDataPath(std::experimental::filesystem::path
 LExit:
 	ReleaseStr(sczPath);
 	return hr;
+}
+//string conversion.
+std::wstring RBSpeech::NarrowStringToWideString(const std::string& stringToConvert)
+{
+	using convert_typeX = std::codecvt_utf8<wchar_t>;
+	std::wstring_convert<convert_typeX, wchar_t> converterX;
+
+	return converterX.from_bytes(stringToConvert);
+}
+
+std::string RBSpeech::WideStringToNarrowString(std::wstring& stringToConvert)
+{
+	using convert_typeX = std::codecvt_utf8<wchar_t>;
+	std::wstring_convert<convert_typeX, wchar_t> converterX;
+
+	return converterX.to_bytes(stringToConvert);
 }
 #endif  // Windows
