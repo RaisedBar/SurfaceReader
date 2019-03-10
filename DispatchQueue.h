@@ -13,8 +13,8 @@
 
 class dispatch_queue 
 {
-	typedef std::function<void(void)> fp_t;
-
+	// typedef std::function<void(void)> fp_t;
+	typedef std::function<void(std::vector< unsigned char >)> fp_t;
 public:
 	dispatch_queue(size_t thread_cnt = 1)
 	{
@@ -28,9 +28,7 @@ public:
 	
 	~dispatch_queue()
 	{
-		// printf("Destructor: Destroying dispatch threads...\n");
-
-		// Signal to dispatch threads that it's time to wrap up 
+				// Signal to dispatch threads that it's time to wrap up 
 		std::unique_lock<std::mutex> lock(lock_);
 		quit_ = true;
 		lock.unlock();
@@ -72,7 +70,7 @@ public:
 		cv_.notify_all();
 	};
 		
-	// Deleted operations 
+		// Deleted operations 
 	dispatch_queue(const dispatch_queue& rhs) = delete;
 	dispatch_queue& operator=(const dispatch_queue& rhs) = delete;
 	dispatch_queue(dispatch_queue&& rhs) = delete;
@@ -84,14 +82,16 @@ private:
 	std::queue<fp_t> q_;
 	std::condition_variable cv_;
 	bool quit_ = false;
-	void dispatch_thread_handler(void)
+
+	void dispatch_thread_handler( std::vector <unsigned char> data) 
 	{
 		std::unique_lock<std::mutex> lock(lock_);
 
 		do
 		{
 			//Wait until we have data or a quit signal 
-			cv_.wait(lock, [this] {
+			cv_.wait(lock, [this] 
+			{
 				return (q_.size() || quit_);
 			});
 
@@ -103,10 +103,64 @@ private:
 
 				//unlock now that we're done messing with the queue 
 				lock.unlock();
-				op();
+								op(data);
 				lock.lock();
 			}
 		} while (!quit_);
 	};
 };
+
+/*
+// Alternative approach from:
+// https://juanchopanzacpp.wordpress.com/2013/02/26/concurrent-queue-c11/
+
+template <typename T>
+class ThreadedQueue
+{
+public:
+		T pop()
+	{
+		std::unique_lock<std::mutex> mlock(mutex_);
+		while (queue_.empty())
+		{
+			cond_.wait(mlock);
+		}
+		auto item = queue_.front();
+		queue_.pop();
+		return item;
+	}
+
+	void pop(T& item)
+	{
+		std::unique_lock<std::mutex> mlock(mutex_);
+		while (queue_.empty())
+		{
+			cond_.wait(mlock);
+		}
+		item = queue_.front();
+		queue_.pop();
+	}
+
+	void push(const T& item)
+	{
+		std::unique_lock<std::mutex> mlock(mutex_);
+		queue_.push(item);
+		mlock.unlock();
+		cond_.notify_one();
+	}
+
+	void push(T&& item)
+	{
+		std::unique_lock<std::mutex> mlock(mutex_);
+		queue_.push(std::move(item));
+		mlock.unlock();
+		cond_.notify_one();
+	}
+
+private:
+	std::queue<T> queue_;
+	std::mutex mutex_;
+	std::condition_variable cond_;
+};
+*/
 #endif

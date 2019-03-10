@@ -168,19 +168,19 @@ int nFirstRangePos = strKey.find( NIBBLE_RANGE_MARKER, 0);
 bool blnRange = false;
 bool blnValue = false;
 
-if ((nValuePos == wxNOT_FOUND) && (nFirstRangePos == wxNOT_FOUND))
+if ((nValuePos == string::npos) && (nFirstRangePos == string::npos))
 {
 	strKey = it->first;	
 }
 else   // search for the shortest substring
 {
-	if (nValuePos != wxNOT_FOUND)
+	if (nValuePos != string::npos)
 	{
 blnValue = true;
 
 strKey = strKey.substr( 0, nValuePos);
 }
-	else if (nFirstRangePos != wxNOT_FOUND)
+	else if (nFirstRangePos != string::npos)
 	{
 blnRange = true;
 strKey = strKey.substr( 0, nFirstRangePos);
@@ -703,7 +703,7 @@ if (it != CharacterTables.end())
 }
 else
 {
-throw RBException( wxT( "No matching table."));
+throw RBException( L"No matching table.");
 	return it->second;
 }
 }
@@ -961,18 +961,18 @@ int nFirstRangePos = strKey.find( NIBBLE_RANGE_MARKER, 0);
 bool blnRange = false;
 bool blnValue = false;
 
-if ((nValuePos == wxNOT_FOUND) && (nFirstRangePos == wxNOT_FOUND))
+if ((nValuePos == string::npos) && (nFirstRangePos == string::npos))
 {
 	strKey = it->first;	
 }
 else   // search for the shortest substring
 {
-	if (nValuePos != wxNOT_FOUND)
+	if (nValuePos != string::npos)
 	{
 blnValue = true;
 strKey = strKey.substr( 0, nValuePos);
 }
-	else if (nFirstRangePos != wxNOT_FOUND)
+	else if (nFirstRangePos != string::npos)
 	{
 blnRange = true;
 strKey = strKey.substr( 0, nFirstRangePos);

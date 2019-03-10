@@ -15,8 +15,6 @@
 #include <boost/serialization/access.hpp>
 #include <boost/serialization/nvp.hpp>
 
-#include <wx/msw/winundef.h> 
-
 const int MIN_READ_DISPLAY_DELAY = 0;
 const int MAX_READ_DISPLAY_DELAY = 1000;   // = 1 second
 const int MIN_MIDI_BUFFER_SIZE = 1;

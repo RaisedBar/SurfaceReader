@@ -8,10 +8,6 @@
 #include <boost/fusion/include/adapt_struct.hpp>
 #include <boost/fusion/include/io.hpp>
 
-#include <wx/string.h>
-#include <wx/msw/winundef.h> 
-
-
 //Enum defining the function/script type.
 enum FunctionType { 
 	ID_TYPE_FUNCTION, //function.

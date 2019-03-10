@@ -248,7 +248,7 @@ m_DisplayMIDIOut = new RtMidiOut();
     	} 
 catch ( RtMidiError &error ) 
 {
-throw RBException( error.getMessage());	
+throw RBException( error.getMessage());
 }
 }
 		
@@ -274,7 +274,7 @@ m_DisplayMIDIOut = new RtMidiOut();
     	} 
 catch ( RtMidiError &error ) 
 {
-throw RBException( error.getMessage());	
+throw RBException( error.getMessage());
 }
 SetWidgetMode(Mode(ID_LIVE_MODE));
 	}
@@ -301,7 +301,7 @@ m_DisplayMIDIOut = new RtMidiOut();
     	} 
 catch ( RtMidiError &error ) 
 {
-throw RBException( error.getMessage());	
+throw RBException( error.getMessage());
 }
 
 SetWidgetMode(Mode(ID_LIVE_MODE));
@@ -502,9 +502,7 @@ try
 	{
 if (nInputID == VP_PORT_ID)
 {
-wxString wxstrName = wstrWidgetName;
-	std::string strName = wxstrName.ToStdString();
-		strName.append( strVirtualInSuffix);
+	std::string strName = wxString(wstrWidgetName).ToStdString().append( strVirtualInSuffix);
 m_DisplayMIDIIn->openVirtualPort( strName);
 // Don't ignore sysex, timing, or active sensing messages.
     m_DisplayMIDIIn->ignoreTypes( false, false, false );
@@ -534,9 +532,7 @@ try
 	{
 if (nOutputID == VP_PORT_ID)
 {
-	wxString wxstrName( wstrWidgetName);
-	std::string strName = wxstrName.ToStdString();
-	strName = strName.append( strVirtualOutSuffix);
+		std::string strName = wxString(wstrWidgetName).ToStdString().append( strVirtualOutSuffix);
 m_HardwareMIDIOut->openVirtualPort( strName);
 }
 else

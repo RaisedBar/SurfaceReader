@@ -11,6 +11,7 @@
 
 		#include <vector>
 #include <map>
+#include <cstdint>
 
 #include "DisplayDefinition.h"
 
@@ -18,7 +19,6 @@
 		#include <boost/uuid/uuid.hpp>
 		#include <boost/uuid/uuid_io.hpp>         // streaming operators etc. 
 #include <boost/uuid/uuid_serialize.hpp>
-#include <wx/string.h>
 
 const int RB_NO_DISPLAY_DEFINITION = -2;
 const int RB_NO_CONTROL_DEFINITION = -3;
@@ -86,14 +86,14 @@ DisplayDefinition GetDisplayItem( unsigned int nItem);
 std::string GetDisplayHash( std::wstring wstrName);
 bool DeleteDisplay( std::string strHash);
 bool RenameDisplay( std::wstring wstrOldName, std::wstring wstrNewName);
-wxInt32 GetDisplayLines( wxInt32 nHash) const;
-void SetDisplayLines( wxInt32 nHash, wxInt32 nLines);
-wxInt32 GetDisplayLineLength( wxInt32 nHash) const;
-void SetDisplayLineLength( wxInt32 nHash, wxInt32 nDisplayLength);
-wxInt32 GetFirstDisplayBytePosition( wxInt32 nHash) const;
-void SetFirstDisplayBytePosition( wxInt32 nHash, wxInt32 nOffset);
-wxInt32 GetDisplayCursorPositionOffset( wxInt32 nHash) const;
-void SetDisplayCursorPositionOffset( wxInt32 nHash, wxInt32 nOffset);
+int GetDisplayLines( int nHash) const;
+void SetDisplayLines( int nHash, int nLines);
+int GetDisplayLineLength( int nHash) const;
+void SetDisplayLineLength( int nHash, int nDisplayLength);
+int GetFirstDisplayBytePosition( int nHash) const;
+void SetFirstDisplayBytePosition( int nHash, int nOffset);
+int GetDisplayCursorPositionOffset( int nHash) const;
+void SetDisplayCursorPositionOffset( int nHash, int nOffset);
 int GetDisplayCursorPosition( std::string strHash, std::vector <unsigned char> vMessage);
 unsigned int GetDisplayCount() const;
 int GetTranslationTableCount();

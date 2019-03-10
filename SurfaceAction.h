@@ -2,34 +2,13 @@
 //Response to surface events
 
 
-// #define _SCL_SECURE_NO_WARNINGS
-
 #ifndef SURFACE_ACTION_H
 #define SURFACE_ACTION_H
 
 #pragma once
 
-//#include <string>
-//#include <vector>
-
 #include "RBEnums.h"
 #include "RBSpeech.h"
-
-//Serialization headers.
-//#include <boost/serialization/string.hpp>
-//#include <boost/serialization/vector.hpp>
-//#include <boost/serialization/utility.hpp>
-//#include <boost/serialization/split_member.hpp>
-//#include <boost/serialization/tracking.hpp>
-//#include <boost/serialization/base_object.hpp>
-//#include <boost/serialization/nvp.hpp>
-//#include <boost/serialization/export.hpp>
-//#include <boost/archive/xml_woarchive.hpp>
-//#include <boost/archive/xml_wiarchive.hpp>
-
-//#include <wx/string.h>
-//#include <wx/msw/winundef.h> 
-
 
 // Enumerations for the available action types
 enum SurfaceActionType

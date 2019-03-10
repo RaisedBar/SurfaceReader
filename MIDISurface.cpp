@@ -1,9 +1,10 @@
 	// MIDISurface.cpp
 // MIDISurface implementation
 
+
 #include "MIDISurface.h"
 #include "SurfaceFrame.h"
-#include "DispatchQueue.h"
+// #include "DispatchQueue.h"
 
 MIDISurface::MIDISurface( SurfaceFrame * pParent, ActiveProduct apProduct, boost::shared_ptr<ProtocolCollection> pProtocols, boost::shared_ptr<AppCollection> pApps)
 		:
@@ -1454,8 +1455,7 @@ std::string strProtocolID = GetProtocolID();
 SurfaceProtocol myProtocol = pMyProtocols->GetProtocol( strProtocolID);
 
 const int DISPLAY_NAME_PARAM = 0;
-wxString wxstrHash = myAction.GetParameter( DISPLAY_NAME_PARAM).second;
-std::string strDisplayHash = wxstrHash.ToStdString();
+std::string strDisplayHash = wxString( myAction.GetParameter(DISPLAY_NAME_PARAM).second).ToStdString();
 DisplayDefinition myDisplay;
 
 try
@@ -1507,8 +1507,7 @@ std::wstring MIDISurface::GetDisplayLineString( SurfaceAction myAction, AppConfi
 std::string strProtocolID = this->GetProtocolID();
 SurfaceProtocol myProtocol = pMyProtocols->GetProtocol( strProtocolID);
 const int DISPLAY_NAME_PARAM = 0;
-wxString wxstrHash = myAction.GetParameter( DISPLAY_NAME_PARAM).second;
-std::string strDisplayHash = wxstrHash.ToStdString();
+std::string strDisplayHash = wxString( myAction.GetParameter(DISPLAY_NAME_PARAM).second).ToStdString();
 		
 const int DISPLAY_LINE_PARAM = 1;
 std::wstring wstrDisplayLine = myAction.GetParameter( DISPLAY_LINE_PARAM).second;
@@ -1564,8 +1563,7 @@ try
 	}
 
 const int DISPLAY_NAME_PARAM = 0;
-wxString wxstrHash = myAction.GetParameter( DISPLAY_NAME_PARAM).second;
-std::string strDisplayHash = wxstrHash.ToStdString();
+std::string strDisplayHash = wxString( myAction.GetParameter(DISPLAY_NAME_PARAM).second).ToStdString();
 DisplayDefinition myDisplay;
 
 if (strDisplayHash.empty())
@@ -1712,8 +1710,7 @@ std::wstring MIDISurface::GetDisplaySubstring( SurfaceAction myAction, AppConfig
 std::string strProtocolID = this->GetProtocolID();
 SurfaceProtocol myProtocol = pMyProtocols->GetProtocol( strProtocolID);
 const int DISPLAY_NAME_PARAM = 0;
-wxString wxstrHash = myAction.GetParameter( DISPLAY_NAME_PARAM).second;
-std::string strDisplayHash = wxstrHash.ToStdString();
+std::string strDisplayHash = wxString( myAction.GetParameter(DISPLAY_NAME_PARAM).second).ToStdString();
 std::wstring wstrDisplayName = myProtocol.GetDisplay( strDisplayHash).GetLabel();
 	int nLength = myProtocol.GetDisplay( strDisplayHash).GetDisplayLength();
 std::wstring wstrDisplayText = GetDisplayText( wstrDisplayName);
@@ -1768,9 +1765,7 @@ if (strProtocolID.empty())
 			}
 
 const int DISPLAY_NAME_PARAM = 0;
-wxString wxstrHash = myAction.GetParameter( DISPLAY_NAME_PARAM).second;
-std::string strDisplayHash = wxstrHash.ToStdString();
-
+std::string strDisplayHash = wxString( myAction.GetParameter(DISPLAY_NAME_PARAM).second).ToStdString();
 
 if (strDisplayHash.empty())
 	{
@@ -2032,7 +2027,7 @@ myAppConfig = pMyApps->GetAppConfig( myAppConfigID);
 }
 else
 {
-std::string strNewHash = myAppConfig.GetDisplayHash( wstrLabel);
+std::string strNewHash = wxString( myAppConfig.GetDisplayHash( wstrLabel)).ToStdString();
 
 if (strNewHash.empty())
  {
@@ -2397,7 +2392,7 @@ std::pair <DisplayDefinition, std::string> myDisplayPair;
 DisplayDefinition myDisplay;
 
 // Check for any matching nibble-addressed display
-std::string strHash = myMIDI.NibbledShortMIDIHash( vMessageBuffer, (vMessageBuffer.size() *2));
+std::string strHash = wxString( myMIDI.NibbledShortMIDIHash( vMessageBuffer, (vMessageBuffer.size() *2))).ToStdString();
 
 try
 	{
@@ -3008,9 +3003,6 @@ break;
 }
 
 
-// Queue to handle processing of messages - only creates 1 thread
-extern dispatch_queue SpeechQ;
-
 // Callbacks
 
 	void HardwareCallback(double deltatime, std::vector< unsigned char > *message, void *pSurface) 
@@ -3026,8 +3018,7 @@ if ((pMySurface->GetWidgetMode() == ID_LIVE_MODE)
 {
 	pMySurface->SendHardwareMessage( message);
 }			
-		// pMySurface->AnalyseHardwareMessage( * message);    
-SpeechQ.dispatch([=] {pMySurface->AnalyseHardwareMessage(*message); });
+		pMySurface->AnalyseHardwareMessage( * message);    
 }
 
 
@@ -3040,8 +3031,7 @@ strLog.append( BytesToHex( * message));
 pMySurface->LogIt( strLog);
 
 pMySurface->SendDisplayMessage( message);
-			// pMySurface->AnalyseDisplayMessage( * message);    
-SpeechQ.dispatch([=] {pMySurface->AnalyseDisplayMessage(*message); });
+			pMySurface->AnalyseDisplayMessage( * message);    
 }
 
 

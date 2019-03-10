@@ -258,7 +258,6 @@
     <ClInclude Include=".\UpdateChecker.h" />
     <ClInclude Include=".\apiproto.h" />
     <ClInclude Include="FileCorrecter.h" />
-    <ClInclude Include="DispatchQueue.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include=".\sample.rc" />

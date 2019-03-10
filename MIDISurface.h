@@ -11,6 +11,15 @@
 #include "ProtocolCollection.h"
 #include "AppCollection.h"
 
+#ifdef __WINDOWS__ 
+#include <windows.h>
+#define SLEEP( milliseconds ) Sleep( (DWORD) milliseconds )
+#else // Unix variants
+#include <unistd.h>
+#define Sleep( milliseconds ) usleep( (unsigned long) (milliseconds * 1000.0) )
+#endif
+
+
 #include <boost/log/trivial.hpp>
 #include <boost/log/expressions.hpp>
 #include <boost/log/sinks/text_file_backend.hpp>
@@ -19,18 +28,6 @@
 #include <boost/log/sources/severity_logger.hpp>
 #include <boost/log/sources/record_ostream.hpp>
 #include <boost/shared_ptr.hpp>
-
-#ifdef __WINDOWS__ 
-#include <windows.h>
-#define SLEEP( milliseconds ) Sleep( (DWORD) milliseconds )
-#include <wx/msw/winundef.h> 
-#else // Unix variants
-#include <unistd.h>
-#define Sleep( milliseconds ) usleep( (unsigned long) (milliseconds * 1000.0) )
-#endif
-
-#include <wx/msw/winundef.h> 
-
 
 // Enumeration to handle Unicode characters encoded in 7-bit MIDI messages
 enum UCode
@@ -323,7 +320,7 @@ void UpdateStatusBar( std::wstring wstrMode);
 	void UpdateUI( std::wstring wstrLabel, bool blnLEDLamp, int nDisplayLength, int nLineCount, SurfaceProtocol * pProtocol, std::string strTranslationID);
 	std::wstring FormatDisplay( const std::wstring &wstrDisplayText, const int &nDisplayLength, const int &nLineCount);
 	int GetNibble( int nNibblePos, std::vector <unsigned char> myMessage);
-	void SetCurrentState( std::wstring wstrDisplayLabel, std::wstring wxstrState);
+	void SetCurrentState( std::wstring wstrDisplayLabel, std::wstring wstrState);
 void SetDisplayText( std::wstring wstrLabel, std::wstring wstrText, bool blnCursorFromLeft, bool blnLEDLamp, int nDisplayLength, int nLineCount, SurfaceProtocol * pProtocol, std::string strTranslationID);
 void SetDisplayText( std::wstring wstrLabel, int nCursorPosition, std::wstring wstrNewText, bool blnCursorFromLeft, bool blnLEDLamp, int nDisplayLength, int nLineCount, SurfaceProtocol * pProtocol, std::string strTranslationID);
 bool IsNoteMessage( std::string strHash);

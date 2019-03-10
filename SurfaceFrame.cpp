@@ -1668,7 +1668,6 @@ if (nMySelection < 0)   // No selection in list box
 catch( RBException &myException)
 {
 			#ifdef __WINDOWS__ 
-// OutputDebugString( myException.what());
 wxMessageBox(myException.what(), wstrErrorTitle, wxOK | wxICON_ERROR);
 					#endif
 
