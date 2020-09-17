@@ -2,9 +2,6 @@
 //Implementation of the DisplayDefinition Class.
 
 
-#include "DisplayDefinition.h"
-
-
 DisplayDefinition::DisplayDefinition()
 		:
 MessageDefinition(),

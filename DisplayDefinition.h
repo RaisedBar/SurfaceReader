@@ -2,8 +2,6 @@
 //DisplayDefinition Class.
 
 
-// #define _SCL_SECURE_NO_WARNINGS
-
 #ifndef DISPLAYDEF_H
 #define DISPLAYDEF_H
 

@@ -13,7 +13,7 @@
 #include <string>
 #include <iostream>
 #include <fstream>
-#include <experimental/filesystem>
+#include <filesystem>
 
 //internal
 #include "SRConstants.h"
@@ -39,18 +39,17 @@
 #include <boost/serialization/shared_ptr.hpp>
 #include <boost/Serialization/nvp.hpp>
 
-
 //crypto++.
-#include <base64.h>
-#include <files.h>
-#include <filters.h>
+#include "cryptopp/base64.h"
+#include "cryptopp/files.h"
+#include <cryptopp/filters.h>
 
 #include <wx/msw/winundef.h> 
 
 //Template method for serializing specific data types.
 
 template <class SerializingType>
-void SaveData(SerializingType Data, std::experimental::filesystem::path myFile, bool blnEncrypt)
+void SaveData(SerializingType Data, std::filesystem::path myFile, bool blnEncrypt)
  {
 //Check file existance.
 	 if ((exists( myFile))    
@@ -61,20 +60,20 @@ void SaveData(SerializingType Data, std::experimental::filesystem::path myFile, 
 {
 	remove( myFile);
 			 }
-catch (const std::experimental::filesystem::filesystem_error &error)
+catch (const std::filesystem::filesystem_error &error)
 {
 	throw RBException(error.what());
 	return;
 	}
 	 }
 	 
-	std::experimental::filesystem::path pTempFileName = myFile;
+	std::filesystem::path pTempFileName = myFile;
 	 
 	try
 	{
 		pTempFileName.replace_extension( wstrTEMPORARY_FILE_EXTENSION);
 }
-catch (const std::experimental::filesystem::filesystem_error &error)
+catch (const std::filesystem::filesystem_error &error)
 {
 	throw RBException(error.what());
 	return;
@@ -87,7 +86,7 @@ catch (const std::experimental::filesystem::filesystem_error &error)
 		 		 boost::archive::xml_woarchive Archive(OutputStream); //create an archive and assign the file stream.
 		Archive << BOOST_SERIALIZATION_NVP(Data);
 }
-catch (const std::experimental::filesystem::filesystem_error &error)
+catch (const std::filesystem::filesystem_error &error)
 {
 	throw RBException(error.what());
 	return;
@@ -101,7 +100,7 @@ if (blnEncrypt)
 		CryptoPP::FileSource(pTempFileName.generic_string().c_str(), true, new CryptoPP::Base64Encoder(new CryptoPP::FileSink( myFile.generic_string().c_str())));
 		remove(pTempFileName);
 	}
-	catch (const std::experimental::filesystem::filesystem_error &error)
+	catch (const std::filesystem::filesystem_error &error)
 	{
 		remove(pTempFileName);
 		throw RBException(error.what());
@@ -114,7 +113,7 @@ else  //Not encrypted, so just rename.
 	{
 		rename(pTempFileName, myFile);
 	}
-	catch (const std::experimental::filesystem::filesystem_error &error)
+	catch (const std::filesystem::filesystem_error &error)
 	{
 		throw RBException(error.what());
 		return;
@@ -126,7 +125,7 @@ else  //Not encrypted, so just rename.
 //load data. 
 //takes a filename, and loads the data returning the serializing type in the template.
 template <class SerializingType>
-SerializingType LoadData(const std::experimental::filesystem::path& myFile, bool blnIsEncrypted)
+SerializingType LoadData(const std::filesystem::path& myFile, bool blnIsEncrypted)
  {
 	SerializingType Data;
 	
@@ -137,7 +136,7 @@ SerializingType LoadData(const std::experimental::filesystem::path& myFile, bool
 		 throw RBException(wstrError);
 	 }
 	
-	 std::experimental::filesystem::path ProcessingPath =myFile;	
+	 std::filesystem::path ProcessingPath =myFile;	
 	 	 if (blnIsEncrypted)
 		{ //the file is encrypted.
 		ProcessingPath.replace_extension(strTEMPORARY_FILE_EXTENSION);

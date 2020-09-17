@@ -4,8 +4,6 @@
 // Raised Bar Ltd.
 // http://www.raisedbar.net
 
-// #ifdef __WINDOWS__ 
-
 #include "ActionPickerWin.h"
 
 
@@ -560,6 +558,4 @@ EVT_BUTTON(ID_PROPERTIES_BUTTON,  ActionPicker::OnActionProperties)
 EVT_BUTTON(wxID_OK,  ActionPicker::OnOK)
 	    EVT_BUTTON( wxID_CANCEL,                 ActionPicker::OnCancel)
 END_EVENT_TABLE()
-	// #endif
-
-		
+	

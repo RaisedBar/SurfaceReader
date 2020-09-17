@@ -112,7 +112,7 @@ std::string GetPortErrorReport(SurfacePointer pMySurface);
 		void CloseAllSurfaces();
 
 bool IsSurfaceNameUnique( std::wstring wstrName);
-bool CopyDir( std::experimental::filesystem::path const & source, std::experimental::filesystem::path const & destination);
+bool CopyDir( std::filesystem::path const & source, std::filesystem::path const & destination);
 
 bool DeleteAppConfigFiles();
 void SaveAppConfigs();
@@ -129,7 +129,7 @@ bool LoadSurfaces();
 	bool LoadOptions();
 	bool SaveOptions();
 
-void ShowLog( std::experimental::filesystem::path myPath, bool blnIsEncrypted);
+void ShowLog( std::filesystem::path myPath, bool blnIsEncrypted);
 
 // event handlers 
 

@@ -4,8 +4,6 @@
 // Raised Bar Ltd.
 // http://www.raisedbar.net
 
-// #define _SCL_SECURE_NO_WARNINGS
-
 #ifndef DISPLAYS_PAGE_H
 #define DISPLAYS_PAGE_H
 

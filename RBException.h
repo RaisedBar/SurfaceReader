@@ -1,7 +1,5 @@
 // RBException.h
 
-// #define _SCL_SECURE_NO_WARNINGS
-
 #ifndef SURFACE_EXCEPTION_H
 #define SURFACE_EXCEPTION_H
 

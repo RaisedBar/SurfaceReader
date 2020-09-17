@@ -2,8 +2,6 @@
 //Responses to surface events
 
 
-// #define _SCL_SECURE_NO_WARNINGS
-
 #ifndef SURFACE_ACTIONS_H
 #define SURFACE_ACTIONS_H
 

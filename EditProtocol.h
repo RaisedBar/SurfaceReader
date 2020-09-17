@@ -1,7 +1,5 @@
 // EditProtocol.h
 
-// #define _SCL_SECURE_NO_WARNINGS
-
 #ifndef EDIT_PROTOCOL_H
 #define EDIT_PROTOCOL_H
 

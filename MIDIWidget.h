@@ -2,8 +2,6 @@
 //MidiWidget class.
 //note: all functions are inlined where possible.
 
-// #define _SCL_SECURE_NO_WARNINGS
-
 #ifndef MIDIWIDGET_H
 #define MIDIWIDGET_H
 

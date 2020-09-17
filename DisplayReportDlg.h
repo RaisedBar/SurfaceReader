@@ -5,8 +5,6 @@
 // http://www.raisedbar.net
 
 
-// #define _SCL_SECURE_NO_WARNINGS
-
 #ifndef DISPLAY_REPORT_DLG_H
 #define DISPLAY_REPORT_DLG_H
 

@@ -3,8 +3,6 @@
 // Raised Bar Ltd.
 // http://www.raisedbar.net
 
-// #define _SCL_SECURE_NO_WARNINGS
-
 #ifndef HardwareControlsPage_H
 #define HardwareControlsPage_H
 

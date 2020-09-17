@@ -5,8 +5,6 @@
 // http://www.raisedbar.net
 
 
-// #define _SCL_SECURE_NO_WARNINGS
-
 #ifndef SCREEN_READER_PARAMS_H
 #define SCREEN_READER_PARAMS_H
 

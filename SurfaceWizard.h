@@ -1,7 +1,5 @@
 // SurfaceWizard.h
 
-// #define _SCL_SECURE_NO_WARNINGS
-
 #ifndef SURFACE_WIZARD_H
 #define SURFACE_WIZARD_H
 

@@ -2,8 +2,6 @@
 //AppConfig and related Classes
 
 
-// #define _SCL_SECURE_NO_WARNINGS
-
 #ifndef APPCONFIG_H
 #define APPCONFIG_H
 

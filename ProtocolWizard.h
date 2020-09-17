@@ -1,7 +1,5 @@
 // ProtocolWizard.h
 
-// #define _SCL_SECURE_NO_WARNINGS
-
 #ifndef PROTOCOL_WIZARD_H
 #define PROTOCOL_WIZARD_H
 

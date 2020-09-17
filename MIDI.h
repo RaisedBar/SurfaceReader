@@ -2,8 +2,6 @@
 // definition of the MIDI class
 
 
-// #define _SCL_SECURE_NO_WARNINGS
-
 #ifndef MIDI_H
 #define MIDI_H
 

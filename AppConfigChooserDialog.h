@@ -5,8 +5,6 @@
 // http://www.raisedbar.net
 
 
-// #define _SCL_SECURE_NO_WARNINGS
-
 #ifndef CHOOSE_APP_CONFIG_H
 #define CHOOSE_APP_CONFIG_H
 

@@ -2,8 +2,6 @@
 //MessageDefinition Class.
 
 
-// #define _SCL_SECURE_NO_WARNINGS
-
 #ifndef MSGDEF_H
 #define MSGDEF_H
 

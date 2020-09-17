@@ -4,8 +4,6 @@
 // http://www.raisedbar.net
 
 
-// #define _SCL_SECURE_NO_WARNINGS
-
 #ifndef LEDLampsPage_H
 #define LEDLampsPage_H
 

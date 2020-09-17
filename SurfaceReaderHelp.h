@@ -2,8 +2,6 @@
 // URL strings for the SurfaceReader help system
 //
 
-// #define _SCL_SECURE_NO_WARNINGS
-
 #ifndef SURFACE_HELP_H
 #define SURFACE_HELP_H
 

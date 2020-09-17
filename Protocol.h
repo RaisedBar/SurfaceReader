@@ -2,8 +2,6 @@
 //SurfaceProtocol Class.
 
 
-// #define _SCL_SECURE_NO_WARNINGS
-
 #ifndef PROTOCOL_H
 #define PROTOCOL_H
 

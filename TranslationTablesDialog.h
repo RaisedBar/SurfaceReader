@@ -4,8 +4,6 @@
 // Raised Bar Ltd.
 // http://www.raisedbar.net
 
-// #define _SCL_SECURE_NO_WARNINGS
-
 #ifndef TRANSLATION_TABLE_DLG_H
 #define TRANSLATION_TABLE_DLG_H
 

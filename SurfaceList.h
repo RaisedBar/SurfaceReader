@@ -1,8 +1,6 @@
 // SurfaceList.h
 // Derived from wxListBox
 
-// #define _SCL_SECURE_NO_WARNINGS
-
 #ifndef SURFACE_LIST_H
 #define SURFACE_LIST_H
 

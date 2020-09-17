@@ -1,7 +1,5 @@
 // AppConfigWizard.h
 
-// #define _SCL_SECURE_NO_WARNINGS
-
 #ifndef APP_CONFIG_WIZARD_H
 #define APP_CONFIG_WIZARD_H
 

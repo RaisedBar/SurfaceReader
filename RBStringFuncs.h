@@ -30,13 +30,13 @@ using namespace std;
 
 // String-handling functions
 
-std::experimental::filesystem::path AppDataPath();
-std::experimental::filesystem::path HelpPath();
-std::experimental::filesystem::path AppConfigPath();
-std::experimental::filesystem::path SpeechPath();
-std::experimental::filesystem::path ProtocolPath();
-std::experimental::filesystem::path SurfacePath();
-std::experimental::filesystem::path LogPath();
+std::filesystem::path AppDataPath();
+std::filesystem::path HelpPath();
+std::filesystem::path AppConfigPath();
+std::filesystem::path SpeechPath();
+std::filesystem::path ProtocolPath();
+std::filesystem::path SurfacePath();
+std::filesystem::path LogPath();
 std::wstring PathToURL( std::wstring wxstrPath);
 
 std::wstring StripWSpaces( std::wstring wstrIn);

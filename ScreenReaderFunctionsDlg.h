@@ -3,8 +3,6 @@
 // Raised Bar Ltd.
 // http://www.raisedbar.net
 
-// #define _SCL_SECURE_NO_WARNINGS
-
 #ifndef SCREEN_READER_FUNCTIONS_DLG_H
 #define SCREEN_READER_FUNCTIONS_DLG_H
 

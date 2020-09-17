@@ -4,8 +4,6 @@
 // Raised Bar Ltd.
 // http://www.raisedbar.net
 
-// #define _SCL_SECURE_NO_WARNINGS
-
 #ifndef CHOOSE_PROTOCOL_H
 #define CHOOSE_PROTOCOL_H
 

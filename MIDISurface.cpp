@@ -29,7 +29,7 @@ vDisplayBuffer.clear();
 	mySurfaceID = boost::lexical_cast <std::string> (myUUID); 	
 
 // Logging
-std::experimental::filesystem::path myPath = LogPath();
+std::filesystem::path myPath = LogPath();
 myPath /= mySurfaceID.append( strLogExtension);
 boost::log::add_file_log( myPath.generic_string(), boost::log::keywords::rotation_size = 10 * 1024 * 1024, boost::log::keywords::time_based_rotation = boost::log::sinks::file::rotation_at_time_point(0, 0, 0), boost::log::keywords::format = "[%TimeStamp%]: %Message%"); //create a log file.
 boost::log::add_common_attributes(); //add common attributes see documentation.
@@ -64,7 +64,7 @@ vDisplayBuffer.clear();
 	mySurfaceID = boost::lexical_cast <std::string> (myUUID); 	
 
 // Logging
-std::experimental::filesystem::path myPath = LogPath();
+std::filesystem::path myPath = LogPath();
 myPath /= myParameters->GetSurfaceName().append( wstrLogExtension);
 boost::log::add_file_log( myPath.generic_string(), boost::log::keywords::rotation_size = 10 * 1024 * 1024, boost::log::keywords::time_based_rotation = boost::log::sinks::file::rotation_at_time_point(0, 0, 0), boost::log::keywords::format = "[%TimeStamp%]: %Message%"); //create a log file.
 boost::log::add_common_attributes(); //add common attributes see documentation.
@@ -115,7 +115,7 @@ vDisplayBuffer.clear();
 	mySurfaceID = boost::lexical_cast <std::string> (myUUID); 	
 
 // Logging
-std::experimental::filesystem::path myPath = LogPath();
+std::filesystem::path myPath = LogPath();
 myPath /= wstrName.append( wstrLogExtension);
 boost::log::add_file_log( myPath.generic_string(), boost::log::keywords::rotation_size = 10 * 1024 * 1024, boost::log::keywords::time_based_rotation = boost::log::sinks::file::rotation_at_time_point(0, 0, 0), boost::log::keywords::format = "[%TimeStamp%]: %Message%"); //create a log file.
 boost::log::add_common_attributes(); //add common attributes see documentation.
@@ -150,7 +150,7 @@ boost::uuids::uuid myUUID = boost::uuids::random_generator()();
 	mySurfaceID = boost::lexical_cast <std::string> (myUUID); 	
 
 // Logging
-std::experimental::filesystem::path myPath = LogPath();
+std::filesystem::path myPath = LogPath();
 myPath /= wstrName.append( wstrLogExtension);
 boost::log::add_file_log( myPath.generic_string(), boost::log::keywords::rotation_size = 10 * 1024 * 1024, boost::log::keywords::time_based_rotation = boost::log::sinks::file::rotation_at_time_point(0, 0, 0), boost::log::keywords::format = "[%TimeStamp%]: %Message%"); //create a log file.
 boost::log::add_common_attributes(); //add common attributes see documentation.
@@ -188,7 +188,7 @@ boost::uuids::uuid myUUID = boost::uuids::random_generator()();
 	mySurfaceID = boost::lexical_cast <std::string> (myUUID); 	
 
 // Logging
-std::experimental::filesystem::path myPath = LogPath();
+std::filesystem::path myPath = LogPath();
 myPath /= wstrName.append( wstrLogExtension);
 boost::log::add_file_log( myPath.generic_string(), boost::log::keywords::rotation_size = 10 * 1024 * 1024, boost::log::keywords::time_based_rotation = boost::log::sinks::file::rotation_at_time_point(0, 0, 0), boost::log::keywords::format = "[%TimeStamp%]: %Message%"); //create a log file.
 boost::log::add_common_attributes(); //add common attributes see documentation.
