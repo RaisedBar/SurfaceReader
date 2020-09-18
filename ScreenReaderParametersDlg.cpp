@@ -4,11 +4,12 @@
 // Raised Bar Ltd.
 // http://www.raisedbar.net
 
+#define _HAS_STD_BYTE 0
 
 #include "ScreenReaderParametersDlg.h"
 
 
-ScreenReaderParametersDlg::ScreenReaderParametersDlg(const wxString & title, boost::shared_ptr <std::vector<JAWSParameter> > pSpeechParameters)
+ScreenReaderParametersDlg::ScreenReaderParametersDlg(const wxString & title, std::shared_ptr <std::vector<JAWSParameter> > pSpeechParameters)
        : wxDialog(NULL, -1, title, wxDefaultPosition, wxSize(250, 230)),
 	   pMySpeechParameters( new JawsParametersType ())
 {

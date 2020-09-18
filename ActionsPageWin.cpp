@@ -4,11 +4,12 @@
 // Raised Bar Ltd.
 // http://www.raisedbar.net
 
+#define _HAS_STD_BYTE 0
 
 #include "ActionsPageWin.h"
 
 
-ActionsPage::ActionsPage(wxWizard * wizParent, const wxString &title, boost::shared_ptr<AppConfig> pAppConfig, boost::shared_ptr<SurfaceProtocol> pProtocol, boost::shared_ptr<RBSpeech> pSpeech, boost::shared_ptr<JawsCacheType> pJawsCache)
+ActionsPage::ActionsPage(wxWizard * wizParent, const wxString &title, std::shared_ptr<AppConfig> pAppConfig, std::shared_ptr<SurfaceProtocol> pProtocol, std::shared_ptr<RBSpeech> pSpeech, std::shared_ptr<JawsCacheType> pJawsCache)
        : wxWizardPageSimple( wizParent),
 	   pMyAppConfig( new AppConfig()),
 pMyProtocol( new SurfaceProtocol()),

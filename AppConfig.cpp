@@ -1,6 +1,7 @@
 // AppConfig.cpp
 //Implementation of the AppConfig class
 
+#define _HAS_STD_BYTE 0
 
 #include "AppConfig.h"
 

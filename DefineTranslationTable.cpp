@@ -3,11 +3,12 @@
 // Raised Bar Ltd.
 // http://www.raisedbar.net
 
+#define _HAS_STD_BYTE 0
 
 #include "DefineTranslationTable.h"
 
 
-DefineTranslationTable::DefineTranslationTable( const wxString& title, boost::shared_ptr<SurfaceProtocol> pProtocol)
+DefineTranslationTable::DefineTranslationTable( const wxString& title, std::shared_ptr<SurfaceProtocol> pProtocol)
        : wxDialog(NULL, -1, title, wxDefaultPosition, wxSize(250, 230)),
 	   pMyProtocol( new SurfaceProtocol())
 {  
@@ -60,7 +61,7 @@ Centre();
 }
 
 
-DefineTranslationTable::DefineTranslationTable( const wxString& title, std::string strTableID, boost::shared_ptr<SurfaceProtocol> pProtocol)
+DefineTranslationTable::DefineTranslationTable( const wxString& title, std::string strTableID, std::shared_ptr<SurfaceProtocol> pProtocol)
        : wxDialog(NULL, -1, title, wxDefaultPosition, wxSize(250, 230))
 {  
 strMyTableID = strTableID;

@@ -1,5 +1,7 @@
 //SurfaceParameters.cpp
 
+#define _HAS_STD_BYTE 0
+
 #include "SurfaceParameters.h"
 
 

@@ -1,6 +1,7 @@
 // AppCollection.cpp
 //Implementation of the AppCollection class
 
+#define _HAS_STD_BYTE 0
 
 #include "AppCollection.h"
 

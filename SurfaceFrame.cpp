@@ -1,5 +1,6 @@
 	// SurfaceFrame.cpp
 
+#define _HAS_STD_BYTE 0
 
 #include "SurfaceFrame.h"
 #include "smile.xpm"
@@ -1319,7 +1320,7 @@ void SurfaceFrame::ShowLog( std::filesystem::path myPath, bool blnIsEncrypted)
 
 void SurfaceFrame::OnNewProtocol(wxCommandEvent& event)
 {
-	boost::shared_ptr <SurfaceProtocol> pProtocol( new SurfaceProtocol());
+	std::shared_ptr <SurfaceProtocol> pProtocol( new SurfaceProtocol());
 	ProtocolWizard myProtocolWizard( this, true, pProtocol, blnEncryptionMode, Protocols, pHelpController);
 
 if (myProtocolWizard.RunWizard( myProtocolWizard.GetSurfacePage()))
@@ -1448,11 +1449,11 @@ return;
 	AppConfig myAppConfig;
 	myAppConfig.SetAppName( wstrAppName);
 myAppConfig.SetProtocolID( strProtocolID);
-boost::shared_ptr <AppConfig> pAppConfig( new AppConfig (myAppConfig));
+std::shared_ptr <AppConfig> pAppConfig( new AppConfig (myAppConfig));
 
 // Populate the control structure from the defaults
 	SurfaceProtocol myProtocol = Protocols->GetProtocol( strProtocolID);
-boost::shared_ptr <SurfaceProtocol> pProtocol( new SurfaceProtocol (myProtocol));
+std::shared_ptr <SurfaceProtocol> pProtocol( new SurfaceProtocol (myProtocol));
 
 pAppConfig->SetHardwareControls( pProtocol->GetHardwareControls());
 pAppConfig->SetDisplays( pProtocol->GetDisplays());
@@ -1693,8 +1694,8 @@ wxMessageBox( wstrNoAppConfigError, wstrErrorTitle, wxOK | wxICON_ERROR);
 return;
 }  // end catch
 
-boost::shared_ptr <AppConfig> pAppConfig( new AppConfig(myAppConfig));
-boost::shared_ptr <SurfaceProtocol> pProtocol(new SurfaceProtocol(Protocols->GetProtocol(strProtocolID)));
+std::shared_ptr <AppConfig> pAppConfig( new AppConfig(myAppConfig));
+std::shared_ptr <SurfaceProtocol> pProtocol(new SurfaceProtocol(Protocols->GetProtocol(strProtocolID)));
 
 	 AppConfigWizard myAppConfigWizard( this, true, pAppConfig, pProtocol, Speech, JawsCache, pHelpController);
 			
@@ -1755,7 +1756,7 @@ blnProtocolExists = false;
 	
 	if (blnProtocolExists)
 		{
-boost::shared_ptr <SurfaceProtocol> pProtocol( new SurfaceProtocol (myProtocol));
+std::shared_ptr <SurfaceProtocol> pProtocol( new SurfaceProtocol (myProtocol));
 			
 			if ((pProtocol->IsEncrypted()) && (blnEncryptionMode == false))
 	{
@@ -1764,7 +1765,7 @@ wxMessageBox( wstrEncryptedProtocolError, wstrErrorTitle, wxOK | wxICON_ERROR);
 	else
 	{
 // Get the surface parameters to keep the wizard happy
-		boost::shared_ptr<SurfaceParameters> pParameters( new SurfaceParameters());
+		std::shared_ptr<SurfaceParameters> pParameters( new SurfaceParameters());
 
 pParameters->SetSurfaceName( SurfacePointers.at( nMySelection)->GetSurfaceName());
 pParameters->SetProtocolID( SurfacePointers.at( nMySelection)->GetProtocolID());
@@ -1816,7 +1817,7 @@ if (nMySelection < 0)   // No selection in list box
 
 std::wstring wstrSurfaceName; 
 std::string strProtocolID = SurfacePointers.at( nMySelection)->GetProtocolID();
-				boost::shared_ptr <SurfaceProtocol> pProtocol( new SurfaceProtocol (Protocols->GetProtocol( strProtocolID)));
+				std::shared_ptr <SurfaceProtocol> pProtocol( new SurfaceProtocol (Protocols->GetProtocol( strProtocolID)));
 
 if ((pProtocol->IsEncrypted()) && (blnEncryptionMode == false))
 	{
@@ -2513,7 +2514,7 @@ ClearDisplays();
 // Identify the selected surface and its protocol
 std::wstring wstrSurfaceName = lbxSurfaces->GetStringSelection().ToStdWstring();
 std::string strProtocolID = SurfacePointers.at( nMySelection)->GetProtocolID();
-	boost::shared_ptr<SurfaceProtocol> pProtocol( new SurfaceProtocol (Protocols->GetProtocol( strProtocolID)));
+	std::shared_ptr<SurfaceProtocol> pProtocol( new SurfaceProtocol (Protocols->GetProtocol( strProtocolID)));
 
 for (unsigned int i = 0; i < pProtocol->GetDisplayCount(); i++)
 {

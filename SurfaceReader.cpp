@@ -2,6 +2,7 @@
 // Purpose:     User interface for the SurfaceReader application
 // Author:      T A Burgess
 
+#define _HAS_STD_BYTE 0
 
 #include "SurfaceReader.h"
 #include "DispatchQueue.h"

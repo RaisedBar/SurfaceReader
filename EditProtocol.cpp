@@ -4,13 +4,14 @@
 // Raised Bar Ltd.
 // http://www.raisedbar.net
 
+#define _HAS_STD_BYTE 0
 
 #include "EditProtocol.h"
 
 
 // Constructor for editing an existing protocol
 
-EditProtocolWizard::EditProtocolWizard( wxFrame * myFrame, bool blnUseSizer, boost::shared_ptr<SurfaceProtocol> pProtocol, boost::shared_ptr<SurfaceParameters> pParameters, bool EncryptionMode, void * pHelpController)
+EditProtocolWizard::EditProtocolWizard( wxFrame * myFrame, bool blnUseSizer, std::shared_ptr<SurfaceProtocol> pProtocol, std::shared_ptr<SurfaceParameters> pParameters, bool EncryptionMode, void * pHelpController)
 	:
 pMyProtocol( new SurfaceProtocol()),
 	pMyParameters( new SurfaceParameters())

@@ -7,7 +7,7 @@
 #include "DisplaysPage.h"
 
 
-DisplaysPage::DisplaysPage(wxWizard * wizParent, const wxString & title, boost::shared_ptr<AppConfig> pAppConfig, boost::shared_ptr<SurfaceProtocol> pProtocol)
+DisplaysPage::DisplaysPage(wxWizard * wizParent, const wxString & title, std::shared_ptr<AppConfig> pAppConfig, std::shared_ptr<SurfaceProtocol> pProtocol)
        : wxWizardPageSimple( wizParent),
 pMyAppConfig( new AppConfig()),
 pMyProtocol( new SurfaceProtocol())

@@ -1,6 +1,8 @@
 // MessageDefinition.cpp
 //Implementation of the MessageDefinition Class.
 
+#define _HAS_STD_BYTE 0
+
 #include "MessageDefinition.h"
 
 	

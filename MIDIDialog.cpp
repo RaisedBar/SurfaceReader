@@ -4,6 +4,8 @@
 // Raised Bar Ltd.
 // http://www.raisedbar.net
 
+#define _HAS_STD_BYTE 0
+
 #include "MIDIDialog.h"
 
 

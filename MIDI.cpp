@@ -1,6 +1,8 @@
 // MIDI.cpp 
 // implementation of the MIDI utility class
 
+#define _HAS_STD_BYTE 0
+
 #include "MIDI.h"
 
 

@@ -1,5 +1,7 @@
 // RBSpeech.cpp
 
+#define _HAS_STD_BYTE 0
+
 #include "RBSpeech.h"
 
 #ifdef __WINDOWS__ 
@@ -414,7 +416,7 @@ blnReturnValue =true;
 			{ // Use a boost::scoped_ptr to ensure that raii is used to close the key when done.
     HKEY reg = NULL;
     DWORD dwErr =RegOpenKey(HKEY_LOCAL_MACHINE, L"SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\HotSpotClicker", &reg);
-    boost::shared_ptr<void> reg_ptr(reg, ::CloseHandle);
+    std::shared_ptr<void> reg_ptr(reg, ::CloseHandle);
 if (dwErr ==ERROR_SUCCESS)
 { //Key is valid so hsc 211 is installed.
 	eReturnValue =STATE_OLDER_VERSION_INSTALLED;
@@ -428,7 +430,7 @@ if (dwErr ==ERROR_SUCCESS)
 				{ // Use a boost::scoped_ptr to ensure that raii is used to close the key when done.
     HKEY reg = NULL;
     DWORD dwErr =RegOpenKey(HKEY_LOCAL_MACHINE, L"SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\HotSpotClicker", & reg);
-    boost::shared_ptr<void> reg_ptr(reg, ::CloseHandle);
+    std::shared_ptr<void> reg_ptr(reg, ::CloseHandle);
 if (dwErr ==ERROR_SUCCESS)
 { //Key is valid so hsc 211 is installed.
 	eReturnValue =STATE_OLDER_VERSION_INSTALLED;
@@ -2151,7 +2153,7 @@ HRESULT RBSpeech::GetExecutablePath(std::filesystem::path& path)
 LPWSTR szFileName[MAX_PATH + 1];
 	DWORD result =GetModuleFileName(NULL, szFileName[0], MAX_PATH + 1);
 	ExitOnSpecificValue(result, 0, hr, S_FALSE, "Unable to obtain he executable name and path.");
-	path = WideCharToMultiByte( szFileName);
+	path = boost::lexical_cast<std::string>(szFileName);
 LExit:
 	ReleaseStr(szFileName);
 	return hr;
@@ -2176,7 +2178,7 @@ HRESULT RBSpeech::GetCurrentUsersAppDataPath(std::filesystem::path &path)
 	// get folder path
 	hr = ShelGetFolder(&sczPath, CSIDL_APPDATA);
 	ExitOnRootFailure(hr, "Failed to get shell folder.");
-	path = WideCharToMultiByte( sczPath);
+	path = sczPath;
 LExit:
 	ReleaseStr(sczPath);
 	return hr;

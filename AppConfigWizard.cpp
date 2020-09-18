@@ -4,11 +4,12 @@
 // Raised Bar Ltd.
 // http://www.raisedbar.net
 
+#define _HAS_STD_BYTE 0
 
 #include "AppConfigWizard.h"
 
 
-AppConfigWizard::AppConfigWizard( wxFrame * myFrame, bool blnUseSizer, boost::shared_ptr<AppConfig> pAppConfig, boost::shared_ptr<SurfaceProtocol> pProtocol, boost::shared_ptr<RBSpeech> pSpeech, boost::shared_ptr<JawsCacheType> pJawsCache, void * pHelpController)
+AppConfigWizard::AppConfigWizard( wxFrame * myFrame, bool blnUseSizer, std::shared_ptr<AppConfig> pAppConfig, std::shared_ptr<SurfaceProtocol> pProtocol, std::shared_ptr<RBSpeech> pSpeech, std::shared_ptr<JawsCacheType> pJawsCache, void * pHelpController)
 	:
 pMyProtocol( new SurfaceProtocol()),
 pMyAppConfig( new AppConfig()),
@@ -68,7 +69,7 @@ SetAcceleratorTable(wxatKeys);
 }
 
 
-boost::shared_ptr <AppConfig> AppConfigWizard::GetAppConfig()
+std::shared_ptr <AppConfig> AppConfigWizard::GetAppConfig()
 {
 // Apply any page updates
 pMyAppConfig->SetHardwareControls( m_ActionsPage->GetActions());

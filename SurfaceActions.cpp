@@ -1,6 +1,7 @@
 // SurfaceActions.cpp
 //Implementation of the SurfaceActions class
 
+#define _HAS_STD_BYTE 0
 
 #include "SurfaceActions.h"
 

@@ -4,11 +4,12 @@
 // Raised Bar Ltd.
 // http://www.raisedbar.net
 
+#define _HAS_STD_BYTE 0
 
 #include "SurfaceWizard.h"
 
 
-SurfaceWizard::SurfaceWizard( wxFrame * myFrame, boost::shared_ptr<ProtocolCollection>  pProtocols, void * pHelpController, bool useSizer)
+SurfaceWizard::SurfaceWizard( wxFrame * myFrame, std::shared_ptr<ProtocolCollection>  pProtocols, void * pHelpController, bool useSizer)
 	:
 pMyProtocols( new ProtocolCollection()),
 	pSurfaceParameters( new SurfaceParameters ())

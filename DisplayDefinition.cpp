@@ -1,6 +1,9 @@
 // DisplayDefinition.cpp
 //Implementation of the DisplayDefinition Class.
 
+#define _HAS_STD_BYTE 0
+
+#include "DisplayDefinition.h"
 
 DisplayDefinition::DisplayDefinition()
 		:

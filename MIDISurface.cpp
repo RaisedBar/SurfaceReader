@@ -1,11 +1,12 @@
 	// MIDISurface.cpp
 // MIDISurface implementation
+#define _HAS_STD_BYTE 0
 
 #include "MIDISurface.h"
 #include "SurfaceFrame.h"
 #include "DispatchQueue.h"
 
-MIDISurface::MIDISurface( SurfaceFrame * pParent, ActiveProduct apProduct, boost::shared_ptr<ProtocolCollection> pProtocols, boost::shared_ptr<AppCollection> pApps)
+MIDISurface::MIDISurface( SurfaceFrame * pParent, ActiveProduct apProduct, std::shared_ptr<ProtocolCollection> pProtocols, std::shared_ptr<AppCollection> pApps)
 		:
 MIDIWidget(),
 							pMyProtocols( new ProtocolCollection()),
@@ -41,7 +42,7 @@ BOOST_LOG_SEV( lg, boost::log::trivial::info) << "Log created.";
 }
 
 
-MIDISurface::MIDISurface(SurfaceFrame * pParent, ActiveProduct apProduct, SurfaceParameters * myParameters, boost::shared_ptr<ProtocolCollection> pProtocols, boost::shared_ptr<AppCollection> pApps) 
+MIDISurface::MIDISurface(SurfaceFrame * pParent, ActiveProduct apProduct, SurfaceParameters * myParameters, std::shared_ptr<ProtocolCollection> pProtocols, std::shared_ptr<AppCollection> pApps) 
 	: 
 						MIDIWidget(),
 				pMyProtocols( new ProtocolCollection()),
@@ -92,7 +93,7 @@ m_DisplayMIDIIn->setCallback( &DisplayCallback, (void*) this);
 }
 
 
-MIDISurface::MIDISurface(SurfaceFrame * pParent, ActiveProduct apProduct, std::wstring wstrName, boost::shared_ptr<ProtocolCollection> pProtocols, boost::shared_ptr<AppCollection> pApps) 
+MIDISurface::MIDISurface(SurfaceFrame * pParent, ActiveProduct apProduct, std::wstring wstrName, std::shared_ptr<ProtocolCollection> pProtocols, std::shared_ptr<AppCollection> pApps) 
 							:
 MIDIWidget( wstrName),
 				pMyProtocols( new ProtocolCollection()),
@@ -127,7 +128,7 @@ m_DisplayMIDIIn->setCallback( &DisplayCallback, (void*) this);
 }
 
 
-	MIDISurface::MIDISurface(SurfaceFrame * pParent, ActiveProduct apProduct, std::wstring wstrName, std::string myNewProtocolID, boost::shared_ptr<ProtocolCollection> pProtocols, boost::shared_ptr<AppCollection> pApps) 
+	MIDISurface::MIDISurface(SurfaceFrame * pParent, ActiveProduct apProduct, std::wstring wstrName, std::string myNewProtocolID, std::shared_ptr<ProtocolCollection> pProtocols, std::shared_ptr<AppCollection> pApps) 
 : 
 	MIDIWidget( wstrName),
 				pMyProtocols( new ProtocolCollection()),
@@ -165,7 +166,7 @@ m_DisplayMIDIIn->setCallback( &DisplayCallback, (void*) this);
 }
 
 	
-MIDISurface::MIDISurface( SurfaceFrame * pParent, ActiveProduct apProduct, std::wstring wstrName, std::string strNewProtocolID, int nHWIn, int nHWOut, int nDisplayIn, int nDisplayOut, boost::shared_ptr<ProtocolCollection> pProtocols, boost::shared_ptr<AppCollection> pApps)
+MIDISurface::MIDISurface( SurfaceFrame * pParent, ActiveProduct apProduct, std::wstring wstrName, std::string strNewProtocolID, int nHWIn, int nHWOut, int nDisplayIn, int nDisplayOut, std::shared_ptr<ProtocolCollection> pProtocols, std::shared_ptr<AppCollection> pApps)
 				        : 
 MIDIWidget(wstrName, nHWIn, nHWOut, nDisplayIn, nDisplayOut),
 								pMyProtocols( new ProtocolCollection()),

@@ -4,11 +4,12 @@
 // Raised Bar Ltd.
 // http://www.raisedbar.net
 
+#define _HAS_STD_BYTE 0
 
 #include "SurfacePage.h"
 
 
-SurfacePage::SurfacePage( wxWizard * wizParent, const wxString & title, bool blnPickProtocol, boost::shared_ptr<SurfaceParameters> pSurfaceParameters, boost::shared_ptr<ProtocolCollection> pProtocols)
+SurfacePage::SurfacePage( wxWizard * wizParent, const wxString & title, bool blnPickProtocol, std::shared_ptr<SurfaceParameters> pSurfaceParameters, std::shared_ptr<ProtocolCollection> pProtocols)
 : wxWizardPageSimple( wizParent),
 pMySurfaceParameters( new SurfaceParameters()),
 pMyProtocols( new ProtocolCollection())

@@ -1,6 +1,8 @@
 // Protocol.cpp
 //Implementation of the SurfaceProtocol Class.
 
+#define _HAS_STD_BYTE 0
+
 #include "Protocol.h"
 
 

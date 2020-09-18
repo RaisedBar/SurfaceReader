@@ -3,11 +3,12 @@
 // Raised Bar Ltd.
 // http://www.raisedbar.net
 
+#define _HAS_STD_BYTE 0
 
 #include "ProtocolChooserDialog.h"
 
 
-ProtocolChooserDialog::ProtocolChooserDialog( const wxString& title, std::string strProtocolID, boost::shared_ptr <ProtocolCollection> pProtocols)
+ProtocolChooserDialog::ProtocolChooserDialog( const wxString& title, std::string strProtocolID, std::shared_ptr <ProtocolCollection> pProtocols)
        : wxDialog(NULL, -1, title, wxDefaultPosition, wxSize(250, 230)),
 	   pMyProtocols( new ProtocolCollection())
 {  

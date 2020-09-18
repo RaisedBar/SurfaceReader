@@ -3,10 +3,12 @@
 // Raised Bar Ltd.
 // http://www.raisedbar.net
 
+#define _HAS_STD_BYTE 0
+
 #include "TextDisplaysPage.h"
 
 
-TextDisplaysPage::TextDisplaysPage(wxWizard * wizParent, const wxString & title, boost::shared_ptr<SurfaceProtocol> pProtocol)
+TextDisplaysPage::TextDisplaysPage(wxWizard * wizParent, const wxString & title, std::shared_ptr<SurfaceProtocol> pProtocol)
        : wxWizardPageSimple( wizParent),
 	   pMyProtocol( new SurfaceProtocol())
 {

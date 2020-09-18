@@ -3,11 +3,12 @@
 // Raised Bar Ltd.
 // http://www.raisedbar.net
 
+#define _HAS_STD_BYTE 0
 
 #include "DefineLEDLampDlg.h"
 
 
-DefineLEDLampDialog::DefineLEDLampDialog( const wxString & title, boost::shared_ptr<SurfaceProtocol> pProtocol)
+DefineLEDLampDialog::DefineLEDLampDialog( const wxString & title, std::shared_ptr<SurfaceProtocol> pProtocol)
        : wxDialog(NULL, -1, title, wxDefaultPosition, wxSize(250, 230)),
 	   pMyProtocol( new SurfaceProtocol())
 {

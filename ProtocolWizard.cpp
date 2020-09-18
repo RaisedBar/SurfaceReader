@@ -4,11 +4,12 @@
 // Raised Bar Ltd.
 // http://www.raisedbar.net
 
+#define _HAS_STD_BYTE 0
 
 #include "ProtocolWizard.h"
 
 
-ProtocolWizard::ProtocolWizard( wxFrame * myFrame, bool blnUseSizer, boost::shared_ptr<SurfaceProtocol> pProtocol, bool EncryptionMode, boost::shared_ptr<ProtocolCollection> pProtocols, void * pHelpController)
+ProtocolWizard::ProtocolWizard( wxFrame * myFrame, bool blnUseSizer, std::shared_ptr<SurfaceProtocol> pProtocol, bool EncryptionMode, std::shared_ptr<ProtocolCollection> pProtocols, void * pHelpController)
 	:
 pMyProtocols( new ProtocolCollection()),
 	pMyProtocol( new SurfaceProtocol()),
@@ -64,7 +65,7 @@ if (blnUseSizer )
 
 // Constructor for editing an existing protocol
 
-ProtocolWizard::ProtocolWizard( wxFrame * myFrame, bool blnUseSizer, boost::shared_ptr<SurfaceProtocol> pProtocol, boost::shared_ptr<SurfaceParameters> pParameters, bool EncryptionMode, boost::shared_ptr<ProtocolCollection> pProtocols, void * pHelpController)
+ProtocolWizard::ProtocolWizard( wxFrame * myFrame, bool blnUseSizer, std::shared_ptr<SurfaceProtocol> pProtocol, std::shared_ptr<SurfaceParameters> pParameters, bool EncryptionMode, std::shared_ptr<ProtocolCollection> pProtocols, void * pHelpController)
 :
 pMyProtocols( new ProtocolCollection()),
 	pMyProtocol( new SurfaceProtocol()),

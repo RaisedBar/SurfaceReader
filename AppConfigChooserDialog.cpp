@@ -3,11 +3,12 @@
 // Raised Bar Ltd.
 // http://www.raisedbar.net
 
+#define _HAS_STD_BYTE 0
 
 #include "AppConfigChooserDialog.h"
 
 
-AppConfigChooserDialog::AppConfigChooserDialog( const wxString& title, std::string strProtocolID, boost::shared_ptr <AppCollection> pApps)
+AppConfigChooserDialog::AppConfigChooserDialog( const wxString& title, std::string strProtocolID, std::shared_ptr <AppCollection> pApps)
        : wxDialog(NULL, -1, title, wxDefaultPosition, wxSize(250, 230)),
 	   pMyApps( new AppCollection())
 {  

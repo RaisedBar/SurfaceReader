@@ -1,11 +1,13 @@
 // ScreenReaderFunctionsDlg.cpp
 
+#define _HAS_STD_BYTE 0
+
 #include "ScreenReaderFunctionsDlg.h"
 
 #ifdef __WINDOWS__
 
 
-ScreenReaderFunctionsDlg::ScreenReaderFunctionsDlg(const wxString & title, SurfaceActionType mySAType, boost::shared_ptr<AppConfig> pAppConfig, boost::shared_ptr<RBSpeech> pSpeech, boost::shared_ptr<JawsCacheType> pJawsCache)
+ScreenReaderFunctionsDlg::ScreenReaderFunctionsDlg(const wxString & title, SurfaceActionType mySAType, std::shared_ptr<AppConfig> pAppConfig, std::shared_ptr<RBSpeech> pSpeech, std::shared_ptr<JawsCacheType> pJawsCache)
 : wxDialog(NULL, -1, title, wxDefaultPosition, wxSize(250, 230)),
 pMyAppConfig( new AppConfig()),
 pMySpeech( new RBSpeech()),
@@ -52,7 +54,7 @@ SetSizerAndFit(vBox1);
 
 #else
 
-ScreenReaderFunctionsDlg::ScreenReaderFunctionsDlg(const wxString & title, SurfaceActionType mySAType, boost::shared_ptr <AppConfig> pAppConfig, boost::shared_ptr <RBSpeech> pSpeech)
+ScreenReaderFunctionsDlg::ScreenReaderFunctionsDlg(const wxString & title, SurfaceActionType mySAType, std::shared_ptr <AppConfig> pAppConfig, std::shared_ptr <RBSpeech> pSpeech)
 : wxDialog(NULL, -1, title, wxDefaultPosition, wxSize(250, 230)),
 pMyAppConfig( new AppConfig()),
 pMySpeech( new RBSpeech())
@@ -352,7 +354,7 @@ else
 	#ifdef __WINDOWS__
 
 // std::vector<JAWSParameter> ScreenReaderFunctionsDlg::GetJawsParameters(std::wstring wstrAction)
-boost::shared_ptr <JawsParametersType> ScreenReaderFunctionsDlg::GetJawsParameters(std::wstring wstrAction)
+std::shared_ptr <JawsParametersType> ScreenReaderFunctionsDlg::GetJawsParameters(std::wstring wstrAction)
 {
 	std::vector<JAWSParameter> JawsParameters;	
 	ActionCollectionType myActionCollection;
@@ -407,7 +409,7 @@ catch( RBException &myException)   // Get the user to define the Jaws script fil
 OutputDebugString( myException.what());
 					// #endif
 }
-return boost::shared_ptr <JawsParametersType>( new JawsParametersType (Parameters));
+return std::shared_ptr <JawsParametersType>( new JawsParametersType (Parameters));
 	}
 #endif
 

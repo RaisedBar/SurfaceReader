@@ -3,12 +3,14 @@
 // Raised Bar Ltd.
 // http://www.raisedbar.net
 
+#define _HAS_STD_BYTE 0
+
 #include "DefineDisplayDlg.h"
 
 
 // Constructor for new displays
 
-DefineDisplayDialog::DefineDisplayDialog( const wxString & title, const bool blnIsLED, boost::shared_ptr<SurfaceProtocol> pProtocol)
+DefineDisplayDialog::DefineDisplayDialog( const wxString & title, const bool blnIsLED, std::shared_ptr<SurfaceProtocol> pProtocol)
        : wxDialog(NULL, -1, title, wxDefaultPosition, wxSize(250, 230)),
 	   pMyProtocol( new SurfaceProtocol ()),
 	   blnCursorFromLeft( true),
@@ -85,7 +87,7 @@ Centre();
 
 // Constructor for editing an existing display
 
-DefineDisplayDialog::DefineDisplayDialog( const wxString& title, const wxString &ControlLabel, const std::string &strDisplayHash, DisplayDefinition myDisplay, boost::shared_ptr<SurfaceProtocol> pProtocol)
+DefineDisplayDialog::DefineDisplayDialog( const wxString& title, const wxString &ControlLabel, const std::string &strDisplayHash, DisplayDefinition myDisplay, std::shared_ptr<SurfaceProtocol> pProtocol)
 :
 		wxDialog(NULL, -1, title, wxDefaultPosition, wxSize(250, 230)),
 	   pMyProtocol( new SurfaceProtocol ()),

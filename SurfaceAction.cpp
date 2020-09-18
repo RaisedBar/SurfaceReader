@@ -1,6 +1,7 @@
 // SurfaceAction.cpp
 //Response to surface events
 
+#define _HAS_STD_BYTE 0
 
 #include "SurfaceAction.h"
 

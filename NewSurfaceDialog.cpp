@@ -16,7 +16,7 @@
 #include "SurfaceReader.h"
 
 
-NewSurfaceDialog::NewSurfaceDialog(const wxString & title, boost::shared_ptr <ProtocolCollection> pMyProtocols, bool blnPickProtocol)
+NewSurfaceDialog::NewSurfaceDialog(const wxString & title, std::shared_ptr <ProtocolCollection> pMyProtocols, bool blnPickProtocol)
 : wxDialog(NULL, -1, title, wxDefaultPosition, wxSize(250, 230))
 {
 	pProtocols = pMyProtocols;
@@ -78,7 +78,7 @@ this->SetSizer(vBox1);
 }
 
 
-NewSurfaceDialog::NewSurfaceDialog(const wxString & title, boost::shared_ptr <ProtocolCollection> pMyProtocols, bool blnPickProtocol, MIDISurface * pMySurface)
+NewSurfaceDialog::NewSurfaceDialog(const wxString & title, std::shared_ptr <ProtocolCollection> pMyProtocols, bool blnPickProtocol, MIDISurface * pMySurface)
        : wxDialog(NULL, -1, title, wxDefaultPosition, wxSize(250, 230))
 {
 	pProtocols = pMyProtocols;
