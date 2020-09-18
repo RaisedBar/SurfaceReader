@@ -12,7 +12,7 @@
 #include "HardwarePage.h"
 #include "SurfaceReaderHelp.h"
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 #include <wx/frame.h>
 #include <wx/menu.h>
@@ -31,7 +31,7 @@
 class EditProtocolWizard : public wxWizard
 {
 public:
-	EditProtocolWizard(wxFrame * myFrame, bool blnUseSizer, boost::shared_ptr<SurfaceProtocol> pProtocol, boost::shared_ptr<SurfaceParameters> pParameters, bool blnEncryptionMode, void * pHelpController);
+	EditProtocolWizard(wxFrame * myFrame, bool blnUseSizer, std::shared_ptr<SurfaceProtocol> pProtocol, std::shared_ptr<SurfaceParameters> pParameters, bool blnEncryptionMode, void * pHelpController);
 
 SurfaceParameters GetSurfaceParameters();
 
@@ -59,8 +59,8 @@ return m_HardwareControlsPage;
 }
 
 private:
-boost::shared_ptr<SurfaceParameters> pMyParameters;
-	boost::shared_ptr<SurfaceProtocol> pMyProtocol;
+std::shared_ptr<SurfaceParameters> pMyParameters;
+	std::shared_ptr<SurfaceProtocol> pMyProtocol;
 bool blnEncryptionMode;
     	
 // Event handlers

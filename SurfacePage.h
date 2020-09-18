@@ -15,7 +15,7 @@
 #include "MIDIDialog.h"
 #include "SRConstants.h"
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 #include <wx/msgdlg.h>
 #include <wx/wizard.h>
@@ -30,7 +30,7 @@
 class SurfacePage: public wxWizardPageSimple
 {
 public:
-	SurfacePage( wxWizard * wizParent, const wxString & title, bool blnPickProtocol, boost::shared_ptr<SurfaceParameters> pSurfaceParameters, boost::shared_ptr<ProtocolCollection> pProtocols);
+	SurfacePage( wxWizard * wizParent, const wxString & title, bool blnPickProtocol, std::shared_ptr<SurfaceParameters> pSurfaceParameters, std::shared_ptr<ProtocolCollection> pProtocols);
 	
 		// ~SurfacePage();
 
@@ -49,7 +49,7 @@ pMySurfaceParameters->SetDisplayOutName( this->GetDisplay_MIDIOutName());
 	return IsValidSurface();
 }
 
-boost::shared_ptr<SurfaceParameters> GetSurfaceParameters()
+std::shared_ptr<SurfaceParameters> GetSurfaceParameters()
 {
 	return pMySurfaceParameters;
 }
@@ -103,8 +103,8 @@ std::wstring wstrProtocolFileName;
 int nHardware_MIDIIn, nHardware_VirtualMIDIOut, nDisplay_VirtualMIDIIn, nDisplay_MIDIOut;
 std::string strHardware_MIDIInName, strHardware_VirtualMIDIOutName, strDisplay_VirtualMIDIInName, strDisplay_MIDIOutName;	
 	
-boost::shared_ptr<SurfaceParameters> pMySurfaceParameters;
-boost::shared_ptr<ProtocolCollection> pMyProtocols;
+std::shared_ptr<SurfaceParameters> pMySurfaceParameters;
+std::shared_ptr<ProtocolCollection> pMyProtocols;
 
 
 wxTextCtrl * txtSurfaceName; 

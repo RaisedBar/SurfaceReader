@@ -18,7 +18,7 @@
 #include "DefineCharDialog.h"
 
 #include <boost/lexical_cast.hpp>
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include <boost/uuid/uuid_generators.hpp>
 		#include <boost/uuid/uuid.hpp>
 		#include <boost/uuid/uuid_io.hpp>         // streaming operators etc. 
@@ -36,8 +36,8 @@
 class DefineTranslationTable: public wxDialog
 {
 public:
-DefineTranslationTable( const wxString& title, boost::shared_ptr<SurfaceProtocol> pProtocol);
-	DefineTranslationTable( const wxString& title, std::string strTableID, boost::shared_ptr<SurfaceProtocol> pProtocol);
+DefineTranslationTable( const wxString& title, std::shared_ptr<SurfaceProtocol> pProtocol);
+	DefineTranslationTable( const wxString& title, std::string strTableID, std::shared_ptr<SurfaceProtocol> pProtocol);
 ~DefineTranslationTable();
 
 bool IsValidTableDefinition();
@@ -58,7 +58,7 @@ wxListBox * lbxCharacters;
   // Internal storage
 std::string strMyTableID;
 std::map <unsigned char, std::wstring> myLabels;
-boost::shared_ptr<SurfaceProtocol> pMyProtocol;
+std::shared_ptr<SurfaceProtocol> pMyProtocol;
 
 DECLARE_EVENT_TABLE()
 };

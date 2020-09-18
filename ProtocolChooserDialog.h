@@ -13,7 +13,7 @@
 #include "RBEnums.h"
 #include "ProtocolCollection.h"
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 #include <wx/StatText.h>
 #include <wx/sizer.h>
@@ -26,7 +26,7 @@
 class ProtocolChooserDialog: public wxDialog
 {
 public:
-ProtocolChooserDialog( const wxString& title, std::string strProtocolID, boost::shared_ptr <ProtocolCollection> pProtocols);
+ProtocolChooserDialog( const wxString& title, std::string strProtocolID, std::shared_ptr <ProtocolCollection> pProtocols);
 ~ProtocolChooserDialog();
 
 std::string GetProtocolID();
@@ -41,7 +41,7 @@ void OnCancel( wxCommandEvent& event);
 
 wxStaticText * lblProtocolsPrompt;
 wxListBox * lbxProtocols;  
-boost::shared_ptr <ProtocolCollection> pMyProtocols;
+std::shared_ptr <ProtocolCollection> pMyProtocols;
 
 DECLARE_EVENT_TABLE()
 };

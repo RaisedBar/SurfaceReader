@@ -19,7 +19,7 @@
 #include "SRConstants.h"
 #include "ScreenReaderFunctionsDlg.h"
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include <boost/foreach.hpp>
 #include <boost/lexical_cast.hpp>
 using boost::lexical_cast;
@@ -41,7 +41,7 @@ const int SURFACE_ACTION_MODE_LEVEL = 2;
 class ActionPicker: public wxDialog
 	{
 	public:
-		ActionPicker(const wxString & title, const wxString &ControlName, boost::shared_ptr<AppConfig> pAppConfig, boost::shared_ptr<RBSpeech> pSpeech, boost::shared_ptr<JawsCacheType> pJawsCache);
+		ActionPicker(const wxString & title, const wxString &ControlName, std::shared_ptr<AppConfig> pAppConfig, std::shared_ptr<RBSpeech> pSpeech, std::shared_ptr<JawsCacheType> pJawsCache);
 ~ActionPicker();
 
 bool IsValidSurfaceAction();
@@ -96,8 +96,8 @@ ActiveProduct myActiveProduct;
 ActiveProduct myOldActiveProduct;
 DolphinProduct myDolphinProduct;
 
-boost::shared_ptr<AppConfig> pMyAppConfig;
-boost::shared_ptr<RBSpeech> pMySpeech;
-boost::shared_ptr<JawsCacheType> pMyJawsCache;
+std::shared_ptr<AppConfig> pMyAppConfig;
+std::shared_ptr<RBSpeech> pMySpeech;
+std::shared_ptr<JawsCacheType> pMyJawsCache;
 };
 #endif  // define guard

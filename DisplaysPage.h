@@ -20,7 +20,7 @@
 #include "DisplayParamsDlg.h"
 #include "RBException.h"
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 #include <wx/msgdlg.h>
 #include <wx/TreeCtrl.h>
@@ -39,7 +39,7 @@ const int STATE_LEVEL = 2;
 class DisplaysPage: public wxWizardPageSimple
 	{
 	public:
-		DisplaysPage(wxWizard * wizParent, const wxString & title, boost::shared_ptr<AppConfig> pAppConfig, boost::shared_ptr<SurfaceProtocol> pProtocol);
+		DisplaysPage(wxWizard * wizParent, const wxString & title, std::shared_ptr<AppConfig> pAppConfig, std::shared_ptr<SurfaceProtocol> pProtocol);
 ~DisplaysPage();
 
 std::map <std::string, DisplayDefinition> GetDisplays();
@@ -79,8 +79,8 @@ ActiveProduct myActiveProduct; //apply action to what product?
 ActiveProduct myOldActiveProduct;
 // Storage for the defined actions
 	std::map <std::string, MessageDefinition> myDefinitions;
-boost::shared_ptr<SurfaceProtocol> pMyProtocol;
-boost::shared_ptr<AppConfig> pMyAppConfig;
+std::shared_ptr<SurfaceProtocol> pMyProtocol;
+std::shared_ptr<AppConfig> pMyAppConfig;
 std::map <std::string, DisplayDefinition> myDisplays;
 };
 #endif

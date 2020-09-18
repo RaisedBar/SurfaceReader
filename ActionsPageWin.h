@@ -24,7 +24,7 @@
 #include "ScreenReaderFunctionsDlg.h"
 #include "RBException.h"
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 #include <wx/platform.h>
 #include <wx/msgdlg.h>
@@ -48,7 +48,7 @@ const int PROPERTIES_LEVEL = 5;
 class ActionsPage: public wxWizardPageSimple
 	{
 	public:
-			ActionsPage(wxWizard * wizParent, const wxString & title, boost::shared_ptr<AppConfig> pAppConfig, boost::shared_ptr<SurfaceProtocol> pProtocol, boost::shared_ptr<RBSpeech> pSpeech, boost::shared_ptr<JawsCacheType> pJawsCache);
+			ActionsPage(wxWizard * wizParent, const wxString & title, std::shared_ptr<AppConfig> pAppConfig, std::shared_ptr<SurfaceProtocol> pProtocol, std::shared_ptr<RBSpeech> pSpeech, std::shared_ptr<JawsCacheType> pJawsCache);
 ~ActionsPage();
 
 std::map <std::string, MessageDefinition> GetActions();
@@ -111,12 +111,12 @@ wxButton * btnAdd, * btnRemove, * btnUp, * btnDown, * btnRename, * btnReplicate,
 DolphinProduct myDolphinProduct;
 ActiveProduct myActiveProduct; //apply action to what product?
 ActiveProduct myOldActiveProduct;
-boost::shared_ptr<AppConfig> pMyAppConfig;
-boost::shared_ptr<SurfaceProtocol> pMyProtocol;
-boost::shared_ptr<RBSpeech> pMySpeech;
+std::shared_ptr<AppConfig> pMyAppConfig;
+std::shared_ptr<SurfaceProtocol> pMyProtocol;
+std::shared_ptr<RBSpeech> pMySpeech;
 
 std::map <std::string, MessageDefinition> myControls;
-boost::shared_ptr<JawsCacheType> pMyJawsCache;
+std::shared_ptr<JawsCacheType> pMyJawsCache;
 };
 #endif  // define guard
 

@@ -14,7 +14,7 @@
 #include "ProtocolCollection.h"
 #include "SurfaceReaderHelp.h"
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 //#include <wx/platform.h>
 
@@ -34,9 +34,9 @@ class ProtocolWizard : public wxWizard
 {
 public:
 // Constructor for brand new protocol:
-	ProtocolWizard(wxFrame * myFrame, bool blnUseSizer, boost::shared_ptr<SurfaceProtocol> pProtocol, bool EncryptionMode, boost::shared_ptr<ProtocolCollection>  pProtocols, void * pHelpController);
+	ProtocolWizard(wxFrame * myFrame, bool blnUseSizer, std::shared_ptr<SurfaceProtocol> pProtocol, bool EncryptionMode, std::shared_ptr<ProtocolCollection>  pProtocols, void * pHelpController);
 // Constructor for editing an existing protocol:
-	ProtocolWizard(wxFrame * myFrame, bool blnUseSizer, boost::shared_ptr<SurfaceProtocol> pProtocol, boost::shared_ptr<SurfaceParameters> pParameters, bool blnEncryptionMode, boost::shared_ptr<ProtocolCollection> pProtocols, void * pHelpController);
+	ProtocolWizard(wxFrame * myFrame, bool blnUseSizer, std::shared_ptr<SurfaceProtocol> pProtocol, std::shared_ptr<SurfaceParameters> pParameters, bool blnEncryptionMode, std::shared_ptr<ProtocolCollection> pProtocols, void * pHelpController);
 
 SurfaceParameters GetSurfaceParameters();
 
@@ -72,9 +72,9 @@ private:
 // Event handlers
 void OnWizardHelp(wxWizardEvent& event);
 
-boost::shared_ptr<SurfaceParameters> pMyParameters;
-	boost::shared_ptr<ProtocolCollection> pMyProtocols;
-boost::shared_ptr<SurfaceProtocol> pMyProtocol;
+std::shared_ptr<SurfaceParameters> pMyParameters;
+	std::shared_ptr<ProtocolCollection> pMyProtocols;
+std::shared_ptr<SurfaceProtocol> pMyProtocol;
 bool blnEncryptionMode;
 
 SurfacePage * m_SurfacePage;

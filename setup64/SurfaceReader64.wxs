@@ -1,0 +1,281 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+  <Product Id="4334e5fd-9389-4373-b6eb-86cf8473f875" Name="SurfaceReader64" Language="1033" Codepage="Windows-1252" Version="1.0.0.0" UpgradeCode="4334e5fd-9389-4373-b6eb-86cf7473f874" Manufacturer="tim">
+    <Package InstallerVersion="200" Compressed="yes" Platform="x64" SummaryCodepage="Windows-1252" Languages="1033" InstallPrivileges="elevated" />
+    <Media Id="1" Cabinet="SurfaceReader64_.cab" EmbedCab="yes" />
+
+    <Directory Id="TARGETDIR" Name="SourceDir">
+      <Directory Id="ProgramFiles64Folder" Name="ProgramFiles64Folder">
+        <Directory Id="ProgramFiles64Folder.Raised_Bar" Name="Raised Bar">
+          <Directory Id="ExeFolder" Name="SurfaceReader">
+
+            <Component Id="Component.SurfaceReader.exe_342937719" Guid="4334e5fd-9389-4373-b6eb-86cffc02dbb5" Win64="yes">
+              <File Id="SurfaceReader.exe_342937719" Source="..\Files\X64\SurfaceReader.exe">
+                <Shortcut Id="Shortcut.SurfaceReader.exe_342937719.SurfaceReader" WorkingDirectory="ExeFolder" Directory="DesktopFolder" Name="SurfaceReader.lnk" />
+              </File>
+
+              <RegistryKey Root="HKCU" Key="Software\WixSharp\Used">
+                <RegistryValue Value="0" Type="string" KeyPath="yes" />
+              </RegistryKey>
+            </Component>
+
+            <Component Id="Component.dolapi.dll_1209711491" Guid="4334e5fd-9389-4373-b6eb-86cf732c0f87" Win64="yes">
+              <File Id="dolapi.dll_1209711491" Source="..\Files\Program Files\dolapi.dll" />
+            </Component>
+
+            <Component Id="Component.nvdaControllerClient32.dll_1209711491" Guid="4334e5fd-9389-4373-b6eb-86cf5adf5ae2" Win64="yes">
+              <File Id="nvdaControllerClient32.dll_1209711491" Source="..\Files\Program Files\nvdaControllerClient32.dll" />
+            </Component>
+
+            <Component Id="Component.nvdaControllerClient64.dll_1209711491" Guid="4334e5fd-9389-4373-b6eb-86cfe77925f2" Win64="yes">
+              <File Id="nvdaControllerClient64.dll_1209711491" Source="..\Files\Program Files\nvdaControllerClient64.dll" />
+            </Component>
+
+            <Component Id="Component.SAAPI32.dll_1209711491" Guid="4334e5fd-9389-4373-b6eb-86cffe9ace80" Win64="yes">
+              <File Id="SAAPI32.dll_1209711491" Source="..\Files\Program Files\SAAPI32.dll" />
+            </Component>
+
+            <Component Id="Component.SAAPI64.dll_1209711491" Guid="4334e5fd-9389-4373-b6eb-86cfd02f0bd5" Win64="yes">
+              <File Id="SAAPI64.dll_1209711491" Source="..\Files\Program Files\SAAPI64.dll" />
+            </Component>
+
+            <Component Id="Component.SurfaceReader.chm_1209711491" Guid="4334e5fd-9389-4373-b6eb-86cf6bcce6c2" Win64="yes">
+              <File Id="SurfaceReader.chm_1209711491" Source="..\Files\Program Files\SurfaceReader.chm" />
+            </Component>
+
+            <Component Id="Uninstall_SurfaceReader" Guid="4334e5fd-9389-4373-b6eb-86cfe9e7c4f9" Win64="yes">
+              <Shortcut Id="ExeFolder.Uninstall_SurfaceReader" WorkingDirectory="SystemFolder" Target="[SystemFolder]msiexec.exe" Arguments="/x [ProductCode]" Name="Uninstall SurfaceReader.lnk" />
+
+              <CreateFolder />
+              <RemoveFolder Id="ExeFolder" On="uninstall" />
+
+              <RegistryKey Root="HKCU" Key="Software\WixSharp\Used">
+                <RegistryValue Value="0" Type="string" KeyPath="yes" />
+              </RegistryKey>
+            </Component>
+
+            <Directory Id="CommonAppDataFolder" Name="CommonAppDataFolder">
+              <Directory Id="CommonAppDataFolder.Raised_Bar" Name="Raised Bar">
+                <Directory Id="DataFiles" Name="SurfaceReader">
+
+                  <Component Id="ComponentDirPermission" Guid="4334e5fd-9389-4373-b6eb-86cfe2134072" KeyPath="yes" Win64="yes">
+                    <CreateFolder>
+                      <PermissionEx User="Everyone" GenericAll="yes" xmlns="http://schemas.microsoft.com/wix/UtilExtension" />
+                    </CreateFolder>
+                    <RemoveFolder Id="DataFiles" On="uninstall" />
+                  </Component>
+
+                  <Directory Id="AppConfigs" Name="Apps">
+
+                    <Component Id="Component.Logic_Pro_Tranzport.sau_795875009" Guid="4334e5fd-9389-4373-b6eb-86cf9e31ae53" Win64="yes">
+                      <File Id="Logic_Pro_Tranzport.sau_795875009" Source="..\Files\ProgramData\Apps\Logic Pro-Tranzport.sau" />
+                    </Component>
+
+                    <Component Id="Component.LogicPro_Mackie_Control.sax_795875009" Guid="4334e5fd-9389-4373-b6eb-86cf9edc2598" Win64="yes">
+                      <File Id="LogicPro_Mackie_Control.sax_795875009" Source="..\Files\ProgramData\Apps\LogicPro-Mackie Control.sax" />
+                    </Component>
+
+                    <Component Id="Component.ProTools_HUI.sax_795875009" Guid="4334e5fd-9389-4373-b6eb-86cf213a29a8" Win64="yes">
+                      <File Id="ProTools_HUI.sax_795875009" Source="..\Files\ProgramData\Apps\ProTools-HUI.sax" />
+                    </Component>
+
+                    <Component Id="Component.Reaper_Tranzport.sau_795875009" Guid="4334e5fd-9389-4373-b6eb-86cf50f5d1e8" Win64="yes">
+                      <File Id="Reaper_Tranzport.sau_795875009" Source="..\Files\ProgramData\Apps\Reaper-Tranzport.sau" />
+                    </Component>
+
+                    <Component Id="Component.Sonar_Mackie_Control.sax_795875009" Guid="4334e5fd-9389-4373-b6eb-86cf81f6e68f" Win64="yes">
+                      <File Id="Sonar_Mackie_Control.sax_795875009" Source="..\Files\ProgramData\Apps\Sonar-Mackie Control.sax" />
+                    </Component>
+
+                    <Component Id="Component.Sonar_Mackie_Extender.sax_795875009" Guid="4334e5fd-9389-4373-b6eb-86cfa54fab58" Win64="yes">
+                      <File Id="Sonar_Mackie_Extender.sax_795875009" Source="..\Files\ProgramData\Apps\Sonar-Mackie Extender.sax" />
+                    </Component>
+
+                    <Component Id="ComponentDirPermission.1" Guid="4334e5fd-9389-4373-b6eb-86cf6ce24ef8" KeyPath="yes" Win64="yes">
+                      <CreateFolder>
+                        <PermissionEx User="Everyone" GenericAll="yes" xmlns="http://schemas.microsoft.com/wix/UtilExtension" />
+                      </CreateFolder>
+                      <RemoveFolder Id="AppConfigs" On="uninstall" />
+                    </Component>
+
+                  </Directory>
+
+                  <Directory Id="Protocols" Name="Protocols">
+
+                    <Component Id="Component.HUI.spx_1216349322" Guid="4334e5fd-9389-4373-b6eb-86cf76f3c653" Win64="yes">
+                      <File Id="HUI.spx_1216349322" Source="..\Files\ProgramData\Protocols\HUI.spx" />
+                    </Component>
+
+                    <Component Id="Component.Logic_Control.spx_1216349322" Guid="4334e5fd-9389-4373-b6eb-86cf0a8ca289" Win64="yes">
+                      <File Id="Logic_Control.spx_1216349322" Source="..\Files\ProgramData\Protocols\Logic Control.spx" />
+                    </Component>
+
+                    <Component Id="Component.Logic_Extender.spx_1216349322" Guid="4334e5fd-9389-4373-b6eb-86cfea221c18" Win64="yes">
+                      <File Id="Logic_Extender.spx_1216349322" Source="..\Files\ProgramData\Protocols\Logic Extender.spx" />
+                    </Component>
+
+                    <Component Id="Component.Mackie_C4.spx_1216349322" Guid="4334e5fd-9389-4373-b6eb-86cfa10306e4" Win64="yes">
+                      <File Id="Mackie_C4.spx_1216349322" Source="..\Files\ProgramData\Protocols\Mackie C4.spx" />
+                    </Component>
+
+                    <Component Id="Component.Mackie_Control.spx_1216349322" Guid="4334e5fd-9389-4373-b6eb-86cf7e47216a" Win64="yes">
+                      <File Id="Mackie_Control.spx_1216349322" Source="..\Files\ProgramData\Protocols\Mackie Control.spx" />
+                    </Component>
+
+                    <Component Id="Component.Mackie_Extender.spx_1216349322" Guid="4334e5fd-9389-4373-b6eb-86cfaf10ceea" Win64="yes">
+                      <File Id="Mackie_Extender.spx_1216349322" Source="..\Files\ProgramData\Protocols\Mackie Extender.spx" />
+                    </Component>
+
+                    <Component Id="Component.Tranzport.spu_1216349322" Guid="4334e5fd-9389-4373-b6eb-86cfb03dba2c" Win64="yes">
+                      <File Id="Tranzport.spu_1216349322" Source="..\Files\ProgramData\Protocols\Tranzport.spu" />
+                    </Component>
+
+                    <Component Id="ComponentDirPermission.2" Guid="4334e5fd-9389-4373-b6eb-86cfcab34ef8" KeyPath="yes" Win64="yes">
+                      <CreateFolder>
+                        <PermissionEx User="Everyone" GenericAll="yes" xmlns="http://schemas.microsoft.com/wix/UtilExtension" />
+                      </CreateFolder>
+                      <RemoveFolder Id="Protocols" On="uninstall" />
+                    </Component>
+
+                  </Directory>
+
+                  <Directory Id="Surfaces" Name="Surfaces">
+
+                    <Component Id="ComponentDirPermission.3" Guid="4334e5fd-9389-4373-b6eb-86cf55184ef8" KeyPath="yes" Win64="yes">
+                      <CreateFolder>
+                        <PermissionEx User="Everyone" GenericAll="yes" xmlns="http://schemas.microsoft.com/wix/UtilExtension" />
+                      </CreateFolder>
+                      <RemoveFolder Id="Surfaces" On="uninstall" />
+                    </Component>
+
+                  </Directory>
+                </Directory>
+              </Directory>
+            </Directory>
+          </Directory>
+        </Directory>
+      </Directory>
+
+      <Directory Id="ProgramMenuFolder" Name="ProgramMenuFolder">
+        <Directory Id="ProgramMenuFolder.Raised_Bar" Name="Raised Bar">
+          <Directory Id="ProgramMenuFolder.Raised_Bar.SurfaceReader" Name="SurfaceReader">
+
+            <Component Id="SurfaceReader_" Guid="4334e5fd-9389-4373-b6eb-86cfce6326a8" Win64="yes">
+              <Shortcut Id="SurfaceReader__.SurfaceReader_" WorkingDirectory="ExeFolder" Target="[ExeFolder]surfacereader.exe" Name="SurfaceReader.lnk" />
+
+              <CreateFolder />
+              <RemoveFolder Id="ProgramMenuFolder.Raised_Bar.SurfaceReader" On="uninstall" />
+
+              <RegistryKey Root="HKCU" Key="Software\WixSharp\Used">
+                <RegistryValue Value="0" Type="string" KeyPath="yes" />
+              </RegistryKey>
+            </Component>
+
+            <Component Id="SurfaceReader_Help" Guid="4334e5fd-9389-4373-b6eb-86cf18114ec7" Win64="yes">
+              <Shortcut Id="SurfaceReader__.SurfaceReader_Help" WorkingDirectory="ExeFolder" Target="[ExeFolder]surfacereader.chm" Name="SurfaceReader Help.lnk" />
+
+              <CreateFolder />
+
+              <RegistryKey Root="HKCU" Key="Software\WixSharp\Used">
+                <RegistryValue Value="0" Type="string" KeyPath="yes" />
+              </RegistryKey>
+            </Component>
+
+            <Component Id="Uninstall_SurfaceReader.1" Guid="4334e5fd-9389-4373-b6eb-86cfcaeb6a1d" Win64="yes">
+              <Shortcut Id="SurfaceReader__.Uninstall_SurfaceReader.1" WorkingDirectory="SystemFolder" Target="[SystemFolder]msiexec.exe" Arguments="/x [ProductCode]" Name="Uninstall SurfaceReader.lnk" />
+
+              <CreateFolder />
+
+              <RegistryKey Root="HKCU" Key="Software\WixSharp\Used">
+                <RegistryValue Value="0" Type="string" KeyPath="yes" />
+              </RegistryKey>
+            </Component>
+
+          </Directory>
+
+          <Component Id="ProgramMenuFolder.Raised_Bar" Guid="4334e5fd-9389-4373-b6eb-86cfc74a33f6">
+            <RemoveFolder Id="ProgramMenuFolder.Raised_Bar" On="uninstall" />
+
+            <RegistryKey Root="HKCU" Key="Software\WixSharp\Used">
+              <RegistryValue Value="0" Type="string" KeyPath="yes" />
+            </RegistryKey>
+          </Component>
+
+        </Directory>
+      </Directory>
+
+      <Directory Id="DesktopFolder" Name="DesktopFolder">
+
+        <Component Id="DesktopFolder.EmptyDirectory" Guid="4334e5fd-9389-4373-b6eb-86cf525ad0de" Win64="yes">
+          <CreateFolder />
+
+          <RegistryKey Root="HKCU" Key="Software\WixSharp\Used">
+            <RegistryValue Value="0" Type="string" KeyPath="yes" />
+          </RegistryKey>
+        </Component>
+
+      </Directory>
+
+      <Component Id="TARGETDIR" Guid="4334e5fd-9389-4373-b6eb-86cfe74368e7" KeyPath="yes" Win64="yes">
+        <CreateFolder />
+        <RemoveFolder Id="TARGETDIR" On="uninstall" />
+      </Component>
+
+    </Directory>
+
+    <UI />
+
+    <WixVariable Id="WixUILicenseRtf" Value="..\Files\License.rtf" />
+
+    <CustomAction Id="WixSharp_InitRuntime_Action" BinaryKey="WixSharp_InitRuntime_Action_File" DllEntry="WixSharp_InitRuntime_Action" Return="check" Execute="immediate" />
+
+    <Binary Id="WixSharp_InitRuntime_Action_File" SourceFile="WixSharp.CA.dll" />
+
+    <UIRef Id="WixUI_Minimal" />
+
+    <Feature Id="binaries" Title="binaries" Absent="allow" Level="1">
+      <ComponentRef Id="Component.SurfaceReader.exe_342937719" />
+      <ComponentRef Id="Component.dolapi.dll_1209711491" />
+      <ComponentRef Id="Component.nvdaControllerClient32.dll_1209711491" />
+      <ComponentRef Id="Component.nvdaControllerClient64.dll_1209711491" />
+      <ComponentRef Id="Component.SAAPI32.dll_1209711491" />
+      <ComponentRef Id="Component.SAAPI64.dll_1209711491" />
+      <ComponentRef Id="Component.SurfaceReader.chm_1209711491" />
+      <ComponentRef Id="Uninstall_SurfaceReader" />
+      <ComponentRef Id="Uninstall_SurfaceReader.1" />
+      <ComponentRef Id="DesktopFolder.EmptyDirectory" />
+      <ComponentRef Id="TARGETDIR" />
+      <ComponentRef Id="ProgramMenuFolder.Raised_Bar" />
+    </Feature>
+
+    <Feature Id="Complete" Title="Complete" Absent="allow" Level="1">
+      <ComponentRef Id="ComponentDirPermission" />
+      <ComponentRef Id="Component.Logic_Pro_Tranzport.sau_795875009" />
+      <ComponentRef Id="Component.LogicPro_Mackie_Control.sax_795875009" />
+      <ComponentRef Id="Component.ProTools_HUI.sax_795875009" />
+      <ComponentRef Id="Component.Reaper_Tranzport.sau_795875009" />
+      <ComponentRef Id="Component.Sonar_Mackie_Control.sax_795875009" />
+      <ComponentRef Id="Component.Sonar_Mackie_Extender.sax_795875009" />
+      <ComponentRef Id="ComponentDirPermission.1" />
+      <ComponentRef Id="Component.HUI.spx_1216349322" />
+      <ComponentRef Id="Component.Logic_Control.spx_1216349322" />
+      <ComponentRef Id="Component.Logic_Extender.spx_1216349322" />
+      <ComponentRef Id="Component.Mackie_C4.spx_1216349322" />
+      <ComponentRef Id="Component.Mackie_Control.spx_1216349322" />
+      <ComponentRef Id="Component.Mackie_Extender.spx_1216349322" />
+      <ComponentRef Id="Component.Tranzport.spu_1216349322" />
+      <ComponentRef Id="ComponentDirPermission.2" />
+      <ComponentRef Id="ComponentDirPermission.3" />
+      <ComponentRef Id="SurfaceReader_" />
+      <ComponentRef Id="SurfaceReader_Help" />
+      <ComponentRef Id="TARGETDIR" />
+      <ComponentRef Id="ProgramMenuFolder.Raised_Bar" />
+    </Feature>
+
+    <InstallExecuteSequence>
+      <Custom Action="WixSharp_InitRuntime_Action" Before="AppSearch"> (1) </Custom>
+    </InstallExecuteSequence>
+
+  </Product>
+</Wix>
+

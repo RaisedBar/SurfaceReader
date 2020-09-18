@@ -25,7 +25,7 @@
 //boost includes.
 #include <boost/any.hpp>
 #include <boost/assign/list_of.hpp>
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/ini_parser.hpp>
 #include <boost/foreach.hpp>

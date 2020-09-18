@@ -20,7 +20,7 @@
 #include <RtMidi.h>
 #include <wx/msw/winundef.h> 
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 #include <wx/wizard.h>
 #include <wx/sizer.h>
@@ -37,7 +37,7 @@
 class HardwareControlsPage: public wxWizardPageSimple
 {
 public:
-HardwareControlsPage( wxWizard * wizParent, const wxString & title, boost::shared_ptr<SurfaceProtocol> pProtocol, boost::shared_ptr<SurfaceParameters> pParameters);
+HardwareControlsPage( wxWizard * wizParent, const wxString & title, std::shared_ptr<SurfaceProtocol> pProtocol, std::shared_ptr<SurfaceParameters> pParameters);
 ~HardwareControlsPage()
 	{
 delete myHardwareIn;
@@ -72,9 +72,9 @@ wxString wxstrTitle;
 wxListBox * lbxControlNames; 
 
 // Pointer to the protocol being modified
-boost::shared_ptr<SurfaceProtocol> pMyProtocol;
+std::shared_ptr<SurfaceProtocol> pMyProtocol;
 // Pointer to the surface setup
-boost::shared_ptr<SurfaceParameters> pMyParameters;
+std::shared_ptr<SurfaceParameters> pMyParameters;
 
 // Buttons to manipulate the list box contents
 wxButton * btnAdd, * btnLearn, *btnEdit, * btnDelete, * btnRename, * btnMatchLEDs;

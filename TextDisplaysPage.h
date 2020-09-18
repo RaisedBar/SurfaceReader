@@ -10,7 +10,7 @@
 
 #include <map>
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 #include "DefineDisplayDlg.h"
 #include "TranslationTablesDialog.h"
@@ -31,7 +31,7 @@
 class TextDisplaysPage: public wxWizardPageSimple
 {
 public:
-TextDisplaysPage( wxWizard * wizParent, const wxString& title, boost::shared_ptr<SurfaceProtocol> pProtocol);
+TextDisplaysPage( wxWizard * wizParent, const wxString& title, std::shared_ptr<SurfaceProtocol> pProtocol);
 // ~TextDisplaysPage();
 
 bool IsValidWizardPage();
@@ -63,7 +63,7 @@ wxListBox * lbxDisplayNames;
 wxButton * btnAdd, * btnEdit, * btnDelete, * btnRename, * btnTranslation;
 
 // Pointer to the protocol being modified
-boost::shared_ptr<SurfaceProtocol> pMyProtocol;
+std::shared_ptr<SurfaceProtocol> pMyProtocol;
 
 DECLARE_EVENT_TABLE()
 };

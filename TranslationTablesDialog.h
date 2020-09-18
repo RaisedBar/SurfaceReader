@@ -11,7 +11,7 @@
 
 #include <map>
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 #include "MIDI.h"
 #include "Protocol.h"
@@ -33,7 +33,7 @@
 class TranslationTablesDialog: public wxDialog
 {
 public:
-TranslationTablesDialog( const wxString& title, std::string strHash, boost::shared_ptr<SurfaceProtocol> pProtocol);
+TranslationTablesDialog( const wxString& title, std::string strHash, std::shared_ptr<SurfaceProtocol> pProtocol);
 ~TranslationTablesDialog();
 
 bool IsValidTableID();
@@ -58,7 +58,7 @@ wxButton * AddTableButton, * RenameTableButton, * DeleteTableButton, * EditTable
 
 // Internal storage
 std::string strMyHash;
-boost::shared_ptr<SurfaceProtocol> pMyProtocol;
+std::shared_ptr<SurfaceProtocol> pMyProtocol;
 
 DECLARE_EVENT_TABLE()
 };

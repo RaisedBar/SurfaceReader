@@ -16,7 +16,7 @@
 #include "RBEnums.h"
 #include "RBStringFuncs.h"
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include <boost/foreach.hpp>
 #include <boost/any.hpp>
 using boost::any_cast;
@@ -41,9 +41,9 @@ class ScreenReaderFunctionsDlg: public wxDialog
 {
 public:
 #ifdef __WINDOWS__
-	ScreenReaderFunctionsDlg(const wxString & title, SurfaceActionType mySAType, boost::shared_ptr<AppConfig> pAppConfig, boost::shared_ptr<RBSpeech> pSpeech, boost::shared_ptr<JawsCacheType> pJawsCache);
+	ScreenReaderFunctionsDlg(const wxString & title, SurfaceActionType mySAType, std::shared_ptr<AppConfig> pAppConfig, std::shared_ptr<RBSpeech> pSpeech, std::shared_ptr<JawsCacheType> pJawsCache);
 #else
-ScreenReaderFunctionsDlg(const wxString & title, SurfaceActionType mySAType, boost::shared_ptr<AppConfig> pAppConfig, boost::shared_ptr<RBSpeech> pSpeech);
+ScreenReaderFunctionsDlg(const wxString & title, SurfaceActionType mySAType, std::shared_ptr<AppConfig> pAppConfig, std::shared_ptr<RBSpeech> pSpeech);
 #endif
 	
 ~ScreenReaderFunctionsDlg();
@@ -62,7 +62,7 @@ std::wstring GetHSCFileName();
 
 #ifdef __WINDOWS__
 // std::vector<JAWSParameter> GetJawsParameters(std::wstring wstrAction);
-boost::shared_ptr <JawsParametersType> GetJawsParameters(std::wstring wstrAction);
+std::shared_ptr <JawsParametersType> GetJawsParameters(std::wstring wstrAction);
 #endif
 
 	void ListAvailableActions( SurfaceActionType mySAType);
@@ -101,13 +101,13 @@ ActionCollectionType myActionCollection;
 std::vector<JAWSParameter> Parameters;
 
 // Pointer to the protocol being referenced
-boost::shared_ptr<AppConfig> pMyAppConfig;
+std::shared_ptr<AppConfig> pMyAppConfig;
 // Pointer to the speech output
-boost::shared_ptr<RBSpeech> pMySpeech;
+std::shared_ptr<RBSpeech> pMySpeech;
 
 	// Jaws caching
 #ifdef __WINDOWS__
-boost::shared_ptr<JawsCacheType> pMyJawsCache;
+std::shared_ptr<JawsCacheType> pMyJawsCache;
 #endif
 
 std::wstring wstrJSDFileName;

@@ -15,7 +15,7 @@
 #include "SRConstants.h"
 #include "RBSpeech.h"
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 #include <wx/msgdlg.h>
 #include <wx/dialog.h>
@@ -32,7 +32,7 @@ typedef std::vector<JAWSParameter> JawsParametersType;
 class ScreenReaderParametersDlg: public wxDialog
 {
 public:
-ScreenReaderParametersDlg(const wxString& title, boost::shared_ptr <JawsParametersType> pSpeechParameters);
+ScreenReaderParametersDlg(const wxString& title, std::shared_ptr <JawsParametersType> pSpeechParameters);
 ~ScreenReaderParametersDlg();
 
 std::wstring GetParameterString();
@@ -58,7 +58,7 @@ wxButton * btnOK, * btnCancel;
 // Map of parameter controls
 		// The index is the label for the static text, which then acts as an on-screen prompt for the text box
 		std::map <std::wstring, std::pair < wxStaticText *, wxTextCtrl * > > myParameters;
-boost::shared_ptr <JawsParametersType> pMySpeechParameters; 
+std::shared_ptr <JawsParametersType> pMySpeechParameters; 
 std::wstring wstrArguments;
 
 DECLARE_EVENT_TABLE()

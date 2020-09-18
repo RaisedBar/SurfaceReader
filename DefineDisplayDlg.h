@@ -15,7 +15,7 @@
 #include "RBEnums.h"
 #include "SRConstants.h"
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 #include <wx/bitmap.h>
 #include <wx/button.h>
@@ -33,8 +33,8 @@
 class DefineDisplayDialog: public wxDialog
 {
 public:
-	DefineDisplayDialog( const wxString& title, const bool blnIsLED, boost::shared_ptr<SurfaceProtocol> pProtocol);
-	DefineDisplayDialog( const wxString& title, const wxString &ControlLabel, const std::string &strDisplayHash, DisplayDefinition myDisplay, boost::shared_ptr<SurfaceProtocol> pProtocol);
+	DefineDisplayDialog( const wxString& title, const bool blnIsLED, std::shared_ptr<SurfaceProtocol> pProtocol);
+	DefineDisplayDialog( const wxString& title, const wxString &ControlLabel, const std::string &strDisplayHash, DisplayDefinition myDisplay, std::shared_ptr<SurfaceProtocol> pProtocol);
 ~DefineDisplayDialog();
 
  bool IsValidDisplay() const;
@@ -71,7 +71,7 @@ wxButton * MIDIButton, * OKButton, * CancelButton;
 bool blnIsLEDLamp;
 std::string strHash;
  DisplayDefinition myDisplayDefinition;
-boost::shared_ptr<SurfaceProtocol> pMyProtocol;
+std::shared_ptr<SurfaceProtocol> pMyProtocol;
 std::vector <unsigned char> vSysExAddressBytes;
 bool blnCursorFromLeft, blnUniCode;
 

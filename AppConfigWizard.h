@@ -18,7 +18,7 @@
 #include "RBSpeech.h"
 #include "SurfaceReaderHelp.h"
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 #include <wx/wizard.h>
 #include <wx/accel.h>
@@ -40,9 +40,9 @@
 class AppConfigWizard : public wxWizard
 {
 public:
-AppConfigWizard(wxFrame * myFrame, bool blnUseSizer, boost::shared_ptr<AppConfig> pAppConfig, boost::shared_ptr<SurfaceProtocol> pProtocol, boost::shared_ptr<RBSpeech> pSpeech, boost::shared_ptr<JawsCacheType> pJawsCache, void * pHelpController);
+AppConfigWizard(wxFrame * myFrame, bool blnUseSizer, std::shared_ptr<AppConfig> pAppConfig, std::shared_ptr<SurfaceProtocol> pProtocol, std::shared_ptr<RBSpeech> pSpeech, std::shared_ptr<JawsCacheType> pJawsCache, void * pHelpController);
 
-        	boost::shared_ptr <AppConfig> GetAppConfig();
+        	std::shared_ptr <AppConfig> GetAppConfig();
 			
 			wxWizardPage * GetActionsPage()
 { 
@@ -63,10 +63,10 @@ void OnWizardHelp(wxWizardEvent& event);
 ActionsPage * m_ActionsPage;
 	DisplaysPage * m_DisplaysPage;
 
-	boost::shared_ptr<SurfaceProtocol> pMyProtocol;
-boost::shared_ptr<AppConfig> pMyAppConfig;
-boost::shared_ptr<RBSpeech> pMySpeech;
-boost::shared_ptr<JawsCacheType> pMyJawsCache;
+	std::shared_ptr<SurfaceProtocol> pMyProtocol;
+std::shared_ptr<AppConfig> pMyAppConfig;
+std::shared_ptr<RBSpeech> pMySpeech;
+std::shared_ptr<JawsCacheType> pMyJawsCache;
 
 	
 #ifdef __WINDOWS__ 

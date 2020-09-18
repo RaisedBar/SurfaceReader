@@ -26,7 +26,7 @@
 // #include <boost/filesystem.hpp>
 
 //boost sharedPtr headers.
-// #include <boost/shared_ptr.hpp>
+// #include <memory>
 //Boost xml serialization headers.
 #include <boost/archive/xml_wiarchive.hpp>
 #include <boost/archive/xml_woarchive.hpp>
