@@ -19,28 +19,28 @@
               </RegistryKey>
             </Component>
 
-            <Component Id="Component.dolapi.dll_846405584" Guid="4334e5fd-9389-4373-b6eb-86cfaad25514">
-              <File Id="dolapi.dll_846405584" Source="..\Files\Program Files\dolapi.dll" />
+            <Component Id="Component.dolapi.dll_886773602" Guid="4334e5fd-9389-4373-b6eb-86cfff995893">
+              <File Id="dolapi.dll_886773602" Source="..\Files\Program Files\dolapi.dll" />
             </Component>
 
-            <Component Id="Component.nvdaControllerClient32.dll_846405584" Guid="4334e5fd-9389-4373-b6eb-86cf91bbc588">
-              <File Id="nvdaControllerClient32.dll_846405584" Source="..\Files\Program Files\nvdaControllerClient32.dll" />
+            <Component Id="Component.nvdaControllerClient32.dll_886773602" Guid="4334e5fd-9389-4373-b6eb-86cfbda0b35d">
+              <File Id="nvdaControllerClient32.dll_886773602" Source="..\Files\Program Files\nvdaControllerClient32.dll" />
             </Component>
 
-            <Component Id="Component.nvdaControllerClient64.dll_846405584" Guid="4334e5fd-9389-4373-b6eb-86cf6c0751cf">
-              <File Id="nvdaControllerClient64.dll_846405584" Source="..\Files\Program Files\nvdaControllerClient64.dll" />
+            <Component Id="Component.nvdaControllerClient64.dll_886773602" Guid="4334e5fd-9389-4373-b6eb-86cf9ef90838">
+              <File Id="nvdaControllerClient64.dll_886773602" Source="..\Files\Program Files\nvdaControllerClient64.dll" />
             </Component>
 
-            <Component Id="Component.SAAPI32.dll_846405584" Guid="4334e5fd-9389-4373-b6eb-86cfce011baf">
-              <File Id="SAAPI32.dll_846405584" Source="..\Files\Program Files\SAAPI32.dll" />
+            <Component Id="Component.SAAPI32.dll_886773602" Guid="4334e5fd-9389-4373-b6eb-86cf09dfc533">
+              <File Id="SAAPI32.dll_886773602" Source="..\Files\Program Files\SAAPI32.dll" />
             </Component>
 
-            <Component Id="Component.SAAPI64.dll_846405584" Guid="4334e5fd-9389-4373-b6eb-86cf6effc712">
-              <File Id="SAAPI64.dll_846405584" Source="..\Files\Program Files\SAAPI64.dll" />
+            <Component Id="Component.SAAPI64.dll_886773602" Guid="4334e5fd-9389-4373-b6eb-86cfbe10edae">
+              <File Id="SAAPI64.dll_886773602" Source="..\Files\Program Files\SAAPI64.dll" />
             </Component>
 
-            <Component Id="Component.SurfaceReader.chm_846405584" Guid="4334e5fd-9389-4373-b6eb-86cf73fd252b">
-              <File Id="SurfaceReader.chm_846405584" Source="..\Files\Program Files\SurfaceReader.chm" />
+            <Component Id="Component.SurfaceReader.chm_886773602" Guid="4334e5fd-9389-4373-b6eb-86cf1cd9c8df">
+              <File Id="SurfaceReader.chm_886773602" Source="..\Files\Program Files\SurfaceReader.chm" />
             </Component>
 
             <Component Id="Uninstall_SurfaceReader" Guid="4334e5fd-9389-4373-b6eb-86cfe9e7c4f9">
@@ -67,28 +67,28 @@
 
                   <Directory Id="AppConfigs" Name="Apps">
 
-                    <Component Id="Component.Logic_Pro_Tranzport.sau_859180782" Guid="4334e5fd-9389-4373-b6eb-86cf0990d7a3">
-                      <File Id="Logic_Pro_Tranzport.sau_859180782" Source="..\Files\ProgramData\Apps\Logic Pro-Tranzport.sau" />
+                    <Component Id="Component.Logic_Pro_Tranzport.sau_79222391" Guid="4334e5fd-9389-4373-b6eb-86cf09d650ee">
+                      <File Id="Logic_Pro_Tranzport.sau_79222391" Source="..\Files\ProgramData\Apps\Logic Pro-Tranzport.sau" />
                     </Component>
 
-                    <Component Id="Component.LogicPro_Mackie_Control.sax_859180782" Guid="4334e5fd-9389-4373-b6eb-86cf97b8c9d2">
-                      <File Id="LogicPro_Mackie_Control.sax_859180782" Source="..\Files\ProgramData\Apps\LogicPro-Mackie Control.sax" />
+                    <Component Id="Component.LogicPro_Mackie_Control.sax_79222391" Guid="4334e5fd-9389-4373-b6eb-86cf6128dc86">
+                      <File Id="LogicPro_Mackie_Control.sax_79222391" Source="..\Files\ProgramData\Apps\LogicPro-Mackie Control.sax" />
                     </Component>
 
-                    <Component Id="Component.ProTools_HUI.sax_859180782" Guid="4334e5fd-9389-4373-b6eb-86cf0140983e">
-                      <File Id="ProTools_HUI.sax_859180782" Source="..\Files\ProgramData\Apps\ProTools-HUI.sax" />
+                    <Component Id="Component.ProTools_HUI.sax_79222391" Guid="4334e5fd-9389-4373-b6eb-86cf26029e15">
+                      <File Id="ProTools_HUI.sax_79222391" Source="..\Files\ProgramData\Apps\ProTools-HUI.sax" />
                     </Component>
 
-                    <Component Id="Component.Reaper_Tranzport.sau_859180782" Guid="4334e5fd-9389-4373-b6eb-86cf8ba39a24">
-                      <File Id="Reaper_Tranzport.sau_859180782" Source="..\Files\ProgramData\Apps\Reaper-Tranzport.sau" />
+                    <Component Id="Component.Reaper_Tranzport.sau_79222391" Guid="4334e5fd-9389-4373-b6eb-86cf94bcac21">
+                      <File Id="Reaper_Tranzport.sau_79222391" Source="..\Files\ProgramData\Apps\Reaper-Tranzport.sau" />
                     </Component>
 
-                    <Component Id="Component.Sonar_Mackie_Control.sax_859180782" Guid="4334e5fd-9389-4373-b6eb-86cf44b87703">
-                      <File Id="Sonar_Mackie_Control.sax_859180782" Source="..\Files\ProgramData\Apps\Sonar-Mackie Control.sax" />
+                    <Component Id="Component.Sonar_Mackie_Control.sax_79222391" Guid="4334e5fd-9389-4373-b6eb-86cf5eb0503a">
+                      <File Id="Sonar_Mackie_Control.sax_79222391" Source="..\Files\ProgramData\Apps\Sonar-Mackie Control.sax" />
                     </Component>
 
-                    <Component Id="Component.Sonar_Mackie_Extender.sax_859180782" Guid="4334e5fd-9389-4373-b6eb-86cf124507ec">
-                      <File Id="Sonar_Mackie_Extender.sax_859180782" Source="..\Files\ProgramData\Apps\Sonar-Mackie Extender.sax" />
+                    <Component Id="Component.Sonar_Mackie_Extender.sax_79222391" Guid="4334e5fd-9389-4373-b6eb-86cff9daa632">
+                      <File Id="Sonar_Mackie_Extender.sax_79222391" Source="..\Files\ProgramData\Apps\Sonar-Mackie Extender.sax" />
                     </Component>
 
                     <Component Id="ComponentDirPermission.1" Guid="4334e5fd-9389-4373-b6eb-86cf6ce24ef8" KeyPath="yes">
@@ -102,32 +102,32 @@
 
                   <Directory Id="Protocols" Name="Protocols">
 
-                    <Component Id="Component.HUI.spx_1584321696" Guid="4334e5fd-9389-4373-b6eb-86cf9636819f">
-                      <File Id="HUI.spx_1584321696" Source="..\Files\ProgramData\Protocols\HUI.spx" />
+                    <Component Id="Component.HUI.spx_818400478" Guid="4334e5fd-9389-4373-b6eb-86cf066a10b5">
+                      <File Id="HUI.spx_818400478" Source="..\Files\ProgramData\Protocols\HUI.spx" />
                     </Component>
 
-                    <Component Id="Component.Logic_Control.spx_1584321696" Guid="4334e5fd-9389-4373-b6eb-86cf4aedbd45">
-                      <File Id="Logic_Control.spx_1584321696" Source="..\Files\ProgramData\Protocols\Logic Control.spx" />
+                    <Component Id="Component.Logic_Control.spx_818400478" Guid="4334e5fd-9389-4373-b6eb-86cfcfa0ed3f">
+                      <File Id="Logic_Control.spx_818400478" Source="..\Files\ProgramData\Protocols\Logic Control.spx" />
                     </Component>
 
-                    <Component Id="Component.Logic_Extender.spx_1584321696" Guid="4334e5fd-9389-4373-b6eb-86cf1d9131d4">
-                      <File Id="Logic_Extender.spx_1584321696" Source="..\Files\ProgramData\Protocols\Logic Extender.spx" />
+                    <Component Id="Component.Logic_Extender.spx_818400478" Guid="4334e5fd-9389-4373-b6eb-86cf53946003">
+                      <File Id="Logic_Extender.spx_818400478" Source="..\Files\ProgramData\Protocols\Logic Extender.spx" />
                     </Component>
 
-                    <Component Id="Component.Mackie_C4.spx_1584321696" Guid="4334e5fd-9389-4373-b6eb-86cf902a355a">
-                      <File Id="Mackie_C4.spx_1584321696" Source="..\Files\ProgramData\Protocols\Mackie C4.spx" />
+                    <Component Id="Component.Mackie_C4.spx_818400478" Guid="4334e5fd-9389-4373-b6eb-86cffab3adb2">
+                      <File Id="Mackie_C4.spx_818400478" Source="..\Files\ProgramData\Protocols\Mackie C4.spx" />
                     </Component>
 
-                    <Component Id="Component.Mackie_Control.spx_1584321696" Guid="4334e5fd-9389-4373-b6eb-86cf7a74249c">
-                      <File Id="Mackie_Control.spx_1584321696" Source="..\Files\ProgramData\Protocols\Mackie Control.spx" />
+                    <Component Id="Component.Mackie_Control.spx_818400478" Guid="4334e5fd-9389-4373-b6eb-86cf83cba869">
+                      <File Id="Mackie_Control.spx_818400478" Source="..\Files\ProgramData\Protocols\Mackie Control.spx" />
                     </Component>
 
-                    <Component Id="Component.Mackie_Extender.spx_1584321696" Guid="4334e5fd-9389-4373-b6eb-86cf02fb8832">
-                      <File Id="Mackie_Extender.spx_1584321696" Source="..\Files\ProgramData\Protocols\Mackie Extender.spx" />
+                    <Component Id="Component.Mackie_Extender.spx_818400478" Guid="4334e5fd-9389-4373-b6eb-86cfa7f614b6">
+                      <File Id="Mackie_Extender.spx_818400478" Source="..\Files\ProgramData\Protocols\Mackie Extender.spx" />
                     </Component>
 
-                    <Component Id="Component.Tranzport.spu_1584321696" Guid="4334e5fd-9389-4373-b6eb-86cf01665d2c">
-                      <File Id="Tranzport.spu_1584321696" Source="..\Files\ProgramData\Protocols\Tranzport.spu" />
+                    <Component Id="Component.Tranzport.spu_818400478" Guid="4334e5fd-9389-4373-b6eb-86cf717de8d0">
+                      <File Id="Tranzport.spu_818400478" Source="..\Files\ProgramData\Protocols\Tranzport.spu" />
                     </Component>
 
                     <Component Id="ComponentDirPermission.2" Guid="4334e5fd-9389-4373-b6eb-86cfcab34ef8" KeyPath="yes">
@@ -235,12 +235,12 @@
 
     <Feature Id="binaries" Title="binaries" Absent="allow" Level="1">
       <ComponentRef Id="Component.SurfaceReader.exe_1330371216" />
-      <ComponentRef Id="Component.dolapi.dll_846405584" />
-      <ComponentRef Id="Component.nvdaControllerClient32.dll_846405584" />
-      <ComponentRef Id="Component.nvdaControllerClient64.dll_846405584" />
-      <ComponentRef Id="Component.SAAPI32.dll_846405584" />
-      <ComponentRef Id="Component.SAAPI64.dll_846405584" />
-      <ComponentRef Id="Component.SurfaceReader.chm_846405584" />
+      <ComponentRef Id="Component.dolapi.dll_886773602" />
+      <ComponentRef Id="Component.nvdaControllerClient32.dll_886773602" />
+      <ComponentRef Id="Component.nvdaControllerClient64.dll_886773602" />
+      <ComponentRef Id="Component.SAAPI32.dll_886773602" />
+      <ComponentRef Id="Component.SAAPI64.dll_886773602" />
+      <ComponentRef Id="Component.SurfaceReader.chm_886773602" />
       <ComponentRef Id="Uninstall_SurfaceReader" />
       <ComponentRef Id="Uninstall_SurfaceReader.1" />
       <ComponentRef Id="DesktopFolder.EmptyDirectory" />
@@ -250,20 +250,20 @@
 
     <Feature Id="Complete" Title="Complete" Absent="allow" Level="1">
       <ComponentRef Id="ComponentDirPermission" />
-      <ComponentRef Id="Component.Logic_Pro_Tranzport.sau_859180782" />
-      <ComponentRef Id="Component.LogicPro_Mackie_Control.sax_859180782" />
-      <ComponentRef Id="Component.ProTools_HUI.sax_859180782" />
-      <ComponentRef Id="Component.Reaper_Tranzport.sau_859180782" />
-      <ComponentRef Id="Component.Sonar_Mackie_Control.sax_859180782" />
-      <ComponentRef Id="Component.Sonar_Mackie_Extender.sax_859180782" />
+      <ComponentRef Id="Component.Logic_Pro_Tranzport.sau_79222391" />
+      <ComponentRef Id="Component.LogicPro_Mackie_Control.sax_79222391" />
+      <ComponentRef Id="Component.ProTools_HUI.sax_79222391" />
+      <ComponentRef Id="Component.Reaper_Tranzport.sau_79222391" />
+      <ComponentRef Id="Component.Sonar_Mackie_Control.sax_79222391" />
+      <ComponentRef Id="Component.Sonar_Mackie_Extender.sax_79222391" />
       <ComponentRef Id="ComponentDirPermission.1" />
-      <ComponentRef Id="Component.HUI.spx_1584321696" />
-      <ComponentRef Id="Component.Logic_Control.spx_1584321696" />
-      <ComponentRef Id="Component.Logic_Extender.spx_1584321696" />
-      <ComponentRef Id="Component.Mackie_C4.spx_1584321696" />
-      <ComponentRef Id="Component.Mackie_Control.spx_1584321696" />
-      <ComponentRef Id="Component.Mackie_Extender.spx_1584321696" />
-      <ComponentRef Id="Component.Tranzport.spu_1584321696" />
+      <ComponentRef Id="Component.HUI.spx_818400478" />
+      <ComponentRef Id="Component.Logic_Control.spx_818400478" />
+      <ComponentRef Id="Component.Logic_Extender.spx_818400478" />
+      <ComponentRef Id="Component.Mackie_C4.spx_818400478" />
+      <ComponentRef Id="Component.Mackie_Control.spx_818400478" />
+      <ComponentRef Id="Component.Mackie_Extender.spx_818400478" />
+      <ComponentRef Id="Component.Tranzport.spu_818400478" />
       <ComponentRef Id="ComponentDirPermission.2" />
       <ComponentRef Id="ComponentDirPermission.3" />
       <ComponentRef Id="SurfaceReader_" />

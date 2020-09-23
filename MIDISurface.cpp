@@ -3027,8 +3027,8 @@ if ((pMySurface->GetWidgetMode() == ID_LIVE_MODE)
 {
 	pMySurface->SendHardwareMessage( message);
 }			
-		// pMySurface->AnalyseHardwareMessage( * message);    
-SpeechQ.dispatch([=] {pMySurface->AnalyseHardwareMessage(*message); });
+		pMySurface->AnalyseHardwareMessage( * message);    
+// SpeechQ.dispatch([=] {pMySurface->AnalyseHardwareMessage(*message); });
 }
 
 
@@ -3041,8 +3041,8 @@ strLog.append( BytesToHex( * message));
 pMySurface->LogIt( strLog);
 
 pMySurface->SendDisplayMessage( message);
-			// pMySurface->AnalyseDisplayMessage( * message);    
-SpeechQ.dispatch([=] {pMySurface->AnalyseDisplayMessage(*message); });
+			pMySurface->AnalyseDisplayMessage( * message);    
+// SpeechQ.dispatch([=] {pMySurface->AnalyseDisplayMessage(*message); });
 }
 
 
