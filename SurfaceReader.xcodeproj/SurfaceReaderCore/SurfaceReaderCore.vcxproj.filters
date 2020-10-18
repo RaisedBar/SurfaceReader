@@ -1,0 +1,178 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="16.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="C:\Users\tim\Projects\surfacereader\SurfaceReaderCore\ActionPickerWin.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\tim\Projects\surfacereader\SurfaceReaderCore\ActionsPageWin.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\tim\Projects\surfacereader\SurfaceReaderCore\ActionPickerMac.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\tim\Projects\surfacereader\SurfaceReaderCore\ActionPickerModels.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\tim\Projects\surfacereader\SurfaceReaderCore\ActionsPageMac.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\tim\Projects\surfacereader\SurfaceReaderCore\ActionsPageModels.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\tim\Projects\surfacereader\SurfaceReaderCore\AppCollection.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\tim\Projects\surfacereader\SurfaceReaderCore\AppConfig.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\tim\Projects\surfacereader\SurfaceReaderCore\AppConfigChooserDialog.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\tim\Projects\surfacereader\SurfaceReaderCore\AppConfigWizard.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\tim\Projects\surfacereader\SurfaceReaderCore\ControlStatesDialog.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\tim\Projects\surfacereader\SurfaceReaderCore\DefineCharDialog.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\tim\Projects\surfacereader\SurfaceReaderCore\DefineDisplayDlg.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\tim\Projects\surfacereader\SurfaceReaderCore\DefineLEDLampDlg.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\tim\Projects\surfacereader\SurfaceReaderCore\DefineMessageDialog.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\tim\Projects\surfacereader\SurfaceReaderCore\DefineStateDialog.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\tim\Projects\surfacereader\SurfaceReaderCore\DefineTranslationTable.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\tim\Projects\surfacereader\SurfaceReaderCore\DispatchQueue.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\tim\Projects\surfacereader\SurfaceReaderCore\DisplayDefinition.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\tim\Projects\surfacereader\SurfaceReaderCore\DisplayParamsDlg.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\tim\Projects\surfacereader\SurfaceReaderCore\DisplayReportDlg.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\tim\Projects\surfacereader\SurfaceReaderCore\DisplaysPage.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\tim\Projects\surfacereader\SurfaceReaderCore\DisplayStatesDialog.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\tim\Projects\surfacereader\SurfaceReaderCore\EditProtocol.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\tim\Projects\surfacereader\SurfaceReaderCore\HardwarePage.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\tim\Projects\surfacereader\SurfaceReaderCore\LEDLampsPage.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\tim\Projects\surfacereader\SurfaceReaderCore\MessageDefinition.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\tim\Projects\surfacereader\SurfaceReaderCore\MIDI.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\tim\Projects\surfacereader\SurfaceReaderCore\MIDIDialog.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\tim\Projects\surfacereader\SurfaceReaderCore\MIDISurface.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\tim\Projects\surfacereader\SurfaceReaderCore\NewSurfaceDialog.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\tim\Projects\surfacereader\SurfaceReaderCore\Protocol.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\tim\Projects\surfacereader\SurfaceReaderCore\ProtocolChooserDialog.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\tim\Projects\surfacereader\SurfaceReaderCore\ProtocolCollection.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\tim\Projects\surfacereader\SurfaceReaderCore\ProtocolWizard.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\tim\Projects\surfacereader\SurfaceReaderCore\queue.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\tim\Projects\surfacereader\SurfaceReaderCore\RBInputBox.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\tim\Projects\surfacereader\SurfaceReaderCore\RBSpeech.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\tim\Projects\surfacereader\SurfaceReaderCore\RBStringFuncs.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\tim\Projects\surfacereader\SurfaceReaderCore\RBWizardPage.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\tim\Projects\surfacereader\SurfaceReaderCore\ScreenReaderFunctionsDlg.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\tim\Projects\surfacereader\SurfaceReaderCore\ScreenReaderParametersDlg.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\tim\Projects\surfacereader\SurfaceReaderCore\SpeechDialog.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\tim\Projects\surfacereader\SurfaceReaderCore\SRTaskBar.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\tim\Projects\surfacereader\SurfaceReaderCore\SurfaceAction.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\tim\Projects\surfacereader\SurfaceReaderCore\SurfaceActions.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\tim\Projects\surfacereader\SurfaceReaderCore\SurfaceFrame.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\tim\Projects\surfacereader\SurfaceReaderCore\SurfaceList.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\tim\Projects\surfacereader\SurfaceReaderCore\SurfacePage.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\tim\Projects\surfacereader\SurfaceReaderCore\SurfaceParameters.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\tim\Projects\surfacereader\SurfaceReaderCore\SurfaceWizard.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\tim\Projects\surfacereader\SurfaceReaderCore\SysExPage.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\tim\Projects\surfacereader\SurfaceReaderCore\TextDisplaysPage.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\tim\Projects\surfacereader\SurfaceReaderCore\TranslationTablesDialog.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\tim\Projects\surfacereader\SurfaceReaderCore\UpdateChecker.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\tim\Projects\surfacereader\SurfaceReaderCore\cmakelists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{AD626E30-02CD-3E4B-8369-4E4A37258BBB}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

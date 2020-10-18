@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="16.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\tim\Projects\surfacereader\SurfaceReader.xcodeproj\CMakeFiles\65bc52f2d5e53a5d81e8a21e2b94b671\generate.stamp.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="CMake Rules">
+      <UniqueIdentifier>{89BA2E6B-3E7C-3ED3-8D1E-77F7F6EEEDC9}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

@@ -1,0 +1,3 @@
+C:/Users/tim/Projects/surfacereader/SurfaceReader.xcodeproj/CMakeFiles/SurfaceReader.dir
+C:/Users/tim/Projects/surfacereader/SurfaceReader.xcodeproj/CMakeFiles/ALL_BUILD.dir
+C:/Users/tim/Projects/surfacereader/SurfaceReader.xcodeproj/CMakeFiles/ZERO_CHECK.dir

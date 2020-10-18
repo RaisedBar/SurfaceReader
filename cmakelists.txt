@@ -1,0 +1,112 @@
+# CMakeLists.txt for SurfaceReader
+cmake_minimum_required(VERSION 3.10 FATAL_ERROR)
+set(CMAKE_LEGACY_CYGWIN_WIN32 0)
+
+# C++17 standard. Can't find how to set for "latest" in VS2019
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
+
+project(SurfaceReader)
+
+# Include WIX SDK if building under Windows
+# if (WIN32)
+	# set( WIX_DIR "C:/program files (x86)/WiX Toolset v3.11/SDK"
+	# CACHE PATH "The path to the WIX SDK.")
+		# include_directories( SYSTEM ${WIX_DIR}/VS2017/inc ${WIX_DIR}/include)
+# endif(win32)
+
+# Includes
+include_directories(${CMAKE_CURRENT_SOURCE_DIR})
+# Boost::algorithm
+    find_path(BOOST_ALGORITHM_INCLUDE_DIRS "boost/algorithm/algorithm.hpp")                                             
+    # wxWidgets
+# find_package(wxWidgets REQUIRED)
+# include(${wxWidgets_USE_FILE})
+    
+# Set warning level
+if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU" OR
+    "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
+    set(warnings "-Wall -Wextra -Werror")
+elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
+    set(warnings "/W4 /WX /EHsc")
+endif()
+
+# Show the settings in the cache
+if (NOT CONFIGURED_ONCE)
+    set(CMAKE_CXX_FLAGS "${warnings}"
+        CACHE STRING "Flags used by the compiler during all build types." FORCE)
+    set(CMAKE_C_FLAGS   "${warnings}"
+        CACHE STRING "Flags used by the compiler during all build types." FORCE)
+endif()
+
+set(CMAKE_C_FLAGS   "${CMAKE_C_FLAGS} ${warnings}")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${warnings}")
+
+add_executable( SurfaceReader 
+ActionPickerMac.cpp
+ActionPickerModels.cpp
+ActionPickerWin.cpp
+ActionsPageMac.cpp
+ActionsPageModels.cpp
+ActionsPageWin.cpp
+AppCollection.cpp
+AppConfig.cpp
+AppConfigChooserDialog.cpp
+AppConfigWizard.cpp
+ControlStatesDialog.cpp
+DefineCharDialog.cpp
+DefineDisplayDlg.cpp
+DefineLEDLampDlg.cpp
+DefineMessageDialog.cpp
+DefineStateDialog.cpp
+DefineTranslationTable.cpp
+DispatchQueue.cpp
+DisplayDefinition.cpp
+DisplayParamsDlg.cpp
+DisplayReportDlg.cpp
+DisplaysPage.cpp
+DisplayStatesDialog.cpp
+EditProtocol.cpp
+HardwarePage.cpp
+LEDLampsPage.cpp
+MessageDefinition.cpp
+MIDI.cpp
+MIDIDialog.cpp
+MIDISurface.cpp
+NewSurfaceDialog.cpp
+Protocol.cpp
+ProtocolChooserDialog.cpp
+ProtocolCollection.cpp
+ProtocolWizard.cpp
+queue.cpp
+RBInputBox.cpp
+RBSpeech.cpp
+RBStringFuncs.cpp
+RBWizardPage.cpp
+ScreenReaderFunctionsDlg.cpp
+ScreenReaderParametersDlg.cpp
+SpeechDialog.cpp
+SRTaskBar.cpp
+SurfaceAction.cpp
+SurfaceActions.cpp
+SurfaceFrame.cpp
+SurfaceList.cpp
+SurfacePage.cpp
+SurfaceParameters.cpp
+SurfaceReader.cpp
+SurfaceWizard.cpp
+SysExPage.cpp
+TextDisplaysPage.cpp
+TranslationTablesDialog.cpp
+UpdateChecker.cpp
+) 
+
+# includes again:
+target_include_directories(SurfaceReader PRIVATE ${BOOST_ALGORITHM_INCLUDE_DIRS})
+target_include_directories(SurfaceReader PRIVATE ${WX_INCLUDE_DIRS})
+
+set(CONFIGURED_ONCE TRUE CACHE INTERNAL
+    "A flag showing that CMake has configured at least once."
+)
+

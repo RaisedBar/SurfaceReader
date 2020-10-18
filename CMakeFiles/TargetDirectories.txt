@@ -1,0 +1,3 @@
+C:/Users/tim/Projects/surfacereader/CMakeFiles/SurfaceReader.dir
+C:/Users/tim/Projects/surfacereader/CMakeFiles/ALL_BUILD.dir
+C:/Users/tim/Projects/surfacereader/CMakeFiles/ZERO_CHECK.dir
