@@ -285,7 +285,7 @@ void UnloadDolphinApi(void);
 	HRESULT DolphinBraille(wstring strText);	
 	/// <Summary> Obtain a list of dolphin actions. </summary>
 	HRESULT GetAvailableDolphinActions(AvailableActionsType& ActionInformation);
-	HRESULT ExecuteDolphinAction(boost::any& name, ScreenReaderActionType& type, DWORD& ReturnCode);
+	HRESULT ExecuteDolphinAction(const boost::any& name, const ScreenReaderActionType& type, DWORD& ReturnCode);
 /// <summary> Determine whether System Access is currently active in memory. </summary>
 	/// <returns> returns S_OK if System Access is active, S_FALSE otherwise. </returns>
 bool IsSystemAccessActive();

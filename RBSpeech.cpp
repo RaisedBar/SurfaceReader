@@ -101,6 +101,8 @@ HRESULT RBSpeech::JAWSSpeak(wstring strText, BOOL blnSilence)
 {
 	HRESULT hr =S_OK;
 	CComVariant vFunctionResult;
+	CComVariant vSilence = blnSilence;
+	CComVariant vText(strText.c_str());
 /*
 std::wstring wstrFunctionCall = L"Say( ";
 wstrFunctionCall.append( wstrDoubleQuotes);
@@ -114,7 +116,7 @@ wstrFunctionCall.append( L", 1)");
 ExitOnTrue(strText.empty(), hr, __HRESULT_FROM_WIN32(ERROR_BAD_ARGUMENTS), "No text has been specified.");
 
 LoadJAWSApi();
-	hr 	= JawsAPI.Invoke2(_bstr_t(L"SayString"), &_variant_t(strText.c_str()), &_variant_t(blnSilence), &vFunctionResult);
+	hr 	= JawsAPI.Invoke2(_bstr_t(L"SayString"), &vText, &vSilence, &vFunctionResult);
 	ExitOnFailure(hr, "Executing the JAWS SayString function returned a failure.");
 	ExitOnFalse(vFunctionResult.vt == VT_BOOL, hr, S_FALSE, "The JAWS SayString function should return a boolean.");
 	ExitOnFalse(vFunctionResult.boolVal, hr, S_FALSE, "The JAWS SayString function could not schedule the speech.");
@@ -139,14 +141,16 @@ HRESULT RBSpeech::JAWSBraille(wstring strText)
 { 
 HRESULT hr =S_OK;
 	CComVariant vFunctionResult;
+	CComVariant vFunctionName;
 	std::wstring FunctionStr =L"BrailleMessage(";
 //Check to see that the message to be spoken actually contains some text.
 ExitOnTrue(strText.empty(), hr, __HRESULT_FROM_WIN32(ERROR_BAD_ARGUMENTS), "No text has been specified.");
 //now, append to the FunctionStr.
 	FunctionStr.append(strText);
 	FunctionStr.append(L", 0, 2000)");
+	vFunctionName = FunctionStr.c_str();
 	LoadJAWSApi();
-	hr = JawsAPI.Invoke1(_bstr_t(L"RunFunction"), &_variant_t(FunctionStr.c_str()), &vFunctionResult);
+	hr = JawsAPI.Invoke1(L"RunFunction", &vFunctionName, &vFunctionResult);
 	ExitOnFailure(hr, "Executing the JAWS RunFunction function returned a failure.");
 	ExitOnFalse(vFunctionResult.vt == VT_BOOL, hr, S_FALSE, "The JAWS RunFunction function should return a boolean.");
 	ExitOnFalse(vFunctionResult.boolVal, hr, S_FALSE, "The JAWS RunFunction function could not schedule the speech.");
@@ -331,15 +335,17 @@ HRESULT RBSpeech::ExecuteJAWSAction(std::wstring Action, ScreenReaderActionType 
 {
 HRESULT hr =S_FALSE;
 CComVariant vFunctionResult;
+CComVariant vScriptName = Action.c_str();
+CComVariant vFunctionName = Action.c_str();
 LoadJAWSApi();
 if (Type == ID_SCRIPT)
 {
-	hr = JawsAPI.Invoke1(_bstr_t(L"RunScript"), &_variant_t(Action.c_str()), &vFunctionResult);
+	hr = JawsAPI.Invoke1(L"RunScript", &vScriptName, &vFunctionResult);
 	ExitOnFailure(hr, "Executing the JAWS RunScript function returned a failure.");
 }
 else if (Type == ID_FUNCTION)
 {
-	hr = JawsAPI.Invoke1(_bstr_t(L"RunFunction"), &_variant_t(Action.c_str()), &vFunctionResult);
+	hr = JawsAPI.Invoke1(L"RunFunction", &vFunctionName, &vFunctionResult);
 	ExitOnFailure(hr, "Executing the JAWS RunFunction function returned a failure.");
 }
 ExitOnFalse(vFunctionResult.vt == VT_BOOL, hr, S_FALSE, "Executing a JAWS action should return a boolean.");
@@ -1234,8 +1240,8 @@ ActionInformation =std::make_pair(AvailableDolphinActionFields, DolphinActionCol
 return E_NOTIMPL;
 #endif
 }
-	
-HRESULT RBSpeech::ExecuteDolphinAction(boost::any& name, ScreenReaderActionType& type, DWORD& ReturnCode)
+
+HRESULT RBSpeech::ExecuteDolphinAction(const boost::any& name, const ScreenReaderActionType& type, DWORD& ReturnCode)
 	{
 #ifndef _WIN64
 		HRESULT hReturnValue =S_OK;
@@ -1756,8 +1762,9 @@ LExit:
 	HRESULT RBSpeech::GetActiveHotSpotSet(std::wstring& ActiveSet)
 {
 HRESULT hr =S_OK;
-boost::optional<std::string> CurrentSpotStringOptional;			
+boost::optional<std::string> CurrentSpotStringOptional;
 CComVariant vFunctionResult;
+CComVariant vFunctionName;
 std::wstring ConvertedSpotString;
 			boost::property_tree::ptree IniTree; //used to store hsc information.
 			std::wstring JAWSFunctionCallString =L"GetCurrentJAWSEnvironment(\"%s\")"; //used to hold the call to JAWS.
@@ -1778,7 +1785,8 @@ if (exists(IniFile))
 } //end file removal.
 boost::replace_first(JAWSFunctionCallString, L"%s", AppDataPath().native());
 //now actually call the function.
-hr = JawsAPI.Invoke1(_bstr_t(L"RunFunction"), &_variant_t(JAWSFunctionCallString.c_str()), &vFunctionResult);
+vFunctionName = JAWSFunctionCallString.c_str();
+					hr = JawsAPI.Invoke1(L"RunFunction", &vFunctionName, &vFunctionResult);
 ExitOnFailure(hr, "Executing the JAWS RunFunction function returned a failure.");
 ExitOnFalse(vFunctionResult.vt == VT_BOOL, hr, S_FALSE, "Running a JAWS function should return a boolean.");
 ExitOnFalse(vFunctionResult.boolVal, hr, S_FALSE, "Running the requested JAWS function could not be scheduled.");
@@ -1813,6 +1821,7 @@ return hr;
 	DolphinProduct SpecificDolphinProduct;
 		std::wstring JAWSFunctionCallString =L"HSCLookupKey( \"%s\")"; //used to hold the call to JAWS.
 		CComVariant vFunctionResult;
+		CComVariant vFunctionName;
 		ExitOnTrue(Set.empty(), hr, S_FALSE, "No hot spot set has been provided.");
 		ExitOnTrue(SpotName.empty(), hr, S_FALSE, "No hot spot name has been provided.");
 			hr =GetActiveProduct(CurrentProduct, SpecificDolphinProduct);
@@ -1826,8 +1835,9 @@ return hr;
 				ExitOnFailure(hr, "The provided hot spot doesn't exist in the provided hot spot set.");
 				//now create the requisite information to call a jaws function.
 				boost::replace_first(JAWSFunctionCallString, L"%s", SpotName);
-				//now call the function.
-				hr = JawsAPI.Invoke1(_bstr_t(L"RunFunction"), &_variant_t(JAWSFunctionCallString.c_str()), &vFunctionResult);
+				vFunctionName =JAWSFunctionCallString.c_str();
+			//now call the function.
+				hr = JawsAPI.Invoke1(L"RunFunction", &vFunctionName, &vFunctionResult);
 				ExitOnFailure(hr, "Executing the JAWS RunFunction function returned a failure.");
 				ExitOnFalse(vFunctionResult.vt == VT_BOOL, hr, S_FALSE, "Executing a JAWS hot spot should return a boolean.");
 				ExitOnFalse(vFunctionResult.boolVal, hr, S_FALSE, "The requested hot spot execution could not be scheduled.");
@@ -1840,13 +1850,13 @@ LExit:
 		return hr;
 	}
 
-HRESULT RBSpeech::ExecuteAction(std::wstring Action, ScreenReaderActionType Type)
+HRESULT RBSpeech::ExecuteAction(std::wstring const Action, ScreenReaderActionType const Type)
 {
 HRESULT hReturnValue =S_OK;
+DWORD ReturnCode = -1;
 ExitOnTrue(Action.empty(), hReturnValue, S_FALSE, "no action was supplied.");
 			ActiveProduct CurrentProduct;
 	DolphinProduct SpecificDolphinProduct;
-DWORD ReturnCode =-1;
 	hReturnValue =GetActiveProduct(CurrentProduct, SpecificDolphinProduct);
 	ExitOnFailure(hReturnValue, "No product is active.");
 				
@@ -1856,7 +1866,7 @@ DWORD ReturnCode =-1;
 hReturnValue =ExecuteJAWSAction(Action, Type);
 				break;
 case ID_DOLPHIN:
-hReturnValue =ExecuteDolphinAction(boost::any(Action), Type, ReturnCode);
+hReturnValue =ExecuteDolphinAction(Action, Type, ReturnCode);
 break;
 default:
 hReturnValue =E_NOTIMPL;
