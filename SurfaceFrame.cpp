@@ -1344,7 +1344,8 @@ ActiveProduct myProduct;
 DolphinProduct dpProduct;
 Speech->GetActiveProduct(myProduct, dpProduct);
 
-SurfacePointer pSurface(new MIDISurface(this, myProduct, &myProtocolWizard.GetSurfaceParameters(), Protocols, Apps));
+SurfaceParameters params = myProtocolWizard.GetSurfaceParameters();
+SurfacePointer pSurface(new MIDISurface(this, myProduct, &params, Protocols, Apps));
 SurfacePointers.push_back(pSurface);
 
 // Activate the new surface
