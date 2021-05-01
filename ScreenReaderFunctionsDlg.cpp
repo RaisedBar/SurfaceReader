@@ -133,10 +133,9 @@ return blnResult;
 
 ActionInfoType ScreenReaderFunctionsDlg::GetAction( std::wstring wstrFunctionName)
 {
-                ActionInfoType CurrentAction; 
 ActionCollectionType Actions;
 //Actions equals the second of the cache.
-BOOST_FOREACH( CurrentAction, Actions)
+for( auto CurrentAction: Actions)
 {
 	// if (CurrentAction[ 0].As <std::wstring>().compare( wstrFunctionName) == 0)
 std::wstring wstrActionString = AsWString( CurrentAction[ 0]); 	
@@ -261,7 +260,7 @@ return;
 lbxActionNames->Clear();
 
 // Populate the list here...
-BOOST_FOREACH(std::string spot, Hotspots)
+for(auto spot : Hotspots)
 lbxActionNames->Append(spot);
 #endif
 }
@@ -360,12 +359,11 @@ std::shared_ptr <JawsParametersType> ScreenReaderFunctionsDlg::GetJawsParameters
 	ActionCollectionType myActionCollection;
 try
 	{
-	ActionInfoType CurrentAction;
 		myActionCollection = GetCachedJawsActionsListItem( pMyAppConfig->GetAppName(), pMyAppConfig->GetProtocolID());
 ActionInfoTypeIterator it2;
 std::wstring wstrName;
 	
-BOOST_FOREACH(CurrentAction, myActionCollection)
+for(ActionInfoType CurrentAction : myActionCollection)
 {
 			it2 =CurrentAction.find(0);
 		
@@ -515,7 +513,7 @@ std::pair< std::wstring, std::string> myIndexPair;
 }  // end catch
 
 //iterate through the vector of actions, the second item in the ActionInfoType pair.
-BOOST_FOREACH(CurrentAction, myActionCollection)
+for(auto CurrentAction : myActionCollection)
 	{
 			it2 =CurrentAction.find(nField);
 		

@@ -13,7 +13,6 @@
 #include <wx/string.h>
 #include <vector>
 #include <map>
-#include <boost/foreach.hpp>
 #include "WIX Include.h"
 #include <wx/msw/winundef.h> 
 

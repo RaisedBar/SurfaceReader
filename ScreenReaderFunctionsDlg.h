@@ -17,7 +17,6 @@
 #include "RBStringFuncs.h"
 
 #include <memory>
-#include <boost/foreach.hpp>
 #include <boost/any.hpp>
 using boost::any_cast;
 

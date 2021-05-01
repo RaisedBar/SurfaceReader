@@ -28,7 +28,6 @@
 #include <memory>
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/ini_parser.hpp>
-#include <boost/foreach.hpp>
 #include <boost/algorithm/string.hpp>
 #include <boost/optional/optional.hpp>
 #include <boost/dll/shared_library.hpp>

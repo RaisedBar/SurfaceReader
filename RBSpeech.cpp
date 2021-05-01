@@ -292,7 +292,7 @@ else { //use hsc method.
 //now sort the function vector.
 //std::sort(AvailableJawsFunctions.begin(), AvailableJawsFunctions.end(), CompareJawsFunctions);
 //now iterate through and add to the vector.
-BOOST_FOREACH(JawsFunction j, AvailableJawsFunctions)
+for(auto j : AvailableJawsFunctions)
 {
 if (j.Type ==ID_TYPE_SCRIPT)
 {
@@ -1708,7 +1708,7 @@ ExitOnFailure(hReturnValue, "No product is active.");
 			Spots.clear();
 		Spots.reserve(IniTree.size()); //reserve memory equal to the number of spots in the current set.
 		//now iterate the spots.
-			BOOST_FOREACH( boost::property_tree::ptree::value_type &v, IniTree)
+			for(boost::property_tree::ptree::value_type &v : IniTree)
 			{
 				if (!v.first.empty())
 				{ //the key has some text in.
@@ -1918,7 +1918,7 @@ std::vector<JawsFunction> RBSpeech::ProcessJSDFile(std::filesystem::path&File)
 			fs.close();
 		
 			JawsFunction newfunction;
-	BOOST_FOREACH(std::wstring line, lines)
+	for(auto line : lines)
 {
 	std::vector<std::wstring> tokens;
 	

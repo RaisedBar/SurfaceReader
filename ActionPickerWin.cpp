@@ -509,7 +509,7 @@ if (it != myActionInformation.first.end())
 //iterate through the vector of actions, the second item in the ActionInfoType pair.
 	ActionInfoTypeIterator it2;
 	ActionInfoType CurrentAction;
-	BOOST_FOREACH(CurrentAction, myActionInformation.second);
+	for(auto CurrentAction : myActionInformation.second);
 	{
 		it2 =CurrentAction.find(nField);
 		if (it2 !=CurrentAction.end())
