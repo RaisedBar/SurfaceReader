@@ -9,9 +9,9 @@
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/ini_parser.hpp>
 #include <boost/property_tree/exceptions.hpp>
-#include <wx/filename.h>
 #include <vector>
 #include <map>
+#include <filesystem>
 #include "WIX Include.h"
 #include <wx/msw/winundef.h> 
 
@@ -24,18 +24,18 @@ IniFileUtils()
 {
 	IniTree.clear();
 }
-IniFileUtils(wxFileName Filename)
+IniFileUtils(std::filesystem::path Filename)
 {
-	if (Filename.FileExists())
+	if (std::filesystem::exists(Filename))
 	{
 		IniTree.clear();
 		boost::property_tree::ini_parser::read_ini(Filename.GetFullPath().ToStdString(), IniTree);
 	}
 }
 //Load file after construction.
-bool LoadFile(wxFileName Filename)
+bool LoadFile(std::filesystem::path Filename)
 {
-	if (Filename.FileExists())
+	if (std::filesystem::exists(Filename))
 	{
 		IniTree.clear();
 		boost::property_tree::ini_parser::read_ini(Filename.GetFullPath().ToStdString(), IniTree);
