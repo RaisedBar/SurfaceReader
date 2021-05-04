@@ -568,13 +568,13 @@ int IntFromWHex(const std::wstring &wstrIn)
 }
 
 
-unsigned int CharCount(std::wstring wxstrIn, wxUniChar wxucChar)
+unsigned int CharCount(std::wstring strIn, wchar_t ucChar)
 {
 	unsigned int nResult = 0;
 
-	for (unsigned int i = 0; i < wxstrIn.length(); i++)
+	for (unsigned int i = 0; i < strIn.length(); i++)
 	{
-		if (wxstrIn.at(i) == wxucChar)
+		if (strIn.at(i) == ucChar)
 		{
 			nResult++;
 		}  // end if

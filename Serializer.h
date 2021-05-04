@@ -62,7 +62,8 @@ void SaveData(SerializingType Data, std::filesystem::path myFile, bool blnEncryp
 			 }
 catch (const std::filesystem::filesystem_error &error)
 {
-	throw RBException(error.what());
+	std::string temp(error.what());
+	throw RBException(std::wstring(begin(temp), end(temp)));
 	return;
 	}
 	 }
@@ -75,7 +76,8 @@ catch (const std::filesystem::filesystem_error &error)
 }
 catch (const std::filesystem::filesystem_error &error)
 {
-	throw RBException(error.what());
+	std::string temp(error.what());
+	throw RBException(std::wstring(begin(temp), end(temp)));
 	return;
 }
 
@@ -88,7 +90,8 @@ catch (const std::filesystem::filesystem_error &error)
 }
 catch (const std::filesystem::filesystem_error &error)
 {
-	throw RBException(error.what());
+	std::string temp(error.what());
+	throw RBException(std::wstring(begin(temp), end(temp)));
 	return;
 }
 
@@ -102,8 +105,8 @@ if (blnEncrypt)
 	}
 	catch (const std::filesystem::filesystem_error &error)
 	{
-		remove(pTempFileName);
-		throw RBException(error.what());
+		std::string temp(error.what());
+		throw RBException(std::wstring(begin(temp), end(temp)));
 				return;
 	}
 } //end encrypt.
@@ -115,7 +118,8 @@ else  //Not encrypted, so just rename.
 	}
 	catch (const std::filesystem::filesystem_error &error)
 	{
-		throw RBException(error.what());
+		std::string temp(error.what());
+		throw RBException(std::wstring(begin(temp), end(temp)));
 		return;
 	}
 }

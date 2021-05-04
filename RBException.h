@@ -4,26 +4,24 @@
 #define SURFACE_EXCEPTION_H
 
 #pragma once
-
-
-#include <wx/string.h>
+#include <string>
 #include <wx/msw/winundef.h> 
 
 
 class RBException
 {
 public:
-    RBException(const wxString & msg) 
-		: wxstrMsg( msg) 
+    RBException(const std::wstring & msg) 
+		: strMsg( msg) 
 	{ }
 
     const wxChar *what() const 
 	{ 
-		return wxstrMsg.c_str(); 
+		return strMsg.c_str(); 
 	}
 
 private:
-    wxString wxstrMsg;
+    std::wstring strMsg;
 };
 #endif
 

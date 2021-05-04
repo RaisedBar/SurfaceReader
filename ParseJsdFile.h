@@ -6,9 +6,7 @@
 #include <boost/spirit/include/phoenix_operator.hpp>
 #include <boost/spirit/include/phoenix_object.hpp>
 #include <boost/fusion/include/adapt_struct.hpp>
-#include <boost/fusion/include/io.hpp>
 
-#include <wx/string.h>
 #include <wx/msw/winundef.h> 
 
 

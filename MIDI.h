@@ -12,8 +12,6 @@
 
 #include "SRConstants.h"
 #include "RBStringFuncs.h"
-
-#include <wx/string.h>
 #include <wx/msw/winundef.h>
 
 #include <boost/lexical_cast.hpp>

@@ -246,7 +246,7 @@ m_DisplayMIDIOut = new RtMidiOut();
     	} 
 catch ( RtMidiError &error ) 
 {
-throw RBException( error.getMessage());	
+throw RBException(std::wstring(begin(error.getMessage()), end(error.getMessage())));
 }
 }
 		
@@ -272,7 +272,7 @@ m_DisplayMIDIOut = new RtMidiOut();
     	} 
 catch ( RtMidiError &error ) 
 {
-throw RBException( error.getMessage());	
+	throw RBException(std::wstring(begin(error.getMessage()), end(error.getMessage())));
 }
 SetWidgetMode(Mode(ID_LIVE_MODE));
 	}
@@ -299,7 +299,7 @@ m_DisplayMIDIOut = new RtMidiOut();
     	} 
 catch ( RtMidiError &error ) 
 {
-throw RBException( error.getMessage());	
+	throw RBException(std::wstring(begin(error.getMessage()), end(error.getMessage())));
 }
 
 SetWidgetMode(Mode(ID_LIVE_MODE));
@@ -487,7 +487,7 @@ m_HardwareMIDIIn->ignoreTypes( false, false, false );
  OutputDebugStringA( error.what());
 					#endif
 
- throw RBException( error.getMessage());
+ throw RBException(std::wstring(begin(error.getMessage()), end(error.getMessage())));
 	return false;
 	}
 	return true;
@@ -519,7 +519,7 @@ m_DisplayMIDIIn->openPort( nInputID);
     #ifdef __WINDOWS__ 
  OutputDebugStringA( error.what());
 					#endif
-		throw RBException( error.getMessage());
+ throw RBException(std::wstring(begin(error.getMessage()), end(error.getMessage())));
 return false;
 	}
 	return true;
@@ -548,7 +548,7 @@ catch ( RtMidiError &error )
  OutputDebugStringA( error.what());
 					#endif
 
- throw RBException( error.getMessage());
+ throw RBException(std::wstring(begin(error.getMessage()), end(error.getMessage())));
 return false;
 	}
 	return true;
@@ -567,7 +567,7 @@ m_DisplayMIDIOut->openPort( nOutputID);
  OutputDebugStringA( error.what());
 					#endif
 
- throw RBException( error.getMessage());
+ throw RBException(std::wstring(begin(error.getMessage()), end(error.getMessage())));
 return false;
 	}
 	return true;
@@ -582,7 +582,7 @@ bool CloseHardwareInput()
 		}
 catch ( RtMidiError &error ) 
 {
-throw RBException( error.getMessage());
+	throw RBException(std::wstring(begin(error.getMessage()), end(error.getMessage())));
 wxMessageBox( error.getMessage(),                wstrAppTitle, wxOK | wxICON_ERROR);
 return false;
 }
@@ -597,7 +597,7 @@ m_HardwareMIDIOut->closePort();
 		}
 catch ( RtMidiError &error ) 
 {
-throw RBException( error.getMessage());
+	throw RBException(std::wstring(begin(error.getMessage()), end(error.getMessage())));
 wxMessageBox( error.getMessage(),                wstrAppTitle, wxOK | wxICON_ERROR);
 return false;
 }
@@ -612,7 +612,7 @@ bool CloseDisplayInput()
 		}
 catch ( RtMidiError &error ) 
 {
-throw RBException( error.getMessage());
+	throw RBException(std::wstring(begin(error.getMessage()), end(error.getMessage())));
 wxMessageBox( error.getMessage(),                wstrAppTitle, wxOK | wxICON_ERROR);
 return false;
 }
@@ -627,7 +627,7 @@ m_DisplayMIDIOut->closePort();
 		}
 		catch ( RtMidiError &error ) 
 {
-throw RBException( error.getMessage());
+			throw RBException(std::wstring(begin(error.getMessage()), end(error.getMessage())));
 wxMessageBox( error.getMessage(),                wstrAppTitle, wxOK | wxICON_ERROR);
   return false;
 		}

@@ -59,7 +59,7 @@ std::string BytesToHex( std::vector <unsigned char> vBytes);
 std::string NibbleToHex( unsigned int nNibble);
 int IntFromHex(const std::string &wstrIn); 
 int IntFromWHex(const std::wstring &wstrIn); 
-unsigned int CharCount( std::wstring wxstrIn, wxUniChar wxucChar);
+unsigned int CharCount( std::wstring strIn, wchar_t ucChar);
 std::vector <unsigned char> GetSysExAddressBytesFromHash(std::string strMsgHash, unsigned int nHeaderLength);
 // std::string ConvertBSTRToMBS(BSTR bstr);
 std::string ConvertWCSToMBS(const wchar_t* pstr, long wslen);
