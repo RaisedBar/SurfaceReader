@@ -4,6 +4,9 @@
 #define APP_COLLECTION_H
 
 #pragma once
+//Standard headers.
+#include <ranges>
+#include <algorithm>
 
 #include "AppConfig.h"
 

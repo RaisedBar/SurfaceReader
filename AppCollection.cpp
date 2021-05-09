@@ -5,226 +5,117 @@
 
 #include "AppCollection.h"
 
+using namespace std;
+using namespace std::ranges::views;
 
 AppCollection::AppCollection()
 	{
 		myAppConfigs.clear();
 }
 
-
-	AppCollection::~AppCollection()
+AppCollection::~AppCollection()
 	{}
-
 
 	void AppCollection::Add( std::wstring wstrAppExeName, std::wstring wstrProtocolID, AppConfig MyAppConfig)
 {
-	std::pair <std::wstring, std::wstring> myIndexPair;
-	std::pair <std::pair <std::wstring, std::wstring>, AppConfig> myAppConfigPair;
-	
-	myIndexPair = std::make_pair( wstrAppExeName, wstrProtocolID);
-	myAppConfigPair = std::make_pair( myIndexPair, MyAppConfig);
-
-	std::map <std::pair <std::wstring, std::wstring>, AppConfig>::iterator it; 
-
-it = myAppConfigs.find( myIndexPair);
-
-if (it != myAppConfigs.end())
-{
-	myAppConfigs.erase( it);	
+		myAppConfigs.insert_or_assign({ wstrAppExeName, wstrProtocolID}, MyAppConfig);
 	}
-
-myAppConfigs.insert( myAppConfigPair);
-}
-
 
 bool AppCollection::Add( std::wstring wstrAppExeName, std::wstring wstrProtocolID)
 	{
-		// Is there an existing connection between this application and the specified protocol?
-		std::pair <std::wstring, std::wstring> myAppProtocolPair;
-		myAppProtocolPair = std::make_pair( wstrAppExeName, wstrProtocolID);
-		std::map <std::pair <std::wstring, std::wstring>, AppConfig> ::iterator it; 
-		it = myAppConfigs.find( myAppProtocolPair);
-		
-		if (it == myAppConfigs.end())
-		{
-myAppConfigs.erase( it);
-	}
-		
-AppConfig myAppConfig;
-			std::pair <std::pair <std::wstring, std::wstring>, AppConfig> myNewAppCollectionPair;
-			myNewAppCollectionPair = std::make_pair( myAppProtocolPair, myAppConfig);
-			myAppConfigs.insert( myNewAppCollectionPair);
-			return true;
+	Add(wstrAppExeName, wstrProtocolID);
+	return true;
 		}
 
 
 	void AppCollection::Remove( std::wstring wstrAppExeName, std::wstring wstrProtocolID, boost::uuids::uuid * myAppConfigID)
 	{
-// Does the specified configuration exist?
-		std::pair <std::wstring, std::wstring> myAppProtocolPair;
-		myAppProtocolPair = std::make_pair( wstrAppExeName, wstrProtocolID);
-		std::map <std::pair <std::wstring, std::wstring>, AppConfig> ::iterator it; 
-		
-		it = myAppConfigs.find( myAppProtocolPair);
-		if (it != myAppConfigs.end())
-		{
-				// Delete the map entry
-				myAppConfigs.erase( it);		
-			}  // end if appName/protocol found
-		}
-
+		myAppConfigs.erase({ wstrAppExeName, wstrProtocolID});
+	}
 
 AppConfig AppCollection::GetAppConfig( std::pair <std::wstring, std::wstring> myID)
 	{
-		  std::map <std::pair <std::wstring, std::wstring>, AppConfig> ::iterator it; 
-		
-		it = myAppConfigs.find( myID);
-		if (it != myAppConfigs.end())
-		{
-				return it->second;
-				}  
-			else
-			{
-    throw RBException(wstrAppConfigNotFoundError);
-}  
-			}
-
+	if (!IsAppConfigUnique(myID))
+	{
+		throw RBException(wstrAppConfigNotFoundError);
+	}
+	return myAppConfigs[myID];
+	}
 
 		AppConfig AppCollection::GetAppConfig( std::wstring wstrAppExeName, std::wstring wstrProtocolID)
 	{
-		  // Does the specified configuration exist?
-		std::pair <std::wstring, std::wstring> myAppProtocolPair;
-		myAppProtocolPair = std::make_pair( wstrAppExeName, wstrProtocolID);
-		std::map <std::pair <std::wstring, std::wstring>, AppConfig> ::iterator it; 
-		
-		it = myAppConfigs.find( myAppProtocolPair);
-		if (it != myAppConfigs.end())
-		{
-				return it->second;
-				}  
-			else
-			{
-    throw RBException(wstrAppConfigNotFoundError);
-}  
-			}
-
+			return GetAppConfig({ wstrAppExeName, wstrProtocolID});
+	}
 
 	std::pair <std::wstring, std::wstring> AppCollection::FindAppConfig( std::wstring wstrAppName, std::wstring wstrProtocolID)
 {
-	std::pair <std::wstring, std::wstring> myAppPair;
-myAppPair = std::make_pair( wstrAppName, wstrProtocolID);
-
-std::map <std::pair <std::wstring, std::wstring>, AppConfig> ::iterator it; 
-
-it = myAppConfigs.find( myAppPair);
+auto it  = myAppConfigs.find({ wstrAppName, wstrProtocolID});
 if (it != myAppConfigs.end())
 {
 	return it->first;
 	}
 else
 {
-std::wstring wstrEmpty;
-wstrEmpty.clear();
-myAppPair = std::make_pair( wstrEmpty, wstrEmpty);
-	return myAppPair;
+	return {L"", L""};
 }
 	}
 
-
-	std::map <std::pair <std::wstring, std::wstring>, AppConfig>::iterator AppCollection::end()
+	map <pair <wstring, wstring>, AppConfig>::iterator AppCollection::end()
 	{
-		return myAppConfigs.end();
+		return std::end(myAppConfigs);
 	}
 
-
-	std::vector <std::wstring> AppCollection::GetAppNames( std::wstring wstrProtocolID)
+	vector <wstring> AppCollection::GetAppNames( wstring wstrProtocolID)
 	{
-std::map <std::pair <std::wstring, std::wstring>, AppConfig>::iterator it;
-std::vector <std::wstring> myAppNames;
-
-for (it = myAppConfigs.begin(); it != myAppConfigs.end(); it++)
-{
-	if (it->first.second.compare( wstrProtocolID) == 0)
-	{
-		myAppNames.push_back( it->first.first);
-	}
-}
+		auto appConfigKeys = keys(myAppConfigs);
+		auto filteredAppConfigs = appConfigKeys | filter([wstrProtocolID](const pair<wstring, wstring>& key) {return key.second.compare(wstrProtocolID) == 0; });
+		vector <wstring> myAppNames;
+		std::transform(begin(filteredAppConfigs), std::end(filteredAppConfigs), back_inserter(myAppNames), [](pair<wstring, wstring> val) { return val.first; });
 			return myAppNames;
 	}
 
-
 AppConfig AppCollection::GetAppConfigItem( int nIndex)
 {
-std::map <std::pair <std::wstring, std::wstring>, AppConfig>::iterator it;
 int i = 0;
 
-for (it = myAppConfigs.begin(); it != myAppConfigs.end(); it++)
+for (auto appConfig : myAppConfigs)
 {
 if (i == nIndex)
 {
-	return it->second;
+	return appConfig.second;
 }
 	 
 i++;
 }  // end for
 	
 throw ID_NO_MATCHING_APP_CONFIG;
-return it->second;
 }
-
 
 int AppCollection::Count()
 {
 	return myAppConfigs.size();
 }
 
-
-void AppCollection::Clone( std::wstring wstrSourceProtocolID, std::wstring wstrDestinationProtocolID)
+void AppCollection::Clone( wstring wstrSourceProtocolID, wstring wstrDestinationProtocolID)
 {
-std::map <std::pair <std::wstring, std::wstring>, AppConfig>::iterator it;
-
-for (it = myAppConfigs.begin(); it != myAppConfigs.end(); it++)
-{
-	// Check to see if this entry is for our original protocol
-	if (it->first.second.compare( wstrSourceProtocolID) == 0)
+	auto range = myAppConfigs | filter([wstrSourceProtocolID](auto pairToCheck) {return pairToCheck.first.second.compare(wstrSourceProtocolID) == 0; });
+	for(auto item : range)
 	{
-		Add( it->first.first, wstrDestinationProtocolID, it->second);
-}  // end if match found
-}  // end for
-}
-
+		Add(item.first.first, wstrDestinationProtocolID, item.second);
+	}
+	}
 
 void AppCollection::UpdateDisplays( std::wstring wstrProtocolID, std::map <std::string , DisplayDefinition> myNewDisplays)
 {
-std::map <std::pair <std::wstring, std::wstring>, AppConfig>::iterator it;
-
-for (it = myAppConfigs.begin(); it != myAppConfigs.end(); it++)
-{
-if (it->first.second.compare( wstrProtocolID) == 0)
+	auto range = myAppConfigs | filter([wstrProtocolID](auto pairToCheck) {return pairToCheck.first.second.compare(wstrProtocolID) == 0; });
+	for(auto item : range)
 	{
-		std::wstring wstrAppName = it->first.first;
-		std::wstring wstrNewProtocolID = it->first.second;
-		AppConfig myAppConfig = it->second;
-		myAppConfig.UpdateDisplayDefinitions( myNewDisplays);
-		it->second = myAppConfig;
-}  // End if matching protocol ID
-}  // end for
-}
+		item.second.UpdateDisplayDefinitions(myNewDisplays);
+	}
+	}
 
 bool AppCollection::IsAppConfigUnique( std::pair <std::wstring, std::wstring> myAppConfigID)
 {
 // Does the specified configuration exist?
-		std::map <std::pair <std::wstring, std::wstring>, AppConfig> ::iterator it; 
-		
-		it = myAppConfigs.find( myAppConfigID);
-		if (it != myAppConfigs.end())
-		{
-				return false;
-				}  
-			else
-			{
-    	return true;
-		}
+	return myAppConfigs.contains(myAppConfigID);
 }
-
-
