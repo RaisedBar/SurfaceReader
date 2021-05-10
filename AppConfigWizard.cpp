@@ -8,7 +8,6 @@
 
 #include "AppConfigWizard.h"
 
-
 AppConfigWizard::AppConfigWizard( wxFrame * myFrame, bool blnUseSizer, std::shared_ptr<AppConfig> pAppConfig, std::shared_ptr<SurfaceProtocol> pProtocol, std::shared_ptr<RBSpeech> pSpeech, std::shared_ptr<JawsCacheType> pJawsCache, void * pHelpController)
 	:
 pMyProtocol( new SurfaceProtocol()),
@@ -29,9 +28,8 @@ pMyHelpController = (wxExtHelpController *) pHelpController;
 #endif
 
 SetExtraStyle(wxWIZARD_EX_HELPBUTTON);
-std::wstring wstrAppName = pMyAppConfig->GetAppName();
-std::wstring wstrTitle = wstrAppConfigWizardTitle;
-	wstrTitle.append( wstrSpacedOpenParen).append( wstrAppName).append( wstrCloseParen);
+auto wstrTitle = wstrAppConfigWizardTitle;
+	wstrTitle.append( wstrSpacedOpenParen).append(pMyAppConfig->GetAppName()).append( wstrCloseParen);
 Create( myFrame,wxID_ANY,wstrTitle);
 
 wstrTitle = wstrActionsPageTitle;
