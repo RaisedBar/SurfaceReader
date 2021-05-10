@@ -7,7 +7,6 @@
 
 #include "ControlStatesDialog.h"
 
-
 ControlStatesDialog::ControlStatesDialog( const wxString& title, std::string strHash, MessageDefinition * pMessage, std::vector <unsigned char> vSysExHeader)
        : wxDialog(NULL, -1, title, wxDefaultPosition, wxSize(250, 230))
 {  
@@ -51,25 +50,22 @@ Centre();
 this->Maximize();
 }
 
-
 ControlStatesDialog::~ControlStatesDialog()
 {}
-
 
 void ControlStatesDialog::ListDefinedStates()
 {
 	lbxStates->Clear();
-	
-	for (int i = 0; i < pMyMessage->GetStateCount(); i++)
+
+	for(auto stateLabel : pMyMessage->GetStateLabels())
 	{
-		lbxStates->Append( pMyMessage->GetStateLabels().at( i));
+		lbxStates->Append(stateLabel);
 	}  // end for
 }
 
-
 void ControlStatesDialog::CheckSelection()
 {
-int nSelection = lbxStates->GetSelection();
+auto nSelection = lbxStates->GetSelection();
 	
 if (nSelection < 0)
 {
@@ -83,10 +79,7 @@ else
 }
 }
 
-
 // Event handlers:
-
-
 void ControlStatesDialog::OnAddState( wxCommandEvent& event)
 {
 	DefineStateDialog * myStateDlg = new DefineStateDialog( wstrControlStatesTitle, strMyHash, vMySysExHeader);
@@ -103,16 +96,15 @@ void ControlStatesDialog::OnAddState( wxCommandEvent& event)
 	}  // end if dialog returns OK
 		}
 
-
 void ControlStatesDialog::OnDeleteState( wxCommandEvent& event)
 {
-	int nSelection = lbxStates->GetSelection();
+	auto nSelection = lbxStates->GetSelection();
 
 	if (nSelection > -1)
 	{
 		if (		wxMessageBox( wstrDeleteStateCheck,                wstrAppTitle, wxYES_NO | wxNO_DEFAULT | wxICON_QUESTION) == wxYES) 
 		{
-		std::vector <unsigned char> vKeyBytes = pMyMessage->GetStateBytes( nSelection);
+		auto vKeyBytes = pMyMessage->GetStateBytes( nSelection);
 		if (pMyMessage->DeleteState( vKeyBytes))
 		{
 	// Refresh list
@@ -123,14 +115,13 @@ void ControlStatesDialog::OnDeleteState( wxCommandEvent& event)
 	}  // end if Valid selection in list box
 }
 
-
 void ControlStatesDialog::OnEditState( wxCommandEvent& event)
 {
-	int nSelection = lbxStates->GetSelection();
+	auto nSelection = lbxStates->GetSelection();
 
 	if (nSelection > -1)
 	{
-				std::vector <unsigned char> vKeyBytes = pMyMessage->GetStateBytes( nSelection);
+				auto vKeyBytes = pMyMessage->GetStateBytes( nSelection);
 				DefineStateDialog * myStateDlg = new DefineStateDialog( wstrControlStatesTitle, strMyHash, vMySysExHeader, lbxStates->GetStringSelection(), vKeyBytes);
 
 	if (myStateDlg->ShowModal() == wxID_OK) 
@@ -146,27 +137,22 @@ void ControlStatesDialog::OnEditState( wxCommandEvent& event)
 	}  // end if valid selection in list
 }
 
-
 void ControlStatesDialog::OnOK( wxCommandEvent& event)
 		{
 	EndModal( wxID_OK);
 		}
-
 		
 		void ControlStatesDialog::OnCancel( wxCommandEvent& event)
 		{
 		EndModal( wxID_CANCEL);
 		}
 
-		
 		void ControlStatesDialog::OnListSelect(wxCommandEvent& event)
 {
 CheckSelection();
 		}
 
-
 		// We need to implement an event table in which the events received by a wxNewSurfaceDialog are routed to their respective handler functions 
-
 	BEGIN_EVENT_TABLE(ControlStatesDialog, wxDialog)
 		// List box selection
 EVT_LISTBOX( ID_STATES_LIST_BOX, ControlStatesDialog::OnListSelect)
