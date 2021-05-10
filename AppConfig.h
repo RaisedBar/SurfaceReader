@@ -6,8 +6,14 @@
 #define APPCONFIG_H
 
 #pragma once
+//Standard headers.
+#include <ranges>
+#include <algorithm>
+#include <optional>
 
+//internal headers.
 #include "Protocol.h"
+#include "SRConstants.h"
 
 class AppConfig
 {

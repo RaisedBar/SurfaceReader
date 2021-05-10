@@ -4,7 +4,6 @@
 #define _HAS_STD_BYTE 0
 
 #include "AppConfig.h"
-
 	
 AppConfig::AppConfig()
 	{
@@ -13,224 +12,141 @@ AppConfig::AppConfig()
 HardwareControls.clear();
 }
 
-
 	AppConfig::~AppConfig()
 	{}
 
-	
 	std::wstring AppConfig::GetAppName() const
 	{
 		return wstrAppName;
 	}
-
 
 	void AppConfig::SetAppName( std::wstring wstrName)
 	{	
 		wstrAppName = wstrName;
 	}
 
-
 std::string AppConfig::GetProtocolID() const
 	{
 		return strProtocolID;
 	}
-
 
 	void AppConfig::SetProtocolID( std::string strID)
 	{	
 		strProtocolID = strID;
 	}
 
-
 		MessageDefinition AppConfig::GetControlDefinition( std::string strControlHash)
 	{
-		std::map <std::string, MessageDefinition>::iterator it;
-		it = HardwareControls.find( strControlHash);
-
-		if (it != HardwareControls.end())
-		{
-			return it->second;
-		}
-		else
-		{
-throw RBException( wstrNoMessageDefinitionError);
+			if (!HardwareControls.contains(strControlHash))
+			{
+				throw RBException(wstrNoMessageDefinitionError);
 			}
-}
-
+			return HardwareControls[strControlHash];
+			}
 
 	void AppConfig::SetControlDefinition( std::pair <std::string, MessageDefinition> myPair)
 	{
-		/*
-		std::map <std::string, MessageDefinition>::iterator it;
-		it = HardwareControls.find( strControlHash);
-
-		if (it != HardwareControls.end())
-		{
-			HardwareControls.erase( it);
-		}
-*/		
-
-		HardwareControls.insert( myPair);
+		HardwareControls.insert_or_assign(myPair.first, myPair.second);
 	}
-
 	
 MessageDefinition AppConfig::GetControlDefinitionItem( unsigned int nItem)
 {
-MessageDefinition myDefinition;
-std::wstring wstrLabel;
-wstrLabel.clear();
-myDefinition.SetLabel( wstrLabel);
-
-if ((nItem < HardwareControls.size())
-		&& (HardwareControls.empty() == false))
+	if ((HardwareControls.empty()) && (nItem == HardwareControls.size()))
 	{
-				unsigned int i = 0;
-std::map <std::string, MessageDefinition>::iterator it;
+		throw RB_NO_CONTROL_DEFINITION;
+	}
 
-for (it = HardwareControls.begin(); it != HardwareControls.end(); it++)
-{
-				if (i == nItem)
-					{
-						myDefinition = it->second;
-				}
+std::optional<MessageDefinition> myDefinition;
+unsigned int i = 0;
 
-				i++;
-}  // end for
+	for (auto hardwareControl : HardwareControls)
+	{
+		if (i == nItem)
+		{
+			myDefinition = hardwareControl.second;
+			break;
+		}
+		i++;
+	}
 	
-if (myDefinition.GetLabel().empty())
+if (!myDefinition)
 {
 throw RB_NO_CONTROL_DEFINITION;
 }
-else
-{
-	return myDefinition;
-}
-}  // end valid index and not empty map
-	else
-	{
-		throw RB_NO_CONTROL_DEFINITION;
-	}		
+
+	return *myDefinition;
 }
 
 DisplayDefinition AppConfig::GetDisplayDefinition( std::string strDisplayHash)
 	{
-		std::map <std::string, DisplayDefinition>::iterator it;
-		it = Displays.find( strDisplayHash);
-
-		if (it != Displays.end())
-		{
-			return it->second;
-		}
-		else
-		{
-throw RB_NO_DISPLAY_DEFINITION;
-		}
+	if (!Displays.contains(strDisplayHash))
+	{
+		throw RB_NO_DISPLAY_DEFINITION;
+	}
+	return Displays[strDisplayHash];
 }
-
 
 	void AppConfig::SetDisplayDefinition( std::pair <std::string, DisplayDefinition> myPair)
 	{
-		/*
-		std::map <std::string, DisplayDefinition>::iterator it;
-		it = Displays.find( strDisplayHash);
-
-		if (it != Displays.end())
-		{
-			Displays.erase( it);
-		}
-*/		
-
-		Displays.insert( myPair);
+		Displays.insert_or_assign(myPair.first, myPair.second);
 	}
 
-	
 	void AppConfig::UpdateDisplayDefinitions( std::map<std::string, DisplayDefinition> myNewDisplays)
 	{
-				std::map <std::string, DisplayDefinition>::iterator it, it2;
-		
-				for (it = myNewDisplays.begin(); it != myNewDisplays.end(); it++)				
+		for(auto newDisplay : myNewDisplays)
 				{
-					it2 = Displays.find( it->first);
+					auto originalDisplay = Displays.find(newDisplay.first);
 
-		if (it2 != Displays.end())
+		if (originalDisplay != Displays.end())
 		{
-						it2->second.SetDisplayLength( it->second.GetDisplayLength());
-			it2->second.SetLineCount( it->second.GetLineCount());
-			it2->second.SetCursorFromLeft( it->second.IsCursorFromLeft());
-			it2->second.SetStripCount( it->second.GetStripCount());
+			originalDisplay->second.SetDisplayLength( newDisplay.second.GetDisplayLength());
+			originalDisplay->second.SetLineCount( newDisplay.second.GetLineCount());
+			originalDisplay->second.SetCursorFromLeft( newDisplay.second.IsCursorFromLeft());
+			originalDisplay->second.SetStripCount(newDisplay.second.GetStripCount());
 			}  // end if found
 	}  // end for
 }
 
-	
 	std::string AppConfig::GetDisplayHash( std::wstring wstrLabel)
 	{
-std::string strHash;
-strHash.clear();
-std::map <std::string, DisplayDefinition>::iterator it;
-
-for (it = Displays.begin(); it != Displays.end(); it++)
-{
-	if (it->second.GetLabel().compare( wstrLabel) == 0)
-	{
-		strHash = it->first;
-	}
-}  // end for
-
+		std::string strHash = strEmpty;
+		 auto filteredDisplays = Displays | std::ranges::views::filter([wstrLabel](std::pair<const std::string, DisplayDefinition> item) {return item.second.GetLabel().compare(wstrLabel) == 0; });
+		 strHash = std::begin(filteredDisplays)->first;
 	return strHash;
 	}
 
-
 	DisplayDefinition AppConfig::GetDisplayDefinitionItem( unsigned int nItem)
 {
-DisplayDefinition myDefinition;
-std::wstring wstrEmpty;
-wstrEmpty.clear();
-myDefinition.SetLabel( wstrEmpty);
+		if ((Displays.empty()) && (nItem == Displays.size()))
+		{
+			throw RB_NO_DISPLAY_DEFINITION;
+		}
 
-if ((nItem < Displays.size())
-		&& (Displays.empty() == false))
-	{
+	std::optional<DisplayDefinition> myDefinition;
 				unsigned int i = 0;
-std::map <std::string, DisplayDefinition>::iterator it;
-
-for (it = Displays.begin(); it != Displays.end(); it++)
+				
+	for(auto display : Displays)
 {
 				if (i == nItem)
 					{
-						myDefinition = it->second;
-				}
+						myDefinition = display.second;
+						break;
+					}
 
 				i++;
 }  // end for
-	
-if (myDefinition.GetLabel().empty())
-{
-throw RB_NO_DISPLAY_DEFINITION;
-}
-else
-{
-	return myDefinition;
-}
-}  // end valid index and not empty map
-	else
+
+	if (!myDefinition)
 	{
 		throw RB_NO_DISPLAY_DEFINITION;
-	}		
-}
+	}
 
+	return *myDefinition;
+}
 
 std::vector <std::wstring> AppConfig::GetDisplayNames()
 {
-std::map <std::string, DisplayDefinition>::iterator it;
-std::vector <std::wstring> myDisplayNames;
-
-for (it = Displays.begin(); it != Displays.end(); it++)
-{
-	myDisplayNames.push_back( it->second.GetLabel());
-}
-
+std::vector<std::wstring> myDisplayNames;
+	std::transform(std::begin(Displays), std::end(Displays), std::back_inserter(myDisplayNames), [](std::pair<const std::string, DisplayDefinition> item)-> std::wstring {return item.second.GetLabel(); });
 return myDisplayNames;
 }
-
-
