@@ -44,38 +44,31 @@ Centre();
 this->Maximize();
 }
 
-
 AppConfigChooserDialog::~AppConfigChooserDialog()
 {}
 
-
 std::pair <std::wstring, std::wstring> AppConfigChooserDialog::GetAppConfigID()
 {
-std::pair <std::wstring, std::wstring> myPair;
 if (lbxApps->GetSelection() < 0)
 {
-		myPair = std::make_pair( wstrDefaultAppName, wstrMyProtocolID);
+	return { wstrDefaultAppName, wstrMyProtocolID };
 }
 else
 {
-	myPair = std::make_pair( lbxApps->GetStringSelection(), wstrMyProtocolID);
+	return { lbxApps->GetStringSelection(), wstrMyProtocolID };
 }
-	
-return myPair;
 }
-
 
 void AppConfigChooserDialog::ListDefinedApps()
 {
 	lbxApps->Clear();
 lbxApps->Append( wstrDefaultAppName);
-	
-for (unsigned int i = 0; i < pMyApps->GetAppNames( wstrMyProtocolID).size(); i++)
-	{
-		lbxApps->Append( pMyApps->GetAppNames( wstrMyProtocolID).at( i));
-	}  // end for
-}
 
+	for(auto appName : pMyApps->GetAppNames(wstrMyProtocolID))
+	{
+		lbxApps->Append(appName);
+	}
+}
 
 // Event handlers:
 
