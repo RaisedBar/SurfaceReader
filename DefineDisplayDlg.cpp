@@ -7,9 +7,7 @@
 
 #include "DefineDisplayDlg.h"
 
-
 // Constructor for new displays
-
 DefineDisplayDialog::DefineDisplayDialog( const wxString & title, const bool blnIsLED, std::shared_ptr<SurfaceProtocol> pProtocol)
        : wxDialog(NULL, -1, title, wxDefaultPosition, wxSize(250, 230)),
 	   pMyProtocol( new SurfaceProtocol ()),
@@ -84,9 +82,7 @@ vBox->Fit( RBPanel);
 Centre();
 }
 
-
 // Constructor for editing an existing display
-
 DefineDisplayDialog::DefineDisplayDialog( const wxString& title, const wxString &ControlLabel, const std::string &strDisplayHash, DisplayDefinition myDisplay, std::shared_ptr<SurfaceProtocol> pProtocol)
 :
 		wxDialog(NULL, -1, title, wxDefaultPosition, wxSize(250, 230)),
@@ -182,97 +178,80 @@ vBox->Fit( RBPanel);
 Centre();
 }
 
-
 DefineDisplayDialog:: ~DefineDisplayDialog()
 {}
 
-
 bool DefineDisplayDialog::IsValidDisplay() const
 {
-bool blnResult = false;
-long lLines, lDisplayLength, lStripCount;
+auto lLines=0L, lDisplayLength =0L, lStripCount =0L;
 
 txtDisplayLines->GetValue() .ToLong( &lLines);
 txtDisplayLength->GetValue() .ToLong( &lDisplayLength);
 txtStripCount->GetValue() .ToLong( &lStripCount);
 
-blnResult = (( txtDisplayName->GetValue().IsEmpty() == false)
+return (( !txtDisplayName->GetValue().IsEmpty())
 && (lLines > 0)
 && (lDisplayLength > 0)
 && (lStripCount > 0)
-&& (strHash.empty() == false)); 
-
-return blnResult;
+&& (!strHash.empty())); 
 }
-
 
 std::wstring DefineDisplayDialog::GetDisplayName() const
 {
 return txtDisplayName->GetValue().ToStdWstring();
 }
 
-
 long DefineDisplayDialog::GetLineCount() const
 {
-long lTemp1;
+auto lTemp1 =0L;
 	txtDisplayLines->GetValue() .ToLong( &lTemp1);
 	return lTemp1;
 }
 
-
 long DefineDisplayDialog::GetDisplayLength() const
 {
-long lTemp1;
+auto lTemp1 =0L;
 txtDisplayLength->GetValue() .ToLong( &lTemp1); 
 	return lTemp1;
 }
-
 
 bool DefineDisplayDialog::IsCursorFromLeft()
 {
 return blnCursorFromLeft;
 }
 
-
 bool DefineDisplayDialog::IsUniCode()
 {
 return blnUniCode;
 }
 
-
 long DefineDisplayDialog::GetStripCount() const
 {
-	long lTemp1;
+	auto lTemp1 =0L;
 	txtStripCount->GetValue().ToLong( &lTemp1);
 	return lTemp1;
 }
-
 
 std::string DefineDisplayDialog::GetDisplayHash() const
 {
 return strHash;
 }
 
-
 std::vector <unsigned char> DefineDisplayDialog::GetSysExAddressBytes()
 {
 	return vSysExAddressBytes;
 }
 
-
 // Event handlers
-
 void DefineDisplayDialog::OnCursorFromLeft( wxCommandEvent& event)
 {
 blnCursorFromLeft = wxchkCursorFromLeft->GetValue();
 }
 
-
 void DefineDisplayDialog::OnUniCode( wxCommandEvent& event)
 {
 blnUniCode = wxchkUniCode->GetValue();
 }
-
 
 void DefineDisplayDialog::OnDefineMIDI( wxCommandEvent& event)				
 {
@@ -288,21 +267,17 @@ if (myDefinitionDialog->ShowModal() == wxID_OK)
 myDefinitionDialog->Destroy(); 
 }
 
-
 void DefineDisplayDialog::OnCancel(wxCommandEvent& event)
 	{
 					EndModal( wxID_CANCEL);
 	}
-
 
 void DefineDisplayDialog::OnOK( wxCommandEvent& event)
 	{
 					EndModal( wxID_OK);
 	}
 
-
 // We need to implement an event table in which the events received by a wxNewSurfaceDialog are routed to their respective handler functions 
-
 	BEGIN_EVENT_TABLE(DefineDisplayDialog, wxDialog)
 		EVT_CHECKBOX( ID_CursorFromLeft, DefineDisplayDialog::OnCursorFromLeft)
 		EVT_CHECKBOX( ID_UniCode, DefineDisplayDialog::OnUniCode)
@@ -311,4 +286,3 @@ EVT_BUTTON(ID_DEFINE_MIDI, DefineDisplayDialog::OnDefineMIDI)
 		EVT_BUTTON(wxID_CANCEL, DefineDisplayDialog::OnCancel)
 EVT_BUTTON(wxID_OK, DefineDisplayDialog::OnOK)
 END_EVENT_TABLE()
-	
