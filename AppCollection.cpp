@@ -23,7 +23,8 @@ AppCollection::~AppCollection()
 
 bool AppCollection::Add( std::wstring wstrAppExeName, std::wstring wstrProtocolID)
 	{
-	Add(wstrAppExeName, wstrProtocolID);
+	AppConfig MyAppConfig;
+	myAppConfigs.insert_or_assign({ wstrAppExeName, wstrProtocolID }, MyAppConfig);
 	return true;
 		}
 
