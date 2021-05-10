@@ -7,7 +7,6 @@
 
 #include "DefineLEDLampDlg.h"
 
-
 DefineLEDLampDialog::DefineLEDLampDialog( const wxString & title, std::shared_ptr<SurfaceProtocol> pProtocol)
        : wxDialog(NULL, -1, title, wxDefaultPosition, wxSize(250, 230)),
 	   pMyProtocol( new SurfaceProtocol())
@@ -45,47 +44,37 @@ Centre();
 this->Maximize();
 }
 
-
 DefineLEDLampDialog:: ~DefineLEDLampDialog()
 {}
 
-
 bool DefineLEDLampDialog::IsValidLEDLamp() const
 {
-long lLineCount = 0;
-long lLineLength = 0;
-long lCursorOffset = 0;
-long lStripCount = 0;
+auto lLineCount = 0, lLineLength = 0, lCursorOffset = 0, lStripCount = 0;
 
-return (( txtLampName->GetValue().IsEmpty() == false)
+return (( !txtLampName->GetValue().IsEmpty())
 && (lLineCount == 0)
 && (lLineLength == 0)
 && (lCursorOffset == 0)
 && (lStripCount == 0)
-&& (strHash.empty() == false)); 
+&& (!strHash.empty())); 
 }
-
 
 std::wstring DefineLEDLampDialog::GetLEDLampName() const
 {
 return txtLampName->GetValue().ToStdWstring();
 }
 
-
 std::string DefineLEDLampDialog::GetDisplayHash() const
 {
 return strHash;
 }
-
 
 std::vector <unsigned char> DefineLEDLampDialog::GetSysExAddressBytes()
 {
 	return vSysExAddressBytes;
 }
 
-
 // Event handlers
-
 void DefineLEDLampDialog::OnDefineMIDI( wxCommandEvent& event)				
 {
 	DefineMessageDialog * myDefinitionDialog = new DefineMessageDialog( wstrLampSetupTitle, txtLampName->GetValue(), pMyProtocol->GetSysExHeader());
@@ -99,18 +88,15 @@ if (myDefinitionDialog->ShowModal() == wxID_OK)
 myDefinitionDialog->Destroy();
 }
 
-
 void DefineLEDLampDialog::OnCancel(wxCommandEvent& event)
 	{
 					EndModal( wxID_CANCEL);
 	}
 
-
 void DefineLEDLampDialog::OnOK( wxCommandEvent& event)
 	{
 					EndModal( wxID_OK);
 	}
-
 
 // We need to implement an event table in which the events received by a wxNewSurfaceDialog are routed to their respective handler functions 
 
@@ -119,5 +105,3 @@ EVT_BUTTON(ID_DEFINE_MIDI, DefineLEDLampDialog::OnDefineMIDI)
 		EVT_BUTTON(wxID_CANCEL, DefineLEDLampDialog::OnCancel)
 EVT_BUTTON(wxID_OK, DefineLEDLampDialog::OnOK)
 END_EVENT_TABLE()
-	
-
