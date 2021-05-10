@@ -33,7 +33,7 @@ auto wstrTitle = wstrAppConfigWizardTitle;
 Create( myFrame,wxID_ANY,wstrTitle);
 
 wstrTitle = wstrActionsPageTitle;
-	wstrTitle.append( wstrSpacedOpenParen).append( wstrAppName).append( wstrCloseParen);
+	wstrTitle.append( wstrSpacedOpenParen).append(pMyAppConfig->GetAppName()).append( wstrCloseParen);
 
 	// Different versions of the ActionsPage class for Windows and Mac
 	#ifdef __WINDOWS__ 
@@ -43,7 +43,7 @@ m_ActionsPage = new ActionsPage( this, wstrTitle, pMyAppConfig, pMyProtocol, pMy
 #endif
 
 wstrTitle = wstrDisplaysPageTitle;
-	wstrTitle.append( wstrSpacedOpenParen).append( wstrAppName).append( wstrCloseParen);
+	wstrTitle.append( wstrSpacedOpenParen).append(pMyAppConfig->GetAppName()).append( wstrCloseParen);
 	m_DisplaysPage = new DisplaysPage(this, wstrTitle, pMyAppConfig, pMyProtocol);
 	
 // Set page ordering
