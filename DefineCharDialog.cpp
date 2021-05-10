@@ -6,7 +6,6 @@
 
 #include "DefineCharDialog.h"
 
-
 DefineCharDialog::DefineCharDialog( const wxString& title)
        : wxDialog(NULL, -1, title, wxDefaultPosition, wxSize(250, 230))
 {  
@@ -42,7 +41,6 @@ vBox1->Fit( myPanel);
 Centre();
 this->Maximize();
 }
-
 
 DefineCharDialog::DefineCharDialog( const wxString& title, int nIndex, std::wstring wstrLabel)
        : wxDialog(NULL, -1, title, wxDefaultPosition, wxSize(250, 230))
@@ -81,89 +79,48 @@ Centre();
 this->Maximize();
 }
 
-
 DefineCharDialog::~DefineCharDialog()
 {}
 
-
 bool DefineCharDialog::IsValidCharDefinition()
 {
-if ((IsValidCharLabel())
-	&& (IsValidCharIndex()))
-	{
-	return true;
-}
-else
-{
-return false;
-}
-}
-
+	return (IsValidCharLabel())
+		&& (IsValidCharIndex());
+	}
 
 std::wstring DefineCharDialog::GetCharLabel()
 {
 	return txtCharLabel->GetValue().ToStdWstring();
 }
 
-
 int DefineCharDialog::GetCharIndex()
 {
-long lTemp;
-
-if (txtCharIndex->GetValue().ToLong( &lTemp, 16))
-{
-	return (int) lTemp;
+auto lTemp =-1L;
+txtCharIndex->GetValue().ToLong(&lTemp, 16);
+return (int)lTemp;
 }
-else
-{
-return -1;
-}
-}
-
 
 bool DefineCharDialog::IsValidCharLabel()
 {
-	if (txtCharLabel->IsEmpty())
-	{
-		return false;
+	return !txtCharLabel->IsEmpty();
 	}
-	else
-	{
-		return true;
-	}
-}
-
 
 bool DefineCharDialog::IsValidCharIndex()
 {
-long lTemp;
-bool blnResult = false;
-
-if (txtCharIndex->GetValue().ToLong( &lTemp, 16))
-{
-if (lTemp > -1)
-{
-	blnResult = true;
+auto lTemp =-1L;
+return txtCharIndex->GetValue().ToLong(&lTemp, 16);
 }
-}
-
-	return blnResult;
-}
-
 
 // Event handlers:
-
 void DefineCharDialog::OnOK( wxCommandEvent& event)
 		{
 	EndModal( wxID_OK);
 		}
 
-		
 		void DefineCharDialog::OnCancel( wxCommandEvent& event)
 		{
 		EndModal( wxID_CANCEL);
 		}
-
 		
 		// We need to implement an event table in which the events received by a wxNewSurfaceDialog are routed to their respective handler functions 
 
