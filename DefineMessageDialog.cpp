@@ -7,7 +7,6 @@
 
 #include "DefineMessageDialog.h"
 
-
 DefineMessageDialog::DefineMessageDialog(const wxString & title, const wxString &ControlLabel, std::vector <unsigned char> vHeader)
        : wxDialog(NULL, -1, title, wxDefaultPosition, wxSize(250, 230))
 {  
@@ -27,8 +26,7 @@ wxBoxSizer * hBoxMessageType = new wxBoxSizer( wxHORIZONTAL);
 	wxBoxSizer * vBoxRadioButtons = new wxBoxSizer( wxVERTICAL);
 wxStaticText * lblMessageTypePrompt = new wxStaticText(myPanel, wxID_ANY, wstrMessageTypePrompt);
 // Message type radio buttons
-std::wstring wstrRadioButtonName;
-wstrRadioButtonName = wstrRB_NoteOn;
+auto wstrRadioButtonName = wstrRB_NoteOn;
 wstrRadioButtonName.append( wstrSpacedOpenParen);
 
 std::string strHexByte = ByteToHex( (unsigned char) MIDI_CMD_NOTE_ON);
@@ -160,9 +158,7 @@ DisableSysExEdits();
 DisableNibbleEdits();
 }
 
-
 // Constructor to allow editing of an existing message definition
-
 DefineMessageDialog::DefineMessageDialog(const wxString & title, const wxString &ControlLabel, std::vector <unsigned char> vHeader, std::string strHash)
        : wxDialog(NULL, -1, title, wxDefaultPosition, wxSize(250, 230))
 {  
@@ -184,10 +180,8 @@ wxBoxSizer * hBoxMessageType = new wxBoxSizer( wxHORIZONTAL);
 	wxBoxSizer * vBoxRadioButtons = new wxBoxSizer( wxVERTICAL);
 wxStaticText * lblMessageTypePrompt = new wxStaticText(myPanel, wxID_ANY, wstrMessageTypePrompt);
 // Message type radio buttons
-std::wstring wstrRadioButtonName;
-
 // Note On
-wstrRadioButtonName = wstrRB_NoteOn;
+auto wstrRadioButtonName = wstrRB_NoteOn;
 wstrRadioButtonName.append( wstrSpacedOpenParen);
 std::string strHexByte = ByteToHex( (unsigned char) MIDI_CMD_NOTE_ON);
 wstrRadioButtonName.append( strHexByte.begin(), strHexByte.end());
@@ -297,7 +291,7 @@ wxBoxSizer * hBoxSysExMessage = new wxBoxSizer( wxHORIZONTAL);
 lblSysExPrompt = new wxStaticText(myPanel, wxID_ANY, wstrSysExPrompt);
 rbtxtSysEx = new RBTextCtrl( myPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_READONLY);
 vSysExAddressBytes = GetSysExAddressBytesFromHash( strHash, vSysExHeader.size());
-std::string strSysExMessage = BytesToHex( vSysExHeader);
+auto strSysExMessage = BytesToHex( vSysExHeader);
 strSysExMessage.append( BytesToHex( vSysExAddressBytes));
 rbtxtSysEx->SetValue( strSysExMessage);
 
@@ -349,27 +343,22 @@ vBox1->Fit( myPanel);
 Centre();
 }
 
-
 DefineMessageDialog::~DefineMessageDialog()
 {}
-
 
 int DefineMessageDialog::MessageType( std::string strMsgHash)
 {
 // Figure out what kind of message is represented by the hash string
-	std::string strFirst = strMsgHash.substr( 0, 1);
 	
-	if (strFirst.compare( strSysExHashPrefix) == 0)
+	if (strMsgHash.starts_with( strSysExHashPrefix))
 {
 	return ID_SYSEX;
 }
-	
-	if (strFirst.compare( strNibbleHashPrefix) == 0)
+	else if (strMsgHash.starts_with( strNibbleHashPrefix))
 	{
 	return ID_NIBBLE;
 		}
-
-	if (strFirst.compare( strDoubleHashPrefix) == 0)
+	else if (strMsgHash.starts_with( strDoubleHashPrefix))
 	{
 // Need more analysis here for note on/off, rpn, nrpn, etc.
 return ID_NOTE_ON_OFF;
@@ -383,7 +372,6 @@ return ID_NOTE_ON;
 // 	ID_PITCH_WHEEL
 	}
 }	
-
 
 void DefineMessageDialog::InitUI( int nType)
 {
@@ -483,65 +471,33 @@ break;
 }  // end switch
 }
 
-
 bool DefineMessageDialog::IsValidMessageDefinition()
 {
-	if (strHash.empty())
-	{
-		return false;
+	return !strHash.empty();
 	}
-	else
-	{
-		return true;
-	}
-}
-
 
 bool DefineMessageDialog::IsValidChannel()
 {
-long lTemp;
+auto lTemp =0L;
 txtMessageChannel->GetValue().ToLong( &lTemp);
-if ((lTemp >= MIN_MIDI_CHANNEL) && (lTemp <= MAX_MIDI_CHANNEL))
-{
-return true;
+return (lTemp >= MIN_MIDI_CHANNEL) && (lTemp <= MAX_MIDI_CHANNEL);
 }
-else
-{
-	return false;
-}
-}
-
 
 bool DefineMessageDialog::IsValidVoiceCommand()
 {
-long lTemp;
+auto lTemp =0L;
 txtMessageCommand->GetValue().ToLong( &lTemp);
 
-if ((lTemp >= MIDI_CMD_NOTE_OFF) && (lTemp <= MIDI_CMD_PITCH_WHEEL))
-{
-return true;
-}
-else
-{
-return false;
-}
+return (lTemp >= MIDI_CMD_NOTE_OFF) && (lTemp <= MIDI_CMD_PITCH_WHEEL);
 }
 
 bool DefineMessageDialog::IsValidData1()
 {
-long lTemp;
+auto lTemp =0L;
 txtMessageData1->GetValue().ToLong( &lTemp);
 
-if ((lTemp >= 0) && (lTemp <= MAX_MIDI_DATA_BYTE))
-{
-return true;
+return (lTemp >= 0) && (lTemp <= MAX_MIDI_DATA_BYTE);
 }
-else
-{
-return false;
-}
-}
-
 
 		std::string DefineMessageDialog::GetMessageHash()
 			{
@@ -561,13 +517,13 @@ else
 	myNoteOnMessage.resize( 3);
 	myNoteOnMessage.clear();
 	// Construct the message
-long lCommand, lChannel, lNoteNumber;
-lCommand = MIDI_CMD_NOTE_ON;
+auto lChannel =0L, lNoteNumber =0l;
+auto lCommand = MIDI_CMD_NOTE_ON;
 
 txtMessageChannel->GetValue().ToLong( &lChannel);
 // User sees channels as 1-16, MIDI sees them as 0-f, so need to subtract 1 from the channel number:
 lChannel = lChannel -1;
-long lStatus = (lCommand *16) + (lChannel);
+auto lStatus = (lCommand *16) + (lChannel);
 
 txtMessageData1->GetValue().ToLong( &lNoteNumber);
 
@@ -590,12 +546,12 @@ else
 	std::vector <unsigned char> myNoteOnMessage, myNoteOffMessage;
 
 // Construct the messages
-long lCommand, lChannel, lNoteNumber;
+auto lCommand =0L, lChannel =0L, lNoteNumber =0L;
 txtMessageChannel->GetValue().ToLong( &lChannel);
 txtMessageData1->GetValue().ToLong( &lNoteNumber);
 
 lCommand = MIDI_CMD_NOTE_ON;
-long lStatus = (lCommand *16) + (lChannel -1);
+auto lStatus = (lCommand *16) + (lChannel -1);
 
 myNoteOnMessage.push_back( lStatus);
 myNoteOnMessage.push_back( lChannel);
@@ -620,10 +576,10 @@ else
 {
 std::vector <unsigned char> myPitchWheelMessage;
 // Construct the message
-long lCommand, lChannel;
+auto lCommand =0L, lChannel =0L;
 txtMessageChannel->GetValue().ToLong( &lChannel);
 lCommand = MIDI_CMD_PITCH_WHEEL;
-wxInt32 lStatus = (lCommand *16) + (lChannel -1);
+auto lStatus = (lCommand *16) + (lChannel -1);
 myPitchWheelMessage.push_back( lStatus);
 myPitchWheelMessage.push_back( 0);
 myPitchWheelMessage.push_back( 0);
@@ -642,12 +598,12 @@ else
 {
 std::vector <unsigned char> myCCMessage;
 // Construct the message
-long lCommand, lCCNumber, lChannel;
+auto lCommand =0L, lCCNumber =0L, lChannel =0L;
 txtMessageChannel->GetValue().ToLong( &lChannel);
 txtMessageData1->GetValue().ToLong( &lCCNumber);
 
 lCommand = MIDI_CMD_CONTROL_CHANGE;
-wxInt32 lStatus = (lCommand * 16) + (lChannel -1);
+auto lStatus = (lCommand * 16) + (lChannel -1);
 myCCMessage.push_back( lStatus);
 myCCMessage.push_back( lCCNumber);
 myCCMessage.push_back( MIN_MIDI_VELOCITY);
@@ -665,7 +621,7 @@ if ((IsValidChannel() == false))
 else
 {
 	std::vector <unsigned char> myMSBMessage, myLSBMessage;
-long lChannel;
+auto lChannel =0L;
 txtMessageChannel->GetValue().ToLong( &lChannel);
 
 myMSBMessage.push_back( myMIDI.ShortMsgStatus( MIDI_CMD_CONTROL_CHANGE, (lChannel -1)));
@@ -689,7 +645,7 @@ if ((IsValidChannel() == false))
 else
 {
 std::vector <unsigned char> myMSBMessage, myLSBMessage;
-long lChannel;
+auto lChannel =0L;
 txtMessageChannel->GetValue().ToLong( &lChannel);
 
 myMSBMessage.push_back( myMIDI.ShortMsgStatus( MIDI_CMD_CONTROL_CHANGE, (lChannel -1)));
@@ -708,9 +664,9 @@ case ID_SYSEX:
 	{
 std::vector <unsigned char> vMessage = vSysExHeader;
 
-for (unsigned int i = 0; i < vSysExAddressBytes.size(); i++)
+for(auto vSysExAddressByte : vSysExAddressBytes)
 {
-	vMessage.push_back( vSysExAddressBytes[ i]);
+	vMessage.push_back(vSysExAddressByte);
 }
 
 		strHash = SysExMessageHash( vMessage, true);
@@ -719,12 +675,11 @@ for (unsigned int i = 0; i < vSysExAddressBytes.size(); i++)
 
 				case ID_NIBBLE:
 	{
-		strHash.clear();
 strHash = strNibbleHashPrefix;		
 		
-		for (unsigned int i = 0; i < vNibbles.size(); i++)
+for(auto vNibble : vNibbles)
 		{
-unsigned char nNibble = vNibbles.at( i);
+	unsigned char nNibble = vNibble;
 
 if (nNibble == NIBBLE_RANGE_MARKER)
 {
@@ -735,7 +690,6 @@ else if (nNibble == NIBBLE_WILD_CARD_MARKER)
 	{
 		strHash.append( NIBBLE_WILD_CARD_MARKER);	
 	}
-	
 else
 	{
 		strHash.append( boost::lexical_cast <std::string> ( (unsigned int) nNibble));
@@ -743,8 +697,6 @@ else
 		
 strHash.append( HASH_DELIMITER);		
 }  // end for
-	
-// wxMessageBox( strHash, wstrTest);	
 }
  	break;
 
@@ -758,13 +710,11 @@ default:
 	return strHash;
 		}
 			
-
 	void DefineMessageDialog::DisableCommandEdits()
 		{
 			lblMessageCommandNumberPrompt->Disable();
 			txtMessageCommand->Disable();
 }
-
 
 		void DefineMessageDialog::EnableCommandEdits()
 		{
@@ -772,13 +722,11 @@ default:
 			txtMessageCommand->Enable();
 }
 
-			
 		void DefineMessageDialog::DisableChannelEdits()
 		{
 			lblMessageChannelPrompt->Disable();
 			txtMessageChannel ->Disable();
 }
-
 
 		void DefineMessageDialog::EnableChannelEdits()
 		{
@@ -786,13 +734,11 @@ default:
 			txtMessageChannel->Enable();
 }
 
-			
 		void DefineMessageDialog::DisableData1Edits()
 		{
 			lblMessageData1Prompt->Disable();
 			txtMessageData1->Disable();
 		}
-
 
 /*
 void DefineMessageDialog::DisableData2Edits()
@@ -800,7 +746,6 @@ void DefineMessageDialog::DisableData2Edits()
 			lblMessageData2Prompt->Disable();
 			txtMessageData2->Disable();
 		}
-
 
 void DefineMessageDialog::EnableData2Edits()
 		{
@@ -856,7 +801,6 @@ case ID_NIBBLE:
 			txtMessageData1->Enable();
 		}
 
-
 void DefineMessageDialog::DisableSysExEdits()
 		{
 		lblSysExPrompt->Disable();
@@ -864,7 +808,6 @@ rbtxtSysEx->Disable();
 btnAddByte->Disable();
 btnRemoveByte->Disable();
 }
-
 
 		void DefineMessageDialog::EnableSysExEdits()
 		{
@@ -874,7 +817,6 @@ btnAddByte->Enable();
 btnRemoveByte->Enable();
 		}
 
-			
 		void DefineMessageDialog::DisableNibbleEdits()
 		{
 		lblNibblePrompt->Disable();
@@ -882,7 +824,6 @@ rbtxtNibble->Disable();
 btnAddNibble->Disable();
 btnRemoveNibble->Disable();
 }
-
 
 		void DefineMessageDialog::EnableNibbleEdits()
 		{
@@ -892,26 +833,23 @@ btnAddNibble->Enable();
 btnRemoveNibble->Enable();
 		}
 
-			
 std::string DefineMessageDialog::GetSingleMessageHash( std::vector <unsigned char> myNewMessage)
 		{
 MIDI myMIDI( myNewMessage, false);
 return myMIDI.MIDIHash();
 }
 
-
 std::string DefineMessageDialog::DoubleMessageHash( std::vector <unsigned char> myMSBMessage, std::vector <unsigned char> myLSBMessage)
 {
 // Join the two messages
-	for (unsigned int i = 0; i < myLSBMessage.size(); i++)
+	for(auto LSBItem : myLSBMessage)
 	{
-		myMSBMessage.push_back( myLSBMessage.at( i));
+		myMSBMessage.push_back(LSBItem);
 	}
 
 MIDI myMIDI( myMSBMessage, false);
 return myMIDI.MIDIHash();
 }
-
 
 std::string DefineMessageDialog::SysExMessageHash( std::vector <unsigned char> vNewMessage, bool blnFake)
 {
@@ -924,14 +862,12 @@ std::vector <unsigned char> DefineMessageDialog::GetSysExAddressBytes()
 return vSysExAddressBytes;
 }
 
-
 unsigned char DefineMessageDialog::GetChannelFromHash(std::string strMsgHash)
 {
 unsigned char nChannel = 0;
 
 return nChannel;
 }
-
 
 unsigned char DefineMessageDialog::GetData1FromHash(std::string strMsgHash)
 {
@@ -940,7 +876,6 @@ unsigned char nData1 = 0;
 return nData1;
 }
 
-
 unsigned char DefineMessageDialog::GetData2FromHash(std::string strMsgHash)
 {
 unsigned char nData2 = 0;
@@ -948,12 +883,11 @@ unsigned char nData2 = 0;
 return nData2;
 }
 
-
 std::vector <unsigned char> DefineMessageDialog::GetNibblesFromHash( std::string strMsgHash)
 {
 std::vector <unsigned char> vNewNibbles;
 
-if (strMsgHash.substr( 0, 1).compare( strNibbleHashPrefix) != 0)
+if (!strMsgHash.starts_with( strNibbleHashPrefix) )
 {
 	// Not a nibblized message, so return an empty vector
 	return vNewNibbles;
@@ -1000,14 +934,13 @@ strByte.clear();
 return vNewNibbles;
 }
 
-
 std::string DefineMessageDialog::NibblesToHex( std::vector <unsigned char> vNewNibbles)
 {
 std::string strOut;
 
-for (unsigned int i = 0; i < vNewNibbles.size(); i++)
+for(auto vNibbleItem : vNewNibbles)
 {
-unsigned char nNibble = vNewNibbles.at( i);
+unsigned char nNibble = vNibbleItem;
 
 if ((nNibble == NIBBLE_WILD_CARD_MARKER)
 	|| (nNibble == NIBBLE_RANGE_MARKER))
@@ -1022,7 +955,6 @@ else
 
 return strOut;
 }
-
 
 // Event handlers:
 
