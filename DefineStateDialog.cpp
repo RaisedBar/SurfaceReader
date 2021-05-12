@@ -7,7 +7,6 @@
 
 #include "DefineStateDialog.h"
 
-
 DefineStateDialog::DefineStateDialog( const wxString& title, std::string strHash, std::vector <unsigned char> vSysExHeader)
        : 
 wxDialog(NULL, -1, title, wxDefaultPosition, wxSize(250, 230))
@@ -56,7 +55,7 @@ vBox1->Add( hBoxValues);
 vBox1->Add( hBoxButtons);	
 
 // Modify the layout according to the message type being manipulated
-if (strHash.substr( 0,1).compare( strSysExHashPrefix) == 0)
+if (strHash.starts_with( strSysExHashPrefix))
 			{  // SysEx message, so variable number of data bytes
 								lblMSBPrompt->Disable();
 				lblLSBPrompt->Disable();
@@ -69,7 +68,7 @@ else  // Short message, may be 1 or 2 data bytes
 	RemoveByteButton->Disable();
 	rbtxtSysExBytes->Disable();	
 	
-	if (strHash.substr( 0,1).compare( strDoubleHashPrefix) != 0)    // Single data byte
+	if (!strHash.starts_with( strDoubleHashPrefix))    // Single data byte
 {
 	lblMSBPrompt->SetLabel( wstrValuePrompt);	
 	lblLSBPrompt->Disable();
@@ -83,7 +82,6 @@ myPanel->Fit();
 vBox1->Fit( myPanel);
 Centre();
 }
-
 
 // Constructor to edit an existing state
 DefineStateDialog::DefineStateDialog( const wxString& title, std::string strHash, std::vector <unsigned char> vSysExHeader, wxString wxstrLabel, std::vector <unsigned char> vKeyBytes)
@@ -133,7 +131,7 @@ vBox1->Add( hBoxValues);
 vBox1->Add( hBoxButtons);	
 
 // Modify the layout according to the message type being manipulated
-if (strHash.substr( 0,1).compare( strSysExHashPrefix) == 0)
+if (strHash.starts_with( strSysExHashPrefix) == 0)
 			{  // SysEx message, so variable number of data bytes
 				lblMSBPrompt->Disable();
 				lblLSBPrompt->Disable();
@@ -146,7 +144,7 @@ else  // Short message, may be 1 or 2 data bytes
 	RemoveByteButton->Disable();
 	rbtxtSysExBytes->Disable();	
 	
-	if (strHash.substr( 0,1).compare( strDoubleHashPrefix) != 0)    // Single data byte
+	if (strHash.starts_with( strDoubleHashPrefix) != 0)    // Single data byte
 {
 	lblMSBPrompt->SetLabel( wstrValuePrompt);	
 	lblLSBPrompt->Disable();
@@ -167,34 +165,23 @@ vBox1->Fit( myPanel);
 Centre();
 }
 
-
 DefineStateDialog::~DefineStateDialog()
 {}
 
-
 bool DefineStateDialog::IsValidStateDefinition()
 {
-if ((IsValidStateLabel())
-	&& (IsValidStateValue()))
-	{
-	return true;
+	return (IsValidStateLabel())
+		&& (IsValidStateValue());
 }
-else
-{
-return false;
-}
-}
-
 
 std::wstring DefineStateDialog::GetStateName()
 {
 	return txtStateLabel->GetValue().ToStdWstring();
 }
 
-
 std::vector <unsigned char> DefineStateDialog::GetStateValue()
 {
-if (strMyHash.substr( 0,1).compare( strSysExHashPrefix) == 0)
+if (strMyHash.starts_with( strSysExHashPrefix))
 			{  // SysEx message, so variable number of data bytes
 				return vBytes;
 }
@@ -203,11 +190,10 @@ if (strMyHash.substr( 0,1).compare( strSysExHashPrefix) == 0)
 	vBytes.clear();
 
 	long lMSB;
-	std::wstring wstrMSB = txtMSBByte->GetValue().ToStdWstring();
 		txtMSBByte->GetValue().ToLong( &lMSB, 16);
 		vBytes.push_back( lMSB);
 		
-if (strMyHash.substr( 0,1).compare( strDoubleHashPrefix) == 0)    // double data byte
+if (strMyHash.starts_with( strDoubleHashPrefix) == 0)    // double data byte
 {
 long lLSB;
 txtLSBByte->GetValue().ToLong( &lLSB, 16);
@@ -217,35 +203,26 @@ vBytes.push_back( lLSB);
 return vBytes;
 }
 
-
 bool DefineStateDialog::IsValidStateLabel()
 {
-	if (txtStateLabel->IsEmpty())
-	{
-		return false;
+	return !txtStateLabel->IsEmpty();
 	}
-	else
-	{
-		return true;
-	}
-}
-
 
 bool DefineStateDialog::IsValidStateValue()
 {
-bool blnResult = false;
+auto blnResult = false;
 
-if (strMyHash.substr( 0,1).compare( strSysExHashPrefix) == 0)
+if (strMyHash.starts_with( strSysExHashPrefix) == 0)
 			{  // SysEx message, so variable number of data bytes
 				blnResult = (vBytes.size() > 0);
 }
 
 else  // Short message, may be 1 or 2 data bytes
 {
-	if (strMyHash.substr( 0,1).compare( strDoubleHashPrefix) == 0)    // double data byte
+	if (strMyHash.starts_with( strDoubleHashPrefix) == 0)    // double data byte
 {
-	if ((IsSingleHexByteString( txtMSBByte->GetValue().ToStdString()) == false)
-		&& (IsSingleHexByteString( txtLSBByte->GetValue().ToStdString()) == false))
+	if ((!IsSingleHexByteString( txtMSBByte->GetValue().ToStdString()))
+		&& (!IsSingleHexByteString( txtLSBByte->GetValue().ToStdString())))
 	{
 		blnResult = true;
 	}
@@ -262,19 +239,10 @@ blnResult = true;
 return blnResult;
 }
 
-
 bool DefineStateDialog::IsValidDataByte( long lValue)
 {
-if ((lValue >= 0) && (lValue <= MAX_MIDI_DATA_BYTE))
-{
-return true;
+	return (lValue >= 0) && (lValue <= MAX_MIDI_DATA_BYTE);
 }
-else
-{
-return false;
-}
-}
-
 
 // Event handlers:
 
@@ -303,7 +271,6 @@ wxMessageBox( wstrBadHexByteError,                wstrAppTitle, wxOK | wxICON_IN
 myInputBox->Destroy(); 
 }
 
-
 void DefineStateDialog::OnRemoveDataByte( wxCommandEvent& event)
 {
 	if (vBytes.size() > 0)
@@ -314,21 +281,17 @@ rbtxtSysExBytes->SetValue( BytesToHex( vBytes));
 	}
 }
 
-
 void DefineStateDialog::OnOK( wxCommandEvent& event)
 		{
 EndModal( wxID_OK);
 		}
 
-		
 		void DefineStateDialog::OnCancel( wxCommandEvent& event)
 		{
 		EndModal( wxID_CANCEL);
 		}
-
 		
 		// We need to implement an event table in which the events received by a wxNewSurfaceDialog are routed to their respective handler functions 
-
 	BEGIN_EVENT_TABLE(DefineStateDialog, wxDialog)
 		EVT_BUTTON( ID_ADD, DefineStateDialog::OnAddDataByte)
 		EVT_BUTTON( ID_DELETE, DefineStateDialog::OnRemoveDataByte)
