@@ -121,7 +121,11 @@ enum ActiveProduct
 	/// <summary>A Dolphin product is active.</summary>
 		ID_DOLPHIN,
 		// Apple NSSpeechSynthesizer on Mac
-		ID_MAC
+		ID_MAC,
+	/// <summary>Windows Narrator is active; it is spoken to through UI Automation notifications.</summary>
+	/// <remarks>Added last so the stored values of the others don't change. Loops that run from ID_JAWS to ID_MAC
+	/// (the per-screen-reader action trees) deliberately leave it out until actions can be defined for it.</remarks>
+		ID_NARRATOR
 };
 
 /// <summary>

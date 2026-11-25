@@ -1433,6 +1433,12 @@ return wstrMac;
 	}
 break;
 
+case ID_NARRATOR:
+{
+return wstrNarrator;
+	}
+break;
+
 default:
 {
 		return wstrNone;

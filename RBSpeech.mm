@@ -2,8 +2,8 @@
 //RBSpeech implementation for Mac
 
 #include "RBSpeech.h"
-#include <AppKit/NSSpeechSynthesizer.h>
-#include <foundation/foundation.h>
+#include <AppKit/AppKit.h>   // NSSpeechSynthesizer, NSWorkspace, NSAccessibility
+#include <Foundation/Foundation.h>
 
 
 /* the indirection avoids declaring the variable of type
@@ -237,17 +237,34 @@ HRESULT RBSpeech::GetActiveProduct(ActiveProduct& Product, DolphinProduct& Speci
 	 }
 	 
 	 
+// True when VoiceOver is running (macOS 10.13 and later can tell us)
+static bool IsVoiceOverRunning()
+{
+	if (@available(macOS 10.13, *))
+	{
+		return [[NSWorkspace sharedWorkspace] isVoiceOverEnabled];
+	}
+	return false;
+}
+
+
+// Ask VoiceOver to speak the text. VoiceOver reads it in the user's own voice and
+// settings and shows it on a braille display, instead of a second synthesizer
+// talking over VoiceOver. High priority interrupts what VoiceOver is saying.
+static void PostVoiceOverAnnouncement( const std::wstring & wstrText, bool blnInterrupt)
+{
+	wxCFStringRef cfText( wstrText);  // keeps the NSString alive until the notification is posted
+	NSDictionary * info = @{
+		NSAccessibilityAnnouncementKey: cfText.AsNSString(),
+		NSAccessibilityPriorityKey: @(blnInterrupt ? NSAccessibilityPriorityHigh : NSAccessibilityPriorityMedium)
+	};
+	NSAccessibilityPostNotificationWithUserInfo( NSApp, NSAccessibilityAnnouncementRequestedNotification, info);
+}
+
+
 HRESULT RBSpeech::Speak( wstring wstrText, DolphinReturnCode& ReturnCode)
 {
- if (IsMuted() == S_OK)
-	{
- 		return S_OK;
-	}
-	else
-	{
-		[impl->synth startSpeakingString: wxCFStringRef( wstrText).AsNSString()];
-	}
-	return S_OK;
+	return Speak( wstrText, false, ReturnCode);
 }
 
 HRESULT RBSpeech::Speak( std::wstring wstrText, bool blnSilence, DolphinReturnCode& ReturnCode)
@@ -256,25 +273,38 @@ HRESULT RBSpeech::Speak( std::wstring wstrText, bool blnSilence, DolphinReturnCo
 	{
 		return S_OK;
 	}
-	else
+
+	if (wstrText.empty())
 	{
-		if (blnSilence == true)
-		{
- 			[impl->synth stopSpeaking];
-		}
-		
-		[impl->synth startSpeakingString: wxCFStringRef( wstrText).AsNSString()];
+		return S_FALSE;
 	}
+
+	if (IsVoiceOverRunning())
+	{
+		PostVoiceOverAnnouncement( wstrText, blnSilence);
+		return S_OK;
+	}
+
+	// No VoiceOver: speak with our own synthesizer
+	if (blnSilence == true)
+	{
+		[impl->synth stopSpeaking];
+	}
+
+	[impl->synth startSpeakingString: wxCFStringRef( wstrText).AsNSString()];
 	return S_OK;
 }
 
 HRESULT RBSpeech::Silence(DolphinReturnCode& ReturnCode)
 {
-	if (IsMuted())
+	// IsMuted returns S_OK (0) when muted, so this used to test the wrong way round
+	// and never stopped speech while unmuted
+	if (IsMuted() == S_OK)
 	{
 		return S_OK;
 	}
-	
+
+	// VoiceOver has no "stop announcement" request; a new high-priority announcement replaces it
 	[impl->synth stopSpeaking];
 	return S_OK;
 }

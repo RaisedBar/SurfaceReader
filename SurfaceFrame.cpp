@@ -75,6 +75,11 @@ Apps( new AppCollection()),
 blnEncryptionMode( EncryptionMode),
 blnLogging( false)
 {
+#ifdef __WINDOWS__
+	// Lets speech reach Narrator and other screen readers through UI Automation notifications
+	Speech->SetAnnounceWindow( GetHWND());
+#endif
+
 	// Load user options
 	LoadOptions();
 
