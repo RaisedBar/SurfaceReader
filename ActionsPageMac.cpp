@@ -8,7 +8,7 @@
 #include "ActionsPageMac.h"
 
 
-ActionsPage::ActionsPage(wxWizard * wizParent, const wxString & title, boost::shared_ptr <AppConfig> pAppConfig, boost::shared_ptr <SurfaceProtocol> pProtocol, boost::shared_ptr <RBSpeech> pSpeech)
+ActionsPage::ActionsPage(wxWizard * wizParent, const wxString & title, std::shared_ptr <AppConfig> pAppConfig, std::shared_ptr <SurfaceProtocol> pProtocol, std::shared_ptr <RBSpeech> pSpeech)
        : wxWizardPageSimple( wizParent),
 	pMyAppConfig( new AppConfig ()),
 	pMyProtocol( new SurfaceProtocol ()),
@@ -490,11 +490,6 @@ if (wstrName.compare( wstrJaws) == 0)
 if (wstrName.compare( wstrSA) == 0)
 {
 		return ID_SYSTEMACCESS;
-	}
-	
-if (wstrName.compare( wstrWE) == 0)
-{
-		return ID_WindowEyes;
 	}
 	
 if (wstrName.compare( wstrNVDA) == 0)
@@ -1406,12 +1401,6 @@ case ID_JAWS:
 case ID_SYSTEMACCESS:
 	{
 		return wstrSA;
-	}
-	break;
-
-case ID_WindowEyes:
-	{
-		return wstrWE;
 	}
 	break;
 

@@ -16,7 +16,7 @@
 #include "RBEnums.h"
 #include "AppCollection.h"
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 #include <wx/StatText.h>
 #include <wx/sizer.h>
@@ -29,7 +29,7 @@
 class AppConfigChooserDialog: public wxDialog
 {
 public:
-AppConfigChooserDialog( const wxString& title, std::string strProtocolID, boost::shared_ptr <AppCollection> pApps);
+AppConfigChooserDialog( const wxString& title, std::string strProtocolID, std::shared_ptr <AppCollection> pApps);
 ~AppConfigChooserDialog();
 
 std::pair <std::wstring, std::wstring> GetAppConfigID();
@@ -45,7 +45,7 @@ void OnCancel( wxCommandEvent& event);
 wxStaticText * lblDefinedAppsPrompt;
 wxListBox * lbxApps;  
 std::wstring wstrMyProtocolID;
-boost::shared_ptr <AppCollection> pMyApps;
+std::shared_ptr <AppCollection> pMyApps;
 
 DECLARE_EVENT_TABLE()
 };

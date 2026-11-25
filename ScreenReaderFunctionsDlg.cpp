@@ -5,7 +5,7 @@
 #ifdef __WINDOWS__
 
 
-ScreenReaderFunctionsDlg::ScreenReaderFunctionsDlg(const wxString & title, SurfaceActionType mySAType, boost::shared_ptr<AppConfig> pAppConfig, boost::shared_ptr<RBSpeech> pSpeech, boost::shared_ptr<JawsCacheType> pJawsCache)
+ScreenReaderFunctionsDlg::ScreenReaderFunctionsDlg(const wxString & title, SurfaceActionType mySAType, std::shared_ptr<AppConfig> pAppConfig, std::shared_ptr<RBSpeech> pSpeech, std::shared_ptr<JawsCacheType> pJawsCache)
 : wxDialog(NULL, -1, title, wxDefaultPosition, wxSize(250, 230)),
 pMyAppConfig( new AppConfig()),
 pMySpeech( new RBSpeech()),
@@ -52,7 +52,7 @@ SetSizerAndFit(vBox1);
 
 #else
 
-ScreenReaderFunctionsDlg::ScreenReaderFunctionsDlg(const wxString & title, SurfaceActionType mySAType, boost::shared_ptr <AppConfig> pAppConfig, boost::shared_ptr <RBSpeech> pSpeech)
+ScreenReaderFunctionsDlg::ScreenReaderFunctionsDlg(const wxString & title, SurfaceActionType mySAType, std::shared_ptr <AppConfig> pAppConfig, std::shared_ptr <RBSpeech> pSpeech)
 : wxDialog(NULL, -1, title, wxDefaultPosition, wxSize(250, 230)),
 pMyAppConfig( new AppConfig()),
 pMySpeech( new RBSpeech())
@@ -129,22 +129,37 @@ return blnResult;
 }
 
 
-ActionInfoType ScreenReaderFunctionsDlg::GetAction( std::wstring wstrFunctionName)
+ActionInfoType ScreenReaderFunctionsDlg::GetAction( std::wstring wstrActionName)
 {
-                ActionInfoType CurrentAction; 
-ActionCollectionType Actions;
-//Actions equals the second of the cache.
-BOOST_FOREACH( CurrentAction, Actions)
-{
-	// if (CurrentAction[ 0].As <std::wstring>().compare( wstrFunctionName) == 0)
-std::wstring wstrActionString = AsWString( CurrentAction[ 0]); 	
-	
-if (wstrActionString.compare( wstrFunctionName) == 0)
-return CurrentAction;
-}  // end for
+	// Search the cached list of the screen reader's actions, the one this dialog lists.
+	// This used to search an empty local collection, so it never found anything and every
+	// JAWS script chosen in the action picker was saved as a function.
+	ActionCollectionType myActions = GetCachedJawsActionsListItem( pMyAppConfig->GetAppName(), pMyAppConfig->GetProtocolID());
 
-// Not found
-throw RBException( wstrActionNotFoundError);
+	for (const ActionInfoType & CurrentAction : myActions)
+	{
+		ActionInfoType::const_iterator it = CurrentAction.find( 0);  // field 0 is the name
+
+		if ((it != CurrentAction.end())
+			&& IsWString( it->second)
+			&& (AsWString( it->second) == wstrActionName))
+		{
+			return CurrentAction;
+		}
+	}
+
+	// Not found
+	throw RBException( wstrActionNotFoundError);
+}
+
+
+std::wstring ScreenReaderFunctionsDlg::GetActionName()
+{
+	if (lbxActionNames->GetSelection() > -1)
+	{
+		return lbxActionNames->GetStringSelection().ToStdWstring();
+	}
+	return std::wstring();
 }
 
 
@@ -259,7 +274,7 @@ return;
 lbxActionNames->Clear();
 
 // Populate the list here...
-BOOST_FOREACH(std::string spot, Hotspots)
+for (std::string spot : Hotspots)
 lbxActionNames->Append(spot);
 #endif
 }
@@ -330,8 +345,10 @@ it = pMyJawsCache->find( myPair);
 	else
 	{
 throw RBException( wstrInfoNotCachedError);
-return it->second;
 	}
+#else
+	// Only JAWS actions are cached; without this the function returned nothing (undefined behaviour)
+	throw RBException( wstrInfoNotCachedError);
 #endif
 }
 
@@ -352,18 +369,17 @@ else
 	#ifdef __WINDOWS__
 
 // std::vector<JAWSParameter> ScreenReaderFunctionsDlg::GetJawsParameters(std::wstring wstrAction)
-boost::shared_ptr <JawsParametersType> ScreenReaderFunctionsDlg::GetJawsParameters(std::wstring wstrAction)
+std::shared_ptr <JawsParametersType> ScreenReaderFunctionsDlg::GetJawsParameters(std::wstring wstrAction)
 {
 	std::vector<JAWSParameter> JawsParameters;	
 	ActionCollectionType myActionCollection;
 try
 	{
-	ActionInfoType CurrentAction;
 		myActionCollection = GetCachedJawsActionsListItem( pMyAppConfig->GetAppName(), pMyAppConfig->GetProtocolID());
-ActionInfoTypeIterator it2;
+ActionInfoType::const_iterator it2;
 std::wstring wstrName;
-	
-BOOST_FOREACH(CurrentAction, myActionCollection)
+
+for (const ActionInfoType & CurrentAction : myActionCollection)
 {
 			it2 =CurrentAction.find(0);
 		
@@ -407,7 +423,7 @@ catch( RBException &myException)   // Get the user to define the Jaws script fil
 OutputDebugString( myException.what());
 					// #endif
 }
-return boost::shared_ptr <JawsParametersType>( new JawsParametersType (Parameters));
+return std::shared_ptr <JawsParametersType>( new JawsParametersType (Parameters));
 	}
 #endif
 
@@ -462,9 +478,8 @@ void ScreenReaderFunctionsDlg::ListJawsActions()
 		AvailableActionsType myActionType;
 AvailableActionFieldsIterator it;	
 int nField =-1;
-ActionInfoTypeIterator it2;
-	ActionInfoType CurrentAction;
-	
+ActionInfoType::const_iterator it2;
+
 // Check to see if we've already processed the required information
 try
 	{
@@ -513,7 +528,7 @@ std::pair< std::wstring, std::string> myIndexPair;
 }  // end catch
 
 //iterate through the vector of actions, the second item in the ActionInfoType pair.
-BOOST_FOREACH(CurrentAction, myActionCollection)
+for (const ActionInfoType & CurrentAction : myActionCollection)
 	{
 			it2 =CurrentAction.find(nField);
 		

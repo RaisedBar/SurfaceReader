@@ -7,7 +7,7 @@
 #include "LEDLampsPage.h"
 
 
-LEDLampsPage::LEDLampsPage(wxWizard * wizParent, const wxString & title, boost::shared_ptr<SurfaceProtocol> pProtocol)
+LEDLampsPage::LEDLampsPage(wxWizard * wizParent, const wxString & title, std::shared_ptr<SurfaceProtocol> pProtocol)
        : wxWizardPageSimple( wizParent),
 	   pMyProtocol( new SurfaceProtocol())
 {  

@@ -7,7 +7,11 @@
 
 #ifdef _WIN32
 
+// atlcore.h casts FARPROC to function pointers internally (warning C4191)
+#pragma warning( push)
+#pragma warning( disable: 4191)
 #include <atlbase.h>
+#pragma warning( pop)
 #include <UIAutomation.h>
 
 // The UIA functions are looked up at run time so SurfaceReader still starts on

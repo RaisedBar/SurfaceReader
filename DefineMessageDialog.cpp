@@ -982,7 +982,7 @@ try
 		unsigned char nByte = (unsigned char) boost::lexical_cast <int> (strByte);
 		vNewNibbles.push_back( nByte);
 }
-catch(bad_lexical_cast &)
+catch(boost::bad_lexical_cast &)
 {
 // wxMessageBox( strByte, wstrErrorTitle, wxOK | wxICON_ERROR);
 }

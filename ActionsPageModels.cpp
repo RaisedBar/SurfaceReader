@@ -8,7 +8,7 @@
 // ActionsTreeModel
 // ----------------------------------------------------------------------------
 
-ActionsTreeModel::ActionsTreeModel( wxString wxstrRootTitle, std::map <std::string , MessageDefinition> * pHardwareControls, boost::shared_ptr <AppConfig> pAppConfig)
+ActionsTreeModel::ActionsTreeModel( wxString wxstrRootTitle, std::map <std::string , MessageDefinition> * pHardwareControls, std::shared_ptr <AppConfig> pAppConfig)
 {
 pMyHardwareControls = pHardwareControls;
 pMyAppConfig = pAppConfig;
@@ -366,12 +366,6 @@ case ID_SYSTEMACCESS:
 	}
 	break;
 
-case ID_WindowEyes:
-	{
-		return wstrWE;
-	}
-	break;
-
 case ID_NVDA:
 	{
 		return wstrNVDA;
@@ -502,11 +496,6 @@ if (wstrName.compare( wstrJaws) == 0)
 if (wstrName.compare( wstrSA) == 0)
 {
 		return ID_SYSTEMACCESS;
-	}
-	
-if (wstrName.compare( wstrWE) == 0)
-{
-		return ID_WindowEyes;
 	}
 	
 if (wstrName.compare( wstrNVDA) == 0)

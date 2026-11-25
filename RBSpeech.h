@@ -23,19 +23,14 @@
 #include "SRConstants.h"
 
 //boost includes.
-#include <boost/any.hpp>
-#include <boost/assign/list_of.hpp>
-#include <boost/shared_ptr.hpp>
+#include <any>
+#include <memory>
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/ini_parser.hpp>
-#include <boost/foreach.hpp>
 #include <boost/algorithm/string.hpp>
 #include <boost/optional/optional.hpp>
 #include <boost/dll/shared_library.hpp>
 #include <boost/dll/import.hpp>
-using boost::any_cast;
-using namespace std;
-// using namespace boost; //used for assignment and EBNF parsing amongst others.
 
 
 //defines.
@@ -90,9 +85,9 @@ JawsReturnInfo Returns;
 };
 
 /// <summary> The type containing a single entry for an access technology action. </summary>
-/// <remarks> this type contains an integer on the left corresponding to the integer in the AvailableActionFieldsType, and a boost::any on the right allowing the storing of any data type supported. This doesn't tie us to returning strings where they are not the most efficient way to represent the data. </remarks> 
-typedef std::map<int, boost::any> ActionInfoType; 
-typedef std::map<int, boost::any>::iterator ActionInfoTypeIterator;
+/// <remarks> this type contains an integer on the left corresponding to the integer in the AvailableActionFieldsType, and a std::any on the right allowing the storing of any data type supported. This doesn't tie us to returning strings where they are not the most efficient way to represent the data. </remarks> 
+typedef std::map<int, std::any> ActionInfoType; 
+typedef std::map<int, std::any>::iterator ActionInfoTypeIterator;
 /// <summary> A vector of <see cref="ActionInfoType"/> containing all available actions for the currently active access technology. </summary>
 typedef std::vector<ActionInfoType > ActionCollectionType; 
 typedef std::vector<ActionInfoType >::iterator ActionCollectionTypeIterator; 
@@ -103,7 +98,7 @@ typedef std::map < std::pair< std::wstring, std::string>, ActionCollectionType> 
 /// Further documentation can be found in the respective Get*Actions methods. </remarks>
 typedef std::map<std::wstring, int> AvailableActionFieldsType;
 typedef std::map<std::wstring, int>::iterator AvailableActionFieldsIterator;
-typedef pair<AvailableActionFieldsType, ActionCollectionType > AvailableActionsType; //Available actions pair.
+typedef std::pair <AvailableActionFieldsType, ActionCollectionType > AvailableActionsType; //Available actions pair.
 
 /// <summary> 
 ///ActiveProduct enumeration determining which supported product is currently active.
@@ -192,12 +187,12 @@ enum HSCInstallState
 
 // Variant-handling
 
-		std::vector <JAWSParameter> AsJawsParameterVector( const boost::any  operand);
-		int AsInt( const boost::any  operand);
-std::wstring AsWString( const boost::any operand);
-bool IsWString(const boost::any & operand);
-bool IsInt(const boost::any & operand);
-bool IsJawsParameterVector(const boost::any & operand);
+		std::vector <JAWSParameter> AsJawsParameterVector( const std::any  operand);
+		int AsInt( const std::any  operand);
+std::wstring AsWString( const std::any operand);
+bool IsWString(const std::any & operand);
+bool IsInt(const std::any & operand);
+bool IsJawsParameterVector(const std::any & operand);
 
 #ifdef __WINDOWS__ 
 #include "RBSpeechWin.h"

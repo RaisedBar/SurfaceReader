@@ -12,7 +12,7 @@
 #include <wx/platform.h>
 #ifdef __WXOSX_COCOA__   
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 #include "ActionsPageModels.h"
 #include "ActionPickerMac.h"
@@ -43,7 +43,7 @@
 class ActionsPage: public wxWizardPageSimple
 	{
 	public:
-		ActionsPage(wxWizard * wizParent, const wxString & title, boost::shared_ptr <AppConfig> pAppConfig, boost::shared_ptr <SurfaceProtocol> pProtocol, boost::shared_ptr <RBSpeech> pSpeech);
+		ActionsPage(wxWizard * wizParent, const wxString & title, std::shared_ptr <AppConfig> pAppConfig, std::shared_ptr <SurfaceProtocol> pProtocol, std::shared_ptr <RBSpeech> pSpeech);
 ~ActionsPage();
 
 std::map <std::string, MessageDefinition> GetActions();
@@ -103,8 +103,8 @@ wxButton * btnAdd, * btnRemove, * btnReplicate, * btnUp, * btnDown, * btnRename,
 DolphinProduct myDolphinProduct;
 ActiveProduct myActiveProduct; //apply action to what product?
 ActiveProduct myOldActiveProduct;
-boost::shared_ptr <AppConfig> pMyAppConfig;
-boost::shared_ptr <SurfaceProtocol> pMyProtocol;
+std::shared_ptr <AppConfig> pMyAppConfig;
+std::shared_ptr <SurfaceProtocol> pMyProtocol;
 std::map <std::string, MessageDefinition> myControls;
 
 wxDataViewCtrl* myDataView;
@@ -112,7 +112,7 @@ wxDataViewCtrl* myDataView;
 // Models for the data view control
     wxObjectDataPtr<ActionsTreeModel> m_actions_model;
 
-boost::shared_ptr <RBSpeech> pMySpeech;
+std::shared_ptr <RBSpeech> pMySpeech;
 };
 #endif    //  if Mac
 #endif   // define guard

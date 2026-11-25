@@ -9,7 +9,7 @@
 #include "ActionPickerMac.h"
 
 
-ActionPicker::ActionPicker(const wxString & title, const std::wstring  &wstrControlName, boost::shared_ptr <AppConfig> pAppConfig, boost::shared_ptr <SurfaceProtocol> pProtocol, boost::shared_ptr <RBSpeech> pSpeech)
+ActionPicker::ActionPicker(const wxString & title, const std::wstring  &wstrControlName, std::shared_ptr <AppConfig> pAppConfig, std::shared_ptr <SurfaceProtocol> pProtocol, std::shared_ptr <RBSpeech> pSpeech)
        : wxDialog(NULL, -1, title, wxDefaultPosition, wxSize(250, 230)),
 	pMyAppConfig( new AppConfig()),
 	pMyProtocol( new SurfaceProtocol ()),
@@ -386,12 +386,6 @@ case ID_SYSTEMACCESS:
 	}
 	break;
 
-case ID_WindowEyes:
-	{
-		ListWindowEyesActions();
-	}
-	break;
-
 case ID_NVDA:
 	{
 		ListNVDAActions();
@@ -443,11 +437,11 @@ if (it != myActionInformation.first.end())
 {
 	int nField = it->second;
 //iterate through the vector of actions, the second item in the ActionInfoType pair.
-	ActionInfoTypeIterator it2;
-	ActionInfoType CurrentAction;
-	BOOST_FOREACH(CurrentAction, myActionInformation.second);
+	// The old BOOST_FOREACH here ended in a stray semicolon, so the loop body was empty and
+	// only the last action was ever added to the tree
+	for (const ActionInfoType & CurrentAction : myActionInformation.second)
 	{
-		it2 =CurrentAction.find(nField);
+		ActionInfoType::const_iterator it2 = CurrentAction.find(nField);
 		if (it2 !=CurrentAction.end())
 		{
 			std::wstring wstrFieldValue;
@@ -479,10 +473,6 @@ void ActionPicker::ListSAActions()
 {}
 
 	
-void ActionPicker::ListWindowEyesActions()
-{}
-
-
 void ActionPicker::ListNVDAActions()
 {}
 

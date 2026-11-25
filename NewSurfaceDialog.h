@@ -10,7 +10,7 @@
 
 #pragma once
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 #include <wx/StatText.h>
 #include <wx/TextCtrl.h>
@@ -27,8 +27,8 @@
 class NewSurfaceDialog: public wxDialog
 {
 public:
-NewSurfaceDialog(const wxString& title, boost::shared_ptr <ProtocolCollection> pMyProtocols, bool PickProtocol);
-NewSurfaceDialog(const wxString& title, boost::shared_ptr <ProtocolCollection> pMyProtocols, bool PickProtocol, MIDISurface * pMySurface);
+NewSurfaceDialog(const wxString& title, std::shared_ptr <ProtocolCollection> pMyProtocols, bool PickProtocol);
+NewSurfaceDialog(const wxString& title, std::shared_ptr <ProtocolCollection> pMyProtocols, bool PickProtocol, MIDISurface * pMySurface);
 ~NewSurfaceDialog();
 
 std::wstring SurfaceName() const;
@@ -64,7 +64,7 @@ wxStaticText * lblProtocolPrompt;
 		MIDISurface * pSurface;
 		
 		// Pointer to the protocol collection
-		boost::shared_ptr <ProtocolCollection> pProtocols;
+		std::shared_ptr <ProtocolCollection> pProtocols;
 		
 		// Path to protocol files
 wxString wxstrPath; 		

@@ -123,7 +123,7 @@ ScreenReaderActionType myScreenReaderActionType;
 ActionInfoType myActionInfoType;
 FunctionType myFunctionType;  // Is this a script or a function, or neither? 
 
-// Each entry in the vector has a string indicating the data type of the boost::any entry
+// Each entry in the vector has a string indicating the data type of the std::any entry
 std::vector <std::pair <ActionParameterDataType, std::wstring> > vActionParameters;
 	};
 

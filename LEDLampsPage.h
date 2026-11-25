@@ -21,7 +21,7 @@
 #include "DisplayStatesDialog.h"
 #include "DefineMessageDialog.h"
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 #include <wx/wizard.h>
 #include <wx/checkbox.h>
@@ -37,7 +37,7 @@
 class LEDLampsPage: public wxWizardPageSimple
 {
 public:
-LEDLampsPage( wxWizard * wizParent, const wxString& title, boost::shared_ptr<SurfaceProtocol> pProtocol);
+LEDLampsPage( wxWizard * wizParent, const wxString& title, std::shared_ptr<SurfaceProtocol> pProtocol);
 // ~LEDLampsPage();
 
 bool IsValidWizardPage();
@@ -68,7 +68,7 @@ wxButton * btnAdd, * btnEdit, * btnDelete, * btnRename, * btnStates;
 wxCheckBox * wxchkUseGlobalStates;
 
 // Pointer to the protocol we're modifying
-boost::shared_ptr<SurfaceProtocol> pMyProtocol;
+std::shared_ptr<SurfaceProtocol> pMyProtocol;
 
 DECLARE_EVENT_TABLE()
 };

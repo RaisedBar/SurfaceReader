@@ -21,12 +21,12 @@ bool IsAllHexChars(std::string strIn)
 }
 
 
-std::experimental::filesystem::path AppDataPath()
+fs::path AppDataPath()
 {
 #ifdef __WINDOWS__
-	std::experimental::filesystem::path myPath = wxStandardPaths::Get().GetConfigDir().ToStdWstring();
+	fs::path myPath = wxStandardPaths::Get().GetConfigDir().ToStdWstring();
 #else
-	std::experimental::filesystem::path myPath =wxStandardPaths::Get().GetExecutablePath().ToStdWstring();
+	fs::path myPath =wxStandardPaths::Get().GetExecutablePath().ToStdWstring();
 #endif
 		
 		if (myPath.has_filename())
@@ -39,14 +39,14 @@ std::experimental::filesystem::path AppDataPath()
 myPath /=wstrRBCompanyName;
 	
 	// check for directory existence
-if (!std::experimental::filesystem::exists(myPath))
+if (!fs::exists(myPath))
 	{
 		// Create the required directory
 		try
 		{
-		std::experimental::filesystem::create_directory(myPath);
+		fs::create_directory(myPath);
 		}
-		catch(const std::experimental::filesystem::filesystem_error& err)
+		catch(const fs::filesystem_error& err)
 		{
 				wxMessageBox( err.code().message(), wstrErrorTitle, wxOK | wxICON_EXCLAMATION);
 			}
@@ -54,14 +54,14 @@ if (!std::experimental::filesystem::exists(myPath))
 	
 	myPath /=wstrAppTitle;
 
-	if (!std::experimental::filesystem::exists(myPath))
+	if (!fs::exists(myPath))
 	{
 		// Create the required directory
 		try 
 			{
-				std::experimental::filesystem::create_directory(myPath);
+				fs::create_directory(myPath);
 			}
-		catch(const std::experimental::filesystem::filesystem_error& err)
+		catch(const fs::filesystem_error& err)
 		{
 			wxMessageBox( err.code().message(), wstrErrorTitle, wxOK | wxICON_EXCLAMATION);
 		}
@@ -72,9 +72,9 @@ if (!std::experimental::filesystem::exists(myPath))
 }
 
 
-std::experimental::filesystem::path HelpPath()
+fs::path HelpPath()
 {
-	std::experimental::filesystem::path myPath = wxStandardPaths::Get().GetExecutablePath().ToStdWstring();
+	fs::path myPath = wxStandardPaths::Get().GetExecutablePath().ToStdWstring();
 
 	if (myPath.has_filename())
 	{
@@ -84,9 +84,9 @@ std::experimental::filesystem::path HelpPath()
 #ifdef __WXOSX_COCOA__   
 	myPath /= wstrMacHelpDir;
 
-	if (!std::experimental::filesystem::exists(myPath))
+	if (!fs::exists(myPath))
 	{
-		std::experimental::filesystem::create_directory(myPath);
+		fs::create_directory(myPath);
 	}
 #endif
 
@@ -94,19 +94,19 @@ std::experimental::filesystem::path HelpPath()
 }
 
 
-std::experimental::filesystem::path AppConfigPath()
+fs::path AppConfigPath()
 {
-	std::experimental::filesystem::path myPath = AppDataPath();
+	fs::path myPath = AppDataPath();
 myPath /=wstrAppConfigDir;
 
-if (!std::experimental::filesystem::exists(myPath))
+if (!fs::exists(myPath))
 	{
 		// Create the required directory
 try
 		{
-			std::experimental::filesystem::create_directory(myPath);
+			fs::create_directory(myPath);
 		}
-		catch(const std::experimental::filesystem::filesystem_error& err)
+		catch(const fs::filesystem_error& err)
 		{
 			wxMessageBox( err.code().message(), wstrErrorTitle, wxOK | wxICON_EXCLAMATION);
 		}
@@ -116,12 +116,12 @@ try
 }
 
 
-std::experimental::filesystem::path SpeechPath()
+fs::path SpeechPath()
 {
 #ifdef __WINDOWS__
-	std::experimental::filesystem::path myPath = wxStandardPaths::Get().GetExecutablePath().ToStdWstring();
+	fs::path myPath = wxStandardPaths::Get().GetExecutablePath().ToStdWstring();
 #else
-	std::experimental::filesystem::path myPath = wxStandardPaths::Get().GetExecutablePath().ToStdWstring();
+	fs::path myPath = wxStandardPaths::Get().GetExecutablePath().ToStdWstring();
 
 	if (myPath.has_filename())
 	{
@@ -130,9 +130,9 @@ std::experimental::filesystem::path SpeechPath()
 
 	myPath /= wstrSpeechDir;
 
-	if (!std::experimental::filesystem::exists(myPath))
+	if (!fs::exists(myPath))
 	{
-		std::experimental::filesystem::create_directory(myPath);
+		fs::create_directory(myPath);
 	}
 #endif
 
@@ -140,19 +140,19 @@ std::experimental::filesystem::path SpeechPath()
 }
 
 
-std::experimental::filesystem::path ProtocolPath()
+fs::path ProtocolPath()
 {
-	std::experimental::filesystem::path myPath = AppDataPath();
+	fs::path myPath = AppDataPath();
 	myPath /= wstrProtocolDir;
 
-	if (!std::experimental::filesystem::exists(myPath))
+	if (!fs::exists(myPath))
 	{
 		try
 		{
 			// Create the required directory
-			std::experimental::filesystem::create_directory(myPath);
+			fs::create_directory(myPath);
 		}
-		catch (const std::experimental::filesystem::filesystem_error& err)
+		catch (const fs::filesystem_error& err)
 		{
 			wxMessageBox(err.code().message(), wstrErrorTitle, wxOK | wxICON_EXCLAMATION);
 		}
@@ -162,19 +162,19 @@ std::experimental::filesystem::path ProtocolPath()
 }
 
 
-std::experimental::filesystem::path SurfacePath()
+fs::path SurfacePath()
 {
-	std::experimental::filesystem::path myPath = AppDataPath();
+	fs::path myPath = AppDataPath();
 myPath /=wstrSurfaceDir;
 
-if (!std::experimental::filesystem::exists(myPath))
+if (!fs::exists(myPath))
 	{
 		try
 		{
 			// Create the required directory
-		std::experimental::filesystem::create_directory(myPath);
+		fs::create_directory(myPath);
 	}
-		catch(const std::experimental::filesystem::filesystem_error& err)
+		catch(const fs::filesystem_error& err)
 		{
 			wxMessageBox( err.code().message(), wstrErrorTitle, wxOK | wxICON_EXCLAMATION);
 		}
@@ -184,19 +184,19 @@ if (!std::experimental::filesystem::exists(myPath))
 	}
 
 
-std::experimental::filesystem::path LogPath()
+fs::path LogPath()
 {
-	std::experimental::filesystem::path myPath = AppDataPath();
+	fs::path myPath = AppDataPath();
 	myPath /= wstrLogDir;
 
-	if (!std::experimental::filesystem::exists(myPath))
+	if (!fs::exists(myPath))
 	{
 		// Create the required directory
 		try
 		{
-			std::experimental::filesystem::create_directory(myPath);
+			fs::create_directory(myPath);
 		}
-		catch (const std::experimental::filesystem::filesystem_error& err)
+		catch (const fs::filesystem_error& err)
 		{
 			wxMessageBox(err.code().message(), wstrErrorTitle, wxOK | wxICON_EXCLAMATION);
 		}

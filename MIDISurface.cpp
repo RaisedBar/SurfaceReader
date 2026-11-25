@@ -5,7 +5,7 @@
 #include "SurfaceFrame.h"
 #include "DispatchQueue.h"
 
-MIDISurface::MIDISurface( SurfaceFrame * pParent, ActiveProduct apProduct, boost::shared_ptr<ProtocolCollection> pProtocols, boost::shared_ptr<AppCollection> pApps)
+MIDISurface::MIDISurface( SurfaceFrame * pParent, ActiveProduct apProduct, std::shared_ptr<ProtocolCollection> pProtocols, std::shared_ptr<AppCollection> pApps)
 		:
 MIDIWidget(),
 							pMyProtocols( new ProtocolCollection()),
@@ -29,7 +29,7 @@ vDisplayBuffer.clear();
 	mySurfaceID = boost::lexical_cast <std::string> (myUUID); 	
 
 // Logging
-std::experimental::filesystem::path myPath = LogPath();
+fs::path myPath = LogPath();
 myPath /= mySurfaceID.append( strLogExtension);
 boost::log::add_file_log( myPath.generic_string(), boost::log::keywords::rotation_size = 10 * 1024 * 1024, boost::log::keywords::time_based_rotation = boost::log::sinks::file::rotation_at_time_point(0, 0, 0), boost::log::keywords::format = "[%TimeStamp%]: %Message%"); //create a log file.
 boost::log::add_common_attributes(); //add common attributes see documentation.
@@ -41,7 +41,7 @@ BOOST_LOG_SEV( lg, boost::log::trivial::info) << "Log created.";
 }
 
 
-MIDISurface::MIDISurface(SurfaceFrame * pParent, ActiveProduct apProduct, SurfaceParameters * myParameters, boost::shared_ptr<ProtocolCollection> pProtocols, boost::shared_ptr<AppCollection> pApps) 
+MIDISurface::MIDISurface(SurfaceFrame * pParent, ActiveProduct apProduct, SurfaceParameters * myParameters, std::shared_ptr<ProtocolCollection> pProtocols, std::shared_ptr<AppCollection> pApps) 
 	: 
 						MIDIWidget(),
 				pMyProtocols( new ProtocolCollection()),
@@ -64,7 +64,7 @@ vDisplayBuffer.clear();
 	mySurfaceID = boost::lexical_cast <std::string> (myUUID); 	
 
 // Logging
-std::experimental::filesystem::path myPath = LogPath();
+fs::path myPath = LogPath();
 myPath /= myParameters->GetSurfaceName().append( wstrLogExtension);
 boost::log::add_file_log( myPath.generic_string(), boost::log::keywords::rotation_size = 10 * 1024 * 1024, boost::log::keywords::time_based_rotation = boost::log::sinks::file::rotation_at_time_point(0, 0, 0), boost::log::keywords::format = "[%TimeStamp%]: %Message%"); //create a log file.
 boost::log::add_common_attributes(); //add common attributes see documentation.
@@ -92,7 +92,7 @@ m_DisplayMIDIIn->setCallback( &DisplayCallback, (void*) this);
 }
 
 
-MIDISurface::MIDISurface(SurfaceFrame * pParent, ActiveProduct apProduct, std::wstring wstrName, boost::shared_ptr<ProtocolCollection> pProtocols, boost::shared_ptr<AppCollection> pApps) 
+MIDISurface::MIDISurface(SurfaceFrame * pParent, ActiveProduct apProduct, std::wstring wstrName, std::shared_ptr<ProtocolCollection> pProtocols, std::shared_ptr<AppCollection> pApps) 
 							:
 MIDIWidget( wstrName),
 				pMyProtocols( new ProtocolCollection()),
@@ -115,7 +115,7 @@ vDisplayBuffer.clear();
 	mySurfaceID = boost::lexical_cast <std::string> (myUUID); 	
 
 // Logging
-std::experimental::filesystem::path myPath = LogPath();
+fs::path myPath = LogPath();
 myPath /= wstrName.append( wstrLogExtension);
 boost::log::add_file_log( myPath.generic_string(), boost::log::keywords::rotation_size = 10 * 1024 * 1024, boost::log::keywords::time_based_rotation = boost::log::sinks::file::rotation_at_time_point(0, 0, 0), boost::log::keywords::format = "[%TimeStamp%]: %Message%"); //create a log file.
 boost::log::add_common_attributes(); //add common attributes see documentation.
@@ -127,7 +127,7 @@ m_DisplayMIDIIn->setCallback( &DisplayCallback, (void*) this);
 }
 
 
-	MIDISurface::MIDISurface(SurfaceFrame * pParent, ActiveProduct apProduct, std::wstring wstrName, std::string myNewProtocolID, boost::shared_ptr<ProtocolCollection> pProtocols, boost::shared_ptr<AppCollection> pApps) 
+	MIDISurface::MIDISurface(SurfaceFrame * pParent, ActiveProduct apProduct, std::wstring wstrName, std::string myNewProtocolID, std::shared_ptr<ProtocolCollection> pProtocols, std::shared_ptr<AppCollection> pApps) 
 : 
 	MIDIWidget( wstrName),
 				pMyProtocols( new ProtocolCollection()),
@@ -150,7 +150,7 @@ boost::uuids::uuid myUUID = boost::uuids::random_generator()();
 	mySurfaceID = boost::lexical_cast <std::string> (myUUID); 	
 
 // Logging
-std::experimental::filesystem::path myPath = LogPath();
+fs::path myPath = LogPath();
 myPath /= wstrName.append( wstrLogExtension);
 boost::log::add_file_log( myPath.generic_string(), boost::log::keywords::rotation_size = 10 * 1024 * 1024, boost::log::keywords::time_based_rotation = boost::log::sinks::file::rotation_at_time_point(0, 0, 0), boost::log::keywords::format = "[%TimeStamp%]: %Message%"); //create a log file.
 boost::log::add_common_attributes(); //add common attributes see documentation.
@@ -165,7 +165,7 @@ m_DisplayMIDIIn->setCallback( &DisplayCallback, (void*) this);
 }
 
 	
-MIDISurface::MIDISurface( SurfaceFrame * pParent, ActiveProduct apProduct, std::wstring wstrName, std::string strNewProtocolID, int nHWIn, int nHWOut, int nDisplayIn, int nDisplayOut, boost::shared_ptr<ProtocolCollection> pProtocols, boost::shared_ptr<AppCollection> pApps)
+MIDISurface::MIDISurface( SurfaceFrame * pParent, ActiveProduct apProduct, std::wstring wstrName, std::string strNewProtocolID, int nHWIn, int nHWOut, int nDisplayIn, int nDisplayOut, std::shared_ptr<ProtocolCollection> pProtocols, std::shared_ptr<AppCollection> pApps)
 				        : 
 MIDIWidget(wstrName, nHWIn, nHWOut, nDisplayIn, nDisplayOut),
 								pMyProtocols( new ProtocolCollection()),
@@ -188,7 +188,7 @@ boost::uuids::uuid myUUID = boost::uuids::random_generator()();
 	mySurfaceID = boost::lexical_cast <std::string> (myUUID); 	
 
 // Logging
-std::experimental::filesystem::path myPath = LogPath();
+fs::path myPath = LogPath();
 myPath /= wstrName.append( wstrLogExtension);
 boost::log::add_file_log( myPath.generic_string(), boost::log::keywords::rotation_size = 10 * 1024 * 1024, boost::log::keywords::time_based_rotation = boost::log::sinks::file::rotation_at_time_point(0, 0, 0), boost::log::keywords::format = "[%TimeStamp%]: %Message%"); //create a log file.
 boost::log::add_common_attributes(); //add common attributes see documentation.
@@ -507,8 +507,8 @@ for (int nLineNumber = 1; nLineNumber <= nLineCount; nLineNumber++)
 {
 	if (nLineNumber < nLineCount)
 		{
-			wstringstream msg;
-			msg << wstrDisplayText.substr( nStart, nLineLength) << endl;
+			std::wstringstream msg;
+			msg << wstrDisplayText.substr( nStart, nLineLength) << std::endl;
 		wstrOut.append( msg.str());		
 	}
 	else

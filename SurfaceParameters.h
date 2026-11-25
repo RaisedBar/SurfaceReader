@@ -11,7 +11,7 @@
 #include "RBException.h"
 #include "SRConstants.h"
 
-#include <boost/serialization//version.hpp>
+#include <boost/serialization/version.hpp>
 #include <boost/serialization/access.hpp>
 #include <boost/serialization/nvp.hpp>
 
