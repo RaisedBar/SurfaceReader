@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  MSBuild imports the first Directory.Build.props it finds walking up from the project folder.
+  This empty one stops a Directory.Build.props in a parent folder (for example one shared by
+  other projects in the same workspace) from changing SurfaceReader's toolset, include paths,
+  libraries or defines. All of SurfaceReader's settings live in SurfaceReader.vcxproj and vcpkg.json.
+-->
+<Project>
+</Project>

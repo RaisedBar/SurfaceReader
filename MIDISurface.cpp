@@ -2227,11 +2227,11 @@ nCursorOffset = 0;
 
 for (unsigned int i = 0; i < strHash.length(); i++)
 					{
-						if (strHash.at( i) == HASH_DELIMITER)
+						if (strHash.at( i) == HASH_DELIMITER[ 0])
 						{
 							nCursorOffset++;
 						}
-						else if (strHash.at( i) == NIBBLE_RANGE_MARKER)
+						else if (strHash.at( i) == NIBBLE_RANGE_MARKER[ 0])
 						{
 nCursorOffset++;
 break;

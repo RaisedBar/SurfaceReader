@@ -17,7 +17,7 @@
 #include "MIDI.h"
 #include <wx/msw/winundef.h> 
 
-#include <RtMidi.h>
+#include <rtmidi/RtMidi.h>
 #include <wx/msw/winundef.h> 
 
 #include <wx/msgdlg.h>

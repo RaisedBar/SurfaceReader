@@ -15,6 +15,10 @@ using boost::bad_lexical_cast;
 
 #include <string>
 #include <filesystem>
+#ifdef _MSC_VER
+// v143 only provides std::experimental::filesystem through this header
+#include <experimental/filesystem>
+#endif
 using namespace std;
 
 

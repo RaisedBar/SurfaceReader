@@ -17,7 +17,7 @@
 #include "RBException.h"
 #include "MIDI.h"
 
-#include <RtMidi.h>
+#include <rtmidi/RtMidi.h>
 
 #include <boost/serialization/nvp.hpp>
 #include <boost/serialization/access.hpp>

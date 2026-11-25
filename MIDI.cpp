@@ -1057,13 +1057,13 @@ for (unsigned int i = 0; i < vBytes.size(); i++)
 {
 	unsigned char nByte = vBytes.at( i);
 
-if (nByte == NIBBLE_RANGE_MARKER)
+if (nByte == NIBBLE_RANGE_MARKER[ 0])
 	{
 	vNibbles.push_back( (nByte));
 break;
 }
 	
-else if (nByte == NIBBLE_WILD_CARD_MARKER)
+else if (nByte == NIBBLE_WILD_CARD_MARKER[ 0])
 	{
 	vNibbles.push_back( (nByte));
 break;
