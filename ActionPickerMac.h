@@ -55,7 +55,6 @@ void ListScreenReaderParameters();
 		void ListScreenReaderActions( SurfaceActionType mySAType, wxDataViewItem wxtIDCurrentNode);
 		void ListJawsActions();
 		void ListSAActions();
-	void ListWindowEyesActions();
 void ListNVDAActions();
 		void ListDolphinActions();
 
