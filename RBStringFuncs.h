@@ -10,16 +10,9 @@
 #include <boost/regex.hpp>
 #include <boost/algorithm/string/regex.hpp>
 #include <boost/lexical_cast.hpp>
-using boost::lexical_cast;
-using boost::bad_lexical_cast;
 
 #include <string>
-#include <filesystem>
-#ifdef _MSC_VER
-// v143 only provides std::experimental::filesystem through this header
-#include <experimental/filesystem>
-#endif
-using namespace std;
+#include "SRFilesystem.h"
 
 
 //#include <Windows.h>
@@ -34,13 +27,13 @@ using namespace std;
 
 // String-handling functions
 
-std::experimental::filesystem::path AppDataPath();
-std::experimental::filesystem::path HelpPath();
-std::experimental::filesystem::path AppConfigPath();
-std::experimental::filesystem::path SpeechPath();
-std::experimental::filesystem::path ProtocolPath();
-std::experimental::filesystem::path SurfacePath();
-std::experimental::filesystem::path LogPath();
+fs::path AppDataPath();
+fs::path HelpPath();
+fs::path AppConfigPath();
+fs::path SpeechPath();
+fs::path ProtocolPath();
+fs::path SurfacePath();
+fs::path LogPath();
 std::wstring PathToURL( std::wstring wxstrPath);
 
 std::wstring StripWSpaces( std::wstring wstrIn);

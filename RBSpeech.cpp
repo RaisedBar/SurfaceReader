@@ -156,7 +156,7 @@ static bool IsComServerGone( HRESULT hr)
 		|| (hr == HRESULT_FROM_WIN32( RPC_S_CALL_FAILED)));
 }
 	
-HRESULT RBSpeech::JAWSSpeak(wstring strText, BOOL blnSilence)
+HRESULT RBSpeech::JAWSSpeak(std::wstring strText, BOOL blnSilence)
 {
 	HRESULT hr =S_OK;
 	CComVariant vFunctionResult;
@@ -209,7 +209,7 @@ LExit:
 	return hr;
 	}
 	
-HRESULT RBSpeech::JAWSBraille(wstring strText)
+HRESULT RBSpeech::JAWSBraille(std::wstring strText)
 { 
 HRESULT hr =S_OK;
 	CComVariant vFunctionResult;
@@ -241,10 +241,10 @@ std::wstring UserScriptFolder;
 std::wstring SharedScriptFolder; 
 std::wstring DefaultScriptFile; 
 std::wstring ApplicationScriptFile; 
-std::experimental::filesystem::path JSDFile;
+fs::path JSDFile;
 			boost::property_tree::ptree IniTree; //used to store environment information.
 			std::wstring JAWSFunctionCallString =L"GetCurrentJAWSEnvironment(\"%s\")"; //used to hold the call to JAWS.
-			std::experimental::filesystem::path IniFile; //file to store the hsc information.
+			fs::path IniFile; //file to store the hsc information.
 			ActiveProduct CurrentProduct;
 	DolphinProduct SpecificDolphinProduct;
 	hReturnValue =GetActiveProduct(CurrentProduct, SpecificDolphinProduct);
@@ -257,10 +257,10 @@ std::experimental::filesystem::path JSDFile;
 //Process files based on the enum.
 					int CurrentFileBeingProcessed;
 					std::wstring TestDir;
-		std::experimental::filesystem::path CurrentFile;
+		fs::path CurrentFile;
 					int FreedomScientificDirectoryPosition =-1;
 					std::vector<std::wstring> tokens;
-					std::experimental::filesystem::path applicationConfigDir;
+					fs::path applicationConfigDir;
 					hReturnValue = GetCommonAppDataPath(applicationConfigDir);
 					for(CurrentFileBeingProcessed =JsdFileToStartProcessing; CurrentFileBeingProcessed <=PROCESS_DEFAULT_SYSTEM_DEFAULT_FILE; CurrentFileBeingProcessed++)
 					{
@@ -309,7 +309,7 @@ if (JsdFileToStartProcessing ==CurrentFileBeingProcessed)
 	}
 else { //specifically set the file/path.
 	//obtain the current user path.
-	std::experimental::filesystem::path userConfigDir;
+	fs::path userConfigDir;
 	hReturnValue = GetCurrentUsersAppDataPath(userConfigDir);
 	TestDir = userConfigDir;
 	TestDir.append(L"\\");
@@ -422,10 +422,10 @@ LExit:
 return hr;
 }
 
-	bool RBSpeech::GetJAWSPath(std::experimental::filesystem::path& FileName)
+	bool RBSpeech::GetJAWSPath(fs::path& FileName)
 	{
 		bool blnReturnValue =false;
-		std::experimental::filesystem::path InternalPath;
+		fs::path InternalPath;
 		if (IsJAWSActive())
 		{ //JAWS is active.
 			//now obtain the JAWS window.
@@ -456,7 +456,7 @@ if (ProcessResult !=0)
 bool RBSpeech::IsJAWSRoaming()
 	{
 		bool blnReturnValue =false;
-		std::experimental::filesystem::path JAWSPath;
+		fs::path JAWSPath;
 		if (GetJAWSPath(JAWSPath) ==true)
 		{ //we have the jaws path.
 			JAWSPath.remove_filename();
@@ -514,7 +514,7 @@ bool RBSpeech::LoadNVDAApi()
 		return true;
 	}
 
-	std::experimental::filesystem::path NVDADllFileName;
+	fs::path NVDADllFileName;
 	 hr =GetExecutablePath(NVDADllFileName);
 	if (hr != S_OK)
 	{
@@ -557,7 +557,7 @@ void RBSpeech::UnloadNVDAApi(void)
 return;
 }
 
-HRESULT RBSpeech::NVDASpeak(wstring strText, BOOL blnSilence)
+HRESULT RBSpeech::NVDASpeak(std::wstring strText, BOOL blnSilence)
 {
 	HRESULT hReturnValue =S_OK;
 	//check to see that the message to be spoken actually contains some text.
@@ -583,7 +583,7 @@ LExit:
 return hReturnValue;
 }
 	
-HRESULT RBSpeech::NVDABraille(wstring strText)
+HRESULT RBSpeech::NVDABraille(std::wstring strText)
 {
 HRESULT hReturnValue =S_OK;
 //check to see that the message to be brailled actually contains some text.
@@ -668,7 +668,7 @@ void RBSpeech::UnloadDolphinApi(void)
 	return;
 }
 	
-	HRESULT RBSpeech::DolphinSpeak(wstring strText, BOOL blnSilence, DolphinReturnCode& ReturnCode)
+	HRESULT RBSpeech::DolphinSpeak(std::wstring strText, BOOL blnSilence, DolphinReturnCode& ReturnCode)
 {
 #ifndef _WIN64
 	HRESULT hReturnValue =S_OK;
@@ -780,7 +780,7 @@ return hReturnValue;
 #endif
 	}
 
-	HRESULT RBSpeech::DolphinBraille(wstring strText)
+	HRESULT RBSpeech::DolphinBraille(std::wstring strText)
 {
 	return E_NOTIMPL;
 	}
@@ -1390,7 +1390,7 @@ bool RBSpeech::LoadSystemAccessApi()
 
 	if (!SystemAccessDllApi.is_loaded())
 {
-		std::experimental::filesystem::path SystemAccessDllFileName;
+		fs::path SystemAccessDllFileName;
 hr =GetExecutablePath(SystemAccessDllFileName); //assign the executable directory.
 		if (hr != S_OK)
 		{
@@ -1430,7 +1430,7 @@ hr =GetExecutablePath(SystemAccessDllFileName); //assign the executable director
 	return;
 }
 	
-HRESULT RBSpeech::SystemAccessSpeak(wstring strText, BOOL blnSilence)
+HRESULT RBSpeech::SystemAccessSpeak(std::wstring strText, BOOL blnSilence)
 {
 HRESULT hReturnValue =S_OK;
 	//check to see that the message to be spoken actually contains some text.	
@@ -1455,7 +1455,7 @@ LExit:
 	return hReturnValue;
 }
 	
-	HRESULT RBSpeech::SystemAccessBraille(wstring strText)
+	HRESULT RBSpeech::SystemAccessBraille(std::wstring strText)
 {
 HRESULT hReturnValue =S_OK;
 	//check to see that the message to be spoken actually contains some text.	
@@ -1632,12 +1632,12 @@ void RBSpeech::Mute( bool blnNewMute)
 blnMuted = blnNewMute;
 }
 
-HRESULT RBSpeech::Speak(wstring strText, DolphinReturnCode& ReturnCode)
+HRESULT RBSpeech::Speak(std::wstring strText, DolphinReturnCode& ReturnCode)
 {
 	return Speak(strText, false, ReturnCode);
 }
 	
-HRESULT RBSpeech::Speak(wstring strText, BOOL blnSilence, DolphinReturnCode& ReturnCode)
+HRESULT RBSpeech::Speak(std::wstring strText, BOOL blnSilence, DolphinReturnCode& ReturnCode)
 {
 	// The Mac version always honoured mute; the Windows one ignored it
 	if (IsMuted() == S_OK)
@@ -1744,7 +1744,7 @@ HRESULT RBSpeech::IsHotSpotInSet(std::wstring SetName, std::wstring SpotName)
 	std::string SpotNameStr;
 	ExitOnTrue(SetName.empty(), hReturnValue, S_FALSE, "No hot spot set has been provided.");
 	ExitOnTrue(SpotName.empty(), hReturnValue, S_FALSE, "No hot spot name has been provided.");
-	ExitOnFalse(std::experimental::filesystem::exists(SetName), hReturnValue, S_FALSE, "The hot spot set does not exist.");
+	ExitOnFalse(fs::exists(SetName), hReturnValue, S_FALSE, "The hot spot set does not exist.");
 		hReturnValue =GetActiveProduct(CurrentProduct, SpecificDolphinProduct);
 	ExitOnFailure(hReturnValue, "No product is active.");
 	switch(CurrentProduct)
@@ -1801,7 +1801,7 @@ LExit:
 		boost::property_tree::ptree::assoc_iterator it;	 
 		std::string SetNameStr;
 	ExitOnTrue(SetName.empty(), hReturnValue, S_FALSE, "No hot spot set has been provided.");
-	ExitOnFalse(std::experimental::filesystem::exists(SetName), hReturnValue, S_FALSE, "The hot spot set does not exist.");
+	ExitOnFalse(fs::exists(SetName), hReturnValue, S_FALSE, "The hot spot set does not exist.");
 	hReturnValue =GetActiveProduct(CurrentProduct, SpecificDolphinProduct);
 ExitOnFailure(hReturnValue, "No product is active.");
 	switch(CurrentProduct)
@@ -1880,7 +1880,7 @@ CComVariant vFunctionResult;
 std::wstring ConvertedSpotString;
 			boost::property_tree::ptree IniTree; //used to store hsc information.
 			std::wstring JAWSFunctionCallString =L"GetCurrentJAWSEnvironment(\"%s\")"; //used to hold the call to JAWS.
-				std::experimental::filesystem::path IniFile; //file to store the hsc information.
+				fs::path IniFile; //file to store the hsc information.
 			ActiveProduct CurrentProduct;
 	DolphinProduct SpecificDolphinProduct;
 	hr =GetActiveProduct(CurrentProduct, SpecificDolphinProduct);
@@ -1893,7 +1893,7 @@ std::wstring ConvertedSpotString;
 IniFile /=L"CurrentJawsEnvironment.ini";
 if (exists(IniFile))
 { //the file exists remove it.
-	ExitOnFalse(std::experimental::filesystem::remove(IniFile), hr, S_FALSE, "Unable to delete the old file.");
+	ExitOnFalse(fs::remove(IniFile), hr, S_FALSE, "Unable to delete the old file.");
 } //end file removal.
 boost::replace_first(JAWSFunctionCallString, L"%s", AppDataPath().native());
 //now actually call the function.
@@ -2010,21 +2010,21 @@ ActionInformation =AvailableActions;
 return hReturnValue;
 }
 
-std::vector<JawsFunction> RBSpeech::ProcessJSDFile(std::experimental::filesystem::path&File)
+std::vector<JawsFunction> RBSpeech::ProcessJSDFile(fs::path&File)
 {
 	std::vector<JawsFunction> AvailableFunctions;
 	bool ParameterIsOptional =false;
-	if (std::experimental::filesystem::exists(File))
+	if (fs::exists(File))
 	{ //existence check.
-		std::wifstream fs(File);
+		std::wifstream JsdStream(File);
 		//Read the file in to a vector.
 		std::vector<std::wstring> lines;
 		std::wstring str;
-		while (std::getline(fs, str))
+		while (std::getline(JsdStream, str))
 		{
 			lines.push_back(str);
 		}
-			fs.close();
+			JsdStream.close();
 		
 			JawsFunction newfunction;
 	BOOST_FOREACH(std::wstring line, lines)
@@ -2196,7 +2196,7 @@ std::vector <JAWSParameter> myParameters;
 
 try
 	{
-		myParameters = any_cast<std::vector <JAWSParameter> >( operand);
+		myParameters = boost::any_cast<std::vector <JAWSParameter> >( operand);
 return myParameters;
 }
 catch( const boost::bad_any_cast &)
@@ -2209,7 +2209,7 @@ return myParameters;
 {
     try
 	{
-		int nOut = any_cast<int>( operand);
+		int nOut = boost::any_cast<int>( operand);
 		return nOut;
 }
 catch( const boost::bad_any_cast &)
@@ -2222,7 +2222,7 @@ std::wstring AsWString( const boost::any operand)
 	{
 try
 	{
-		std::wstring wstrOut = any_cast<std::wstring>( operand);
+		std::wstring wstrOut = boost::any_cast<std::wstring>( operand);
 		return wstrOut;
 }
 catch( const boost::bad_any_cast &)
@@ -2266,7 +2266,7 @@ HRESULT RBSpeech::IsNVDAActive()
 }
 
 //file path functions.
-HRESULT RBSpeech::GetExecutablePath(std::experimental::filesystem::path& path)
+HRESULT RBSpeech::GetExecutablePath(fs::path& path)
 {
 	// This used to declare an array of string pointers and pass an uninitialised one to
 	// GetModuleFileName, so the path was written to random memory, then freed with ReleaseStr.
@@ -2280,7 +2280,7 @@ HRESULT RBSpeech::GetExecutablePath(std::experimental::filesystem::path& path)
 	path = szFileName;
 	return S_OK;
 }
-HRESULT RBSpeech::GetCommonAppDataPath(std::experimental::filesystem::path &path)
+HRESULT RBSpeech::GetCommonAppDataPath(fs::path &path)
 {
 	wchar_t szPath[ MAX_PATH] = L"";
 	HRESULT hr = SHGetFolderPathW(NULL, CSIDL_COMMON_APPDATA, NULL, SHGFP_TYPE_CURRENT, szPath);
@@ -2291,7 +2291,7 @@ HRESULT RBSpeech::GetCommonAppDataPath(std::experimental::filesystem::path &path
 	return hr;
 }
 
-HRESULT RBSpeech::GetCurrentUsersAppDataPath(std::experimental::filesystem::path &path)
+HRESULT RBSpeech::GetCurrentUsersAppDataPath(fs::path &path)
 {
 	wchar_t szPath[ MAX_PATH] = L"";
 	HRESULT hr = SHGetFolderPathW(NULL, CSIDL_APPDATA, NULL, SHGFP_TYPE_CURRENT, szPath);

@@ -19,7 +19,6 @@
 #include <wx/msw/winundef.h>
 
 #include <boost/lexical_cast.hpp>
-using boost::bad_lexical_cast;
 
 
 #define MIDI_CODE_MASK  0xf0

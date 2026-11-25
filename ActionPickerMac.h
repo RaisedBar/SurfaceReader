@@ -16,8 +16,6 @@
 #include <boost/shared_ptr.hpp>
 #include <boost/make_shared.hpp>
 #include <boost/lexical_cast.hpp>
-using boost::lexical_cast;
-using boost::bad_lexical_cast;
 
 #include "DisplayParamsDlg.h"
 #include "RBInputBox.h"

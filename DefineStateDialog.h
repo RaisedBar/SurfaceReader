@@ -20,8 +20,6 @@
 #include "RBInputBox.h"
 
 #include <boost/lexical_cast.hpp>
-using boost::lexical_cast;
-using boost::bad_lexical_cast;
 
 #include <wx/StatText.h>
 #include <wx/listbox.h>

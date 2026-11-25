@@ -225,7 +225,7 @@ if (nEnd > 0)
 		{
 lValue = boost::lexical_cast <long> (strValue);
 }
-catch(bad_lexical_cast &)
+catch(boost::bad_lexical_cast &)
 {
 std::string strVariable = "strValue = ";
 	wxMessageBox( strVariable.append( strValue), wstrErrorTitle, wxOK | wxICON_ERROR);
@@ -235,7 +235,7 @@ try
 	{
 		lMin = boost::lexical_cast <long> (strMin);
 }
-catch(bad_lexical_cast &)
+catch(boost::bad_lexical_cast &)
 {
 std::string strVariable = "strMin = ";
 	wxMessageBox( strVariable.append( strMin), wstrErrorTitle, wxOK | wxICON_ERROR);
@@ -245,7 +245,7 @@ try
 	{
 		lMax = boost::lexical_cast <long> (strMax);
 }
-catch(bad_lexical_cast &)
+catch(boost::bad_lexical_cast &)
 {
 std::string strVariable = "strMax = ";
 		wxMessageBox( strVariable.append( strMax), wstrErrorTitle, wxOK | wxICON_ERROR);

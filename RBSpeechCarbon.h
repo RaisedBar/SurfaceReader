@@ -47,8 +47,8 @@ bool SaveSpeechParameters();
 	HRESULT IsMuted(void);
 	void Mute( bool blnNewMute);
 	
-	HRESULT Speak(wstring strText, DolphinReturnCode& ReturnCode);
-	HRESULT Speak(wstring strText, bool  blnSilence, DolphinReturnCode& ReturnCode);
+	HRESULT Speak(std::wstring strText, DolphinReturnCode& ReturnCode);
+	HRESULT Speak(std::wstring strText, bool  blnSilence, DolphinReturnCode& ReturnCode);
 HRESULT Silence(DolphinReturnCode& ReturnCode);
 
 HRESULT GetAvailableActions(AvailableActionsType& ActionInformation);

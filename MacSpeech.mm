@@ -40,7 +40,7 @@ else
 }
 		}
 	
-	bool Speak(wstring Text, bool Interrupt)
+	bool Speak(std::wstring Text, bool Interrupt)
 	{
     if (synth) 
 	{

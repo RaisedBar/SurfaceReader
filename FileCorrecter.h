@@ -1,11 +1,7 @@
 #ifndef FILECORRECTER_H
 #define FILECORRECTER_H
 #pragma once
-#include <filesystem>
-#ifdef _MSC_VER
-// v143 only provides std::experimental::filesystem through this header
-#include <experimental/filesystem>
-#endif
+#include "SRFilesystem.h"
 #include <sstream>
 #include <fstream>
 #include <string>
@@ -16,7 +12,7 @@ private:
 	const std::wstring wstrFinalTag = L"</boost_serialization>";
 
 public:
-	inline bool IsFileSerializationInvalid(const std::experimental::filesystem::path& pathToCheck)
+	inline bool IsFileSerializationInvalid(const fs::path& pathToCheck)
 	{
 		//We assume the file actually exists.
 		std::wifstream inputStream(pathToCheck);
@@ -25,7 +21,7 @@ public:
 		return contents.str().rfind(wstrFinalTag) == std::wstring::npos;
 	}
 	
-	inline void FixFileWithInvalidSerialization(const std::experimental::filesystem::path& originalFilePath)
+	inline void FixFileWithInvalidSerialization(const fs::path& originalFilePath)
 	{
 		//Again, we assume the file exists.
 		if (IsFileSerializationInvalid(originalFilePath))

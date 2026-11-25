@@ -261,6 +261,7 @@
     <ClInclude Include=".\SpeechDialog.h" />
     <ClInclude Include=".\SpeechParameters.h" />
     <ClInclude Include=".\SRConstants.h" />
+    <ClInclude Include=".\SRFilesystem.h" />
     <ClInclude Include=".\SROptions.h" />
     <ClInclude Include=".\SRTaskBar.h" />
     <ClInclude Include=".\SurfaceAction.h" />

@@ -262,7 +262,7 @@ static void PostVoiceOverAnnouncement( const std::wstring & wstrText, bool blnIn
 }
 
 
-HRESULT RBSpeech::Speak( wstring wstrText, DolphinReturnCode& ReturnCode)
+HRESULT RBSpeech::Speak( std::wstring wstrText, DolphinReturnCode& ReturnCode)
 {
 	return Speak( wstrText, false, ReturnCode);
 }
@@ -364,7 +364,7 @@ std::vector <JAWSParameter> AsJawsParameterVector( const boost::any  operand)
 	
 	try
 	{
-		myParameters = any_cast<std::vector <JAWSParameter> >( operand);
+		myParameters = boost::any_cast<std::vector <JAWSParameter> >( operand);
 		return myParameters;
 	}
 	catch( const boost::bad_any_cast &)
@@ -377,7 +377,7 @@ int AsInt( const boost::any  operand)
 {
     try
 	{
-		int nOut = any_cast<int>( operand);
+		int nOut = boost::any_cast<int>( operand);
 		return nOut;
 	}
 	catch( const boost::bad_any_cast &)
@@ -391,7 +391,7 @@ std::wstring AsWString( const boost::any operand)
 {
 	try
 	{
-		std::wstring wstrOut = any_cast<std::wstring>( operand);
+		std::wstring wstrOut = boost::any_cast<std::wstring>( operand);
 		return wstrOut;
 	}
 	catch( const boost::bad_any_cast &)

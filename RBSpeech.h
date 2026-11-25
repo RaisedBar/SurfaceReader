@@ -33,9 +33,6 @@
 #include <boost/optional/optional.hpp>
 #include <boost/dll/shared_library.hpp>
 #include <boost/dll/import.hpp>
-using boost::any_cast;
-using namespace std;
-// using namespace boost; //used for assignment and EBNF parsing amongst others.
 
 
 //defines.
@@ -103,7 +100,7 @@ typedef std::map < std::pair< std::wstring, std::string>, ActionCollectionType> 
 /// Further documentation can be found in the respective Get*Actions methods. </remarks>
 typedef std::map<std::wstring, int> AvailableActionFieldsType;
 typedef std::map<std::wstring, int>::iterator AvailableActionFieldsIterator;
-typedef pair<AvailableActionFieldsType, ActionCollectionType > AvailableActionsType; //Available actions pair.
+typedef std::pair <AvailableActionFieldsType, ActionCollectionType > AvailableActionsType; //Available actions pair.
 
 /// <summary> 
 ///ActiveProduct enumeration determining which supported product is currently active.

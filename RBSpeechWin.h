@@ -207,9 +207,9 @@ std::wstring HscFile;
 	ProcessJsdFileType JsdFileToStartProcessing;
 	
 	//Functions to retrieve directories.
-	HRESULT GetExecutablePath(std::experimental::filesystem::path& path);
-	HRESULT GetCommonAppDataPath(std::experimental::filesystem::path &path);
-	HRESULT GetCurrentUsersAppDataPath(std::experimental::filesystem::path &path);
+	HRESULT GetExecutablePath(fs::path& path);
+	HRESULT GetCommonAppDataPath(fs::path &path);
+	HRESULT GetCurrentUsersAppDataPath(fs::path &path);
 	
 	//Functions to perform string conversion.
 	std::wstring NarrowStringToWideString(const std::string& stringToConvert);
@@ -232,7 +232,7 @@ void UnloadJAWSApi(void);
 /// <param name="strText">The text to speak.</param>
 	   /// <param name="blnSilence">Whether or not to silence the existing speech. True indicates the existing speech will be silenced, false indicates the speech will be queued as normal.</param>
 	/// <returns> Returns true if the speech has been queued for speaking, false otherwise.</returns>
-	HRESULT JAWSSpeak(wstring strText, BOOL blnSilence);
+	HRESULT JAWSSpeak(std::wstring strText, BOOL blnSilence);
 
 	/// <summary> Silences JAWS.</summary>
 	/// <returns> Returns S_OK if the speech has been silenced, S_FALSE otherwise.</returns>
@@ -241,7 +241,7 @@ void UnloadJAWSApi(void);
 	/// <summary> Brailles a string of text from JAWS. </summery>
 /// <param name="strText">The text to braille.</param>
 	/// <returns> Returns S_OK if the speech has been queued for brailleing, S_FALSE otherwise.</returns>
-	HRESULT JAWSBraille(wstring strText);
+	HRESULT JAWSBraille(std::wstring strText);
 /// <summary> list the available actions for JAWS. </summary>
 	/// <remarks> This procedure lists the available actions for the JAWS screen reader. The following are the available action fields:
 	/// 0 =Name,
@@ -266,7 +266,7 @@ NewAction.insert(std::make_pair(5, Element.Parameters));
 	return NewAction;
 }
 /// <summary> Obtain the path to the current jaws executable.
-	bool GetJAWSPath(std::experimental::filesystem::path& FileName);
+	bool GetJAWSPath(fs::path& FileName);
 	/// <summary> IsJAWSRoaming
 	/// <remarks> Check to see whether jaws is roaming. To do this we check to see whether a settings folder exists in the folder from which jaws is running. </remarks>
 	bool IsJAWSRoaming();
@@ -286,14 +286,14 @@ void UnloadNVDAApi(void);
 /// <param name="strText">The text to speak.</param>
 	   /// <param name="blnSilence">Whether or not to silence the existing speech. True indicates the existing speech will be silenced, false indicates the speech will be queued as normal.</param>
 	/// <returns> Returns S_OK if the speech has been queued for speaking, S_FALSE otherwise.</returns>
-	HRESULT NVDASpeak(wstring strText, BOOL blnSilence);
+	HRESULT NVDASpeak(std::wstring strText, BOOL blnSilence);
 /// <summary> Silences NVDA.</summary>
 	/// <returns> Returns S_OK if the speech has been silenced, S_FALSE otherwise.</returns>
 	HRESULT NVDASilence(void);
 /// <summary> Brailles a string of text from NVDA. </summery>
 /// <param name="strText">The text to braille.</param>
 	/// <returns> Returns S_OK if the speech has been queued for brailleing, S_FALSE otherwise.</returns>
-	HRESULT NVDABraille(wstring strText);
+	HRESULT NVDABraille(std::wstring strText);
 //All dolphin functions for dolphin requires us to be 32-bit.
 /// <summary> Determine whether Dolphin is currently active in memory. </summary>
 	/// <returns> returns S_OK if Dolphin is active, S_FALSE otherwise. </returns>
@@ -306,14 +306,14 @@ void UnloadDolphinApi(void);
 /// <param name="strText">The text to speak.</param>
 	   /// <param name="blnSilence">Whether or not to silence the existing speech. True indicates the existing speech will be silenced, false indicates the speech will be queued as normal.</param>
 	/// <returns> Returns S_OK if the speech has been queued for speaking, E_NOTIMPL if the function is not supported and S_FALSE otherwise.</returns>
-	HRESULT DolphinSpeak(wstring strText, BOOL blnSilence, DolphinReturnCode& ReturnCode);
+	HRESULT DolphinSpeak(std::wstring strText, BOOL blnSilence, DolphinReturnCode& ReturnCode);
 /// <summary> Silences Dolphin.</summary>
 	/// <returns> Returns S_OK if the speech has been silenced, S_FALSE otherwise.</returns>
 	HRESULT DolphinSilence(DolphinReturnCode& ReturnCode);
 /// <summary> Brailles a string of text from Dolphin. </summery>
 /// <param name="strText">The text to braille.</param>
 	/// <returns> Returns S_OK if the speech has been queued for brailleing, E_NOTIMPL if the function is not available and S_FALSE otherwise.</returns>
-	HRESULT DolphinBraille(wstring strText);	
+	HRESULT DolphinBraille(std::wstring strText);	
 	/// <Summary> Obtain a list of dolphin actions. </summary>
 	HRESULT GetAvailableDolphinActions(AvailableActionsType& ActionInformation);
 	HRESULT ExecuteDolphinAction(boost::any& name, ScreenReaderActionType& type, DWORD& ReturnCode);
@@ -328,16 +328,16 @@ void UnloadSystemAccessApi(void);
 /// <param name="strText">The text to speak.</param>
 	   /// <param name="blnSilence">Whether or not to silence the existing speech. True indicates the existing speech will be silenced, false indicates the speech will be queued as normal.</param>
 	/// <returns> Returns S_OK if the speech has been queued for speaking, S_FALSE otherwise.</returns>
-	HRESULT SystemAccessSpeak(wstring strText, BOOL blnSilence);
+	HRESULT SystemAccessSpeak(std::wstring strText, BOOL blnSilence);
 /// <summary> Silences System Access.</summary>
 	/// <returns> Returns S_OK if the speech has been silenced, S_FALSE otherwise.</returns>
 	HRESULT SystemAccessSilence(void);
 /// <summary> Brailles a string of text from System Access. </summery>
 /// <param name="strText">The text to braille.</param>
 	/// <returns> Returns S_OK if the string has been queued for brailleing, S_FALSE otherwise.</returns>
-	HRESULT SystemAccessBraille(wstring strText);	
+	HRESULT SystemAccessBraille(std::wstring strText);	
 public:
-	std::vector<JawsFunction> ProcessJSDFile(std::experimental::filesystem::path&File);
+	std::vector<JawsFunction> ProcessJSDFile(fs::path&File);
 	/// <summary> loads the application programming interface for the active screen reader.</summery>
 	/// <returns> S_OK if the API has loaded successfully and an error code otherwise.</returns>
 	bool LoadAPI();
@@ -371,7 +371,7 @@ void Mute( bool blnNewMute);
 	/// </summary>
 	   /// <param name="strText">The text to speak.</param>
 	/// <returns> Returns S_OK if the speech has been queued for speaking, S_FALSE otherwise. </returns>
-	HRESULT Speak(wstring strText, DolphinReturnCode& ReturnCode);
+	HRESULT Speak(std::wstring strText, DolphinReturnCode& ReturnCode);
 
 	/// <summary> 
 	///speak a string of text with an option to silence the currently speaking text if any is alreaky speaking.
@@ -379,7 +379,7 @@ void Mute( bool blnNewMute);
 	   /// <param name="strText">The text to speak.</param>
 	   /// <param name="blnSilence">Whether or not to silence the existing speech. True indicates the existing speech will be silenced, false indicates the speech will be queued as normal.</param>
 	/// <returns> Returns S_OK if the speech has been queued for speaking, S_FALSE otherwise. </returns>
-	HRESULT Speak(wstring strText, BOOL blnSilence, DolphinReturnCode& ReturnCode);
+	HRESULT Speak(std::wstring strText, BOOL blnSilence, DolphinReturnCode& ReturnCode);
 HRESULT Silence(DolphinReturnCode& ReturnCode);
 HRESULT GetAvailableActions(AvailableActionsType& ActionInformation);
 HRESULT ExecuteAction(std::wstring Action, ScreenReaderActionType Type);

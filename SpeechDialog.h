@@ -14,8 +14,6 @@
 
 #include <boost/shared_ptr.hpp>
 #include <boost/lexical_cast.hpp>
-using boost::lexical_cast;
-using boost::bad_lexical_cast;
 
 #include "RBEnums.h"
 #include "SRConstants.h"

@@ -6,11 +6,7 @@
 #pragma once
 
 // 
-#include <filesystem>
-#ifdef _MSC_VER
-// v143 only provides std::experimental::filesystem through this header
-#include <experimental/filesystem>
-#endif
+#include "SRFilesystem.h"
 
 #include "RBSpeech.h"
 #include "SurfaceReaderHelp.h"
@@ -116,7 +112,7 @@ std::string GetPortErrorReport(SurfacePointer pMySurface);
 		void CloseAllSurfaces();
 
 bool IsSurfaceNameUnique( std::wstring wstrName);
-bool CopyDir( std::experimental::filesystem::path const & source, std::experimental::filesystem::path const & destination);
+bool CopyDir( fs::path const & source, fs::path const & destination);
 
 bool DeleteAppConfigFiles();
 void SaveAppConfigs();
@@ -133,7 +129,7 @@ bool LoadSurfaces();
 	bool LoadOptions();
 	bool SaveOptions();
 
-void ShowLog( std::experimental::filesystem::path myPath, bool blnIsEncrypted);
+void ShowLog( fs::path myPath, bool blnIsEncrypted);
 
 // event handlers 
 
