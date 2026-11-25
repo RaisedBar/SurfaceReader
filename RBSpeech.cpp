@@ -509,29 +509,28 @@ if (MsiQueryProductStateW(L"c1093f38-9866-431e-a942-f786a1b8e8c0") ==INSTALLSTAT
 bool RBSpeech::LoadNVDAApi()
 {
 	HRESULT hr = S_OK;
-	BOOL bIsProcess64Bit = false;
 	if (NvdaDllApi.is_loaded())
 	{
 		return true;
 	}
-	
+
 	std::experimental::filesystem::path NVDADllFileName;
-	 hr =GetExecutablePath(NVDADllFileName); //assign the executable directory.
-	
-	hr = ProcWow64(::GetCurrentProcess(), &bIsProcess64Bit);
-	if (hr == S_FALSE)
+	 hr =GetExecutablePath(NVDADllFileName);
+	if (hr != S_OK)
 	{
 		return false;
 	}
+	// The DLL sits next to the executable. Without this the DLL name was appended to the
+	// executable's own path (...\SurfaceReader.exe\nvdaControllerClient32.dll), so NVDA never loaded.
+	NVDADllFileName.remove_filename();
 
-	if (bIsProcess64Bit)
-		{ //We are running on a 64-bit operating system--or at least as a 64-bit process.
+	// A process can only load a DLL of its own bitness. This used to choose by whether
+	// Windows was 64-bit, so the 32-bit build picked the 64-bit DLL on 64-bit Windows.
+#ifdef _WIN64
 NVDADllFileName /=L"nvdaControllerClient64.dll";
-	}
-	else  //32-bit.
-			{
+#else
 			NVDADllFileName /=L"nvdaControllerClient32.dll";
-	}
+#endif
 
 			if (exists(NVDADllFileName))
 {
@@ -1388,27 +1387,24 @@ bool RBSpeech::LoadSystemAccessApi()
 {
 	bool result = false;
 	HRESULT hr = S_OK;
-	BOOL bIsProcess64Bit = false;
 
 	if (!SystemAccessDllApi.is_loaded())
 {
 		std::experimental::filesystem::path SystemAccessDllFileName;
 hr =GetExecutablePath(SystemAccessDllFileName); //assign the executable directory.
-		SystemAccessDllFileName.remove_filename();
-		
-		hr = ProcWow64(::GetCurrentProcess(), &bIsProcess64Bit);
-		if (hr == S_FALSE)
+		if (hr != S_OK)
 		{
 			return false;
 		}
+		SystemAccessDllFileName.remove_filename();
 
-		if (bIsProcess64Bit)
-		{ //We are running on a 64-bit operating system--or at least as a 64-bit process.
+		// A process can only load a DLL of its own bitness; this used to choose by
+		// whether Windows was 64-bit, which is wrong for the 32-bit build there.
+#ifdef _WIN64
 			SystemAccessDllFileName /= L"SAAPI64.dll";
-		}
-		else { //We are running on a 32-bit o/s.
+#else
 			SystemAccessDllFileName /= L"SAAPI32.dll";
-		}
+#endif
 		
 		if (exists(SystemAccessDllFileName))
 		{ 
