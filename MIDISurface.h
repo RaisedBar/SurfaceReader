@@ -433,7 +433,9 @@ unsigned int nHardwareMessages, nDisplayMessages;
 // Set the class version for serialisation
 BOOST_CLASS_VERSION(MIDISurface, 3);
 	
-typedef MIDISurface * SurfacePointer;
+// Owning pointer: removing a surface from the vector now destroys it,
+// which closes its MIDI ports and log file.
+typedef boost::shared_ptr <MIDISurface> SurfacePointer;
 typedef std::vector <SurfacePointer> SurfaceVectorType;
 
 void HardwareCallback(double deltatime, std::vector< unsigned char > *message, void *pSurface);
