@@ -5,6 +5,18 @@
 #include "SurfaceFrame.h"
 #include "DispatchQueue.h"
 
+// Post a surface update to the main window.
+// The payload is copied into the event, so nothing is left on the heap
+// and the MIDI callback thread shares no memory with the UI thread.
+// wxQueueEvent takes ownership of the event and deletes it once handled.
+template <typename T>
+static void PostSurfaceEvent( SurfaceFrame * pTarget, int nEventID, const T & payload)
+{
+wxThreadEvent * pEvent = new wxThreadEvent( wxEVT_THREAD, nEventID);
+pEvent->SetPayload( payload);
+wxQueueEvent( pTarget->GetEventHandler(), pEvent);
+}
+
 MIDISurface::MIDISurface( SurfaceFrame * pParent, ActiveProduct apProduct, std::shared_ptr<ProtocolCollection> pProtocols, std::shared_ptr<AppCollection> pApps)
 		:
 MIDIWidget(),
@@ -30,10 +42,8 @@ vDisplayBuffer.clear();
 
 // Logging
 fs::path myPath = LogPath();
-myPath /= mySurfaceID.append( strLogExtension);
-boost::log::add_file_log( myPath.generic_string(), boost::log::keywords::rotation_size = 10 * 1024 * 1024, boost::log::keywords::time_based_rotation = boost::log::sinks::file::rotation_at_time_point(0, 0, 0), boost::log::keywords::format = "[%TimeStamp%]: %Message%"); //create a log file.
-boost::log::add_common_attributes(); //add common attributes see documentation.
-BOOST_LOG_SEV( lg, boost::log::trivial::info) << "Log created.";
+myPath /= mySurfaceID + strLogExtension;
+OpenLog( myPath.generic_string());
 
 // Specify the callbacks
 						m_HardwareMIDIIn->setCallback( &HardwareCallback, (void*) this);
@@ -66,9 +76,7 @@ vDisplayBuffer.clear();
 // Logging
 fs::path myPath = LogPath();
 myPath /= myParameters->GetSurfaceName().append( wstrLogExtension);
-boost::log::add_file_log( myPath.generic_string(), boost::log::keywords::rotation_size = 10 * 1024 * 1024, boost::log::keywords::time_based_rotation = boost::log::sinks::file::rotation_at_time_point(0, 0, 0), boost::log::keywords::format = "[%TimeStamp%]: %Message%"); //create a log file.
-boost::log::add_common_attributes(); //add common attributes see documentation.
-BOOST_LOG_SEV( lg, boost::log::trivial::info) << "Log created.";
+OpenLog( myPath.generic_string());
     
 						SetSurfaceName( myParameters->GetSurfaceName());
 						SetProtocolID(myParameters->GetProtocolID());
@@ -117,9 +125,7 @@ vDisplayBuffer.clear();
 // Logging
 fs::path myPath = LogPath();
 myPath /= wstrName.append( wstrLogExtension);
-boost::log::add_file_log( myPath.generic_string(), boost::log::keywords::rotation_size = 10 * 1024 * 1024, boost::log::keywords::time_based_rotation = boost::log::sinks::file::rotation_at_time_point(0, 0, 0), boost::log::keywords::format = "[%TimeStamp%]: %Message%"); //create a log file.
-boost::log::add_common_attributes(); //add common attributes see documentation.
-BOOST_LOG_SEV( lg, boost::log::trivial::info) << "Log created.";
+OpenLog( myPath.generic_string());
     
 // Specify the callbacks
 						m_HardwareMIDIIn->setCallback( &HardwareCallback, (void*) this);
@@ -152,9 +158,7 @@ boost::uuids::uuid myUUID = boost::uuids::random_generator()();
 // Logging
 fs::path myPath = LogPath();
 myPath /= wstrName.append( wstrLogExtension);
-boost::log::add_file_log( myPath.generic_string(), boost::log::keywords::rotation_size = 10 * 1024 * 1024, boost::log::keywords::time_based_rotation = boost::log::sinks::file::rotation_at_time_point(0, 0, 0), boost::log::keywords::format = "[%TimeStamp%]: %Message%"); //create a log file.
-boost::log::add_common_attributes(); //add common attributes see documentation.
-BOOST_LOG_SEV( lg, boost::log::trivial::info) << "Log created.";
+OpenLog( myPath.generic_string());
     
 						// Link to the map of protocols
 						myProtocolID =myNewProtocolID;
@@ -190,9 +194,7 @@ boost::uuids::uuid myUUID = boost::uuids::random_generator()();
 // Logging
 fs::path myPath = LogPath();
 myPath /= wstrName.append( wstrLogExtension);
-boost::log::add_file_log( myPath.generic_string(), boost::log::keywords::rotation_size = 10 * 1024 * 1024, boost::log::keywords::time_based_rotation = boost::log::sinks::file::rotation_at_time_point(0, 0, 0), boost::log::keywords::format = "[%TimeStamp%]: %Message%"); //create a log file.
-boost::log::add_common_attributes(); //add common attributes see documentation.
-BOOST_LOG_SEV( lg, boost::log::trivial::info) << "Log created.";
+OpenLog( myPath.generic_string());
     
 						// Link to the map of protocols
 						myProtocolID =strNewProtocolID;
@@ -214,11 +216,44 @@ StopDisplayProcessing();
 // Dereference the callbacks
 						m_HardwareMIDIIn->setCallback( NULL);
 m_DisplayMIDIIn->setCallback( NULL);
+
+CloseLog();
+}
+
+
+void MIDISurface::OpenLog( const std::string & strLogFile)
+{
+pMyLogSink = boost::log::add_file_log( strLogFile, boost::log::keywords::rotation_size = 10 * 1024 * 1024, boost::log::keywords::time_based_rotation = boost::log::sinks::file::rotation_at_time_point(0, 0, 0), boost::log::keywords::format = "[%TimeStamp%]: %Message%"); //create a log file.
+
+// Tag this surface's records and send only those to this surface's file;
+// without the filter every surface's messages went to every log file.
+lg.add_attribute( "SurfaceID", boost::log::attributes::constant <std::string> ( mySurfaceID));
+pMyLogSink->set_filter( boost::log::expressions::attr <std::string> ( "SurfaceID") == mySurfaceID);
+
+boost::log::add_common_attributes(); //add common attributes see documentation.
+BOOST_LOG_SEV( lg, boost::log::trivial::info) << "Log created.";
+}
+
+
+void MIDISurface::CloseLog()
+{
+	// The logging core keeps every sink until it is removed,
+	// so each surface must take its own log file away when it goes.
+if (pMyLogSink)
+{
+boost::log::core::get()->remove_sink( pMyLogSink);
+pMyLogSink->flush();
+pMyLogSink.reset();
+}
 }
 
 
 void MIDISurface::FlushLog()
 {
+if (pMyLogSink)
+{
+pMyLogSink->flush();
+}
 }
 
 
@@ -1896,14 +1931,10 @@ void MIDISurface::ProcessRunHotSpot( SurfaceAction myAction, AppConfig * pAppCon
 		return;
 	}
 
-HotSpotObject * pHSCObj = new HotSpotObject();
-pHSCObj->SetHSCFileName( wstrHSCFileName);
-pHSCObj->SetSpotName( wstrSpotName);
-
-wxCommandEvent event( wxEVT_COMMAND_TEXT_UPDATED, HOT_SPOT_CALL_ID);
-event.SetEventObject( pHSCObj);
-pMyParent->GetEventHandler()->AddPendingEvent( event );
-// delete pHSCObj;
+HotSpotObject myHSCObj;
+myHSCObj.SetHSCFileName( wstrHSCFileName);
+myHSCObj.SetSpotName( wstrSpotName);
+PostSurfaceEvent( pMyParent, HOT_SPOT_CALL_ID, myHSCObj);
 }
 
 
@@ -1917,14 +1948,10 @@ void MIDISurface::ProcessRunScreenReaderFunction( SurfaceAction myAction, AppCon
 	}
 
 	ScreenReaderActionType myActionType = myAction.GetScreenReaderActionType();
-SRFunctionObject * pSRFunctionObj = new SRFunctionObject();
-	pSRFunctionObj->SetFunctionName( wstrFunctionName);
-	pSRFunctionObj->SetActionType( myActionType);
-
-wxCommandEvent event( wxEVT_COMMAND_TEXT_UPDATED, SCREEN_READER_FUNCTION_CALL_ID);
-event.SetEventObject( pSRFunctionObj);
-pMyParent->GetEventHandler()->AddPendingEvent( event );
-// delete pSRFunctionObj;
+SRFunctionObject mySRFunctionObj;
+	mySRFunctionObj.SetFunctionName( wstrFunctionName);
+	mySRFunctionObj.SetActionType( myActionType);
+PostSurfaceEvent( pMyParent, SCREEN_READER_FUNCTION_CALL_ID, mySRFunctionObj);
 }
 
 
@@ -1979,14 +2006,10 @@ return nResult;
 	
 	void MIDISurface::Speak( std::wstring wstrText, bool blnInterrupt)
 		{
-SpeechObject * pSpeechObj = new SpeechObject();
-pSpeechObj->SetMsg( wstrText);
-pSpeechObj->Interrupt( blnInterrupt);
-
-wxCommandEvent event( wxEVT_COMMAND_TEXT_UPDATED, SPEECH_UPDATE_ID);
-event.SetEventObject( pSpeechObj);
-pMyParent->GetEventHandler()->AddPendingEvent( event );
-// delete pSpeechObj;
+SpeechObject mySpeechObj;
+mySpeechObj.SetMsg( wstrText);
+mySpeechObj.Interrupt( blnInterrupt);
+PostSurfaceEvent( pMyParent, SPEECH_UPDATE_ID, mySpeechObj);
 }
 	
 
@@ -1997,13 +2020,9 @@ void MIDISurface::UpdateStatusBar( std::wstring wstrMode)
 			return;
 	}
 
-	StatusObject * pStatusObj = new StatusObject();
-pStatusObj->SetMode( wstrMode);
-
-wxCommandEvent event( wxEVT_COMMAND_TEXT_UPDATED, STATUS_UPDATE_ID);
-event.SetEventObject( pStatusObj);
-pMyParent->GetEventHandler()->AddPendingEvent( event );
-// delete pDisplayObj;
+	StatusObject myStatusObj;
+myStatusObj.SetMode( wstrMode);
+PostSurfaceEvent( pMyParent, STATUS_UPDATE_ID, myStatusObj);
 }
 
 
@@ -2022,13 +2041,13 @@ if (it == myDisplays.end())
 return;
 }
 
-DisplayObject * pDisplayObj = new DisplayObject();
+DisplayObject myDisplayObj;
 AppConfig myAppConfig;
 myAppConfig = pMyApps->GetAppConfig( myAppConfigID);
 
 		if (myAppConfig.GetAppName().empty())  // default behaviour
 {
-	pDisplayObj->SetLabel( wstrLabel);
+	myDisplayObj.SetLabel( wstrLabel);
 }
 else
 {
@@ -2036,26 +2055,23 @@ std::string strNewHash = myAppConfig.GetDisplayHash( wstrLabel);
 
 if (strNewHash.empty())
  {
-pDisplayObj->SetLabel( wstrLabel);
+myDisplayObj.SetLabel( wstrLabel);
 }
 else
 {
-	pDisplayObj->SetLabel( myAppConfig.GetDisplayDefinition( strNewHash).GetLabel());
+	myDisplayObj.SetLabel( myAppConfig.GetDisplayDefinition( strNewHash).GetLabel());
 }
 }
 
 std::wstring wstrContents = pProtocol->GetTranslatedString( strTranslationID, it->second);
 	wstrContents = FormatDisplay( wstrContents, nDisplayLength, nLineCount);
 
-	pDisplayObj->SetContents( wstrContents);
-pDisplayObj->IsLEDLamp( blnLEDLamp);
-pDisplayObj->SetLineCount( nLineCount);
+	myDisplayObj.SetContents( wstrContents);
+myDisplayObj.IsLEDLamp( blnLEDLamp);
+myDisplayObj.SetLineCount( nLineCount);
 LogIt(wstrContents);
 
-wxCommandEvent event( wxEVT_COMMAND_TEXT_UPDATED, SURFACE_UPDATE_ID);
-event.SetEventObject( pDisplayObj);
-pMyParent->GetEventHandler()->AddPendingEvent( event );
-// delete pDisplayObj;
+PostSurfaceEvent( pMyParent, SURFACE_UPDATE_ID, myDisplayObj);
 	}
 
 

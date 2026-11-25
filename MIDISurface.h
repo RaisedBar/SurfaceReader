@@ -14,6 +14,8 @@
 #include <boost/log/trivial.hpp>
 #include <boost/log/expressions.hpp>
 #include <boost/log/sinks/text_file_backend.hpp>
+#include <boost/log/sinks/sync_frontend.hpp>
+#include <boost/log/attributes/constant.hpp>
 #include <boost/log/utility/setup/file.hpp>
 #include <boost/log/utility/setup/common_attributes.hpp>
 #include <boost/log/sources/severity_logger.hpp>
@@ -317,6 +319,10 @@ void LogIt( std::string strMessage);
 private:
 	// Logging
 boost::log::sources::severity_logger<boost::log::trivial::severity_level> lg; //create a logging level.
+// This surface's log file, kept so it can be removed from the logging core when the surface is destroyed
+boost::shared_ptr <boost::log::sinks::synchronous_sink <boost::log::sinks::text_file_backend> > pMyLogSink;
+void OpenLog( const std::string & strLogFile);
+void CloseLog();
 	
 void Speak( std::wstring wstrText, bool blnInterrupt);
 void UpdateStatusBar( std::wstring wstrMode);
@@ -427,7 +433,9 @@ unsigned int nHardwareMessages, nDisplayMessages;
 // Set the class version for serialisation
 BOOST_CLASS_VERSION(MIDISurface, 3);
 	
-typedef MIDISurface * SurfacePointer;
+// Owning pointer: removing a surface from the vector now destroys it,
+// which closes its MIDI ports and log file.
+typedef std::shared_ptr <MIDISurface> SurfacePointer;
 typedef std::vector <SurfacePointer> SurfaceVectorType;
 
 void HardwareCallback(double deltatime, std::vector< unsigned char > *message, void *pSurface);

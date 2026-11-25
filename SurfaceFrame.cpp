@@ -2675,11 +2675,10 @@ bool SurfaceFrame::SaveOptions()
 
 // Event handlers for handling surface updates
 
-void SurfaceFrame::onSpeechUpdate(wxCommandEvent& event)
+void SurfaceFrame::onSpeechUpdate(wxThreadEvent& event)
     {
-        SpeechObject * pSpeechObj = new SpeechObject();
-pSpeechObj = 		dynamic_cast <SpeechObject*> (event.GetEventObject());
-std::wstring wstrOut = pSpeechObj->GetMsg();
+        SpeechObject mySpeechObj = event.GetPayload<SpeechObject>();
+std::wstring wstrOut = mySpeechObj.GetMsg();
 
 if (wstrOut.empty())
 	{
@@ -2687,40 +2686,37 @@ if (wstrOut.empty())
 }
 
 			DolphinReturnCode dpReturn;
-			Speech->Speak( wstrOut, pSpeechObj->Interrupt(), dpReturn);
+			Speech->Speak( wstrOut, mySpeechObj.Interrupt(), dpReturn);
 }
- 
 
-void SurfaceFrame::onScreenReaderCall(wxCommandEvent& event)
+
+void SurfaceFrame::onScreenReaderCall(wxThreadEvent& event)
 {
-SRFunctionObject * pSRFunctionObj = new SRFunctionObject();
-pSRFunctionObj = 		dynamic_cast <SRFunctionObject*> (event.GetEventObject());
-	
-HRESULT hr = Speech->ExecuteAction( pSRFunctionObj->GetFunctionName(), pSRFunctionObj->GetActionType());
+SRFunctionObject mySRFunctionObj = event.GetPayload<SRFunctionObject>();
+
+HRESULT hr = Speech->ExecuteAction( mySRFunctionObj.GetFunctionName(), mySRFunctionObj.GetActionType());
 }
 
 
-void SurfaceFrame::onHotSpotCall(wxCommandEvent& event)
+void SurfaceFrame::onHotSpotCall(wxThreadEvent& event)
     {
-HotSpotObject * pHSC = new HotSpotObject();
-pHSC = 		dynamic_cast <HotSpotObject*> (event.GetEventObject());
+HotSpotObject myHSC = event.GetPayload<HotSpotObject>();
 
-HRESULT hr = Speech->ExecuteHotSpot( pHSC->GetHSCFileName(), pHSC->GetSpotName());
-} 
+HRESULT hr = Speech->ExecuteHotSpot( myHSC.GetHSCFileName(), myHSC.GetSpotName());
+}
 
 
-void SurfaceFrame::OnDisplayUpdate(wxCommandEvent& event)
+void SurfaceFrame::OnDisplayUpdate(wxThreadEvent& event)
 {
-DisplayObject * pDisplay = dynamic_cast <DisplayObject*> (event.GetEventObject());
+DisplayObject myDisplay = event.GetPayload<DisplayObject>();
 
-		if (pDisplay->IsLEDLamp())
+		if (myDisplay.IsLEDLamp())
 		{
-// delete pDisplay;
 			return;
 		}
 
-	std::wstring wstrLabel = pDisplay->GetLabel();
-std::wstring wstrContents = pDisplay->GetContents();
+	std::wstring wstrLabel = myDisplay.GetLabel();
+std::wstring wstrContents = myDisplay.GetContents();
 
 if ((wstrLabel.empty())
 	|| (wstrContents.empty()))
@@ -2745,7 +2741,7 @@ std::wstring wstrElementLabel = wstrLabel;
 myDisplayElement.DisplayLabel = new wxStaticText(this, wxID_ANY, wstrElementLabel, wxPoint( DISPLAY_LABEL_LEFT, -1), wxSize( NORMAL_WIDTH, -1));
 myDisplayElement.DisplayContents = NULL;
 
-		if (pDisplay->GetLineCount() > 1)
+		if (myDisplay.GetLineCount() > 1)
 		{
 			myDisplayElement.DisplayContents = new RBTextCtrl( this, wxID_ANY, wstrEmpty, wxPoint( DISPLAY_CONTENTS_LEFT, -1), wxSize( TEXT_WIDTH, -1), wxTE_READONLY | wxTE_MULTILINE | wxTE_NO_VSCROLL);
 }
@@ -2792,17 +2788,15 @@ lbxSurfaces->MoveAfterInTabOrder( myDisplayPair.second.DisplayContents);
 		it->second.DisplayContents->SetFocus();
 	}
 
-	// delete pDisplay;
 }
 
 
-void SurfaceFrame::onStatusUpdate( wxCommandEvent& event)
+void SurfaceFrame::onStatusUpdate( wxThreadEvent& event)
 {
-StatusObject * pStatus = dynamic_cast <StatusObject*> (event.GetEventObject());
+StatusObject myStatus = event.GetPayload<StatusObject>();
 
-if (pStatus->GetMode().empty())
+if (myStatus.GetMode().empty())
 		{
-// delete pDisplay;
 			return;
 		}
 
@@ -2833,15 +2827,15 @@ void SurfaceFrame::OnToggleDisplays( wxCommandEvent& event)
 	BEGIN_EVENT_TABLE(SurfaceFrame, wxFrame)
 // Surface updates
 // On-screen display update from a surface
-EVT_COMMAND(SURFACE_UPDATE_ID, wxEVT_COMMAND_TEXT_UPDATED, SurfaceFrame::OnDisplayUpdate)
+EVT_THREAD(SURFACE_UPDATE_ID, SurfaceFrame::OnDisplayUpdate)
 	// Speech update from a surface
-EVT_COMMAND  (SPEECH_UPDATE_ID, wxEVT_COMMAND_TEXT_UPDATED, SurfaceFrame::onSpeechUpdate)
+EVT_THREAD(SPEECH_UPDATE_ID, SurfaceFrame::onSpeechUpdate)
 // Call a hot spot
-	EVT_COMMAND(HOT_SPOT_CALL_ID, wxEVT_COMMAND_TEXT_UPDATED, SurfaceFrame::onHotSpotCall)
+	EVT_THREAD(HOT_SPOT_CALL_ID, SurfaceFrame::onHotSpotCall)
 // Call a screen-reader function
-	EVT_COMMAND(SCREEN_READER_FUNCTION_CALL_ID, wxEVT_COMMAND_TEXT_UPDATED, SurfaceFrame::onScreenReaderCall)
+	EVT_THREAD(SCREEN_READER_FUNCTION_CALL_ID, SurfaceFrame::onScreenReaderCall)
 // Update the status bar
-EVT_COMMAND(STATUS_UPDATE_ID, wxEVT_COMMAND_TEXT_UPDATED, SurfaceFrame::onStatusUpdate)	
+EVT_THREAD(STATUS_UPDATE_ID, SurfaceFrame::onStatusUpdate)
 
 // AppConfig wizard
 	// EVT_WIZARD_FINISHED(wxID_ANY, SurfaceFrame::OnAppConfigWizardFinished)

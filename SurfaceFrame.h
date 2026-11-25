@@ -133,11 +133,11 @@ void ShowLog( fs::path myPath, bool blnIsEncrypted);
 
 // event handlers 
 
-	void OnDisplayUpdate(wxCommandEvent& event);
-	void onSpeechUpdate(wxCommandEvent& event);
-void onHotSpotCall(wxCommandEvent& event);
-void onScreenReaderCall(wxCommandEvent& event);
-void onStatusUpdate(wxCommandEvent& event);
+	void OnDisplayUpdate(wxThreadEvent& event);
+	void onSpeechUpdate(wxThreadEvent& event);
+void onHotSpotCall(wxThreadEvent& event);
+void onScreenReaderCall(wxThreadEvent& event);
+void onStatusUpdate(wxThreadEvent& event);
     
     void OnNewProtocol(wxCommandEvent& event);    
 void OnNewAppConfig( wxCommandEvent& event);
