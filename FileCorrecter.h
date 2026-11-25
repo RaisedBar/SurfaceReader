@@ -2,6 +2,10 @@
 #define FILECORRECTER_H
 #pragma once
 #include <filesystem>
+#ifdef _MSC_VER
+// v143 only provides std::experimental::filesystem through this header
+#include <experimental/filesystem>
+#endif
 #include <sstream>
 #include <fstream>
 #include <string>

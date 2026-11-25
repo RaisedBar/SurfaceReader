@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Stops a Directory.Build.targets in a parent folder from being imported; see Directory.Build.props. -->
+<Project>
+</Project>

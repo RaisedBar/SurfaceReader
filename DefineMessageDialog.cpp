@@ -725,12 +725,12 @@ strHash = strNibbleHashPrefix;
 		{
 unsigned char nNibble = vNibbles.at( i);
 
-if (nNibble == NIBBLE_RANGE_MARKER)
+if (nNibble == NIBBLE_RANGE_MARKER[ 0])
 {
 	strHash.append( NIBBLE_RANGE_MARKER);
 }
 
-else if (nNibble == NIBBLE_WILD_CARD_MARKER)
+else if (nNibble == NIBBLE_WILD_CARD_MARKER[ 0])
 	{
 		strHash.append( NIBBLE_WILD_CARD_MARKER);	
 	}
@@ -1008,8 +1008,8 @@ for (unsigned int i = 0; i < vNewNibbles.size(); i++)
 {
 unsigned char nNibble = vNewNibbles.at( i);
 
-if ((nNibble == NIBBLE_WILD_CARD_MARKER)
-	|| (nNibble == NIBBLE_RANGE_MARKER))
+if ((nNibble == NIBBLE_WILD_CARD_MARKER[ 0])
+	|| (nNibble == NIBBLE_RANGE_MARKER[ 0]))
 {
 	strOut.push_back( nNibble);
 }
