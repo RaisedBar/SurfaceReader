@@ -22,11 +22,9 @@
 
 //boost filesystem headers.
 // #define BOOST_FILESYSTEM_VERSION 3
-// #include <boost/filesystem/fstream.hpp>
-// #include <boost/filesystem.hpp>
 
 //boost sharedPtr headers.
-// #include <boost/shared_ptr.hpp>
+// #include <memory>
 //Boost xml serialization headers.
 #include <boost/archive/xml_wiarchive.hpp>
 #include <boost/archive/xml_woarchive.hpp>
@@ -34,10 +32,10 @@
 //Data type boost serialization headers.
 #include <boost/config.hpp>
 #include <boost/serialization/string.hpp>
-#include <boost/Serialization/Vector.hpp>
-#include <boost/Serialization/Map.hpp>
+#include <boost/serialization/vector.hpp>
+#include <boost/serialization/map.hpp>
 #include <boost/serialization/shared_ptr.hpp>
-#include <boost/Serialization/nvp.hpp>
+#include <boost/serialization/nvp.hpp>
 
 
 //crypto++.
@@ -170,7 +168,7 @@ if (blnIsEncrypted)
 	remove(ProcessingPath);
 				} //end path removal.
 			}
-			catch (boost::archive::archive_exception & myException)
+			catch (boost::archive::archive_exception &)
 			{
 								if (blnIsEncrypted)
 				{

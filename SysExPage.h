@@ -15,7 +15,7 @@
 #include <vector>
 #include <string>
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include <boost/lexical_cast.hpp>
 
 #include "Protocol.h"
@@ -33,7 +33,7 @@
 class ProtocolSysExPage: public wxWizardPageSimple
 {
 public:
-ProtocolSysExPage(wxWizard * wizParent, const wxString& title, boost::shared_ptr<SurfaceProtocol> pProtocol, bool EncryptionMode);
+ProtocolSysExPage(wxWizard * wizParent, const wxString& title, std::shared_ptr<SurfaceProtocol> pProtocol, bool EncryptionMode);
 
 std::wstring GetProtocolName() const;
 void SetProtocolName( std::wstring wstrProtocolName);
@@ -70,7 +70,7 @@ void OnWizardCancel(wxWizardEvent& event);
 void OnEncryptionChange(wxCommandEvent& event);    
     
 		// Internal storage
-boost::shared_ptr<SurfaceProtocol> pMyProtocol;
+std::shared_ptr<SurfaceProtocol> pMyProtocol;
 wxTextCtrl * txtProtocolName; 
 		wxTextCtrl * txtSysExManufacturerByte1, * txtSysExManufacturerByte2, * txtSysExManufacturerByte3;
 wxTextCtrl * txtSysExModelID;

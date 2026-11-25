@@ -15,7 +15,7 @@
 #include "AppConfig.h"
 #include "SurfaceAction.h"
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include <boost/lexical_cast.hpp>
 
 #include <wx/sizer.h>
@@ -30,7 +30,7 @@
 class DisplayParamsDlg: public wxDialog
 {
 public:
-DisplayParamsDlg(const wxString & title, SurfaceActionType mySAType, boost::shared_ptr<AppConfig> pAppConfig);
+DisplayParamsDlg(const wxString & title, SurfaceActionType mySAType, std::shared_ptr<AppConfig> pAppConfig);
 ~DisplayParamsDlg();
 
 bool IsValidParameterSet();
@@ -64,7 +64,7 @@ wxButton * btnOK, * btnCancel;
 SurfaceActionType mySurfaceActionType;
 
 // Pointer to the protocol being referenced
-boost::shared_ptr<AppConfig> pMyAppConfig;
+std::shared_ptr<AppConfig> pMyAppConfig;
 
 DECLARE_EVENT_TABLE()
 };

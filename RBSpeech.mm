@@ -358,62 +358,62 @@ HRESULT RBSpeech::ExecuteAction(std::wstring Action, ScreenReaderActionType Type
 
 // Variant-handling
 
-std::vector <JAWSParameter> AsJawsParameterVector( const boost::any  operand)
+std::vector <JAWSParameter> AsJawsParameterVector( const std::any  operand)
 {
 	std::vector <JAWSParameter> myParameters;
 	
 	try
 	{
-		myParameters = boost::any_cast<std::vector <JAWSParameter> >( operand);
+		myParameters = std::any_cast<std::vector <JAWSParameter> >( operand);
 		return myParameters;
 	}
-	catch( const boost::bad_any_cast &)
+	catch( const std::bad_any_cast &)
 	{
 		return myParameters;
 	}
 }
 
-int AsInt( const boost::any  operand)
+int AsInt( const std::any  operand)
 {
     try
 	{
-		int nOut = boost::any_cast<int>( operand);
+		int nOut = std::any_cast<int>( operand);
 		return nOut;
 	}
-	catch( const boost::bad_any_cast &)
+	catch( const std::bad_any_cast &)
 	{
 		return -1;
 	}
 }
 
 
-std::wstring AsWString( const boost::any operand)
+std::wstring AsWString( const std::any operand)
 {
 	try
 	{
-		std::wstring wstrOut = boost::any_cast<std::wstring>( operand);
+		std::wstring wstrOut = std::any_cast<std::wstring>( operand);
 		return wstrOut;
 	}
-	catch( const boost::bad_any_cast &)
+	catch( const std::bad_any_cast &)
 	{
 		return wstrEmpty;
 	}
 }
 
 
-bool IsWString(const boost::any & operand)
+bool IsWString(const std::any & operand)
 {
     return operand.type() == typeid( std::wstring);
 }
 
 
-bool IsInt(const boost::any & operand)
+bool IsInt(const std::any & operand)
 {
     return operand.type() == typeid(int);
 }
 
 
-bool IsJawsParameterVector(const boost::any & operand)
+bool IsJawsParameterVector(const std::any & operand)
 {
     return operand.type() == typeid( std::vector <JAWSParameter>);
 }

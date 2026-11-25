@@ -15,7 +15,7 @@
 #include "MIDISurface.h"
 #include "DisplayDefinition.h"
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 #include <wx/listbox.h>
 #include <wx/msw/winundef.h> 
@@ -26,7 +26,7 @@ const int ENTER_KEY_CODE = 13;
 class SurfaceList: public wxListBox
 {
 public:
-	SurfaceList( wxWindow* parent, wxWindowID  id, SurfaceVectorType * pSurfaces, boost::shared_ptr<ProtocolCollection> pProtocols, const wxPoint &  pos = wxDefaultPosition, const wxSize &  size = wxDefaultSize, int  n = 0, const wxString choices[ ] = NULL, long  style = 0, const wxValidator &  validator = wxDefaultValidator, const wxString &  name = wxListBoxNameStr) 
+	SurfaceList( wxWindow* parent, wxWindowID  id, SurfaceVectorType * pSurfaces, std::shared_ptr<ProtocolCollection> pProtocols, const wxPoint &  pos = wxDefaultPosition, const wxSize &  size = wxDefaultSize, int  n = 0, const wxString choices[ ] = NULL, long  style = 0, const wxValidator &  validator = wxDefaultValidator, const wxString &  name = wxListBoxNameStr) 
 :wxListBox( parent, id, pos, size, n, choices, style, validator, name) 
 	{
 pMySurfaces = pSurfaces;
@@ -42,7 +42,7 @@ private:
 void OnEnterKey(wxKeyEvent& event);
 
 SurfaceVectorType * pMySurfaces;
-boost::shared_ptr<ProtocolCollection> pMyProtocols;
+std::shared_ptr<ProtocolCollection> pMyProtocols;
 
 	DECLARE_EVENT_TABLE()
 // end class

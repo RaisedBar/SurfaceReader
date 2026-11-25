@@ -10,7 +10,6 @@
 #include <vector>
 #include <algorithm>
 #include <locale>
-#include <codecvt>
 
 #include "UiaAnnouncer.h"
 
@@ -234,7 +233,7 @@ HRESULT hReturnValue =S_OK;
 AvailableActionsType JawsActions;
 ActionCollectionType Actions;
 ActionCollectionTypeIterator NewEnd =Actions.begin();
-AvailableActionFieldsType Fields =boost::assign::map_list_of(L"Name", 0)(L"Synopsis", 1)(L"Description", 2)(L"Returns", 3)(L"Parameters", 4)(L"Category", 5)(L"Type", 6);
+AvailableActionFieldsType Fields = { {L"Name", 0}, {L"Synopsis", 1}, {L"Description", 2}, {L"Returns", 3}, {L"Parameters", 4}, {L"Category", 5}, {L"Type", 6} };
 ActionInfoType CurrentAction;
 std::vector<JawsFunction> AvailableJawsFunctions;
 std::wstring UserScriptFolder; 
@@ -362,7 +361,7 @@ else { //use hsc method.
 //now sort the function vector.
 //std::sort(AvailableJawsFunctions.begin(), AvailableJawsFunctions.end(), CompareJawsFunctions);
 //now iterate through and add to the vector.
-BOOST_FOREACH(JawsFunction j, AvailableJawsFunctions)
+for (JawsFunction j : AvailableJawsFunctions)
 {
 if (j.Type ==ID_TYPE_SCRIPT)
 {
@@ -801,484 +800,484 @@ DolphinActionCollection.clear();
 //now add the actions.
 ActionInfoType CurrentAction;
 CurrentAction.clear();
-CurrentAction.insert(std::make_pair(0, boost::any(200)));
-CurrentAction.insert(std::make_pair( 1, boost::any( wstrScreenRefresh)));
-CurrentAction.insert(std::make_pair(2, boost::any(ID_ACTION)));
+CurrentAction.insert(std::make_pair(0, std::any(200)));
+CurrentAction.insert(std::make_pair( 1, std::any( wstrScreenRefresh)));
+CurrentAction.insert(std::make_pair(2, std::any(ID_ACTION)));
 DolphinActionCollection.push_back(CurrentAction);
 CurrentAction.clear();
-CurrentAction.insert(std::make_pair(0, boost::any(201)));
-CurrentAction.insert(std::make_pair(1, boost::any( wstrPassNextKey)));
-CurrentAction.insert(std::make_pair(2, boost::any(ID_ACTION)));
+CurrentAction.insert(std::make_pair(0, std::any(201)));
+CurrentAction.insert(std::make_pair(1, std::any( wstrPassNextKey)));
+CurrentAction.insert(std::make_pair(2, std::any(ID_ACTION)));
 DolphinActionCollection.push_back(CurrentAction);
 CurrentAction.clear();
-CurrentAction.insert(std::make_pair(0, boost::any(202)));
-CurrentAction.insert(std::make_pair(1, boost::any( wstrToggleHotKeys)));
-CurrentAction.insert(std::make_pair(2, boost::any(ID_ACTION)));
+CurrentAction.insert(std::make_pair(0, std::any(202)));
+CurrentAction.insert(std::make_pair(1, std::any( wstrToggleHotKeys)));
+CurrentAction.insert(std::make_pair(2, std::any(ID_ACTION)));
 DolphinActionCollection.push_back(CurrentAction);
 CurrentAction.clear();
-CurrentAction.insert(std::make_pair(0, boost::any(2)));
-CurrentAction.insert(std::make_pair(1, boost::any(wstrNavigationMode)));
-CurrentAction.insert(std::make_pair(2, boost::any(ID_ACTION)));
+CurrentAction.insert(std::make_pair(0, std::any(2)));
+CurrentAction.insert(std::make_pair(1, std::any(wstrNavigationMode)));
+CurrentAction.insert(std::make_pair(2, std::any(ID_ACTION)));
 DolphinActionCollection.push_back(CurrentAction);
 CurrentAction.clear();
-CurrentAction.insert(std::make_pair(0, boost::any(3)));
-CurrentAction.insert(std::make_pair(1, boost::any(wstrDocumentReadMode)));
-CurrentAction.insert(std::make_pair(2, boost::any(ID_ACTION)));
+CurrentAction.insert(std::make_pair(0, std::any(3)));
+CurrentAction.insert(std::make_pair(1, std::any(wstrDocumentReadMode)));
+CurrentAction.insert(std::make_pair(2, std::any(ID_ACTION)));
 DolphinActionCollection.push_back(CurrentAction);
 CurrentAction.clear();
-CurrentAction.insert(std::make_pair(0, boost::any(4)));
-CurrentAction.insert(std::make_pair(1, boost::any(wstrSwitchToPreviousLanguage)));
-CurrentAction.insert(std::make_pair(2, boost::any(ID_ACTION)));
+CurrentAction.insert(std::make_pair(0, std::any(4)));
+CurrentAction.insert(std::make_pair(1, std::any(wstrSwitchToPreviousLanguage)));
+CurrentAction.insert(std::make_pair(2, std::any(ID_ACTION)));
 DolphinActionCollection.push_back(CurrentAction);
 CurrentAction.clear();
-CurrentAction.insert(std::make_pair(0, boost::any(5)));
-CurrentAction.insert(std::make_pair(1, boost::any(wstrSwitchToNextLanguage)));
-CurrentAction.insert(std::make_pair(2, boost::any(ID_ACTION)));
+CurrentAction.insert(std::make_pair(0, std::any(5)));
+CurrentAction.insert(std::make_pair(1, std::any(wstrSwitchToNextLanguage)));
+CurrentAction.insert(std::make_pair(2, std::any(ID_ACTION)));
 DolphinActionCollection.push_back(CurrentAction);
 CurrentAction.clear();
-CurrentAction.insert(std::make_pair(0, boost::any(35)));
-CurrentAction.insert(std::make_pair(1, boost::any(wstrVolumeUp)));
-CurrentAction.insert(std::make_pair(2, boost::any(ID_ACTION)));
+CurrentAction.insert(std::make_pair(0, std::any(35)));
+CurrentAction.insert(std::make_pair(1, std::any(wstrVolumeUp)));
+CurrentAction.insert(std::make_pair(2, std::any(ID_ACTION)));
 DolphinActionCollection.push_back(CurrentAction);
 CurrentAction.clear();
-CurrentAction.insert(std::make_pair(0, boost::any(36)));
-CurrentAction.insert(std::make_pair(1, boost::any(wstrVolumeDown)));
-CurrentAction.insert(std::make_pair(2, boost::any(ID_ACTION)));
+CurrentAction.insert(std::make_pair(0, std::any(36)));
+CurrentAction.insert(std::make_pair(1, std::any(wstrVolumeDown)));
+CurrentAction.insert(std::make_pair(2, std::any(ID_ACTION)));
 DolphinActionCollection.push_back(CurrentAction);
 CurrentAction.clear();
-CurrentAction.insert(std::make_pair(0, boost::any(37)));
-CurrentAction.insert(std::make_pair(1, boost::any(wstrToggleSpeech)));
-CurrentAction.insert(std::make_pair(2, boost::any(ID_ACTION)));
+CurrentAction.insert(std::make_pair(0, std::any(37)));
+CurrentAction.insert(std::make_pair(1, std::any(wstrToggleSpeech)));
+CurrentAction.insert(std::make_pair(2, std::any(ID_ACTION)));
 DolphinActionCollection.push_back(CurrentAction);
 CurrentAction.clear();
-CurrentAction.insert(std::make_pair(0, boost::any(38)));
-CurrentAction.insert(std::make_pair(1, boost::any(wstrToggleRowColumnMode)));
-CurrentAction.insert(std::make_pair(2, boost::any(ID_ACTION)));
+CurrentAction.insert(std::make_pair(0, std::any(38)));
+CurrentAction.insert(std::make_pair(1, std::any(wstrToggleRowColumnMode)));
+CurrentAction.insert(std::make_pair(2, std::any(ID_ACTION)));
 DolphinActionCollection.push_back(CurrentAction);
 CurrentAction.clear();
-CurrentAction.insert(std::make_pair(0, boost::any(105)));
-CurrentAction.insert(std::make_pair(1, boost::any(wstrReadFocus)));
-CurrentAction.insert(std::make_pair(2, boost::any(ID_ACTION)));
+CurrentAction.insert(std::make_pair(0, std::any(105)));
+CurrentAction.insert(std::make_pair(1, std::any(wstrReadFocus)));
+CurrentAction.insert(std::make_pair(2, std::any(ID_ACTION)));
 DolphinActionCollection.push_back(CurrentAction);
 CurrentAction.clear();
-CurrentAction.insert(std::make_pair(0, boost::any(106)));
-CurrentAction.insert(std::make_pair(1, boost::any(wstrSpellFocus)));
-CurrentAction.insert(std::make_pair(2, boost::any(ID_ACTION)));
+CurrentAction.insert(std::make_pair(0, std::any(106)));
+CurrentAction.insert(std::make_pair(1, std::any(wstrSpellFocus)));
+CurrentAction.insert(std::make_pair(2, std::any(ID_ACTION)));
 DolphinActionCollection.push_back(CurrentAction);
 CurrentAction.clear();
-CurrentAction.insert(std::make_pair(0, boost::any(107)));
-CurrentAction.insert(std::make_pair(1, boost::any(wstrVerboseFocus)));
-CurrentAction.insert(std::make_pair(2, boost::any(ID_ACTION)));
+CurrentAction.insert(std::make_pair(0, std::any(107)));
+CurrentAction.insert(std::make_pair(1, std::any(wstrVerboseFocus)));
+CurrentAction.insert(std::make_pair(2, std::any(ID_ACTION)));
 DolphinActionCollection.push_back(CurrentAction);
 CurrentAction.clear();
-CurrentAction.insert(std::make_pair(0, boost::any(108)));
-CurrentAction.insert(std::make_pair(1, boost::any(wstrPhoneticFocus)));
-CurrentAction.insert(std::make_pair(2, boost::any(ID_ACTION)));
+CurrentAction.insert(std::make_pair(0, std::any(108)));
+CurrentAction.insert(std::make_pair(1, std::any(wstrPhoneticFocus)));
+CurrentAction.insert(std::make_pair(2, std::any(ID_ACTION)));
 DolphinActionCollection.push_back(CurrentAction);
 CurrentAction.clear();
-CurrentAction.insert(std::make_pair(0, boost::any(109)));
-CurrentAction.insert(std::make_pair(1, boost::any(wstrReadTextToCursor)));
-CurrentAction.insert(std::make_pair(2, boost::any(ID_ACTION)));
+CurrentAction.insert(std::make_pair(0, std::any(109)));
+CurrentAction.insert(std::make_pair(1, std::any(wstrReadTextToCursor)));
+CurrentAction.insert(std::make_pair(2, std::any(ID_ACTION)));
 DolphinActionCollection.push_back(CurrentAction);
 CurrentAction.clear();
-CurrentAction.insert(std::make_pair(0, boost::any(110)));
-CurrentAction.insert(std::make_pair(1, boost::any(wstrSpellTextToCursor)));
-CurrentAction.insert(std::make_pair(2, boost::any(ID_ACTION)));
+CurrentAction.insert(std::make_pair(0, std::any(110)));
+CurrentAction.insert(std::make_pair(1, std::any(wstrSpellTextToCursor)));
+CurrentAction.insert(std::make_pair(2, std::any(ID_ACTION)));
 DolphinActionCollection.push_back(CurrentAction);
 CurrentAction.clear();
-CurrentAction.insert(std::make_pair(0, boost::any(111)));
-CurrentAction.insert(std::make_pair(1, boost::any(wstrVerboseTextToCursor)));
-CurrentAction.insert(std::make_pair(2, boost::any(ID_ACTION)));
+CurrentAction.insert(std::make_pair(0, std::any(111)));
+CurrentAction.insert(std::make_pair(1, std::any(wstrVerboseTextToCursor)));
+CurrentAction.insert(std::make_pair(2, std::any(ID_ACTION)));
 DolphinActionCollection.push_back(CurrentAction);
 CurrentAction.clear();
-CurrentAction.insert(std::make_pair(0, boost::any(112)));
-CurrentAction.insert(std::make_pair(1, boost::any(wstrPhoneticTextToCursor)));
-CurrentAction.insert(std::make_pair(2, boost::any(ID_ACTION)));
+CurrentAction.insert(std::make_pair(0, std::any(112)));
+CurrentAction.insert(std::make_pair(1, std::any(wstrPhoneticTextToCursor)));
+CurrentAction.insert(std::make_pair(2, std::any(ID_ACTION)));
 DolphinActionCollection.push_back(CurrentAction);
 CurrentAction.clear();
-CurrentAction.insert(std::make_pair(0, boost::any(113)));
-CurrentAction.insert(std::make_pair(1, boost::any(wstrReadTextFromCursor)));
-CurrentAction.insert(std::make_pair(2, boost::any(ID_ACTION)));
+CurrentAction.insert(std::make_pair(0, std::any(113)));
+CurrentAction.insert(std::make_pair(1, std::any(wstrReadTextFromCursor)));
+CurrentAction.insert(std::make_pair(2, std::any(ID_ACTION)));
 DolphinActionCollection.push_back(CurrentAction);
 CurrentAction.clear();
-CurrentAction.insert(std::make_pair(0, boost::any(114)));
-CurrentAction.insert(std::make_pair(1, boost::any(wstrSpellTextFromCursor)));
-CurrentAction.insert(std::make_pair(2, boost::any(ID_ACTION)));
+CurrentAction.insert(std::make_pair(0, std::any(114)));
+CurrentAction.insert(std::make_pair(1, std::any(wstrSpellTextFromCursor)));
+CurrentAction.insert(std::make_pair(2, std::any(ID_ACTION)));
 DolphinActionCollection.push_back(CurrentAction);
 CurrentAction.clear();
-CurrentAction.insert(std::make_pair(0, boost::any(115)));
-CurrentAction.insert(std::make_pair(1, boost::any(wstrVerboseTextFromCursor)));
-CurrentAction.insert(std::make_pair(2, boost::any(ID_ACTION)));
+CurrentAction.insert(std::make_pair(0, std::any(115)));
+CurrentAction.insert(std::make_pair(1, std::any(wstrVerboseTextFromCursor)));
+CurrentAction.insert(std::make_pair(2, std::any(ID_ACTION)));
 DolphinActionCollection.push_back(CurrentAction);
 CurrentAction.clear();
-CurrentAction.insert(std::make_pair(0, boost::any(116)));
-CurrentAction.insert(std::make_pair(1, boost::any(wstrPhoneticTextFromCursor)));
-CurrentAction.insert(std::make_pair(2, boost::any(ID_ACTION)));
+CurrentAction.insert(std::make_pair(0, std::any(116)));
+CurrentAction.insert(std::make_pair(1, std::any(wstrPhoneticTextFromCursor)));
+CurrentAction.insert(std::make_pair(2, std::any(ID_ACTION)));
 DolphinActionCollection.push_back(CurrentAction);
 CurrentAction.clear();
-CurrentAction.insert(std::make_pair(0, boost::any(117)));
-CurrentAction.insert(std::make_pair(1, boost::any(wstrReadSpreadsheetRowAndColumn)));
-CurrentAction.insert(std::make_pair(2, boost::any(ID_ACTION)));
+CurrentAction.insert(std::make_pair(0, std::any(117)));
+CurrentAction.insert(std::make_pair(1, std::any(wstrReadSpreadsheetRowAndColumn)));
+CurrentAction.insert(std::make_pair(2, std::any(ID_ACTION)));
 DolphinActionCollection.push_back(CurrentAction);
 CurrentAction.clear();
-CurrentAction.insert(std::make_pair(0, boost::any(118)));
-CurrentAction.insert(std::make_pair(1, boost::any(wstrSpellSpreadsheetRowAndColumn)));
-CurrentAction.insert(std::make_pair(2, boost::any(ID_ACTION)));
+CurrentAction.insert(std::make_pair(0, std::any(118)));
+CurrentAction.insert(std::make_pair(1, std::any(wstrSpellSpreadsheetRowAndColumn)));
+CurrentAction.insert(std::make_pair(2, std::any(ID_ACTION)));
 DolphinActionCollection.push_back(CurrentAction);
 CurrentAction.clear();
-CurrentAction.insert(std::make_pair(0, boost::any(119)));
-CurrentAction.insert(std::make_pair(1, boost::any(wstrVerboseSpreadsheetRowAndColumn)));
-CurrentAction.insert(std::make_pair(2, boost::any(ID_ACTION)));
+CurrentAction.insert(std::make_pair(0, std::any(119)));
+CurrentAction.insert(std::make_pair(1, std::any(wstrVerboseSpreadsheetRowAndColumn)));
+CurrentAction.insert(std::make_pair(2, std::any(ID_ACTION)));
 DolphinActionCollection.push_back(CurrentAction);
 CurrentAction.clear();
-CurrentAction.insert(std::make_pair(0, boost::any(120)));
-CurrentAction.insert(std::make_pair(1, boost::any(wstrPhoneticSpreadsheetRowAndColumn)));
-CurrentAction.insert(std::make_pair(2, boost::any(ID_ACTION)));
+CurrentAction.insert(std::make_pair(0, std::any(120)));
+CurrentAction.insert(std::make_pair(1, std::any(wstrPhoneticSpreadsheetRowAndColumn)));
+CurrentAction.insert(std::make_pair(2, std::any(ID_ACTION)));
 DolphinActionCollection.push_back(CurrentAction);
 CurrentAction.clear();
-CurrentAction.insert(std::make_pair(0, boost::any(121)));
-CurrentAction.insert(std::make_pair(1, boost::any(wstrReadCharacter)));
-CurrentAction.insert(std::make_pair(2, boost::any(ID_ACTION)));
+CurrentAction.insert(std::make_pair(0, std::any(121)));
+CurrentAction.insert(std::make_pair(1, std::any(wstrReadCharacter)));
+CurrentAction.insert(std::make_pair(2, std::any(ID_ACTION)));
 DolphinActionCollection.push_back(CurrentAction);
 CurrentAction.clear();
-CurrentAction.insert(std::make_pair(0, boost::any(122)));
-CurrentAction.insert(std::make_pair(1, boost::any(wstrDescribeCharacterAttributes)));
-CurrentAction.insert(std::make_pair(2, boost::any(ID_ACTION)));
+CurrentAction.insert(std::make_pair(0, std::any(122)));
+CurrentAction.insert(std::make_pair(1, std::any(wstrDescribeCharacterAttributes)));
+CurrentAction.insert(std::make_pair(2, std::any(ID_ACTION)));
 DolphinActionCollection.push_back(CurrentAction);
 CurrentAction.clear();
-CurrentAction.insert(std::make_pair(0, boost::any(123)));
-CurrentAction.insert(std::make_pair(1, boost::any(wstrDescribeCharacterAttributes)));
-CurrentAction.insert(std::make_pair(2, boost::any(ID_ACTION)));
+CurrentAction.insert(std::make_pair(0, std::any(123)));
+CurrentAction.insert(std::make_pair(1, std::any(wstrDescribeCharacterAttributes)));
+CurrentAction.insert(std::make_pair(2, std::any(ID_ACTION)));
 DolphinActionCollection.push_back(CurrentAction);
 CurrentAction.clear();
-CurrentAction.insert(std::make_pair(0, boost::any(124)));
-CurrentAction.insert(std::make_pair(1, boost::any(wstrPhoneticCharacter)));
-CurrentAction.insert(std::make_pair(2, boost::any(ID_ACTION)));
+CurrentAction.insert(std::make_pair(0, std::any(124)));
+CurrentAction.insert(std::make_pair(1, std::any(wstrPhoneticCharacter)));
+CurrentAction.insert(std::make_pair(2, std::any(ID_ACTION)));
 DolphinActionCollection.push_back(CurrentAction);
 CurrentAction.clear();
-CurrentAction.insert(std::make_pair(0, boost::any(125)));
-CurrentAction.insert(std::make_pair(1, boost::any(wstrReadWord)));
-CurrentAction.insert(std::make_pair(2, boost::any(ID_ACTION)));
+CurrentAction.insert(std::make_pair(0, std::any(125)));
+CurrentAction.insert(std::make_pair(1, std::any(wstrReadWord)));
+CurrentAction.insert(std::make_pair(2, std::any(ID_ACTION)));
 DolphinActionCollection.push_back(CurrentAction);
 CurrentAction.clear();
-CurrentAction.insert(std::make_pair(0, boost::any(126)));
-CurrentAction.insert(std::make_pair(1, boost::any(wstrSpellWord)));
-CurrentAction.insert(std::make_pair(2, boost::any(ID_ACTION)));
+CurrentAction.insert(std::make_pair(0, std::any(126)));
+CurrentAction.insert(std::make_pair(1, std::any(wstrSpellWord)));
+CurrentAction.insert(std::make_pair(2, std::any(ID_ACTION)));
 DolphinActionCollection.push_back(CurrentAction);
 CurrentAction.clear();
-CurrentAction.insert(std::make_pair(0, boost::any(127)));
-CurrentAction.insert(std::make_pair(1, boost::any(wstrVerboseWord)));
-CurrentAction.insert(std::make_pair(2, boost::any(ID_ACTION)));
+CurrentAction.insert(std::make_pair(0, std::any(127)));
+CurrentAction.insert(std::make_pair(1, std::any(wstrVerboseWord)));
+CurrentAction.insert(std::make_pair(2, std::any(ID_ACTION)));
 DolphinActionCollection.push_back(CurrentAction);
 CurrentAction.clear();
-CurrentAction.insert(std::make_pair(0, boost::any(128)));
-CurrentAction.insert(std::make_pair(1, boost::any(wstrPhoneticWord)));
-CurrentAction.insert(std::make_pair(2, boost::any(ID_ACTION)));
+CurrentAction.insert(std::make_pair(0, std::any(128)));
+CurrentAction.insert(std::make_pair(1, std::any(wstrPhoneticWord)));
+CurrentAction.insert(std::make_pair(2, std::any(ID_ACTION)));
 DolphinActionCollection.push_back(CurrentAction);
 CurrentAction.clear();
-CurrentAction.insert(std::make_pair(0, boost::any(129)));
-CurrentAction.insert(std::make_pair(1, boost::any(wstrReadLine)));
-CurrentAction.insert(std::make_pair(2, boost::any(ID_ACTION)));
+CurrentAction.insert(std::make_pair(0, std::any(129)));
+CurrentAction.insert(std::make_pair(1, std::any(wstrReadLine)));
+CurrentAction.insert(std::make_pair(2, std::any(ID_ACTION)));
 DolphinActionCollection.push_back(CurrentAction);
 CurrentAction.clear();
-CurrentAction.insert(std::make_pair(0, boost::any(130)));
-CurrentAction.insert(std::make_pair(1, boost::any(wstrSpellLine)));
-CurrentAction.insert(std::make_pair(2, boost::any(ID_ACTION)));
+CurrentAction.insert(std::make_pair(0, std::any(130)));
+CurrentAction.insert(std::make_pair(1, std::any(wstrSpellLine)));
+CurrentAction.insert(std::make_pair(2, std::any(ID_ACTION)));
 DolphinActionCollection.push_back(CurrentAction);
 CurrentAction.clear();
-CurrentAction.insert(std::make_pair(0, boost::any(131)));
-CurrentAction.insert(std::make_pair(1, boost::any(wstrVerboseLine)));
-CurrentAction.insert(std::make_pair(2, boost::any(ID_ACTION)));
+CurrentAction.insert(std::make_pair(0, std::any(131)));
+CurrentAction.insert(std::make_pair(1, std::any(wstrVerboseLine)));
+CurrentAction.insert(std::make_pair(2, std::any(ID_ACTION)));
 DolphinActionCollection.push_back(CurrentAction);
 CurrentAction.clear();
-CurrentAction.insert(std::make_pair(0, boost::any(132)));
-CurrentAction.insert(std::make_pair(1, boost::any(wstrPhoneticLine)));
-CurrentAction.insert(std::make_pair(2, boost::any(ID_ACTION)));
+CurrentAction.insert(std::make_pair(0, std::any(132)));
+CurrentAction.insert(std::make_pair(1, std::any(wstrPhoneticLine)));
+CurrentAction.insert(std::make_pair(2, std::any(ID_ACTION)));
 DolphinActionCollection.push_back(CurrentAction);
 CurrentAction.clear();
-CurrentAction.insert(std::make_pair(0, boost::any(134)));
-CurrentAction.insert(std::make_pair(1, boost::any(wstrReadWindow)));
-CurrentAction.insert(std::make_pair(2, boost::any(ID_ACTION)));
+CurrentAction.insert(std::make_pair(0, std::any(134)));
+CurrentAction.insert(std::make_pair(1, std::any(wstrReadWindow)));
+CurrentAction.insert(std::make_pair(2, std::any(ID_ACTION)));
 DolphinActionCollection.push_back(CurrentAction);
 CurrentAction.clear();
-CurrentAction.insert(std::make_pair(0, boost::any(135)));
-CurrentAction.insert(std::make_pair(1, boost::any(wstrVerboseWindow)));
-CurrentAction.insert(std::make_pair(2, boost::any(ID_ACTION)));
+CurrentAction.insert(std::make_pair(0, std::any(135)));
+CurrentAction.insert(std::make_pair(1, std::any(wstrVerboseWindow)));
+CurrentAction.insert(std::make_pair(2, std::any(ID_ACTION)));
 DolphinActionCollection.push_back(CurrentAction);
 CurrentAction.clear();
-CurrentAction.insert(std::make_pair(0, boost::any(136)));
-CurrentAction.insert(std::make_pair(1, boost::any(wstrWhereAmI)));
-CurrentAction.insert(std::make_pair(2, boost::any(ID_ACTION)));
+CurrentAction.insert(std::make_pair(0, std::any(136)));
+CurrentAction.insert(std::make_pair(1, std::any(wstrWhereAmI)));
+CurrentAction.insert(std::make_pair(2, std::any(ID_ACTION)));
 DolphinActionCollection.push_back(CurrentAction);
 CurrentAction.clear();
-CurrentAction.insert(std::make_pair(0, boost::any(137)));
-CurrentAction.insert(std::make_pair(1, boost::any(wstrReadShortcut)));
-CurrentAction.insert(std::make_pair(2, boost::any(ID_ACTION)));
+CurrentAction.insert(std::make_pair(0, std::any(137)));
+CurrentAction.insert(std::make_pair(1, std::any(wstrReadShortcut)));
+CurrentAction.insert(std::make_pair(2, std::any(ID_ACTION)));
 DolphinActionCollection.push_back(CurrentAction);
 CurrentAction.clear();
-CurrentAction.insert(std::make_pair(0, boost::any(139)));
-CurrentAction.insert(std::make_pair(1, boost::any(wstrReadControl)));
-CurrentAction.insert(std::make_pair(2, boost::any(ID_ACTION)));
+CurrentAction.insert(std::make_pair(0, std::any(139)));
+CurrentAction.insert(std::make_pair(1, std::any(wstrReadControl)));
+CurrentAction.insert(std::make_pair(2, std::any(ID_ACTION)));
 DolphinActionCollection.push_back(CurrentAction);
 CurrentAction.clear();
-CurrentAction.insert(std::make_pair(0, boost::any(140)));
-CurrentAction.insert(std::make_pair(1, boost::any(wstrVerboseControl)));
-CurrentAction.insert(std::make_pair(2, boost::any(ID_ACTION)));
+CurrentAction.insert(std::make_pair(0, std::any(140)));
+CurrentAction.insert(std::make_pair(1, std::any(wstrVerboseControl)));
+CurrentAction.insert(std::make_pair(2, std::any(ID_ACTION)));
 DolphinActionCollection.push_back(CurrentAction);
 CurrentAction.clear();
-CurrentAction.insert(std::make_pair(0, boost::any(14)));
-CurrentAction.insert(std::make_pair(1, boost::any(wstr1Mute)));
-CurrentAction.insert(std::make_pair(2, boost::any(ID_ACTION)));
+CurrentAction.insert(std::make_pair(0, std::any(14)));
+CurrentAction.insert(std::make_pair(1, std::any(wstr1Mute)));
+CurrentAction.insert(std::make_pair(2, std::any(ID_ACTION)));
 DolphinActionCollection.push_back(CurrentAction);
 CurrentAction.clear();
-CurrentAction.insert(std::make_pair(0, boost::any(185)));
-CurrentAction.insert(std::make_pair(1, boost::any(wstrReadStatusBar)));
-CurrentAction.insert(std::make_pair(2, boost::any(ID_ACTION)));
+CurrentAction.insert(std::make_pair(0, std::any(185)));
+CurrentAction.insert(std::make_pair(1, std::any(wstrReadStatusBar)));
+CurrentAction.insert(std::make_pair(2, std::any(ID_ACTION)));
 DolphinActionCollection.push_back(CurrentAction);
 CurrentAction.clear();
-CurrentAction.insert(std::make_pair(0, boost::any(186)));
-CurrentAction.insert(std::make_pair(1, boost::any(wstrSpellStatusBar)));
-CurrentAction.insert(std::make_pair(2, boost::any(ID_ACTION)));
+CurrentAction.insert(std::make_pair(0, std::any(186)));
+CurrentAction.insert(std::make_pair(1, std::any(wstrSpellStatusBar)));
+CurrentAction.insert(std::make_pair(2, std::any(ID_ACTION)));
 DolphinActionCollection.push_back(CurrentAction);
 CurrentAction.clear();
-CurrentAction.insert(std::make_pair(0, boost::any(187)));
-CurrentAction.insert(std::make_pair(1, boost::any(wstrVerboseStatusBar)));
-CurrentAction.insert(std::make_pair(2, boost::any(ID_ACTION)));
+CurrentAction.insert(std::make_pair(0, std::any(187)));
+CurrentAction.insert(std::make_pair(1, std::any(wstrVerboseStatusBar)));
+CurrentAction.insert(std::make_pair(2, std::any(ID_ACTION)));
 DolphinActionCollection.push_back(CurrentAction);
 CurrentAction.clear();
-CurrentAction.insert(std::make_pair(0, boost::any(188)));
-CurrentAction.insert(std::make_pair(1, boost::any(wstrPhoneticStatusBar)));
-CurrentAction.insert(std::make_pair(2, boost::any(ID_ACTION)));
+CurrentAction.insert(std::make_pair(0, std::any(188)));
+CurrentAction.insert(std::make_pair(1, std::any(wstrPhoneticStatusBar)));
+CurrentAction.insert(std::make_pair(2, std::any(ID_ACTION)));
 DolphinActionCollection.push_back(CurrentAction);
 CurrentAction.clear();
-CurrentAction.insert(std::make_pair(0, boost::any(198)));
-CurrentAction.insert(std::make_pair(1, boost::any(wstrSpeedUp)));
-CurrentAction.insert(std::make_pair(2, boost::any(ID_ACTION)));
+CurrentAction.insert(std::make_pair(0, std::any(198)));
+CurrentAction.insert(std::make_pair(1, std::any(wstrSpeedUp)));
+CurrentAction.insert(std::make_pair(2, std::any(ID_ACTION)));
 DolphinActionCollection.push_back(CurrentAction);
 CurrentAction.clear();
-CurrentAction.insert(std::make_pair(0, boost::any(199)));
-CurrentAction.insert(std::make_pair(1, boost::any(wstrSpeedDown)));
-CurrentAction.insert(std::make_pair(2, boost::any(ID_ACTION)));
+CurrentAction.insert(std::make_pair(0, std::any(199)));
+CurrentAction.insert(std::make_pair(1, std::any(wstrSpeedDown)));
+CurrentAction.insert(std::make_pair(2, std::any(ID_ACTION)));
 DolphinActionCollection.push_back(CurrentAction);
 CurrentAction.clear();
-CurrentAction.insert(std::make_pair(0, boost::any(76)));
-CurrentAction.insert(std::make_pair(1, boost::any(wstrBrailleBack)));
-CurrentAction.insert(std::make_pair(2, boost::any(ID_ACTION)));
+CurrentAction.insert(std::make_pair(0, std::any(76)));
+CurrentAction.insert(std::make_pair(1, std::any(wstrBrailleBack)));
+CurrentAction.insert(std::make_pair(2, std::any(ID_ACTION)));
 DolphinActionCollection.push_back(CurrentAction);
 CurrentAction.clear();
-CurrentAction.insert(std::make_pair(0, boost::any(77)));
-CurrentAction.insert(std::make_pair(1, boost::any(wstrBrailleForward)));
-CurrentAction.insert(std::make_pair(2, boost::any(ID_ACTION)));
+CurrentAction.insert(std::make_pair(0, std::any(77)));
+CurrentAction.insert(std::make_pair(1, std::any(wstrBrailleForward)));
+CurrentAction.insert(std::make_pair(2, std::any(ID_ACTION)));
 DolphinActionCollection.push_back(CurrentAction);
 CurrentAction.clear();
-CurrentAction.insert(std::make_pair(0, boost::any(78)));
-CurrentAction.insert(std::make_pair(1, boost::any(wstrBrailleLeft)));
-CurrentAction.insert(std::make_pair(2, boost::any(ID_ACTION)));
+CurrentAction.insert(std::make_pair(0, std::any(78)));
+CurrentAction.insert(std::make_pair(1, std::any(wstrBrailleLeft)));
+CurrentAction.insert(std::make_pair(2, std::any(ID_ACTION)));
 DolphinActionCollection.push_back(CurrentAction);
 CurrentAction.clear();
-CurrentAction.insert(std::make_pair(0, boost::any(79)));
-CurrentAction.insert(std::make_pair(1, boost::any(wstrBrailleRight)));
-CurrentAction.insert(std::make_pair(2, boost::any(ID_ACTION)));
+CurrentAction.insert(std::make_pair(0, std::any(79)));
+CurrentAction.insert(std::make_pair(1, std::any(wstrBrailleRight)));
+CurrentAction.insert(std::make_pair(2, std::any(ID_ACTION)));
 DolphinActionCollection.push_back(CurrentAction);
 CurrentAction.clear();
-CurrentAction.insert(std::make_pair(0, boost::any(80)));
-CurrentAction.insert(std::make_pair(1, boost::any(wstrBrailleWidthLeft)));
-CurrentAction.insert(std::make_pair(2, boost::any(ID_ACTION)));
+CurrentAction.insert(std::make_pair(0, std::any(80)));
+CurrentAction.insert(std::make_pair(1, std::any(wstrBrailleWidthLeft)));
+CurrentAction.insert(std::make_pair(2, std::any(ID_ACTION)));
 DolphinActionCollection.push_back(CurrentAction);
 CurrentAction.clear();
-CurrentAction.insert(std::make_pair(0, boost::any(81)));
-CurrentAction.insert(std::make_pair(1, boost::any(wstrBrailleWidthRight)));
-CurrentAction.insert(std::make_pair(2, boost::any(ID_ACTION)));
+CurrentAction.insert(std::make_pair(0, std::any(81)));
+CurrentAction.insert(std::make_pair(1, std::any(wstrBrailleWidthRight)));
+CurrentAction.insert(std::make_pair(2, std::any(ID_ACTION)));
 DolphinActionCollection.push_back(CurrentAction);
 CurrentAction.clear();
-CurrentAction.insert(std::make_pair(0, boost::any(82)));
-CurrentAction.insert(std::make_pair(1, boost::any(wstrBrailleHalfWidthLeft)));
-CurrentAction.insert(std::make_pair(2, boost::any(ID_ACTION)));
+CurrentAction.insert(std::make_pair(0, std::any(82)));
+CurrentAction.insert(std::make_pair(1, std::any(wstrBrailleHalfWidthLeft)));
+CurrentAction.insert(std::make_pair(2, std::any(ID_ACTION)));
 DolphinActionCollection.push_back(CurrentAction);
 CurrentAction.clear();
-CurrentAction.insert(std::make_pair(0, boost::any(83)));
-CurrentAction.insert(std::make_pair(1, boost::any(wstrBrailleHalfWidthRight)));
-CurrentAction.insert(std::make_pair(2, boost::any(ID_ACTION)));
+CurrentAction.insert(std::make_pair(0, std::any(83)));
+CurrentAction.insert(std::make_pair(1, std::any(wstrBrailleHalfWidthRight)));
+CurrentAction.insert(std::make_pair(2, std::any(ID_ACTION)));
 DolphinActionCollection.push_back(CurrentAction);
 CurrentAction.clear();
-CurrentAction.insert(std::make_pair(0, boost::any(84)));
-CurrentAction.insert(std::make_pair(1, boost::any(wstrBrailleGoToFocus)));
-CurrentAction.insert(std::make_pair(2, boost::any(ID_ACTION)));
+CurrentAction.insert(std::make_pair(0, std::any(84)));
+CurrentAction.insert(std::make_pair(1, std::any(wstrBrailleGoToFocus)));
+CurrentAction.insert(std::make_pair(2, std::any(ID_ACTION)));
 DolphinActionCollection.push_back(CurrentAction);
 CurrentAction.clear();
-CurrentAction.insert(std::make_pair(0, boost::any(85)));
-CurrentAction.insert(std::make_pair(1, boost::any(wstrBrailleHome)));
-CurrentAction.insert(std::make_pair(2, boost::any(ID_ACTION)));
+CurrentAction.insert(std::make_pair(0, std::any(85)));
+CurrentAction.insert(std::make_pair(1, std::any(wstrBrailleHome)));
+CurrentAction.insert(std::make_pair(2, std::any(ID_ACTION)));
 DolphinActionCollection.push_back(CurrentAction);
 CurrentAction.clear();
-CurrentAction.insert(std::make_pair(0, boost::any(86)));
-CurrentAction.insert(std::make_pair(1, boost::any(wstrBrailleEnd)));
-CurrentAction.insert(std::make_pair(2, boost::any(ID_ACTION)));
+CurrentAction.insert(std::make_pair(0, std::any(86)));
+CurrentAction.insert(std::make_pair(1, std::any(wstrBrailleEnd)));
+CurrentAction.insert(std::make_pair(2, std::any(ID_ACTION)));
 DolphinActionCollection.push_back(CurrentAction);
 CurrentAction.clear();
-CurrentAction.insert(std::make_pair(0, boost::any(175)));
-CurrentAction.insert(std::make_pair(1, boost::any(wstrToggleBraille)));
-CurrentAction.insert(std::make_pair(2, boost::any(ID_ACTION)));
+CurrentAction.insert(std::make_pair(0, std::any(175)));
+CurrentAction.insert(std::make_pair(1, std::any(wstrToggleBraille)));
+CurrentAction.insert(std::make_pair(2, std::any(ID_ACTION)));
 DolphinActionCollection.push_back(CurrentAction);
 CurrentAction.clear();
-CurrentAction.insert(std::make_pair(0, boost::any(176)));
-CurrentAction.insert(std::make_pair(1, boost::any(wstrDisplayCharacters)));
-CurrentAction.insert(std::make_pair(2, boost::any(ID_ACTION)));
+CurrentAction.insert(std::make_pair(0, std::any(176)));
+CurrentAction.insert(std::make_pair(1, std::any(wstrDisplayCharacters)));
+CurrentAction.insert(std::make_pair(2, std::any(ID_ACTION)));
 DolphinActionCollection.push_back(CurrentAction);
 CurrentAction.clear();
-CurrentAction.insert(std::make_pair(0, boost::any(177)));
-CurrentAction.insert(std::make_pair(1, boost::any(wstrCycleAttributes)));
-CurrentAction.insert(std::make_pair(2, boost::any(ID_ACTION)));
+CurrentAction.insert(std::make_pair(0, std::any(177)));
+CurrentAction.insert(std::make_pair(1, std::any(wstrCycleAttributes)));
+CurrentAction.insert(std::make_pair(2, std::any(ID_ACTION)));
 DolphinActionCollection.push_back(CurrentAction);
 CurrentAction.clear();
-CurrentAction.insert(std::make_pair(0, boost::any(178)));
-CurrentAction.insert(std::make_pair(1, boost::any(wstrDisplayFontSize)));
-CurrentAction.insert(std::make_pair(2, boost::any(ID_ACTION)));
+CurrentAction.insert(std::make_pair(0, std::any(178)));
+CurrentAction.insert(std::make_pair(1, std::any(wstrDisplayFontSize)));
+CurrentAction.insert(std::make_pair(2, std::any(ID_ACTION)));
 DolphinActionCollection.push_back(CurrentAction);
 CurrentAction.clear();
-CurrentAction.insert(std::make_pair(0, boost::any(179)));
-CurrentAction.insert(std::make_pair(1, boost::any(wstrDisplayFontStyle)));
-CurrentAction.insert(std::make_pair(2, boost::any(ID_ACTION)));
+CurrentAction.insert(std::make_pair(0, std::any(179)));
+CurrentAction.insert(std::make_pair(1, std::any(wstrDisplayFontStyle)));
+CurrentAction.insert(std::make_pair(2, std::any(ID_ACTION)));
 DolphinActionCollection.push_back(CurrentAction);
 CurrentAction.clear();
-CurrentAction.insert(std::make_pair(0, boost::any(180)));
-CurrentAction.insert(std::make_pair(1, boost::any(wstrDisplayFontColours)));
-CurrentAction.insert(std::make_pair(2, boost::any(ID_ACTION)));
+CurrentAction.insert(std::make_pair(0, std::any(180)));
+CurrentAction.insert(std::make_pair(1, std::any(wstrDisplayFontColours)));
+CurrentAction.insert(std::make_pair(2, std::any(ID_ACTION)));
 DolphinActionCollection.push_back(CurrentAction);
 CurrentAction.clear();
-CurrentAction.insert(std::make_pair(0, boost::any(181)));
-CurrentAction.insert(std::make_pair(1, boost::any(wstrDisplayFontForegroundColour)));
-CurrentAction.insert(std::make_pair(2, boost::any(ID_ACTION)));
+CurrentAction.insert(std::make_pair(0, std::any(181)));
+CurrentAction.insert(std::make_pair(1, std::any(wstrDisplayFontForegroundColour)));
+CurrentAction.insert(std::make_pair(2, std::any(ID_ACTION)));
 DolphinActionCollection.push_back(CurrentAction);
 CurrentAction.clear();
-CurrentAction.insert(std::make_pair(0, boost::any(182)));
-CurrentAction.insert(std::make_pair(1, boost::any(wstrDisplayFontName)));
-CurrentAction.insert(std::make_pair(2, boost::any(ID_ACTION)));
+CurrentAction.insert(std::make_pair(0, std::any(182)));
+CurrentAction.insert(std::make_pair(1, std::any(wstrDisplayFontName)));
+CurrentAction.insert(std::make_pair(2, std::any(ID_ACTION)));
 DolphinActionCollection.push_back(CurrentAction);
 CurrentAction.clear();
-CurrentAction.insert(std::make_pair(0, boost::any(183)));
-CurrentAction.insert(std::make_pair(1, boost::any(wstrDescribeCharacter)));
-CurrentAction.insert(std::make_pair(2, boost::any(ID_ACTION)));
+CurrentAction.insert(std::make_pair(0, std::any(183)));
+CurrentAction.insert(std::make_pair(1, std::any(wstrDescribeCharacter)));
+CurrentAction.insert(std::make_pair(2, std::any(ID_ACTION)));
 DolphinActionCollection.push_back(CurrentAction);
 CurrentAction.clear();
-CurrentAction.insert(std::make_pair(0, boost::any(184)));
-CurrentAction.insert(std::make_pair(1, boost::any(wstrToggleCursor)));
-CurrentAction.insert(std::make_pair(2, boost::any(ID_ACTION)));
+CurrentAction.insert(std::make_pair(0, std::any(184)));
+CurrentAction.insert(std::make_pair(1, std::any(wstrToggleCursor)));
+CurrentAction.insert(std::make_pair(2, std::any(ID_ACTION)));
 DolphinActionCollection.push_back(CurrentAction);
 CurrentAction.clear();
-CurrentAction.insert(std::make_pair(0, boost::any(189)));
-CurrentAction.insert(std::make_pair(1, boost::any(wstrToggleTracking)));
-CurrentAction.insert(std::make_pair(2, boost::any(ID_ACTION)));
+CurrentAction.insert(std::make_pair(0, std::any(189)));
+CurrentAction.insert(std::make_pair(1, std::any(wstrToggleTracking)));
+CurrentAction.insert(std::make_pair(2, std::any(ID_ACTION)));
 DolphinActionCollection.push_back(CurrentAction);
 CurrentAction.clear();
-CurrentAction.insert(std::make_pair(0, boost::any(190)));
-CurrentAction.insert(std::make_pair(1, boost::any(wstrBrailleLineDown)));
-CurrentAction.insert(std::make_pair(2, boost::any(ID_ACTION)));
+CurrentAction.insert(std::make_pair(0, std::any(190)));
+CurrentAction.insert(std::make_pair(1, std::any(wstrBrailleLineDown)));
+CurrentAction.insert(std::make_pair(2, std::any(ID_ACTION)));
 DolphinActionCollection.push_back(CurrentAction);
 CurrentAction.clear();
-CurrentAction.insert(std::make_pair(0, boost::any(191)));
-CurrentAction.insert(std::make_pair(1, boost::any(wstrBrailleLineUp)));
-CurrentAction.insert(std::make_pair(2, boost::any(ID_ACTION)));
+CurrentAction.insert(std::make_pair(0, std::any(191)));
+CurrentAction.insert(std::make_pair(1, std::any(wstrBrailleLineUp)));
+CurrentAction.insert(std::make_pair(2, std::any(ID_ACTION)));
 DolphinActionCollection.push_back(CurrentAction);
 CurrentAction.clear();
-CurrentAction.insert(std::make_pair(0, boost::any(192)));
-CurrentAction.insert(std::make_pair(1, boost::any(wstrBrailleBottom)));
-CurrentAction.insert(std::make_pair(2, boost::any(ID_ACTION)));
+CurrentAction.insert(std::make_pair(0, std::any(192)));
+CurrentAction.insert(std::make_pair(1, std::any(wstrBrailleBottom)));
+CurrentAction.insert(std::make_pair(2, std::any(ID_ACTION)));
 DolphinActionCollection.push_back(CurrentAction);
 CurrentAction.clear();
-CurrentAction.insert(std::make_pair(0, boost::any(193)));
-CurrentAction.insert(std::make_pair(1, boost::any(wstrTBrailleTP)));
-CurrentAction.insert(std::make_pair(2, boost::any(ID_ACTION)));
+CurrentAction.insert(std::make_pair(0, std::any(193)));
+CurrentAction.insert(std::make_pair(1, std::any(wstrTBrailleTP)));
+CurrentAction.insert(std::make_pair(2, std::any(ID_ACTION)));
 DolphinActionCollection.push_back(CurrentAction);
 CurrentAction.clear();
-CurrentAction.insert(std::make_pair(0, boost::any(197)));
-CurrentAction.insert(std::make_pair(1, boost::any(wstrToggleLayoutMode)));
-CurrentAction.insert(std::make_pair(2, boost::any(ID_ACTION)));
+CurrentAction.insert(std::make_pair(0, std::any(197)));
+CurrentAction.insert(std::make_pair(1, std::any(wstrToggleLayoutMode)));
+CurrentAction.insert(std::make_pair(2, std::any(ID_ACTION)));
 DolphinActionCollection.push_back(CurrentAction);
 CurrentAction.clear();
-CurrentAction.insert(std::make_pair(0, boost::any(217)));
-CurrentAction.insert(std::make_pair(1, boost::any(wstrToggleLiteraryBraille)));
-CurrentAction.insert(std::make_pair(2, boost::any(ID_ACTION)));
+CurrentAction.insert(std::make_pair(0, std::any(217)));
+CurrentAction.insert(std::make_pair(1, std::any(wstrToggleLiteraryBraille)));
+CurrentAction.insert(std::make_pair(2, std::any(ID_ACTION)));
 DolphinActionCollection.push_back(CurrentAction);
 CurrentAction.clear();
-CurrentAction.insert(std::make_pair(0, boost::any(218)));
-CurrentAction.insert(std::make_pair(1, boost::any(wstrTogglePhysicalMode)));
-CurrentAction.insert(std::make_pair(2, boost::any(ID_ACTION)));
+CurrentAction.insert(std::make_pair(0, std::any(218)));
+CurrentAction.insert(std::make_pair(1, std::any(wstrTogglePhysicalMode)));
+CurrentAction.insert(std::make_pair(2, std::any(ID_ACTION)));
 DolphinActionCollection.push_back(CurrentAction);
 CurrentAction.clear();
-CurrentAction.insert(std::make_pair(0, boost::any(142)));
-CurrentAction.insert(std::make_pair(1, boost::any(wstrIncreaseMag)));
-CurrentAction.insert(std::make_pair(2, boost::any(ID_ACTION)));
+CurrentAction.insert(std::make_pair(0, std::any(142)));
+CurrentAction.insert(std::make_pair(1, std::any(wstrIncreaseMag)));
+CurrentAction.insert(std::make_pair(2, std::any(ID_ACTION)));
 DolphinActionCollection.push_back(CurrentAction);
 CurrentAction.clear();
-CurrentAction.insert(std::make_pair(0, boost::any(143)));
-CurrentAction.insert(std::make_pair(1, boost::any(wstrDecreaseMag)));
-CurrentAction.insert(std::make_pair(2, boost::any(ID_ACTION)));
+CurrentAction.insert(std::make_pair(0, std::any(143)));
+CurrentAction.insert(std::make_pair(1, std::any(wstrDecreaseMag)));
+CurrentAction.insert(std::make_pair(2, std::any(ID_ACTION)));
 DolphinActionCollection.push_back(CurrentAction);
 CurrentAction.clear();
-CurrentAction.insert(std::make_pair(0, boost::any(146)));
-CurrentAction.insert(std::make_pair(1, boost::any(wstrIncrementXMag)));
-CurrentAction.insert(std::make_pair(2, boost::any(ID_ACTION)));
+CurrentAction.insert(std::make_pair(0, std::any(146)));
+CurrentAction.insert(std::make_pair(1, std::any(wstrIncrementXMag)));
+CurrentAction.insert(std::make_pair(2, std::any(ID_ACTION)));
 DolphinActionCollection.push_back(CurrentAction);
 CurrentAction.clear();
-CurrentAction.insert(std::make_pair(0, boost::any(147)));
-CurrentAction.insert(std::make_pair(1, boost::any(wstrDecrementXMag)));
-CurrentAction.insert(std::make_pair(2, boost::any(ID_ACTION)));
+CurrentAction.insert(std::make_pair(0, std::any(147)));
+CurrentAction.insert(std::make_pair(1, std::any(wstrDecrementXMag)));
+CurrentAction.insert(std::make_pair(2, std::any(ID_ACTION)));
 DolphinActionCollection.push_back(CurrentAction);
 CurrentAction.clear();
-CurrentAction.insert(std::make_pair(0, boost::any(148)));
-CurrentAction.insert(std::make_pair(1, boost::any(wstrIncrementYMag)));
-CurrentAction.insert(std::make_pair(2, boost::any(ID_ACTION)));
+CurrentAction.insert(std::make_pair(0, std::any(148)));
+CurrentAction.insert(std::make_pair(1, std::any(wstrIncrementYMag)));
+CurrentAction.insert(std::make_pair(2, std::any(ID_ACTION)));
 DolphinActionCollection.push_back(CurrentAction);
 CurrentAction.clear();
-CurrentAction.insert(std::make_pair(0, boost::any(149)));
-CurrentAction.insert(std::make_pair(1, boost::any(wstrDecrementYMag)));
-CurrentAction.insert(std::make_pair(2, boost::any(ID_ACTION)));
+CurrentAction.insert(std::make_pair(0, std::any(149)));
+CurrentAction.insert(std::make_pair(1, std::any(wstrDecrementYMag)));
+CurrentAction.insert(std::make_pair(2, std::any(ID_ACTION)));
 DolphinActionCollection.push_back(CurrentAction);
 CurrentAction.clear();
-CurrentAction.insert(std::make_pair(0, boost::any(150)));
-CurrentAction.insert(std::make_pair(1, boost::any(wstrToggleMag)));
-CurrentAction.insert(std::make_pair(2, boost::any(ID_ACTION)));
+CurrentAction.insert(std::make_pair(0, std::any(150)));
+CurrentAction.insert(std::make_pair(1, std::any(wstrToggleMag)));
+CurrentAction.insert(std::make_pair(2, std::any(ID_ACTION)));
 DolphinActionCollection.push_back(CurrentAction);
 CurrentAction.clear();
-CurrentAction.insert(std::make_pair(0, boost::any(151)));
-CurrentAction.insert(std::make_pair(1, boost::any(wstrToggleColourChanger)));
-CurrentAction.insert(std::make_pair(2, boost::any(ID_ACTION)));
+CurrentAction.insert(std::make_pair(0, std::any(151)));
+CurrentAction.insert(std::make_pair(1, std::any(wstrToggleColourChanger)));
+CurrentAction.insert(std::make_pair(2, std::any(ID_ACTION)));
 DolphinActionCollection.push_back(CurrentAction);
 CurrentAction.clear();
-CurrentAction.insert(std::make_pair(0, boost::any(152)));
-CurrentAction.insert(std::make_pair(1, boost::any(wstrToggleOverviewMode)));
-CurrentAction.insert(std::make_pair(2, boost::any(ID_ACTION)));
+CurrentAction.insert(std::make_pair(0, std::any(152)));
+CurrentAction.insert(std::make_pair(1, std::any(wstrToggleOverviewMode)));
+CurrentAction.insert(std::make_pair(2, std::any(ID_ACTION)));
 DolphinActionCollection.push_back(CurrentAction);
 CurrentAction.clear();
-CurrentAction.insert(std::make_pair(0, boost::any(153)));
-CurrentAction.insert(std::make_pair(1, boost::any(wstrCyclePrimaryAreaType)));
-CurrentAction.insert(std::make_pair(2, boost::any(ID_ACTION)));
+CurrentAction.insert(std::make_pair(0, std::any(153)));
+CurrentAction.insert(std::make_pair(1, std::any(wstrCyclePrimaryAreaType)));
+CurrentAction.insert(std::make_pair(2, std::any(ID_ACTION)));
 DolphinActionCollection.push_back(CurrentAction);
 CurrentAction.clear();
-CurrentAction.insert(std::make_pair(0, boost::any(155)));
-CurrentAction.insert(std::make_pair(1, boost::any(wstrCycleOrientation)));
-CurrentAction.insert(std::make_pair(2, boost::any(ID_ACTION)));
+CurrentAction.insert(std::make_pair(0, std::any(155)));
+CurrentAction.insert(std::make_pair(1, std::any(wstrCycleOrientation)));
+CurrentAction.insert(std::make_pair(2, std::any(ID_ACTION)));
 DolphinActionCollection.push_back(CurrentAction);
 CurrentAction.clear();
-CurrentAction.insert(std::make_pair(0, boost::any(156)));
-CurrentAction.insert(std::make_pair(1, boost::any(wstrImageSmoothing)));
-CurrentAction.insert(std::make_pair(2, boost::any(ID_ACTION)));
+CurrentAction.insert(std::make_pair(0, std::any(156)));
+CurrentAction.insert(std::make_pair(1, std::any(wstrImageSmoothing)));
+CurrentAction.insert(std::make_pair(2, std::any(ID_ACTION)));
 DolphinActionCollection.push_back(CurrentAction);
 CurrentAction.clear();
-CurrentAction.insert(std::make_pair(0, boost::any(157)));
-CurrentAction.insert(std::make_pair(1, boost::any(wstrToggleMagTracking)));
-CurrentAction.insert(std::make_pair(2, boost::any(ID_ACTION)));
+CurrentAction.insert(std::make_pair(0, std::any(157)));
+CurrentAction.insert(std::make_pair(1, std::any(wstrToggleMagTracking)));
+CurrentAction.insert(std::make_pair(2, std::any(ID_ACTION)));
 DolphinActionCollection.push_back(CurrentAction);
 CurrentAction.clear();
-CurrentAction.insert(std::make_pair(0, boost::any(158)));
-CurrentAction.insert(std::make_pair(1, boost::any(wstrDisplayHookedAreas)));
-CurrentAction.insert(std::make_pair(2, boost::any(ID_ACTION)));
+CurrentAction.insert(std::make_pair(0, std::any(158)));
+CurrentAction.insert(std::make_pair(1, std::any(wstrDisplayHookedAreas)));
+CurrentAction.insert(std::make_pair(2, std::any(ID_ACTION)));
 DolphinActionCollection.push_back(CurrentAction);
 CurrentAction.clear();
-CurrentAction.insert(std::make_pair(0, boost::any(204)));
-CurrentAction.insert(std::make_pair(1, boost::any(wstrLineViewWholeWindows)));
-CurrentAction.insert(std::make_pair(2, boost::any(ID_ACTION)));
+CurrentAction.insert(std::make_pair(0, std::any(204)));
+CurrentAction.insert(std::make_pair(1, std::any(wstrLineViewWholeWindows)));
+CurrentAction.insert(std::make_pair(2, std::any(ID_ACTION)));
 DolphinActionCollection.push_back(CurrentAction);
 ActionInformation =std::make_pair(AvailableDolphinActionFields, DolphinActionCollection); //return what is required.
 		return S_OK;
@@ -1287,7 +1286,7 @@ return E_NOTIMPL;
 #endif
 }
 	
-HRESULT RBSpeech::ExecuteDolphinAction(boost::any& name, ScreenReaderActionType& type, DWORD& ReturnCode)
+HRESULT RBSpeech::ExecuteDolphinAction(std::any& name, ScreenReaderActionType& type, DWORD& ReturnCode)
 	{
 #ifndef _WIN64
 		HRESULT hReturnValue =S_OK;
@@ -1821,7 +1820,7 @@ ExitOnFailure(hReturnValue, "No product is active.");
 			Spots.clear();
 		Spots.reserve(IniTree.size()); //reserve memory equal to the number of spots in the current set.
 		//now iterate the spots.
-			BOOST_FOREACH( boost::property_tree::ptree::value_type &v, IniTree)
+			for (boost::property_tree::ptree::value_type &v : IniTree)
 			{
 				if (!v.first.empty())
 				{ //the key has some text in.
@@ -1975,7 +1974,7 @@ DWORD ReturnCode =-1;
 hReturnValue =ExecuteJAWSAction(Action, Type);
 				break;
 case ID_DOLPHIN:
-hReturnValue =ExecuteDolphinAction(boost::any(Action), Type, ReturnCode);
+hReturnValue =ExecuteDolphinAction(std::any(Action), Type, ReturnCode);
 break;
 default:
 hReturnValue =E_NOTIMPL;
@@ -2027,7 +2026,7 @@ std::vector<JawsFunction> RBSpeech::ProcessJSDFile(fs::path&File)
 			JsdStream.close();
 		
 			JawsFunction newfunction;
-	BOOST_FOREACH(std::wstring line, lines)
+	for (std::wstring line : lines)
 {
 	std::vector<std::wstring> tokens;
 	
@@ -2190,58 +2189,58 @@ return;
 
 // Variant-handling
 
-		std::vector <JAWSParameter> AsJawsParameterVector( const boost::any  operand)
+		std::vector <JAWSParameter> AsJawsParameterVector( const std::any  operand)
 {
 std::vector <JAWSParameter> myParameters;
 
 try
 	{
-		myParameters = boost::any_cast<std::vector <JAWSParameter> >( operand);
+		myParameters = std::any_cast<std::vector <JAWSParameter> >( operand);
 return myParameters;
 }
-catch( const boost::bad_any_cast &)
+catch( const std::bad_any_cast &)
 {
 return myParameters;
 }
 }
 
-		int AsInt( const boost::any  operand)
+		int AsInt( const std::any  operand)
 {
     try
 	{
-		int nOut = boost::any_cast<int>( operand);
+		int nOut = std::any_cast<int>( operand);
 		return nOut;
 }
-catch( const boost::bad_any_cast &)
+catch( const std::bad_any_cast &)
 {
 return -1;
 }
 }
 
-std::wstring AsWString( const boost::any operand)
+std::wstring AsWString( const std::any operand)
 	{
 try
 	{
-		std::wstring wstrOut = boost::any_cast<std::wstring>( operand);
+		std::wstring wstrOut = std::any_cast<std::wstring>( operand);
 		return wstrOut;
 }
-catch( const boost::bad_any_cast &)
+catch( const std::bad_any_cast &)
 {
 return wstrEmpty;
 }
 }
 
-bool IsWString(const boost::any & operand)
+bool IsWString(const std::any & operand)
 {
     return operand.type() == typeid( std::wstring);
 }
 
-bool IsInt(const boost::any & operand)
+bool IsInt(const std::any & operand)
 {
     return operand.type() == typeid(int);
 }
 
-bool IsJawsParameterVector(const boost::any & operand)
+bool IsJawsParameterVector(const std::any & operand)
 {
     return operand.type() == typeid( std::vector <JAWSParameter>);
 }
@@ -2302,20 +2301,30 @@ HRESULT RBSpeech::GetCurrentUsersAppDataPath(fs::path &path)
 	return hr;
 }
 //string conversion.
+// UTF-8 to UTF-16 (std::wstring_convert, used before, is deprecated in C++17)
 std::wstring RBSpeech::NarrowStringToWideString(const std::string& stringToConvert)
 {
-	using convert_typeX = std::codecvt_utf8<wchar_t>;
-	std::wstring_convert<convert_typeX, wchar_t> converterX;
-
-	return converterX.from_bytes(stringToConvert);
+	if (stringToConvert.empty())
+	{
+		return std::wstring();
+	}
+	int nLength = MultiByteToWideChar(CP_UTF8, 0, stringToConvert.data(), (int) stringToConvert.size(), NULL, 0);
+	std::wstring wstrOut( nLength, L'\0');
+	MultiByteToWideChar(CP_UTF8, 0, stringToConvert.data(), (int) stringToConvert.size(), &wstrOut[0], nLength);
+	return wstrOut;
 }
 
+// UTF-16 to UTF-8
 std::string RBSpeech::WideStringToNarrowString(std::wstring& stringToConvert)
 {
-	using convert_typeX = std::codecvt_utf8<wchar_t>;
-	std::wstring_convert<convert_typeX, wchar_t> converterX;
-
-	return converterX.to_bytes(stringToConvert);
+	if (stringToConvert.empty())
+	{
+		return std::string();
+	}
+	int nLength = WideCharToMultiByte(CP_UTF8, 0, stringToConvert.data(), (int) stringToConvert.size(), NULL, 0, NULL, NULL);
+	std::string strOut( nLength, '\0');
+	WideCharToMultiByte(CP_UTF8, 0, stringToConvert.data(), (int) stringToConvert.size(), &strOut[0], nLength, NULL, NULL);
+	return strOut;
 }
 //Function to get the windows user name.
 HRESULT RBSpeech::GetCurrentUserName(std::wstring& userName)

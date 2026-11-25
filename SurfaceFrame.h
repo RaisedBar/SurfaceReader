@@ -222,15 +222,15 @@ std::wstring wstrHelpFileName;
 	    SurfaceVectorType SurfacePointers;
 
 // Storage for application configurations
-		boost::shared_ptr<AppCollection> Apps;
+		std::shared_ptr<AppCollection> Apps;
 
 // Storage for all loaded protocols
-boost::shared_ptr <ProtocolCollection> Protocols;
+std::shared_ptr <ProtocolCollection> Protocols;
 
 		// Speech output
-		boost::shared_ptr<RBSpeech> Speech;
+		std::shared_ptr<RBSpeech> Speech;
 // Allow faster retrieval of Jaws parameters, etc.
-boost::shared_ptr<JawsCacheType> JawsCache;
+std::shared_ptr<JawsCacheType> JawsCache;
 
 // Cope with mid-stream changes of access technology
 ActiveProduct myActiveProduct, myOldActiveProduct;

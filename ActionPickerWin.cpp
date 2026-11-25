@@ -10,7 +10,7 @@
 
 
 
-ActionPicker::ActionPicker(const wxString & title, const wxString &wxstrControlName, boost::shared_ptr<AppConfig> pAppConfig, boost::shared_ptr<RBSpeech> pSpeech, boost::shared_ptr<JawsCacheType> pJawsCache)
+ActionPicker::ActionPicker(const wxString & title, const wxString &wxstrControlName, std::shared_ptr<AppConfig> pAppConfig, std::shared_ptr<RBSpeech> pSpeech, std::shared_ptr<JawsCacheType> pJawsCache)
        : wxDialog(NULL, -1, title, wxDefaultPosition, wxSize(250, 230)),
 	   pMyAppConfig( new AppConfig()),
 pMySpeech( new RBSpeech()),

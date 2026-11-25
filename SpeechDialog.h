@@ -12,7 +12,7 @@
 #include <wx/platform.h>
 #ifdef __WXOSX_COCOA__
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include <boost/lexical_cast.hpp>
 
 #include "RBEnums.h"
@@ -38,7 +38,7 @@ const int SPEECH_DIALOG_WIDTH = 460;
 class SpeechDialog: public wxDialog
 {
 public:
-	SpeechDialog(const wxString& title, boost::shared_ptr <RBSpeech> myRBSpeech);
+	SpeechDialog(const wxString& title, std::shared_ptr <RBSpeech> myRBSpeech);
 ~SpeechDialog();
 
 void VoiceName( std::wstring wstrVoice);
@@ -61,7 +61,7 @@ void OnOK(wxCommandEvent& event);
 	wxListBox * lbxVoiceNames;
 	wxTextCtrl * txtVoiceRate, * txtVoiceVolume;
 	
-	boost::shared_ptr <RBSpeech> pMySpeech;
+	std::shared_ptr <RBSpeech> pMySpeech;
 	std::wstring wstrOldVoice;
 	float fOldRate, fOldVolume;
 	

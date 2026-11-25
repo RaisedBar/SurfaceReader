@@ -18,7 +18,7 @@
 #include <boost/log/utility/setup/common_attributes.hpp>
 #include <boost/log/sources/severity_logger.hpp>
 #include <boost/log/sources/record_ostream.hpp>
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 #ifdef __WINDOWS__ 
 #include <windows.h>
@@ -271,11 +271,11 @@ class SurfaceFrame;
 class MIDISurface : public MIDIWidget 
 	{
 public:
-MIDISurface(SurfaceFrame * parent, ActiveProduct apProduct, SurfaceParameters * myParameters, boost::shared_ptr<ProtocolCollection> pProtocols, boost::shared_ptr<AppCollection> pApps);
-	MIDISurface( SurfaceFrame * parent, ActiveProduct apProduct, boost::shared_ptr<ProtocolCollection> pProtocols, boost::shared_ptr<AppCollection> pApps);
-			MIDISurface(SurfaceFrame * parent, ActiveProduct apProduct, std::wstring wstrName, boost::shared_ptr<ProtocolCollection> pProtocols, boost::shared_ptr<AppCollection> pApps);
-			MIDISurface(SurfaceFrame * parent, ActiveProduct apProduct, std::wstring wstrName, std::string myNewProtocolID, boost::shared_ptr<ProtocolCollection> pProtocols, boost::shared_ptr<AppCollection> pApps);
-			        	MIDISurface( SurfaceFrame * parent, ActiveProduct apProduct, std::wstring wstrName, std::string strNewProtocolID, int nHWIn, int nHWOut, int nDisplayIn, int nDisplayOut, boost::shared_ptr<ProtocolCollection> pProtocols, boost::shared_ptr<AppCollection> pApps);
+MIDISurface(SurfaceFrame * parent, ActiveProduct apProduct, SurfaceParameters * myParameters, std::shared_ptr<ProtocolCollection> pProtocols, std::shared_ptr<AppCollection> pApps);
+	MIDISurface( SurfaceFrame * parent, ActiveProduct apProduct, std::shared_ptr<ProtocolCollection> pProtocols, std::shared_ptr<AppCollection> pApps);
+			MIDISurface(SurfaceFrame * parent, ActiveProduct apProduct, std::wstring wstrName, std::shared_ptr<ProtocolCollection> pProtocols, std::shared_ptr<AppCollection> pApps);
+			MIDISurface(SurfaceFrame * parent, ActiveProduct apProduct, std::wstring wstrName, std::string myNewProtocolID, std::shared_ptr<ProtocolCollection> pProtocols, std::shared_ptr<AppCollection> pApps);
+			        	MIDISurface( SurfaceFrame * parent, ActiveProduct apProduct, std::wstring wstrName, std::string strNewProtocolID, int nHWIn, int nHWOut, int nDisplayIn, int nDisplayOut, std::shared_ptr<ProtocolCollection> pProtocols, std::shared_ptr<AppCollection> pApps);
 	    ~MIDISurface();
 
 void FlushLog();
@@ -416,8 +416,8 @@ std::map <std::wstring, std::wstring> myDisplays;
 
 int nReadDisplayDelay;
 
-boost::shared_ptr<ProtocolCollection> pMyProtocols;
-boost::shared_ptr<AppCollection> pMyApps;
+std::shared_ptr<ProtocolCollection> pMyProtocols;
+std::shared_ptr<AppCollection> pMyApps;
 
 // Message buffering
 std::vector <unsigned char> vHardwareBuffer, vDisplayBuffer;

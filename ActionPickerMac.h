@@ -12,9 +12,7 @@
 #include <wx/platform.h>
 #ifdef __WXOSX_COCOA__   
 
-#include <boost/foreach.hpp>
-#include <boost/shared_ptr.hpp>
-#include <boost/make_shared.hpp>
+#include <memory>
 #include <boost/lexical_cast.hpp>
 
 #include "DisplayParamsDlg.h"
@@ -40,7 +38,7 @@
 class ActionPicker: public wxDialog
 	{
 	public:
-		ActionPicker(const wxString & title, const std::wstring &wstrControlName, boost::shared_ptr <AppConfig> pAppConfig, boost::shared_ptr <SurfaceProtocol> pProtocol, boost::shared_ptr <RBSpeech> pSpeech);
+		ActionPicker(const wxString & title, const std::wstring &wstrControlName, std::shared_ptr <AppConfig> pAppConfig, std::shared_ptr <SurfaceProtocol> pProtocol, std::shared_ptr <RBSpeech> pSpeech);
 ~ActionPicker();
 
 bool IsValidSurfaceAction();
@@ -88,13 +86,13 @@ wxButton *btnActionProperties, * btnOK, * btnCancel;
 // Storage for the defined action
 SurfaceAction myNewSurfaceAction;
 
-boost::shared_ptr <AppConfig> pMyAppConfig;
-boost::shared_ptr <SurfaceProtocol> pMyProtocol;
+std::shared_ptr <AppConfig> pMyAppConfig;
+std::shared_ptr <SurfaceProtocol> pMyProtocol;
 
 ActiveProduct myActiveProduct;
 ActiveProduct myOldActiveProduct;
 DolphinProduct myDolphinProduct;
-boost::shared_ptr <RBSpeech> pMySpeech;
+std::shared_ptr <RBSpeech> pMySpeech;
 };
 #endif   // if Mac
 #endif  // define guard

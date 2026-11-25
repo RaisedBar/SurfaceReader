@@ -8,7 +8,7 @@
 // ActionsTreeModel
 // ----------------------------------------------------------------------------
 
-ActionsTreeModel::ActionsTreeModel( wxString wxstrRootTitle, std::map <std::string , MessageDefinition> * pHardwareControls, boost::shared_ptr <AppConfig> pAppConfig)
+ActionsTreeModel::ActionsTreeModel( wxString wxstrRootTitle, std::map <std::string , MessageDefinition> * pHardwareControls, std::shared_ptr <AppConfig> pAppConfig)
 {
 pMyHardwareControls = pHardwareControls;
 pMyAppConfig = pAppConfig;

@@ -7,7 +7,7 @@
 
 #pragma once
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 #include "SurfacePage.h"
 #include "ProtocolCollection.h"
@@ -30,7 +30,7 @@
 class SurfaceWizard : public wxWizard
 {
 public:
-SurfaceWizard(wxFrame *frame, boost::shared_ptr <ProtocolCollection> pProtocols, void * pHelpController, bool useSizer = true);
+SurfaceWizard(wxFrame *frame, std::shared_ptr <ProtocolCollection> pProtocols, void * pHelpController, bool useSizer = true);
 
 SurfaceParameters GetSurfaceParameters();
 
@@ -42,8 +42,8 @@ return m_SurfacePage;
 private:
 void OnWizardHelp(wxWizardEvent& event);
 	
-boost::shared_ptr <SurfaceParameters> pSurfaceParameters;
-	    boost::shared_ptr <ProtocolCollection> pMyProtocols;
+std::shared_ptr <SurfaceParameters> pSurfaceParameters;
+	    std::shared_ptr <ProtocolCollection> pMyProtocols;
 
 SurfacePage * m_SurfacePage;
 

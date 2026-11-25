@@ -10,7 +10,7 @@
 #include <wx/msw/winundef.h>
 
 
-SpeechDialog::SpeechDialog(const wxString & title, boost::shared_ptr <RBSpeech> pSpeech)
+SpeechDialog::SpeechDialog(const wxString & title, std::shared_ptr <RBSpeech> pSpeech)
        : wxDialog(NULL, -1, title, wxDefaultPosition, wxSize( SPEECH_DIALOG_HEIGHT, SPEECH_DIALOG_WIDTH)),
 pMySpeech( new RBSpeech())
 {

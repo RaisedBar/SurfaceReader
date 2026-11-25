@@ -9,7 +9,7 @@
 #include "ActionPickerMac.h"
 
 
-ActionPicker::ActionPicker(const wxString & title, const std::wstring  &wstrControlName, boost::shared_ptr <AppConfig> pAppConfig, boost::shared_ptr <SurfaceProtocol> pProtocol, boost::shared_ptr <RBSpeech> pSpeech)
+ActionPicker::ActionPicker(const wxString & title, const std::wstring  &wstrControlName, std::shared_ptr <AppConfig> pAppConfig, std::shared_ptr <SurfaceProtocol> pProtocol, std::shared_ptr <RBSpeech> pSpeech)
        : wxDialog(NULL, -1, title, wxDefaultPosition, wxSize(250, 230)),
 	pMyAppConfig( new AppConfig()),
 	pMyProtocol( new SurfaceProtocol ()),

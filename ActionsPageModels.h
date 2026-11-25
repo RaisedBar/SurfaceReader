@@ -8,8 +8,7 @@
 #include <wx/platform.h>
 #ifdef __WXOSX_COCOA__
 
-#include <boost/shared_ptr.hpp>
-#include <boost/make_shared.hpp>
+#include <memory>
 
 #include "AppConfig.h"
 #include "MessageDefinition.h"
@@ -116,7 +115,7 @@ ActionsTreeModelNode          *m_parent;
 class ActionsTreeModel: public wxDataViewModel
 {
 public:
-    ActionsTreeModel( wxString wxstrRootTitle, std::map <std::string, MessageDefinition> * pHardwareControls, boost::shared_ptr <AppConfig> pAppConfig);
+    ActionsTreeModel( wxString wxstrRootTitle, std::map <std::string, MessageDefinition> * pHardwareControls, std::shared_ptr <AppConfig> pAppConfig);
 
 	~ActionsTreeModel()
     {
@@ -169,7 +168,7 @@ void AddActionNodes( ActionsTreeModelNode * myScreenReaderNode, std::string strH
 
 	std::wstring GetActiveProductName( ActiveProduct apID);
 	std::map <std::string, MessageDefinition> * pMyHardwareControls;
-	boost::shared_ptr <AppConfig> pMyAppConfig;
+	std::shared_ptr <AppConfig> pMyAppConfig;
 ActionsTreeModelNode*   m_root;
 };
 #endif  // if mac

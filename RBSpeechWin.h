@@ -9,7 +9,11 @@
 
 #include <memory>
 #include <windows.h>
+// atlcore.h casts FARPROC to function pointers internally (warning C4191)
+#pragma warning( push)
+#pragma warning( disable: 4191)
 #include <atlbase.h>
+#pragma warning( pop)
 #include <Psapi.h>
 
 //msi/wix includes.
@@ -316,7 +320,7 @@ void UnloadDolphinApi(void);
 	HRESULT DolphinBraille(std::wstring strText);	
 	/// <Summary> Obtain a list of dolphin actions. </summary>
 	HRESULT GetAvailableDolphinActions(AvailableActionsType& ActionInformation);
-	HRESULT ExecuteDolphinAction(boost::any& name, ScreenReaderActionType& type, DWORD& ReturnCode);
+	HRESULT ExecuteDolphinAction(std::any& name, ScreenReaderActionType& type, DWORD& ReturnCode);
 /// <summary> Determine whether System Access is currently active in memory. </summary>
 	/// <returns> returns S_OK if System Access is active, S_FALSE otherwise. </returns>
 bool IsSystemAccessActive();

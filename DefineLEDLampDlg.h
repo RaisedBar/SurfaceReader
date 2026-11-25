@@ -17,7 +17,7 @@
 #include "RBEnums.h"
 #include "DefineMessageDialog.h"
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 #include <wx/button.h>
 #include <wx/gdiobj.h>
@@ -33,7 +33,7 @@
 class DefineLEDLampDialog: public wxDialog
 {
 public:
-	DefineLEDLampDialog( const wxString& title, boost::shared_ptr<SurfaceProtocol> pProtocol);
+	DefineLEDLampDialog( const wxString& title, std::shared_ptr<SurfaceProtocol> pProtocol);
  ~DefineLEDLampDialog();
 
  bool IsValidLEDLamp() const;
@@ -60,7 +60,7 @@ std::string strHash;
 wxButton * MIDIButton;
 wxButton * OKButton;
 wxButton * CancelButton;
-boost::shared_ptr<SurfaceProtocol> pMyProtocol;
+std::shared_ptr<SurfaceProtocol> pMyProtocol;
 std::vector <unsigned char> vSysExAddressBytes;
 
 DECLARE_EVENT_TABLE()

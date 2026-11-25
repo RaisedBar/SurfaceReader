@@ -6,7 +6,7 @@
 #include "HardwarePage.h"
 
 
-HardwareControlsPage::HardwareControlsPage( wxWizard * wizParent, const wxString & title, boost::shared_ptr<SurfaceProtocol> pProtocol, boost::shared_ptr<SurfaceParameters> pParameters)
+HardwareControlsPage::HardwareControlsPage( wxWizard * wizParent, const wxString & title, std::shared_ptr<SurfaceProtocol> pProtocol, std::shared_ptr<SurfaceParameters> pParameters)
        : wxWizardPageSimple( wizParent),
 	   pMyProtocol( new SurfaceProtocol()),
 	   pMyParameters( new SurfaceParameters())

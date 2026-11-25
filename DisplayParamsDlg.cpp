@@ -4,7 +4,7 @@
 #include "DisplayParamsDlg.h"
 
 
-DisplayParamsDlg::DisplayParamsDlg(const wxString & title, SurfaceActionType mySAType, boost::shared_ptr<AppConfig> pAppConfig)
+DisplayParamsDlg::DisplayParamsDlg(const wxString & title, SurfaceActionType mySAType, std::shared_ptr<AppConfig> pAppConfig)
 : wxDialog(NULL, -1, title, wxDefaultPosition, wxSize(250, 230)),
 pMyAppConfig( new AppConfig())
 {
