@@ -129,22 +129,37 @@ return blnResult;
 }
 
 
-ActionInfoType ScreenReaderFunctionsDlg::GetAction( std::wstring wstrFunctionName)
+ActionInfoType ScreenReaderFunctionsDlg::GetAction( std::wstring wstrActionName)
 {
-                ActionInfoType CurrentAction; 
-ActionCollectionType Actions;
-//Actions equals the second of the cache.
-BOOST_FOREACH( CurrentAction, Actions)
-{
-	// if (CurrentAction[ 0].As <std::wstring>().compare( wstrFunctionName) == 0)
-std::wstring wstrActionString = AsWString( CurrentAction[ 0]); 	
-	
-if (wstrActionString.compare( wstrFunctionName) == 0)
-return CurrentAction;
-}  // end for
+	// Search the cached list of the screen reader's actions, the one this dialog lists.
+	// This used to search an empty local collection, so it never found anything and every
+	// JAWS script chosen in the action picker was saved as a function.
+	ActionCollectionType myActions = GetCachedJawsActionsListItem( pMyAppConfig->GetAppName(), pMyAppConfig->GetProtocolID());
 
-// Not found
-throw RBException( wstrActionNotFoundError);
+	for (const ActionInfoType & CurrentAction : myActions)
+	{
+		ActionInfoType::const_iterator it = CurrentAction.find( 0);  // field 0 is the name
+
+		if ((it != CurrentAction.end())
+			&& IsWString( it->second)
+			&& (AsWString( it->second) == wstrActionName))
+		{
+			return CurrentAction;
+		}
+	}
+
+	// Not found
+	throw RBException( wstrActionNotFoundError);
+}
+
+
+std::wstring ScreenReaderFunctionsDlg::GetActionName()
+{
+	if (lbxActionNames->GetSelection() > -1)
+	{
+		return lbxActionNames->GetStringSelection().ToStdWstring();
+	}
+	return std::wstring();
 }
 
 
@@ -330,8 +345,10 @@ it = pMyJawsCache->find( myPair);
 	else
 	{
 throw RBException( wstrInfoNotCachedError);
-return it->second;
 	}
+#else
+	// Only JAWS actions are cached; without this the function returned nothing (undefined behaviour)
+	throw RBException( wstrInfoNotCachedError);
 #endif
 }
 

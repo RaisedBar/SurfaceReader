@@ -53,7 +53,9 @@ bool IsValidParameterSet();
 std::wstring GetTargetFileName();
 std::wstring GetFunctionName();
 ScreenReaderActionType GetActionTypeFromAction(ActionInfoType Action);
-ActionInfoType GetAction( std::wstring wstrFunctionName);
+ActionInfoType GetAction( std::wstring wstrActionName);
+// The selected action's name, without the parameters GetFunctionName adds
+std::wstring GetActionName();
 
 private:
 void ToggleButtons();

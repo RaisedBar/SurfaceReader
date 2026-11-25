@@ -289,7 +289,7 @@ else
 	{
 		try
 			{
-				myNewSurfaceAction.SetScreenReaderActionType( myScreenReaderFunctionsDlg->GetActionTypeFromAction( myScreenReaderFunctionsDlg->GetAction( myScreenReaderFunctionsDlg->GetFunctionName())));
+				myNewSurfaceAction.SetScreenReaderActionType( myScreenReaderFunctionsDlg->GetActionTypeFromAction( myScreenReaderFunctionsDlg->GetAction( myScreenReaderFunctionsDlg->GetActionName())));
 		}
 catch( ...)
 {
@@ -507,11 +507,11 @@ if (it != myActionInformation.first.end())
 {
 	int nField = it->second;
 //iterate through the vector of actions, the second item in the ActionInfoType pair.
-	ActionInfoTypeIterator it2;
-	ActionInfoType CurrentAction;
-	BOOST_FOREACH(CurrentAction, myActionInformation.second);
+	// The old BOOST_FOREACH here ended in a stray semicolon, so the loop body was empty and
+	// only the last action was ever added to the tree
+	for (const ActionInfoType & CurrentAction : myActionInformation.second)
 	{
-		it2 =CurrentAction.find(nField);
+		ActionInfoType::const_iterator it2 = CurrentAction.find(nField);
 		if (it2 !=CurrentAction.end())
 		{
 std::wstring wstrFieldValue;
