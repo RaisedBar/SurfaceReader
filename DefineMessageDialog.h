@@ -24,7 +24,7 @@
 using boost::lexical_cast;
 using boost::bad_lexical_cast;
 
-#include <RtMidi.h>
+#include <rtmidi/RtMidi.h>
 #include <wx/msw/winundef.h> 
 
 #include <wx/gdiobj.h>

@@ -19,7 +19,7 @@
 #include "MIDI.h"
 #include "DefineMessageDialog.h"
 
-#include <RtMidi.h>
+#include <rtmidi/RtMidi.h>
 #include <wx/msw/winundef.h> 
 
 #include <boost/shared_ptr.hpp>

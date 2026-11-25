@@ -41,9 +41,9 @@
 
 
 //crypto++.
-#include <base64.h>
-#include <files.h>
-#include <filters.h>
+#include <cryptopp/base64.h>
+#include <cryptopp/files.h>
+#include <cryptopp/filters.h>
 
 #include <wx/msw/winundef.h> 
 

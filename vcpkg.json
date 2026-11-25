@@ -1,0 +1,30 @@
+{
+  "$schema": "https://raw.githubusercontent.com/microsoft/vcpkg-tool/main/docs/vcpkg.schema.json",
+  "name": "surfacereader",
+  "version-string": "0",
+  "description": "Third-party libraries for SurfaceReader (Boost, Crypto++, RtMidi, wxWidgets), installed by vcpkg in manifest mode.",
+  "builtin-baseline": "ed8445dd2a9ba44e0e3ace4e952b2e33130082d9",
+  "dependencies": [
+    "boost-algorithm",
+    "boost-any",
+    "boost-assign",
+    "boost-config",
+    "boost-dll",
+    "boost-filesystem",
+    "boost-foreach",
+    "boost-fusion",
+    "boost-lexical-cast",
+    "boost-log",
+    "boost-optional",
+    "boost-phoenix",
+    "boost-property-tree",
+    "boost-regex",
+    "boost-serialization",
+    "boost-smart-ptr",
+    "boost-spirit",
+    "boost-uuid",
+    "cryptopp",
+    "rtmidi",
+    "wxwidgets"
+  ]
+}
