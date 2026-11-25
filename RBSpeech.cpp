@@ -6,10 +6,6 @@
 #include <TlHelp32.h>
 #include <Processthreadsapi.h> // on Windows 8 and Windows Server 2012
 #include <comutil.h>
-#include <strutil.h>
-#include <procutil.h>
-#include <osutil.h>
-#include <shelutil.h>
 #include <shlobj.h>
 #include <vector>
 #include <algorithm>
@@ -397,44 +393,23 @@ blnReturnValue =true;
 	HSCInstallState RBSpeech::IsHSCInstalled()
 	{
 		HSCInstallState eReturnValue =STATE_NOT_INSTALLED;
-		HRESULT hr = S_OK;
-		BOOL bIs64BitProcess = false;
-		OS_VERSION version;
-		DWORD servicePack = 0;
-		//Retrieve the OS version.
-		OsGetVersion(&version, &servicePack);
-		//Retrieve whether the process is 64-bit.
-		hr = ProcWow64(::GetCurrentProcess(), &bIs64BitProcess);
 		//first check whether an older version--pre 211 is installed.
 		//the only reliable way to check this is using a registry key check.
-
-		//conditionalise this on operating system, if the user is running xp we don't support 64-bit.
-		if (version == OS_VERSION_WINXP && !bIs64BitProcess)
-		{ //we are using xp.
-			{ // Use a boost::scoped_ptr to ensure that raii is used to close the key when done.
-    HKEY reg = NULL;
-    DWORD dwErr =RegOpenKey(HKEY_LOCAL_MACHINE, L"SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\HotSpotClicker", &reg);
-    boost::shared_ptr<void> reg_ptr(reg, ::CloseHandle);
-if (dwErr ==ERROR_SUCCESS)
-{ //Key is valid so hsc 211 is installed.
-	eReturnValue =STATE_OLDER_VERSION_INSTALLED;
-} //end key is valid block.
-} //end raii scope for the key.
-		} //end xp specific block.
-		//check for at least vista.
-		else if (version == OS_VERSION_VISTA)
-		{ //we are running vista or above.
-			//Query the wow6432node key.
-				{ // Use a boost::scoped_ptr to ensure that raii is used to close the key when done.
-    HKEY reg = NULL;
-    DWORD dwErr =RegOpenKey(HKEY_LOCAL_MACHINE, L"SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\HotSpotClicker", & reg);
-    boost::shared_ptr<void> reg_ptr(reg, ::CloseHandle);
-if (dwErr ==ERROR_SUCCESS)
-{ //Key is valid so hsc 211 is installed.
-	eReturnValue =STATE_OLDER_VERSION_INSTALLED;
-} //end key is valid block.
-} //end raii scope for the key.
-		} //end vista or above block.
+		// Hot Spot Clicker 211 and earlier were 32-bit, so read the 32-bit registry view:
+		// KEY_WOW64_32KEY finds the key under Wow6432Node on 64-bit Windows, from both
+		// 32-bit and 64-bit builds, and is ignored on 32-bit Windows.
+		// (This used to compare the OS version with Windows XP and with Vista exactly,
+		// so on Windows 7 and later neither check ran.)
+		{
+			HKEY reg = NULL;
+			LONG nErr = RegOpenKeyExW(HKEY_LOCAL_MACHINE, L"SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\HotSpotClicker", 0, KEY_READ | KEY_WOW64_32KEY, &reg);
+			if (nErr == ERROR_SUCCESS)
+			{ //Key is valid so hsc 211 is installed.
+				eReturnValue =STATE_OLDER_VERSION_INSTALLED;
+				// Registry keys must be closed with RegCloseKey; CloseHandle left them open
+				RegCloseKey( reg);
+			} //end key is valid block.
+		}
 //now that we have checked for hsc 211 and below, we can look for 212 and above.
 //to do this we use the msi (windows installer) functions and the hsc product code--you can find this in the hsc installer itsself.
 if (MsiQueryProductStateW(L"c1093f38-9866-431e-a942-f786a1b8e8c0") ==INSTALLSTATE_DEFAULT)
@@ -2147,38 +2122,37 @@ HRESULT RBSpeech::IsNVDAActive()
 //file path functions.
 HRESULT RBSpeech::GetExecutablePath(std::experimental::filesystem::path& path)
 {
-	HRESULT hr = S_OK;
-LPWSTR szFileName[MAX_PATH + 1];
-	DWORD result =GetModuleFileName(NULL, szFileName[0], MAX_PATH + 1);
-	ExitOnSpecificValue(result, 0, hr, S_FALSE, "Unable to obtain he executable name and path.");
+	// This used to declare an array of string pointers and pass an uninitialised one to
+	// GetModuleFileName, so the path was written to random memory, then freed with ReleaseStr.
+	wchar_t szFileName[ MAX_PATH + 1] = L"";
+	DWORD result = GetModuleFileNameW(NULL, szFileName, MAX_PATH + 1);
+	if ((result == 0)
+		|| (result > MAX_PATH))
+	{
+		return S_FALSE;  // failed, or the path was truncated
+	}
 	path = szFileName;
-LExit:
-	ReleaseStr(szFileName);
-	return hr;
+	return S_OK;
 }
 HRESULT RBSpeech::GetCommonAppDataPath(std::experimental::filesystem::path &path)
 {
-	HRESULT hr = S_OK;
-	LPWSTR sczPath = NULL;
-	// get folder path
-	hr = ShelGetFolder(&sczPath, CSIDL_COMMON_APPDATA);
-	ExitOnRootFailure(hr, "Failed to get shell folder.");
-	path = sczPath;
-LExit:
-	ReleaseStr(sczPath);
+	wchar_t szPath[ MAX_PATH] = L"";
+	HRESULT hr = SHGetFolderPathW(NULL, CSIDL_COMMON_APPDATA, NULL, SHGFP_TYPE_CURRENT, szPath);
+	if (SUCCEEDED( hr))
+	{
+		path = szPath;
+	}
 	return hr;
 }
 
 HRESULT RBSpeech::GetCurrentUsersAppDataPath(std::experimental::filesystem::path &path)
 {
-	HRESULT hr = S_OK;
-	LPWSTR sczPath = NULL;
-	// get folder path
-	hr = ShelGetFolder(&sczPath, CSIDL_APPDATA);
-	ExitOnRootFailure(hr, "Failed to get shell folder.");
-	path = sczPath;
-LExit:
-	ReleaseStr(sczPath);
+	wchar_t szPath[ MAX_PATH] = L"";
+	HRESULT hr = SHGetFolderPathW(NULL, CSIDL_APPDATA, NULL, SHGFP_TYPE_CURRENT, szPath);
+	if (SUCCEEDED( hr))
+	{
+		path = szPath;
+	}
 	return hr;
 }
 //string conversion.
