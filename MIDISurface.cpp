@@ -5,6 +5,18 @@
 #include "SurfaceFrame.h"
 #include "DispatchQueue.h"
 
+// Post a surface update to the main window.
+// The payload is copied into the event, so nothing is left on the heap
+// and the MIDI callback thread shares no memory with the UI thread.
+// wxQueueEvent takes ownership of the event and deletes it once handled.
+template <typename T>
+static void PostSurfaceEvent( SurfaceFrame * pTarget, int nEventID, const T & payload)
+{
+wxThreadEvent * pEvent = new wxThreadEvent( wxEVT_THREAD, nEventID);
+pEvent->SetPayload( payload);
+wxQueueEvent( pTarget->GetEventHandler(), pEvent);
+}
+
 MIDISurface::MIDISurface( SurfaceFrame * pParent, ActiveProduct apProduct, boost::shared_ptr<ProtocolCollection> pProtocols, boost::shared_ptr<AppCollection> pApps)
 		:
 MIDIWidget(),
@@ -1896,14 +1908,10 @@ void MIDISurface::ProcessRunHotSpot( SurfaceAction myAction, AppConfig * pAppCon
 		return;
 	}
 
-HotSpotObject * pHSCObj = new HotSpotObject();
-pHSCObj->SetHSCFileName( wstrHSCFileName);
-pHSCObj->SetSpotName( wstrSpotName);
-
-wxCommandEvent event( wxEVT_COMMAND_TEXT_UPDATED, HOT_SPOT_CALL_ID);
-event.SetEventObject( pHSCObj);
-pMyParent->GetEventHandler()->AddPendingEvent( event );
-// delete pHSCObj;
+HotSpotObject myHSCObj;
+myHSCObj.SetHSCFileName( wstrHSCFileName);
+myHSCObj.SetSpotName( wstrSpotName);
+PostSurfaceEvent( pMyParent, HOT_SPOT_CALL_ID, myHSCObj);
 }
 
 
@@ -1917,14 +1925,10 @@ void MIDISurface::ProcessRunScreenReaderFunction( SurfaceAction myAction, AppCon
 	}
 
 	ScreenReaderActionType myActionType = myAction.GetScreenReaderActionType();
-SRFunctionObject * pSRFunctionObj = new SRFunctionObject();
-	pSRFunctionObj->SetFunctionName( wstrFunctionName);
-	pSRFunctionObj->SetActionType( myActionType);
-
-wxCommandEvent event( wxEVT_COMMAND_TEXT_UPDATED, SCREEN_READER_FUNCTION_CALL_ID);
-event.SetEventObject( pSRFunctionObj);
-pMyParent->GetEventHandler()->AddPendingEvent( event );
-// delete pSRFunctionObj;
+SRFunctionObject mySRFunctionObj;
+	mySRFunctionObj.SetFunctionName( wstrFunctionName);
+	mySRFunctionObj.SetActionType( myActionType);
+PostSurfaceEvent( pMyParent, SCREEN_READER_FUNCTION_CALL_ID, mySRFunctionObj);
 }
 
 
@@ -1979,14 +1983,10 @@ return nResult;
 	
 	void MIDISurface::Speak( std::wstring wstrText, bool blnInterrupt)
 		{
-SpeechObject * pSpeechObj = new SpeechObject();
-pSpeechObj->SetMsg( wstrText);
-pSpeechObj->Interrupt( blnInterrupt);
-
-wxCommandEvent event( wxEVT_COMMAND_TEXT_UPDATED, SPEECH_UPDATE_ID);
-event.SetEventObject( pSpeechObj);
-pMyParent->GetEventHandler()->AddPendingEvent( event );
-// delete pSpeechObj;
+SpeechObject mySpeechObj;
+mySpeechObj.SetMsg( wstrText);
+mySpeechObj.Interrupt( blnInterrupt);
+PostSurfaceEvent( pMyParent, SPEECH_UPDATE_ID, mySpeechObj);
 }
 	
 
@@ -1997,13 +1997,9 @@ void MIDISurface::UpdateStatusBar( std::wstring wstrMode)
 			return;
 	}
 
-	StatusObject * pStatusObj = new StatusObject();
-pStatusObj->SetMode( wstrMode);
-
-wxCommandEvent event( wxEVT_COMMAND_TEXT_UPDATED, STATUS_UPDATE_ID);
-event.SetEventObject( pStatusObj);
-pMyParent->GetEventHandler()->AddPendingEvent( event );
-// delete pDisplayObj;
+	StatusObject myStatusObj;
+myStatusObj.SetMode( wstrMode);
+PostSurfaceEvent( pMyParent, STATUS_UPDATE_ID, myStatusObj);
 }
 
 
@@ -2022,13 +2018,13 @@ if (it == myDisplays.end())
 return;
 }
 
-DisplayObject * pDisplayObj = new DisplayObject();
+DisplayObject myDisplayObj;
 AppConfig myAppConfig;
 myAppConfig = pMyApps->GetAppConfig( myAppConfigID);
 
 		if (myAppConfig.GetAppName().empty())  // default behaviour
 {
-	pDisplayObj->SetLabel( wstrLabel);
+	myDisplayObj.SetLabel( wstrLabel);
 }
 else
 {
@@ -2036,26 +2032,23 @@ std::string strNewHash = myAppConfig.GetDisplayHash( wstrLabel);
 
 if (strNewHash.empty())
  {
-pDisplayObj->SetLabel( wstrLabel);
+myDisplayObj.SetLabel( wstrLabel);
 }
 else
 {
-	pDisplayObj->SetLabel( myAppConfig.GetDisplayDefinition( strNewHash).GetLabel());
+	myDisplayObj.SetLabel( myAppConfig.GetDisplayDefinition( strNewHash).GetLabel());
 }
 }
 
 std::wstring wstrContents = pProtocol->GetTranslatedString( strTranslationID, it->second);
 	wstrContents = FormatDisplay( wstrContents, nDisplayLength, nLineCount);
 
-	pDisplayObj->SetContents( wstrContents);
-pDisplayObj->IsLEDLamp( blnLEDLamp);
-pDisplayObj->SetLineCount( nLineCount);
+	myDisplayObj.SetContents( wstrContents);
+myDisplayObj.IsLEDLamp( blnLEDLamp);
+myDisplayObj.SetLineCount( nLineCount);
 LogIt(wstrContents);
 
-wxCommandEvent event( wxEVT_COMMAND_TEXT_UPDATED, SURFACE_UPDATE_ID);
-event.SetEventObject( pDisplayObj);
-pMyParent->GetEventHandler()->AddPendingEvent( event );
-// delete pDisplayObj;
+PostSurfaceEvent( pMyParent, SURFACE_UPDATE_ID, myDisplayObj);
 	}
 
 
