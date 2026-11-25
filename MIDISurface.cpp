@@ -42,10 +42,8 @@ vDisplayBuffer.clear();
 
 // Logging
 std::experimental::filesystem::path myPath = LogPath();
-myPath /= mySurfaceID.append( strLogExtension);
-boost::log::add_file_log( myPath.generic_string(), boost::log::keywords::rotation_size = 10 * 1024 * 1024, boost::log::keywords::time_based_rotation = boost::log::sinks::file::rotation_at_time_point(0, 0, 0), boost::log::keywords::format = "[%TimeStamp%]: %Message%"); //create a log file.
-boost::log::add_common_attributes(); //add common attributes see documentation.
-BOOST_LOG_SEV( lg, boost::log::trivial::info) << "Log created.";
+myPath /= mySurfaceID + strLogExtension;
+OpenLog( myPath.generic_string());
 
 // Specify the callbacks
 						m_HardwareMIDIIn->setCallback( &HardwareCallback, (void*) this);
@@ -78,9 +76,7 @@ vDisplayBuffer.clear();
 // Logging
 std::experimental::filesystem::path myPath = LogPath();
 myPath /= myParameters->GetSurfaceName().append( wstrLogExtension);
-boost::log::add_file_log( myPath.generic_string(), boost::log::keywords::rotation_size = 10 * 1024 * 1024, boost::log::keywords::time_based_rotation = boost::log::sinks::file::rotation_at_time_point(0, 0, 0), boost::log::keywords::format = "[%TimeStamp%]: %Message%"); //create a log file.
-boost::log::add_common_attributes(); //add common attributes see documentation.
-BOOST_LOG_SEV( lg, boost::log::trivial::info) << "Log created.";
+OpenLog( myPath.generic_string());
     
 						SetSurfaceName( myParameters->GetSurfaceName());
 						SetProtocolID(myParameters->GetProtocolID());
@@ -129,9 +125,7 @@ vDisplayBuffer.clear();
 // Logging
 std::experimental::filesystem::path myPath = LogPath();
 myPath /= wstrName.append( wstrLogExtension);
-boost::log::add_file_log( myPath.generic_string(), boost::log::keywords::rotation_size = 10 * 1024 * 1024, boost::log::keywords::time_based_rotation = boost::log::sinks::file::rotation_at_time_point(0, 0, 0), boost::log::keywords::format = "[%TimeStamp%]: %Message%"); //create a log file.
-boost::log::add_common_attributes(); //add common attributes see documentation.
-BOOST_LOG_SEV( lg, boost::log::trivial::info) << "Log created.";
+OpenLog( myPath.generic_string());
     
 // Specify the callbacks
 						m_HardwareMIDIIn->setCallback( &HardwareCallback, (void*) this);
@@ -164,9 +158,7 @@ boost::uuids::uuid myUUID = boost::uuids::random_generator()();
 // Logging
 std::experimental::filesystem::path myPath = LogPath();
 myPath /= wstrName.append( wstrLogExtension);
-boost::log::add_file_log( myPath.generic_string(), boost::log::keywords::rotation_size = 10 * 1024 * 1024, boost::log::keywords::time_based_rotation = boost::log::sinks::file::rotation_at_time_point(0, 0, 0), boost::log::keywords::format = "[%TimeStamp%]: %Message%"); //create a log file.
-boost::log::add_common_attributes(); //add common attributes see documentation.
-BOOST_LOG_SEV( lg, boost::log::trivial::info) << "Log created.";
+OpenLog( myPath.generic_string());
     
 						// Link to the map of protocols
 						myProtocolID =myNewProtocolID;
@@ -202,9 +194,7 @@ boost::uuids::uuid myUUID = boost::uuids::random_generator()();
 // Logging
 std::experimental::filesystem::path myPath = LogPath();
 myPath /= wstrName.append( wstrLogExtension);
-boost::log::add_file_log( myPath.generic_string(), boost::log::keywords::rotation_size = 10 * 1024 * 1024, boost::log::keywords::time_based_rotation = boost::log::sinks::file::rotation_at_time_point(0, 0, 0), boost::log::keywords::format = "[%TimeStamp%]: %Message%"); //create a log file.
-boost::log::add_common_attributes(); //add common attributes see documentation.
-BOOST_LOG_SEV( lg, boost::log::trivial::info) << "Log created.";
+OpenLog( myPath.generic_string());
     
 						// Link to the map of protocols
 						myProtocolID =strNewProtocolID;
@@ -226,11 +216,44 @@ StopDisplayProcessing();
 // Dereference the callbacks
 						m_HardwareMIDIIn->setCallback( NULL);
 m_DisplayMIDIIn->setCallback( NULL);
+
+CloseLog();
+}
+
+
+void MIDISurface::OpenLog( const std::string & strLogFile)
+{
+pMyLogSink = boost::log::add_file_log( strLogFile, boost::log::keywords::rotation_size = 10 * 1024 * 1024, boost::log::keywords::time_based_rotation = boost::log::sinks::file::rotation_at_time_point(0, 0, 0), boost::log::keywords::format = "[%TimeStamp%]: %Message%"); //create a log file.
+
+// Tag this surface's records and send only those to this surface's file;
+// without the filter every surface's messages went to every log file.
+lg.add_attribute( "SurfaceID", boost::log::attributes::constant <std::string> ( mySurfaceID));
+pMyLogSink->set_filter( boost::log::expressions::attr <std::string> ( "SurfaceID") == mySurfaceID);
+
+boost::log::add_common_attributes(); //add common attributes see documentation.
+BOOST_LOG_SEV( lg, boost::log::trivial::info) << "Log created.";
+}
+
+
+void MIDISurface::CloseLog()
+{
+	// The logging core keeps every sink until it is removed,
+	// so each surface must take its own log file away when it goes.
+if (pMyLogSink)
+{
+boost::log::core::get()->remove_sink( pMyLogSink);
+pMyLogSink->flush();
+pMyLogSink.reset();
+}
 }
 
 
 void MIDISurface::FlushLog()
 {
+if (pMyLogSink)
+{
+pMyLogSink->flush();
+}
 }
 
 
