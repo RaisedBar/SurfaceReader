@@ -12,6 +12,8 @@
 #include <locale>
 #include <codecvt>
 
+#include "UiaAnnouncer.h"
+
 bool FindProcessByName(const wchar_t * wstrProcessName)
 {
 	PROCESSENTRY32 entry;
@@ -34,13 +36,45 @@ bool FindProcessByName(const wchar_t * wstrProcessName)
 	return false;
 }
 
+// How long a screen reader check is trusted before Speak checks again.
+// Long enough that a burst of surface updates doesn't rescan, short enough that
+// starting or switching screen reader is picked up almost at once.
+const ULONGLONG nActiveProductCacheMs = 3000;
+
+
 RBSpeech::RBSpeech(void)
+	: blnHaveActiveProduct( false),
+	nActiveProductTime( 0),
+	hrActiveProduct( S_FALSE),
+	CachedProduct( ID_NONE),
+	CachedDolphinProduct( ID_NOPRODUCT),
+	pAnnouncer( new UiaAnnouncer()),
+	blnComInitialised( false),
+	blnComInitAttempted( false),
+	FShouldSpeak( S_OK),
+	JsdFileToStartProcessing( PROCESS_NO_FILE),
+	blnMuted( false)
 {
 }
 
 
 RBSpeech::~RBSpeech(void)
-{}
+{
+	// Release the JAWS object before COM is uninitialised
+	JawsAPI.Release();
+
+	if (blnComInitialised)
+	{
+		CoUninitialize();
+		blnComInitialised = false;
+	}
+}
+
+
+void RBSpeech::SetAnnounceWindow( HWND hWindow)
+{
+	pAnnouncer->SetWindow( hWindow);
+}
 	
 
 //JAWS specific private functions.
@@ -66,18 +100,32 @@ bool RBSpeech::IsJAWSActive()
 
 bool RBSpeech::LoadJAWSApi()
 {
-	bool result = false;
-	//first initialize com for the current thread.
-CoInitializeEx(0, COINIT_APARTMENTTHREADED); 
+	// Initialise COM once for this object, not on every call: each successful
+	// CoInitializeEx needs its own CoUninitialize, and only one was ever made.
+	if (blnComInitAttempted == false)
+	{
+		HRESULT hrInit = CoInitializeEx(0, COINIT_APARTMENTTHREADED);
+		// S_OK and S_FALSE both need a matching CoUninitialize. RPC_E_CHANGED_MODE means COM
+		// is already initialised differently on this thread: usable, but not ours to uninitialise.
+		blnComInitialised = SUCCEEDED( hrInit);
+		blnComInitAttempted = true;
+	}
+
+	// Reuse the JAWS object rather than creating a new one for every utterance
+	if (JawsAPI.p != NULL)
+	{
+		return true;
+	}
+
 //Now obtain an instance of the required co class.
 CComPtr<IDispatch> lpTDispatch;
 HRESULT hr= lpTDispatch.CoCreateInstance(_bstr_t(L"FreedomSci.JawsApi"));
 if (hr == S_OK)
 {
 	JawsAPI = lpTDispatch;
-	result = true;
+	return true;
 }
-return result;
+return false;
 }
 
 void RBSpeech::UnloadJAWSApi(void)
@@ -86,9 +134,26 @@ void RBSpeech::UnloadJAWSApi(void)
 	this->UnloadDolphinApi();
 	//Release the JAWS API com object.
 	JawsAPI.Release();
-	//Now uninitialize com.
-	CoUninitialize();	
+	//Now uninitialize com, if this object initialised it.
+	if (blnComInitialised)
+	{
+		CoUninitialize();
+		blnComInitialised = false;
+	}
+	blnComInitAttempted = false;
 	return;
+}
+
+
+// True when a COM call failed because the server went away (for example JAWS was restarted)
+static bool IsComServerGone( HRESULT hr)
+{
+	return ((hr == RPC_E_DISCONNECTED)
+		|| (hr == CO_E_OBJNOTCONNECTED)
+		|| (hr == RPC_E_SERVER_DIED)
+		|| (hr == RPC_E_SERVER_DIED_DNE)
+		|| (hr == HRESULT_FROM_WIN32( RPC_S_SERVER_UNAVAILABLE))
+		|| (hr == HRESULT_FROM_WIN32( RPC_S_CALL_FAILED)));
 }
 	
 HRESULT RBSpeech::JAWSSpeak(wstring strText, BOOL blnSilence)
@@ -107,8 +172,23 @@ wstrFunctionCall.append( L", 1)");
 	//check to see that the message to be spoken actually contains some text.
 ExitOnTrue(strText.empty(), hr, __HRESULT_FROM_WIN32(ERROR_BAD_ARGUMENTS), "No text has been specified.");
 
+{
+	CComVariant vText( strText.c_str());
+	CComVariant vSilence( blnSilence);
 LoadJAWSApi();
-	hr 	= JawsAPI.Invoke2(_bstr_t(L"SayString"), &_variant_t(strText.c_str()), &_variant_t(blnSilence), &vFunctionResult);
+	hr 	= JawsAPI.Invoke2(_bstr_t(L"SayString"), &vText, &vSilence, &vFunctionResult);
+
+	if (IsComServerGone( hr))
+	{
+		// JAWS has been restarted since the object was created: make a new one and try once more
+		JawsAPI.Release();
+		if (LoadJAWSApi())
+		{
+			vFunctionResult.Clear();
+			hr = JawsAPI.Invoke2(_bstr_t(L"SayString"), &vText, &vSilence, &vFunctionResult);
+		}
+	}
+}
 	ExitOnFailure(hr, "Executing the JAWS SayString function returned a failure.");
 	ExitOnFalse(vFunctionResult.vt == VT_BOOL, hr, S_FALSE, "The JAWS SayString function should return a boolean.");
 	ExitOnFalse(vFunctionResult.boolVal, hr, S_FALSE, "The JAWS SayString function could not schedule the speech.");
@@ -1396,10 +1476,41 @@ LExit:
 	
 	HRESULT RBSpeech::GetActiveProduct(ActiveProduct& Product, DolphinProduct& SpecificDolphinProduct)
 {
+	// Checking means scanning every running process and loading each screen reader's API,
+	// which is far too slow to repeat for every display update, so reuse a recent answer.
+	ULONGLONG nNow = GetTickCount64();
+
+	if ((blnHaveActiveProduct == false)
+		|| ((nNow - nActiveProductTime) >= nActiveProductCacheMs))
+	{
+		hrActiveProduct = DetectActiveProduct( CachedProduct, CachedDolphinProduct);
+		nActiveProductTime = nNow;
+		blnHaveActiveProduct = true;
+
+		// Drop the JAWS object once JAWS has gone, so a later JAWS gets a fresh one
+		if (CachedProduct != ID_JAWS)
+		{
+			JawsAPI.Release();
+		}
+	}
+
+	Product = CachedProduct;
+	SpecificDolphinProduct = CachedDolphinProduct;
+	return hrActiveProduct;
+}
+
+
+void RBSpeech::RefreshActiveProduct()
+{
+	blnHaveActiveProduct = false;
+}
+
+
+	HRESULT RBSpeech::DetectActiveProduct(ActiveProduct& Product, DolphinProduct& SpecificDolphinProduct)
+{
 HRESULT hReturnValue =S_OK;
 DolphinProduct ExactDolphinProduct =ID_NOPRODUCT; //we always obtain even if we can't output.
-// tim test
-// ExitOnNull(Product, hReturnValue, S_FALSE, "The variable passed in to recieve the product cannot be null.");
+SpecificDolphinProduct = ID_NOPRODUCT;
 
 //check to see what is active.
 if (IsJAWSActive())
@@ -1409,14 +1520,7 @@ if (IsJAWSActive())
 else if (IsDolphinActive(ExactDolphinProduct))
 	{ //Dolphin is active.
 		Product =ID_DOLPHIN;
-		if (SpecificDolphinProduct ==NULL)
-		{ //exit telling the user dolphin is active, but that we carn't tell them what screen reader is active.
-			ExitFunctionWithMessageAndStatusCode(hReturnValue, S_OK, "Dolphin is active but due to the fact that the variable to contain the specific dolphin product was NULL the exact product couldn't be provided.");
-		} //end unable to tell what screen reader.
-		else 
-		{ //output dolphin product.
-			SpecificDolphinProduct =ExactDolphinProduct;
-		} //end dolphin product output.
+		SpecificDolphinProduct =ExactDolphinProduct;
 	} //Dolphin is active.
 else if (IsNVDAActive())
 	{ //NVDA is active.
@@ -1433,7 +1537,6 @@ else if (IsSystemAccessActive())
 		Product =ID_NONE;
 		hReturnValue =S_FALSE;
 	} //No product is active.
-LExit:
 return hReturnValue;
 }
 
@@ -1531,11 +1634,24 @@ HRESULT RBSpeech::Speak(wstring strText, DolphinReturnCode& ReturnCode)
 	
 HRESULT RBSpeech::Speak(wstring strText, BOOL blnSilence, DolphinReturnCode& ReturnCode)
 {
+	// The Mac version always honoured mute; the Windows one ignored it
+	if (IsMuted() == S_OK)
+	{
+		return S_OK;
+	}
+
+	if (strText.empty())
+	{
+		return S_FALSE;
+	}
+
 	HRESULT hReturnValue =S_FALSE;
 	ActiveProduct CurrentProduct;
 	DolphinProduct SpecificDolphinProduct;
-	hReturnValue =GetActiveProduct(CurrentProduct, SpecificDolphinProduct);
-	ExitOnFailure(hReturnValue, "No product is active.");
+	GetActiveProduct(CurrentProduct, SpecificDolphinProduct);
+
+	// A screen reader's own API works while SurfaceReader is in the background,
+	// which UI Automation notifications may not, so use it whenever there is one.
 	switch(CurrentProduct)
 	{
 	case ID_JAWS:
@@ -1551,10 +1667,27 @@ HRESULT RBSpeech::Speak(wstring strText, BOOL blnSilence, DolphinReturnCode& Ret
 					hReturnValue =DolphinSpeak(strText, blnSilence, ReturnCode);
 			break;
 		default:
+		// Narrator, or a screen reader with no API here
 		hReturnValue =E_NOTIMPL;
 			break;
 	}
-	LExit:
+
+	if (hReturnValue != S_OK)
+	{
+		if (CurrentProduct != ID_NONE)
+		{
+			// The screen reader may have closed or changed: check again on the next call
+			RefreshActiveProduct();
+		}
+
+		// Let Windows pass the text to whichever screen reader is listening
+		HRESULT hrAnnounce = pAnnouncer->Announce( strText, (blnSilence != FALSE));
+		if (hrAnnounce == S_OK)
+		{
+			hReturnValue = S_OK;
+		}
+	}
+
 	return hReturnValue;
 }
 

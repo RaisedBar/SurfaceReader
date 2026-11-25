@@ -7,6 +7,7 @@
 
 #pragma once
 
+#include <memory>
 #include <windows.h>
 #include <atlbase.h>
 #include <Psapi.h>
@@ -139,16 +140,44 @@ System Access.
 Non-Visual Desktop Access.
 */
 
+class UiaAnnouncer;
+
 class RBSpeech
 {
 public:
 	RBSpeech(void);
 	~RBSpeech(void);
 
+	/// <summary> The window UI Automation notifications are raised from; call once the main frame exists. </summary>
+	/// <remarks> Used to speak through Narrator and any other screen reader without a direct API here, and as a fallback when a direct API fails. </remarks>
+	void SetAnnounceWindow( HWND hWindow);
+
+	/// <summary> Forget the cached screen reader, so the next call checks which one is running. </summary>
+	void RefreshActiveProduct();
+
 private:
+	// Owns a COM object and possibly a COM initialisation, so it must not be copied
+	RBSpeech( const RBSpeech &) = delete;
+	RBSpeech & operator=( const RBSpeech &) = delete;
+
+	// Which screen reader is running, cached so that speaking doesn't scan every process
+	// and reload each screen reader's API every time; see GetActiveProduct.
+	HRESULT DetectActiveProduct( ActiveProduct & Product, DolphinProduct & SpecificDolphinProduct);
+	bool blnHaveActiveProduct;
+	ULONGLONG nActiveProductTime;
+	HRESULT hrActiveProduct;
+	ActiveProduct CachedProduct;
+	DolphinProduct CachedDolphinProduct;
+
+	// UI Automation notifications
+	std::unique_ptr <UiaAnnouncer> pAnnouncer;
+
 	//Dll variables and function pointers.
 	//jaws.
 	CComDispatchDriver JawsAPI;
+	// True when this object's CoInitializeEx succeeded and needs a matching CoUninitialize
+	bool blnComInitialised;
+	bool blnComInitAttempted;
 	
 	//NVDA.
 		boost::dll::shared_library NvdaDllApi;

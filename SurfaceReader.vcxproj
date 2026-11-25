@@ -208,6 +208,7 @@
     <ClCompile Include=".\SysExPage.cpp" />
     <ClCompile Include=".\TextDisplaysPage.cpp" />
     <ClCompile Include=".\TranslationTablesDialog.cpp" />
+    <ClCompile Include=".\UiaAnnouncer.cpp" />
     <ClCompile Include=".\UpdateChecker.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -274,6 +275,7 @@
     <ClInclude Include=".\SysExPage.h" />
     <ClInclude Include=".\TextDisplaysPage.h" />
     <ClInclude Include=".\TranslationTablesDialog.h" />
+    <ClInclude Include=".\UiaAnnouncer.h" />
     <ClInclude Include=".\UpdateChecker.h" />
     <ClInclude Include=".\apiproto.h" />
     <ClInclude Include="FileCorrecter.h" />
