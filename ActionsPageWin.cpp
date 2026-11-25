@@ -442,6 +442,11 @@ if (wstrName.compare( wstrMac) == 0)
 {
 		return ID_MAC;
 	}
+
+if (wstrName.compare( wstrNarrator) == 0)
+{
+		return ID_NARRATOR;
+	}
 	
 return myProduct;
 }
@@ -1304,6 +1309,12 @@ case ID_DOLPHIN:
 case ID_MAC:
 {
 return wstrMac;
+}
+break;
+
+case ID_NARRATOR:
+{
+return wstrNarrator;
 }
 break;
 

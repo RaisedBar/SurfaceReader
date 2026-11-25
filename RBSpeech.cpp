@@ -1506,32 +1506,41 @@ void RBSpeech::RefreshActiveProduct()
 }
 
 
+	bool RBSpeech::IsNarratorActive()
+{
+	return FindProcessByName( L"Narrator.exe");
+}
+
+
 	HRESULT RBSpeech::DetectActiveProduct(ActiveProduct& Product, DolphinProduct& SpecificDolphinProduct)
 {
 HRESULT hReturnValue =S_OK;
 DolphinProduct ExactDolphinProduct =ID_NOPRODUCT; //we always obtain even if we can't output.
 SpecificDolphinProduct = ID_NOPRODUCT;
 
-//check to see what is active.
+//check to see what is active, in order of preference: JAWS, NVDA, Dolphin, System Access, then Narrator.
 if (IsJAWSActive())
 { //JAWS IS ACTIVE.
 	Product = ID_JAWS;
 } //End JAWS active block.
+else if (IsNVDAActive())
+	{ //NVDA is active.
+		Product =ID_NVDA;
+	} //End NVDA active block.
 else if (IsDolphinActive(ExactDolphinProduct))
 	{ //Dolphin is active.
 		Product =ID_DOLPHIN;
 		SpecificDolphinProduct =ExactDolphinProduct;
 	} //Dolphin is active.
-else if (IsNVDAActive())
-	{ //NVDA is active.
-		Product =ID_NVDA;
-	} //End NVDA active block.
-			
 else if (IsSystemAccessActive())
 	{ //System Access is active.
 	Product =ID_SYSTEMACCESS;
 	} //System Access is active.
-	
+else if (IsNarratorActive())
+	{ //Narrator is active.
+	Product =ID_NARRATOR;
+	} //Narrator is active.
+
 	else
 	{ //no product is active.
 		Product =ID_NONE;
@@ -1666,8 +1675,12 @@ HRESULT RBSpeech::Speak(wstring strText, BOOL blnSilence, DolphinReturnCode& Ret
 		case ID_DOLPHIN:
 					hReturnValue =DolphinSpeak(strText, blnSilence, ReturnCode);
 			break;
+		case ID_NARRATOR:
+			// Narrator has no API of its own; it reads UI Automation notifications
+			hReturnValue = pAnnouncer->Announce( strText, (blnSilence != FALSE));
+			break;
 		default:
-		// Narrator, or a screen reader with no API here
+		// No screen reader recognised; one we don't know may still be listening to UI Automation
 		hReturnValue =E_NOTIMPL;
 			break;
 	}
@@ -1681,10 +1694,14 @@ HRESULT RBSpeech::Speak(wstring strText, BOOL blnSilence, DolphinReturnCode& Ret
 		}
 
 		// Let Windows pass the text to whichever screen reader is listening
-		HRESULT hrAnnounce = pAnnouncer->Announce( strText, (blnSilence != FALSE));
-		if (hrAnnounce == S_OK)
+		// (already tried for Narrator, so not again)
+		if (CurrentProduct != ID_NARRATOR)
 		{
-			hReturnValue = S_OK;
+			HRESULT hrAnnounce = pAnnouncer->Announce( strText, (blnSilence != FALSE));
+			if (hrAnnounce == S_OK)
+			{
+				hReturnValue = S_OK;
+			}
 		}
 	}
 

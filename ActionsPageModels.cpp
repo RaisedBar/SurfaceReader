@@ -390,6 +390,12 @@ return wstrMac;
 	}
 break;
 
+case ID_NARRATOR:
+{
+return wstrNarrator;
+	}
+break;
+
 default:
 {
 		return wstrNone;
@@ -516,6 +522,11 @@ if (wstrName.compare( wstrDolphin) == 0)
 if (wstrName.compare( wstrMac) == 0)
 {
 		return ID_MAC;
+	}
+
+if (wstrName.compare( wstrNarrator) == 0)
+{
+		return ID_NARRATOR;
 	}
 	
 return myProduct;

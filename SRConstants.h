@@ -579,6 +579,7 @@ const std::wstring wstrAvailableScreenReaderFunctionsTitle = L"Available Screen 
 			const std::wstring wstrDolphin = L"Dolphin";
 const std::wstring wstrNVDA = L"NVDA";
 const std::wstring wstrSA = L"System Access";
+const std::wstring wstrNarrator = L"Narrator";
 const std::wstring wstrMac = L"Mac Speech";
 
 			// Action look-up literals

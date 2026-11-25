@@ -163,6 +163,8 @@ private:
 	// Which screen reader is running, cached so that speaking doesn't scan every process
 	// and reload each screen reader's API every time; see GetActiveProduct.
 	HRESULT DetectActiveProduct( ActiveProduct & Product, DolphinProduct & SpecificDolphinProduct);
+	/// <summary> Determine whether Windows Narrator is running. </summary>
+	bool IsNarratorActive();
 	bool blnHaveActiveProduct;
 	ULONGLONG nActiveProductTime;
 	HRESULT hrActiveProduct;
