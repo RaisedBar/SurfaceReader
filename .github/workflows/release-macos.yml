@@ -1,0 +1,96 @@
+# Builds SurfaceReader for macOS as a universal app (Apple silicon + Intel) and packages it as a disk image:
+# SurfaceReader-<version>-macOS-universal.dmg, with an Applications link, the read-me, the licence and the
+# third-party notices. The version comes from SRVersion.h.
+#
+# The Xcode project's "Install vcpkg dependencies" phase installs the libraries for each architecture in ARCHS
+# (arm64-osx, x64-osx), so one xcodebuild with both architectures makes the universal app. The app is signed ad hoc
+# only (no Developer ID): on first start macOS asks to confirm it (Control-click > Open).
+#
+# Runs when a release/* branch is pushed, or by hand (Actions > macOS release > Run workflow). The disk image is
+# kept as the run's artifact; it's uploaded to the public releases repository from there.
+name: macOS release
+
+on:
+  push:
+    branches: ["release/**"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: macos-latest
+    timeout-minutes: 180
+    env:
+      VCPKG_ROOT: ${{ github.workspace }}/vcpkg
+      VCPKG_DEFAULT_BINARY_CACHE: ${{ github.workspace }}/vcpkg-cache
+      VCPKG_BINARY_SOURCES: "clear;files,${{ github.workspace }}/vcpkg-cache,readwrite"
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Tools
+        run: brew install pkg-config autoconf autoconf-archive automake libtool ninja || true
+
+      - name: vcpkg
+        run: |
+          # The manifest's builtin-baseline must be in the clone's history
+          git clone --filter=blob:none https://github.com/microsoft/vcpkg.git "$VCPKG_ROOT"
+          "$VCPKG_ROOT/bootstrap-vcpkg.sh" -disableMetrics
+          mkdir -p "$VCPKG_DEFAULT_BINARY_CACHE"
+
+      - name: Cache vcpkg libraries
+        uses: actions/cache@v4
+        with:
+          path: ${{ github.workspace }}/vcpkg-cache
+          key: vcpkg-macos-${{ hashFiles('vcpkg.json') }}
+          restore-keys: vcpkg-macos-
+
+      - name: Build (universal)
+        run: |
+          set -o pipefail
+          xcodebuild -project SurfaceReader.xcodeproj -target SurfaceReader -configuration Release \
+            ARCHS="arm64 x86_64" ONLY_ACTIVE_ARCH=NO \
+            VCPKG_ROOT="$VCPKG_ROOT" \
+            CODE_SIGNING_ALLOWED=NO \
+            SYMROOT="$PWD/build" \
+            build | tee build.log | grep -E "error:|warning: .*SurfaceReader|BUILD (SUCCEEDED|FAILED)" || true
+          test -d build/Release/SurfaceReader.app
+
+      - name: Show build errors
+        if: failure()
+        run: grep -n -B2 -A8 "error:" build.log | head -300 || true
+
+      - name: Bundle the help, protocols and app configurations
+        run: |
+          APP=build/Release/SurfaceReader.app
+          RES="$APP/Contents/Resources"
+          mkdir -p "$RES/Protocols" "$RES/Apps"
+          cp -R Help "$RES/Help"
+          cp Files/ProgramData/Protocols/* "$RES/Protocols/"
+          cp Files/ProgramData/Apps/* "$RES/Apps/"
+          version=$(awk '/#define SR_VERSION_(MAJOR|MINOR|PATCH)/ {printf "%s%s", sep, $3; sep="."}' SRVersion.h)
+          /usr/libexec/PlistBuddy -c "Set :CFBundleShortVersionString $version" "$APP/Contents/Info.plist"
+          /usr/libexec/PlistBuddy -c "Set :CFBundleVersion $version" "$APP/Contents/Info.plist"
+          lipo -info "$APP/Contents/MacOS/SurfaceReader"
+          codesign --force --deep --sign - "$APP"
+          codesign --verify --verbose "$APP"
+          echo "VERSION=$version" >> "$GITHUB_ENV"
+
+      - name: Disk image
+        run: |
+          DMG="SurfaceReader-${VERSION}-macOS-universal.dmg"
+          mkdir -p dmg
+          cp -R build/Release/SurfaceReader.app dmg/
+          ln -s /Applications dmg/Applications
+          cp packaging/macOS-Read-Me.txt "dmg/Read Me.txt"
+          cp LICENSE dmg/LICENSE.txt
+          cp packaging/THIRD-PARTY-NOTICES.txt dmg/
+          hdiutil create -volname "SurfaceReader ${VERSION}" -srcfolder dmg -ov -format UDZO "$DMG"
+          hdiutil verify "$DMG"
+          echo "DMG=$DMG" >> "$GITHUB_ENV"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: SurfaceReader-macOS-universal
+          path: ${{ env.DMG }}

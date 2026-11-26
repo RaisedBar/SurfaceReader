@@ -1,0 +1,27 @@
+SurfaceReader for macOS
+=======================
+
+SurfaceReader speaks the controls, LEDs and displays of MIDI control surfaces (Mackie Control, Logic Control,
+HUI, Mackie C4, Frontier TranzPort and others) through VoiceOver.
+
+Installing
+----------
+Drag SurfaceReader to the Applications folder.
+
+SurfaceReader is not signed with an Apple Developer ID, so the first time you open it macOS asks you to confirm.
+Control-click SurfaceReader in Applications and choose Open (with VoiceOver, VO-Shift-M opens the shortcut menu),
+then choose Open again. Or, after trying to open it once, use System Settings > Privacy & Security > Open Anyway.
+
+Where SurfaceReader keeps your files
+------------------------------------
+Your surfaces, protocols, app configurations and settings are in:
+    ~/Library/Application Support/Raised Bar/SurfaceReader
+The protocols and app configurations that come with SurfaceReader are copied there the first time it runs.
+Ones you have changed are never overwritten.
+
+Licence
+-------
+SurfaceReader is distributed under the MIT licence (LICENSE.txt). The open source software it includes is listed,
+with its licences, in THIRD-PARTY-NOTICES.txt.
+
+Raised Bar Ltd, http://www.raisedbar.net
