@@ -39,8 +39,10 @@ jobs:
           "$VCPKG_ROOT/bootstrap-vcpkg.sh" -disableMetrics
           mkdir -p "$VCPKG_DEFAULT_BINARY_CACHE"
 
-      - name: Cache vcpkg libraries
-        uses: actions/cache@v4
+      # Restored and saved separately, so the libraries are kept even when the app itself fails to build
+      - name: Restore vcpkg libraries
+        id: vcpkg-cache
+        uses: actions/cache/restore@v4
         with:
           path: ${{ github.workspace }}/vcpkg-cache
           key: vcpkg-macos-${{ hashFiles('vcpkg.json') }}
@@ -48,18 +50,33 @@ jobs:
 
       - name: Build (universal)
         run: |
-          set -o pipefail
           xcodebuild -project SurfaceReader.xcodeproj -target SurfaceReader -configuration Release \
             ARCHS="arm64 x86_64" ONLY_ACTIVE_ARCH=NO \
             VCPKG_ROOT="$VCPKG_ROOT" \
             CODE_SIGNING_ALLOWED=NO \
             SYMROOT="$PWD/build" \
-            build | tee build.log | grep -E "error:|warning: .*SurfaceReader|BUILD (SUCCEEDED|FAILED)" || true
-          test -d build/Release/SurfaceReader.app
+            build > build.log 2>&1 || true
+          grep -E "error:|BUILD (SUCCEEDED|FAILED)" build.log | head -100 || true
+          test -x build/Release/SurfaceReader.app/Contents/MacOS/SurfaceReader
+
+      - name: Save vcpkg libraries
+        if: always() && steps.vcpkg-cache.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v4
+        with:
+          path: ${{ github.workspace }}/vcpkg-cache
+          key: vcpkg-macos-${{ hashFiles('vcpkg.json') }}
 
       - name: Show build errors
         if: failure()
-        run: grep -n -B2 -A8 "error:" build.log | head -300 || true
+        run: grep -n -B3 -A10 "error:" build.log | head -400 || true
+
+      - name: Build log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: macos-build-log
+          path: build.log
+          if-no-files-found: ignore
 
       - name: Bundle the help, protocols and app configurations
         run: |
