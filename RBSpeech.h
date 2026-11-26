@@ -106,75 +106,35 @@ typedef std::pair <AvailableActionFieldsType, ActionCollectionType > AvailableAc
 enum ActiveProduct 
 {
 	/// <summary>No access technology is active.</summary>
-	ID_NONE,
-/// <summary>JAWS for windows is active.</summary>
-		ID_JAWS, 
+	ID_NONE = 0,
+	/// <summary>JAWS for windows is active.</summary>
+	ID_JAWS = 1,
 	/// <summary>System Access is active.</summary>
-		ID_SYSTEMACCESS, 
+	ID_SYSTEMACCESS = 2,
 	/// <summary>Non-Visual Desktop Access is active.</summary>
-		ID_NVDA, 
-	/// <summary>A Dolphin product is active.</summary>
-		ID_DOLPHIN,
-		// Apple NSSpeechSynthesizer on Mac
-		ID_MAC,
+	ID_NVDA = 3,
+	// 4 was Dolphin, which is no longer supported. The values are stored in protocol files, so the
+	// others keep their numbers; MessageDefinition drops any actions still stored for 4 when it loads.
+	// Apple NSSpeechSynthesizer on Mac
+	ID_MAC = 5,
 	/// <summary>Windows Narrator is active; it is spoken to through UI Automation notifications.</summary>
-	/// <remarks>Added last so the stored values of the others don't change. Loops that run from ID_JAWS to ID_MAC
-	/// (the per-screen-reader action trees) deliberately leave it out until actions can be defined for it.</remarks>
-		ID_NARRATOR
+	ID_NARRATOR = 6
 };
 
-/// <summary>
-/// DolphinProduct enumeration determining which Dolphin product is currently active.
-/// </summery>
-enum DolphinProduct 
-{
-	/// <summary>No Dolphin product is active.</summary>
-	ID_NOPRODUCT =0,
-/// <summary>Hal is active.</summary>
-		ID_HAL =1, 
-	/// <summary>Lunar isactive.</summary>
-		ID_LUNAR =2, 
-	/// <summary>SuperNova is active.</summary>
-		ID_SUPERNOVA =4, 
-	/// <summary>LunarPlusis active.</summary>
-		ID_LUNARPLUS =8, 
-};
+/// <summary>The products that have a branch of their own in the action trees, in display order.
+/// Narrator is left out until actions can be defined for it.</summary>
+const ActiveProduct arrActionProducts[] = { ID_JAWS, ID_SYSTEMACCESS, ID_NVDA, ID_MAC };
 
-/// <summary>
-/// DolphinReturnCode enumeration determining whether the procedure call succeeded and if it didn't what the specific error was.
-/// </summery>
-enum DolphinReturnCode 
-{
-	/// <summary>Function Succeeded.</summary>
-	ID_SUCCESS= 0,
-/// <summary>no dolphin product running.</summary>
-		ID_No_Server =1, 
-	/// <summary>An invalid id was specified.</summary>
-		ID_INVALID_ID =2, 
-	/// <summary>Invalid length.</summary>
-		ID_INVALID_LENGTH =3, 
-	/// <summary>Invalid action.</summary>
-		ID_INVALID_ACTION =4, 
-	/// <summary>In use by another application, try again.</summary>
-		ID_ALREADY_IN_USE =5, 
-	/// <summary>SuperNova control panel in use.</summary>
-		ID_SUPERNOVA_CONTROL_PANEL_IN_USE =6, 
-	/// <summary>SuperNova not responding.</summary>
-ID_SUPERNOVA_NOT_RESPONDING =7, 
-	/// <summary>Set val failed, parameter read-only.</summary>
-		ID_SET_VAL_FAILED_PARAMETER_READONLY =8, 
-};
 
 //Action types enum.
 enum ScreenReaderActionType 
 {
-ID_HOTKEY, //Window-Eyes hotkeys.
-ID_REGISTERED_HOTKEY, //Window-Eyes hotkeys.
-ID_CURSORKEY, //Window-Eyes cursor key.
-ID_ACTION, //DolphinAction.
-ID_DOLPHIN_SCRIPT, //Dolphin script.
-ID_SCRIPT, //Jaws scripts.
-ID_FUNCTION //jaws void functions.
+	// Stored in protocol files, so the values are fixed; 3 and 4 were Dolphin actions and scripts
+	ID_HOTKEY = 0, //Window-Eyes hotkeys.
+	ID_REGISTERED_HOTKEY = 1, //Window-Eyes hotkeys.
+	ID_CURSORKEY = 2, //Window-Eyes cursor key.
+	ID_SCRIPT = 5, //Jaws scripts.
+	ID_FUNCTION = 6 //jaws void functions.
 };
 
 //Hot spot clicker install state enum.

@@ -46,7 +46,6 @@ RBSpeech::RBSpeech(void)
 	nActiveProductTime( 0),
 	hrActiveProduct( S_FALSE),
 	CachedProduct( ID_NONE),
-	CachedDolphinProduct( ID_NOPRODUCT),
 	pAnnouncer( new UiaAnnouncer()),
 	blnComInitialised( false),
 	blnComInitAttempted( false),
@@ -129,8 +128,7 @@ return false;
 
 void RBSpeech::UnloadJAWSApi(void)
 {
-// Dolphin API always loaded, so must unload
-	this->UnloadDolphinApi();
+
 	//Release the JAWS API com object.
 	JawsAPI.Release();
 	//Now uninitialize com, if this object initialised it.
@@ -245,8 +243,7 @@ fs::path JSDFile;
 			std::wstring JAWSFunctionCallString =L"GetCurrentJAWSEnvironment(\"%s\")"; //used to hold the call to JAWS.
 			fs::path IniFile; //file to store the hsc information.
 			ActiveProduct CurrentProduct;
-	DolphinProduct SpecificDolphinProduct;
-	hReturnValue =GetActiveProduct(CurrentProduct, SpecificDolphinProduct);
+	hReturnValue =GetActiveProduct( CurrentProduct);
 	ExitOnFailure(hReturnValue, "No product is active.");
 				switch(CurrentProduct)
 			{
@@ -593,769 +590,8 @@ ExitOnTrue(strText.empty(), hReturnValue, __HRESULT_FROM_WIN32(ERROR_BAD_ARGUMEN
 		return hReturnValue;			
 }
 
-//Dolphin.
-//All dolphin functions for dolphin requires us to be 32-bit.
-
-bool RBSpeech::IsDolphinActive(DolphinProduct& SpecificProduct)
-{
-#ifndef _WIN64
-	SpecificProduct =ID_NOPRODUCT;
-
-	//API loaded, so now have a switch to determine what exact product from dolphin is active.
-switch(DolAccess_GetSystem())
-{
-case 0:
-	{
-		SpecificProduct =ID_NOPRODUCT;
-return false; //no product.
-	}
-	break;
-
-case 1:
-	{
-		SpecificProduct =ID_HAL;
-return true; 
-	}
-	break;
-
-case 2:
-	{
-		SpecificProduct =ID_LUNAR;
-return true; 
-	}
-	break;
-
-case 4:
-	{
-		SpecificProduct =ID_SUPERNOVA;
-return true; 
-	}
-	break;
-
-case 8:
-	{
-		SpecificProduct =ID_LUNARPLUS;
-return true; 
-	}
-	break;
-
-default:
-	{
-		SpecificProduct =ID_NOPRODUCT;
-return false; //no product.
-	}
-	break;
-}  // end switch
-#else 
-	return false;
-#endif
-}
-
-	
-bool RBSpeech::LoadDolphinApi()
-{
-#ifndef _WIN64
-	return true;
-#else
-	return false;
-#endif
-}
-
-	
-void RBSpeech::UnloadDolphinApi(void)
-{
-	return;
-}
-	
-	HRESULT RBSpeech::DolphinSpeak(std::wstring strText, BOOL blnSilence, DolphinReturnCode& ReturnCode)
-{
-#ifndef _WIN64
-	HRESULT hReturnValue =S_OK;
-ExitOnTrue(strText.empty(), hReturnValue, S_FALSE, "No text was specified to speak through dolphin.");
-const wchar_t *StrToSpeak =strText.c_str();
-	DWORD len = (wcslen(StrToSpeak)+1)*sizeof(WCHAR);
-// DWORD ReturnValue =DolAccess_Command((VOID *) StrToSpeak, len, DOLAPI_COMMAND_SPEAK);
-	DWORD ReturnValue = 1;
-		// ReturnValue = DolAccess_Command((VOID *)StrToSpeak, len, DOLAPI_COMMAND_SPEAK);
-switch(ReturnValue)
-{
-case 0:
-	ReturnCode =ID_SUCCESS;
-break;
-case 1:
-	ReturnCode =ID_No_Server;
-	hReturnValue =S_FALSE;
-	break;
-case 2:
-	ReturnCode =		ID_INVALID_ID;
-	hReturnValue =S_FALSE;
-	break;
-case 3:
-	ReturnCode =ID_INVALID_LENGTH;
-	hReturnValue =S_FALSE;
-	break;
-case 4:
-	ReturnCode =ID_INVALID_ACTION;
-	hReturnValue =S_FALSE;
-	break;
-case 5:
-	ReturnCode =ID_ALREADY_IN_USE;
-	hReturnValue =S_FALSE;
-	break;
-case 6: 
-	ReturnCode =ID_SUPERNOVA_CONTROL_PANEL_IN_USE;
-	hReturnValue =S_FALSE;
-	break;
-case 7:
-	ReturnValue =ID_SUPERNOVA_NOT_RESPONDING;
-	hReturnValue =S_FALSE;
-	break;
-case 8:
-	ReturnCode =ID_SET_VAL_FAILED_PARAMETER_READONLY;
-	hReturnValue =S_FALSE;
-	break;
-default:
-	hReturnValue =S_FALSE;
-	break;
-};
-LExit:
-return hReturnValue;
-#else
-	return E_NOTIMPL;
-#endif
-	}
-	
-	HRESULT RBSpeech::DolphinSilence(DolphinReturnCode& ReturnCode)
-	{
-#ifndef _WIN64
-		HRESULT hReturnValue = S_OK;
-		ExitOnNull(ReturnCode, hReturnValue, S_FALSE, "No exact return code was supplied.");
-		DWORD ReturnValue = DolAccess_Action(141);
-		switch (ReturnValue)
-		{
-		case 0:
-			ReturnCode = ID_SUCCESS;
-			break;
-		case 1:
-			ReturnCode = ID_No_Server;
-			hReturnValue = S_FALSE;
-			break;
-		case 2:
-			ReturnCode = ID_INVALID_ID;
-			hReturnValue = S_FALSE;
-			break;
-		case 3:
-			ReturnCode = ID_INVALID_LENGTH;
-			hReturnValue = S_FALSE;
-			break;
-		case 4:
-			ReturnCode = ID_INVALID_ACTION;
-			hReturnValue = S_FALSE;
-			break;
-		case 5:
-			ReturnCode = ID_ALREADY_IN_USE;
-			hReturnValue = S_FALSE;
-			break;
-		case 6:
-			ReturnCode = ID_SUPERNOVA_CONTROL_PANEL_IN_USE;
-			hReturnValue = S_FALSE;
-			break;
-		case 7:
-			ReturnValue = ID_SUPERNOVA_NOT_RESPONDING;
-			hReturnValue = S_FALSE;
-			break;
-		case 8:
-			ReturnCode = ID_SET_VAL_FAILED_PARAMETER_READONLY;
-			hReturnValue = S_FALSE;
-			break;
-		default:
-			hReturnValue = S_FALSE;
-			break;
-		};
-	LExit:
-		return hReturnValue;
-#else
-		return E_NOTIMPL;
-#endif
-	}
-
-	HRESULT RBSpeech::DolphinBraille(std::wstring strText)
-{
-	return E_NOTIMPL;
-	}
-	
-	HRESULT RBSpeech::GetAvailableDolphinActions(AvailableActionsType& ActionInformation)
-	{
-#ifndef _WIN64
-		//declare needed variables.
-		AvailableActionFieldsType AvailableDolphinActionFields;
-ActionCollectionType DolphinActionCollection; //store all action information for Dolphin.
-//add the description, ID and type int/strings.
-AvailableDolphinActionFields.clear();
-// AvailableDolphinActionFields =boost::assign::map_list_of(L"ID", 0)(L"Description", 1)(L"Action Type", 2);
-AvailableDolphinActionFields.insert(std::make_pair( L"ID", 0));
-AvailableDolphinActionFields.insert(std::make_pair(L"Description", 1));
-AvailableDolphinActionFields.insert(std::make_pair( L"Action Type", 2));
-DolphinActionCollection.clear();
-//now add the actions.
-ActionInfoType CurrentAction;
-CurrentAction.clear();
-CurrentAction.insert(std::make_pair(0, std::any(200)));
-CurrentAction.insert(std::make_pair( 1, std::any( wstrScreenRefresh)));
-CurrentAction.insert(std::make_pair(2, std::any(ID_ACTION)));
-DolphinActionCollection.push_back(CurrentAction);
-CurrentAction.clear();
-CurrentAction.insert(std::make_pair(0, std::any(201)));
-CurrentAction.insert(std::make_pair(1, std::any( wstrPassNextKey)));
-CurrentAction.insert(std::make_pair(2, std::any(ID_ACTION)));
-DolphinActionCollection.push_back(CurrentAction);
-CurrentAction.clear();
-CurrentAction.insert(std::make_pair(0, std::any(202)));
-CurrentAction.insert(std::make_pair(1, std::any( wstrToggleHotKeys)));
-CurrentAction.insert(std::make_pair(2, std::any(ID_ACTION)));
-DolphinActionCollection.push_back(CurrentAction);
-CurrentAction.clear();
-CurrentAction.insert(std::make_pair(0, std::any(2)));
-CurrentAction.insert(std::make_pair(1, std::any(wstrNavigationMode)));
-CurrentAction.insert(std::make_pair(2, std::any(ID_ACTION)));
-DolphinActionCollection.push_back(CurrentAction);
-CurrentAction.clear();
-CurrentAction.insert(std::make_pair(0, std::any(3)));
-CurrentAction.insert(std::make_pair(1, std::any(wstrDocumentReadMode)));
-CurrentAction.insert(std::make_pair(2, std::any(ID_ACTION)));
-DolphinActionCollection.push_back(CurrentAction);
-CurrentAction.clear();
-CurrentAction.insert(std::make_pair(0, std::any(4)));
-CurrentAction.insert(std::make_pair(1, std::any(wstrSwitchToPreviousLanguage)));
-CurrentAction.insert(std::make_pair(2, std::any(ID_ACTION)));
-DolphinActionCollection.push_back(CurrentAction);
-CurrentAction.clear();
-CurrentAction.insert(std::make_pair(0, std::any(5)));
-CurrentAction.insert(std::make_pair(1, std::any(wstrSwitchToNextLanguage)));
-CurrentAction.insert(std::make_pair(2, std::any(ID_ACTION)));
-DolphinActionCollection.push_back(CurrentAction);
-CurrentAction.clear();
-CurrentAction.insert(std::make_pair(0, std::any(35)));
-CurrentAction.insert(std::make_pair(1, std::any(wstrVolumeUp)));
-CurrentAction.insert(std::make_pair(2, std::any(ID_ACTION)));
-DolphinActionCollection.push_back(CurrentAction);
-CurrentAction.clear();
-CurrentAction.insert(std::make_pair(0, std::any(36)));
-CurrentAction.insert(std::make_pair(1, std::any(wstrVolumeDown)));
-CurrentAction.insert(std::make_pair(2, std::any(ID_ACTION)));
-DolphinActionCollection.push_back(CurrentAction);
-CurrentAction.clear();
-CurrentAction.insert(std::make_pair(0, std::any(37)));
-CurrentAction.insert(std::make_pair(1, std::any(wstrToggleSpeech)));
-CurrentAction.insert(std::make_pair(2, std::any(ID_ACTION)));
-DolphinActionCollection.push_back(CurrentAction);
-CurrentAction.clear();
-CurrentAction.insert(std::make_pair(0, std::any(38)));
-CurrentAction.insert(std::make_pair(1, std::any(wstrToggleRowColumnMode)));
-CurrentAction.insert(std::make_pair(2, std::any(ID_ACTION)));
-DolphinActionCollection.push_back(CurrentAction);
-CurrentAction.clear();
-CurrentAction.insert(std::make_pair(0, std::any(105)));
-CurrentAction.insert(std::make_pair(1, std::any(wstrReadFocus)));
-CurrentAction.insert(std::make_pair(2, std::any(ID_ACTION)));
-DolphinActionCollection.push_back(CurrentAction);
-CurrentAction.clear();
-CurrentAction.insert(std::make_pair(0, std::any(106)));
-CurrentAction.insert(std::make_pair(1, std::any(wstrSpellFocus)));
-CurrentAction.insert(std::make_pair(2, std::any(ID_ACTION)));
-DolphinActionCollection.push_back(CurrentAction);
-CurrentAction.clear();
-CurrentAction.insert(std::make_pair(0, std::any(107)));
-CurrentAction.insert(std::make_pair(1, std::any(wstrVerboseFocus)));
-CurrentAction.insert(std::make_pair(2, std::any(ID_ACTION)));
-DolphinActionCollection.push_back(CurrentAction);
-CurrentAction.clear();
-CurrentAction.insert(std::make_pair(0, std::any(108)));
-CurrentAction.insert(std::make_pair(1, std::any(wstrPhoneticFocus)));
-CurrentAction.insert(std::make_pair(2, std::any(ID_ACTION)));
-DolphinActionCollection.push_back(CurrentAction);
-CurrentAction.clear();
-CurrentAction.insert(std::make_pair(0, std::any(109)));
-CurrentAction.insert(std::make_pair(1, std::any(wstrReadTextToCursor)));
-CurrentAction.insert(std::make_pair(2, std::any(ID_ACTION)));
-DolphinActionCollection.push_back(CurrentAction);
-CurrentAction.clear();
-CurrentAction.insert(std::make_pair(0, std::any(110)));
-CurrentAction.insert(std::make_pair(1, std::any(wstrSpellTextToCursor)));
-CurrentAction.insert(std::make_pair(2, std::any(ID_ACTION)));
-DolphinActionCollection.push_back(CurrentAction);
-CurrentAction.clear();
-CurrentAction.insert(std::make_pair(0, std::any(111)));
-CurrentAction.insert(std::make_pair(1, std::any(wstrVerboseTextToCursor)));
-CurrentAction.insert(std::make_pair(2, std::any(ID_ACTION)));
-DolphinActionCollection.push_back(CurrentAction);
-CurrentAction.clear();
-CurrentAction.insert(std::make_pair(0, std::any(112)));
-CurrentAction.insert(std::make_pair(1, std::any(wstrPhoneticTextToCursor)));
-CurrentAction.insert(std::make_pair(2, std::any(ID_ACTION)));
-DolphinActionCollection.push_back(CurrentAction);
-CurrentAction.clear();
-CurrentAction.insert(std::make_pair(0, std::any(113)));
-CurrentAction.insert(std::make_pair(1, std::any(wstrReadTextFromCursor)));
-CurrentAction.insert(std::make_pair(2, std::any(ID_ACTION)));
-DolphinActionCollection.push_back(CurrentAction);
-CurrentAction.clear();
-CurrentAction.insert(std::make_pair(0, std::any(114)));
-CurrentAction.insert(std::make_pair(1, std::any(wstrSpellTextFromCursor)));
-CurrentAction.insert(std::make_pair(2, std::any(ID_ACTION)));
-DolphinActionCollection.push_back(CurrentAction);
-CurrentAction.clear();
-CurrentAction.insert(std::make_pair(0, std::any(115)));
-CurrentAction.insert(std::make_pair(1, std::any(wstrVerboseTextFromCursor)));
-CurrentAction.insert(std::make_pair(2, std::any(ID_ACTION)));
-DolphinActionCollection.push_back(CurrentAction);
-CurrentAction.clear();
-CurrentAction.insert(std::make_pair(0, std::any(116)));
-CurrentAction.insert(std::make_pair(1, std::any(wstrPhoneticTextFromCursor)));
-CurrentAction.insert(std::make_pair(2, std::any(ID_ACTION)));
-DolphinActionCollection.push_back(CurrentAction);
-CurrentAction.clear();
-CurrentAction.insert(std::make_pair(0, std::any(117)));
-CurrentAction.insert(std::make_pair(1, std::any(wstrReadSpreadsheetRowAndColumn)));
-CurrentAction.insert(std::make_pair(2, std::any(ID_ACTION)));
-DolphinActionCollection.push_back(CurrentAction);
-CurrentAction.clear();
-CurrentAction.insert(std::make_pair(0, std::any(118)));
-CurrentAction.insert(std::make_pair(1, std::any(wstrSpellSpreadsheetRowAndColumn)));
-CurrentAction.insert(std::make_pair(2, std::any(ID_ACTION)));
-DolphinActionCollection.push_back(CurrentAction);
-CurrentAction.clear();
-CurrentAction.insert(std::make_pair(0, std::any(119)));
-CurrentAction.insert(std::make_pair(1, std::any(wstrVerboseSpreadsheetRowAndColumn)));
-CurrentAction.insert(std::make_pair(2, std::any(ID_ACTION)));
-DolphinActionCollection.push_back(CurrentAction);
-CurrentAction.clear();
-CurrentAction.insert(std::make_pair(0, std::any(120)));
-CurrentAction.insert(std::make_pair(1, std::any(wstrPhoneticSpreadsheetRowAndColumn)));
-CurrentAction.insert(std::make_pair(2, std::any(ID_ACTION)));
-DolphinActionCollection.push_back(CurrentAction);
-CurrentAction.clear();
-CurrentAction.insert(std::make_pair(0, std::any(121)));
-CurrentAction.insert(std::make_pair(1, std::any(wstrReadCharacter)));
-CurrentAction.insert(std::make_pair(2, std::any(ID_ACTION)));
-DolphinActionCollection.push_back(CurrentAction);
-CurrentAction.clear();
-CurrentAction.insert(std::make_pair(0, std::any(122)));
-CurrentAction.insert(std::make_pair(1, std::any(wstrDescribeCharacterAttributes)));
-CurrentAction.insert(std::make_pair(2, std::any(ID_ACTION)));
-DolphinActionCollection.push_back(CurrentAction);
-CurrentAction.clear();
-CurrentAction.insert(std::make_pair(0, std::any(123)));
-CurrentAction.insert(std::make_pair(1, std::any(wstrDescribeCharacterAttributes)));
-CurrentAction.insert(std::make_pair(2, std::any(ID_ACTION)));
-DolphinActionCollection.push_back(CurrentAction);
-CurrentAction.clear();
-CurrentAction.insert(std::make_pair(0, std::any(124)));
-CurrentAction.insert(std::make_pair(1, std::any(wstrPhoneticCharacter)));
-CurrentAction.insert(std::make_pair(2, std::any(ID_ACTION)));
-DolphinActionCollection.push_back(CurrentAction);
-CurrentAction.clear();
-CurrentAction.insert(std::make_pair(0, std::any(125)));
-CurrentAction.insert(std::make_pair(1, std::any(wstrReadWord)));
-CurrentAction.insert(std::make_pair(2, std::any(ID_ACTION)));
-DolphinActionCollection.push_back(CurrentAction);
-CurrentAction.clear();
-CurrentAction.insert(std::make_pair(0, std::any(126)));
-CurrentAction.insert(std::make_pair(1, std::any(wstrSpellWord)));
-CurrentAction.insert(std::make_pair(2, std::any(ID_ACTION)));
-DolphinActionCollection.push_back(CurrentAction);
-CurrentAction.clear();
-CurrentAction.insert(std::make_pair(0, std::any(127)));
-CurrentAction.insert(std::make_pair(1, std::any(wstrVerboseWord)));
-CurrentAction.insert(std::make_pair(2, std::any(ID_ACTION)));
-DolphinActionCollection.push_back(CurrentAction);
-CurrentAction.clear();
-CurrentAction.insert(std::make_pair(0, std::any(128)));
-CurrentAction.insert(std::make_pair(1, std::any(wstrPhoneticWord)));
-CurrentAction.insert(std::make_pair(2, std::any(ID_ACTION)));
-DolphinActionCollection.push_back(CurrentAction);
-CurrentAction.clear();
-CurrentAction.insert(std::make_pair(0, std::any(129)));
-CurrentAction.insert(std::make_pair(1, std::any(wstrReadLine)));
-CurrentAction.insert(std::make_pair(2, std::any(ID_ACTION)));
-DolphinActionCollection.push_back(CurrentAction);
-CurrentAction.clear();
-CurrentAction.insert(std::make_pair(0, std::any(130)));
-CurrentAction.insert(std::make_pair(1, std::any(wstrSpellLine)));
-CurrentAction.insert(std::make_pair(2, std::any(ID_ACTION)));
-DolphinActionCollection.push_back(CurrentAction);
-CurrentAction.clear();
-CurrentAction.insert(std::make_pair(0, std::any(131)));
-CurrentAction.insert(std::make_pair(1, std::any(wstrVerboseLine)));
-CurrentAction.insert(std::make_pair(2, std::any(ID_ACTION)));
-DolphinActionCollection.push_back(CurrentAction);
-CurrentAction.clear();
-CurrentAction.insert(std::make_pair(0, std::any(132)));
-CurrentAction.insert(std::make_pair(1, std::any(wstrPhoneticLine)));
-CurrentAction.insert(std::make_pair(2, std::any(ID_ACTION)));
-DolphinActionCollection.push_back(CurrentAction);
-CurrentAction.clear();
-CurrentAction.insert(std::make_pair(0, std::any(134)));
-CurrentAction.insert(std::make_pair(1, std::any(wstrReadWindow)));
-CurrentAction.insert(std::make_pair(2, std::any(ID_ACTION)));
-DolphinActionCollection.push_back(CurrentAction);
-CurrentAction.clear();
-CurrentAction.insert(std::make_pair(0, std::any(135)));
-CurrentAction.insert(std::make_pair(1, std::any(wstrVerboseWindow)));
-CurrentAction.insert(std::make_pair(2, std::any(ID_ACTION)));
-DolphinActionCollection.push_back(CurrentAction);
-CurrentAction.clear();
-CurrentAction.insert(std::make_pair(0, std::any(136)));
-CurrentAction.insert(std::make_pair(1, std::any(wstrWhereAmI)));
-CurrentAction.insert(std::make_pair(2, std::any(ID_ACTION)));
-DolphinActionCollection.push_back(CurrentAction);
-CurrentAction.clear();
-CurrentAction.insert(std::make_pair(0, std::any(137)));
-CurrentAction.insert(std::make_pair(1, std::any(wstrReadShortcut)));
-CurrentAction.insert(std::make_pair(2, std::any(ID_ACTION)));
-DolphinActionCollection.push_back(CurrentAction);
-CurrentAction.clear();
-CurrentAction.insert(std::make_pair(0, std::any(139)));
-CurrentAction.insert(std::make_pair(1, std::any(wstrReadControl)));
-CurrentAction.insert(std::make_pair(2, std::any(ID_ACTION)));
-DolphinActionCollection.push_back(CurrentAction);
-CurrentAction.clear();
-CurrentAction.insert(std::make_pair(0, std::any(140)));
-CurrentAction.insert(std::make_pair(1, std::any(wstrVerboseControl)));
-CurrentAction.insert(std::make_pair(2, std::any(ID_ACTION)));
-DolphinActionCollection.push_back(CurrentAction);
-CurrentAction.clear();
-CurrentAction.insert(std::make_pair(0, std::any(14)));
-CurrentAction.insert(std::make_pair(1, std::any(wstr1Mute)));
-CurrentAction.insert(std::make_pair(2, std::any(ID_ACTION)));
-DolphinActionCollection.push_back(CurrentAction);
-CurrentAction.clear();
-CurrentAction.insert(std::make_pair(0, std::any(185)));
-CurrentAction.insert(std::make_pair(1, std::any(wstrReadStatusBar)));
-CurrentAction.insert(std::make_pair(2, std::any(ID_ACTION)));
-DolphinActionCollection.push_back(CurrentAction);
-CurrentAction.clear();
-CurrentAction.insert(std::make_pair(0, std::any(186)));
-CurrentAction.insert(std::make_pair(1, std::any(wstrSpellStatusBar)));
-CurrentAction.insert(std::make_pair(2, std::any(ID_ACTION)));
-DolphinActionCollection.push_back(CurrentAction);
-CurrentAction.clear();
-CurrentAction.insert(std::make_pair(0, std::any(187)));
-CurrentAction.insert(std::make_pair(1, std::any(wstrVerboseStatusBar)));
-CurrentAction.insert(std::make_pair(2, std::any(ID_ACTION)));
-DolphinActionCollection.push_back(CurrentAction);
-CurrentAction.clear();
-CurrentAction.insert(std::make_pair(0, std::any(188)));
-CurrentAction.insert(std::make_pair(1, std::any(wstrPhoneticStatusBar)));
-CurrentAction.insert(std::make_pair(2, std::any(ID_ACTION)));
-DolphinActionCollection.push_back(CurrentAction);
-CurrentAction.clear();
-CurrentAction.insert(std::make_pair(0, std::any(198)));
-CurrentAction.insert(std::make_pair(1, std::any(wstrSpeedUp)));
-CurrentAction.insert(std::make_pair(2, std::any(ID_ACTION)));
-DolphinActionCollection.push_back(CurrentAction);
-CurrentAction.clear();
-CurrentAction.insert(std::make_pair(0, std::any(199)));
-CurrentAction.insert(std::make_pair(1, std::any(wstrSpeedDown)));
-CurrentAction.insert(std::make_pair(2, std::any(ID_ACTION)));
-DolphinActionCollection.push_back(CurrentAction);
-CurrentAction.clear();
-CurrentAction.insert(std::make_pair(0, std::any(76)));
-CurrentAction.insert(std::make_pair(1, std::any(wstrBrailleBack)));
-CurrentAction.insert(std::make_pair(2, std::any(ID_ACTION)));
-DolphinActionCollection.push_back(CurrentAction);
-CurrentAction.clear();
-CurrentAction.insert(std::make_pair(0, std::any(77)));
-CurrentAction.insert(std::make_pair(1, std::any(wstrBrailleForward)));
-CurrentAction.insert(std::make_pair(2, std::any(ID_ACTION)));
-DolphinActionCollection.push_back(CurrentAction);
-CurrentAction.clear();
-CurrentAction.insert(std::make_pair(0, std::any(78)));
-CurrentAction.insert(std::make_pair(1, std::any(wstrBrailleLeft)));
-CurrentAction.insert(std::make_pair(2, std::any(ID_ACTION)));
-DolphinActionCollection.push_back(CurrentAction);
-CurrentAction.clear();
-CurrentAction.insert(std::make_pair(0, std::any(79)));
-CurrentAction.insert(std::make_pair(1, std::any(wstrBrailleRight)));
-CurrentAction.insert(std::make_pair(2, std::any(ID_ACTION)));
-DolphinActionCollection.push_back(CurrentAction);
-CurrentAction.clear();
-CurrentAction.insert(std::make_pair(0, std::any(80)));
-CurrentAction.insert(std::make_pair(1, std::any(wstrBrailleWidthLeft)));
-CurrentAction.insert(std::make_pair(2, std::any(ID_ACTION)));
-DolphinActionCollection.push_back(CurrentAction);
-CurrentAction.clear();
-CurrentAction.insert(std::make_pair(0, std::any(81)));
-CurrentAction.insert(std::make_pair(1, std::any(wstrBrailleWidthRight)));
-CurrentAction.insert(std::make_pair(2, std::any(ID_ACTION)));
-DolphinActionCollection.push_back(CurrentAction);
-CurrentAction.clear();
-CurrentAction.insert(std::make_pair(0, std::any(82)));
-CurrentAction.insert(std::make_pair(1, std::any(wstrBrailleHalfWidthLeft)));
-CurrentAction.insert(std::make_pair(2, std::any(ID_ACTION)));
-DolphinActionCollection.push_back(CurrentAction);
-CurrentAction.clear();
-CurrentAction.insert(std::make_pair(0, std::any(83)));
-CurrentAction.insert(std::make_pair(1, std::any(wstrBrailleHalfWidthRight)));
-CurrentAction.insert(std::make_pair(2, std::any(ID_ACTION)));
-DolphinActionCollection.push_back(CurrentAction);
-CurrentAction.clear();
-CurrentAction.insert(std::make_pair(0, std::any(84)));
-CurrentAction.insert(std::make_pair(1, std::any(wstrBrailleGoToFocus)));
-CurrentAction.insert(std::make_pair(2, std::any(ID_ACTION)));
-DolphinActionCollection.push_back(CurrentAction);
-CurrentAction.clear();
-CurrentAction.insert(std::make_pair(0, std::any(85)));
-CurrentAction.insert(std::make_pair(1, std::any(wstrBrailleHome)));
-CurrentAction.insert(std::make_pair(2, std::any(ID_ACTION)));
-DolphinActionCollection.push_back(CurrentAction);
-CurrentAction.clear();
-CurrentAction.insert(std::make_pair(0, std::any(86)));
-CurrentAction.insert(std::make_pair(1, std::any(wstrBrailleEnd)));
-CurrentAction.insert(std::make_pair(2, std::any(ID_ACTION)));
-DolphinActionCollection.push_back(CurrentAction);
-CurrentAction.clear();
-CurrentAction.insert(std::make_pair(0, std::any(175)));
-CurrentAction.insert(std::make_pair(1, std::any(wstrToggleBraille)));
-CurrentAction.insert(std::make_pair(2, std::any(ID_ACTION)));
-DolphinActionCollection.push_back(CurrentAction);
-CurrentAction.clear();
-CurrentAction.insert(std::make_pair(0, std::any(176)));
-CurrentAction.insert(std::make_pair(1, std::any(wstrDisplayCharacters)));
-CurrentAction.insert(std::make_pair(2, std::any(ID_ACTION)));
-DolphinActionCollection.push_back(CurrentAction);
-CurrentAction.clear();
-CurrentAction.insert(std::make_pair(0, std::any(177)));
-CurrentAction.insert(std::make_pair(1, std::any(wstrCycleAttributes)));
-CurrentAction.insert(std::make_pair(2, std::any(ID_ACTION)));
-DolphinActionCollection.push_back(CurrentAction);
-CurrentAction.clear();
-CurrentAction.insert(std::make_pair(0, std::any(178)));
-CurrentAction.insert(std::make_pair(1, std::any(wstrDisplayFontSize)));
-CurrentAction.insert(std::make_pair(2, std::any(ID_ACTION)));
-DolphinActionCollection.push_back(CurrentAction);
-CurrentAction.clear();
-CurrentAction.insert(std::make_pair(0, std::any(179)));
-CurrentAction.insert(std::make_pair(1, std::any(wstrDisplayFontStyle)));
-CurrentAction.insert(std::make_pair(2, std::any(ID_ACTION)));
-DolphinActionCollection.push_back(CurrentAction);
-CurrentAction.clear();
-CurrentAction.insert(std::make_pair(0, std::any(180)));
-CurrentAction.insert(std::make_pair(1, std::any(wstrDisplayFontColours)));
-CurrentAction.insert(std::make_pair(2, std::any(ID_ACTION)));
-DolphinActionCollection.push_back(CurrentAction);
-CurrentAction.clear();
-CurrentAction.insert(std::make_pair(0, std::any(181)));
-CurrentAction.insert(std::make_pair(1, std::any(wstrDisplayFontForegroundColour)));
-CurrentAction.insert(std::make_pair(2, std::any(ID_ACTION)));
-DolphinActionCollection.push_back(CurrentAction);
-CurrentAction.clear();
-CurrentAction.insert(std::make_pair(0, std::any(182)));
-CurrentAction.insert(std::make_pair(1, std::any(wstrDisplayFontName)));
-CurrentAction.insert(std::make_pair(2, std::any(ID_ACTION)));
-DolphinActionCollection.push_back(CurrentAction);
-CurrentAction.clear();
-CurrentAction.insert(std::make_pair(0, std::any(183)));
-CurrentAction.insert(std::make_pair(1, std::any(wstrDescribeCharacter)));
-CurrentAction.insert(std::make_pair(2, std::any(ID_ACTION)));
-DolphinActionCollection.push_back(CurrentAction);
-CurrentAction.clear();
-CurrentAction.insert(std::make_pair(0, std::any(184)));
-CurrentAction.insert(std::make_pair(1, std::any(wstrToggleCursor)));
-CurrentAction.insert(std::make_pair(2, std::any(ID_ACTION)));
-DolphinActionCollection.push_back(CurrentAction);
-CurrentAction.clear();
-CurrentAction.insert(std::make_pair(0, std::any(189)));
-CurrentAction.insert(std::make_pair(1, std::any(wstrToggleTracking)));
-CurrentAction.insert(std::make_pair(2, std::any(ID_ACTION)));
-DolphinActionCollection.push_back(CurrentAction);
-CurrentAction.clear();
-CurrentAction.insert(std::make_pair(0, std::any(190)));
-CurrentAction.insert(std::make_pair(1, std::any(wstrBrailleLineDown)));
-CurrentAction.insert(std::make_pair(2, std::any(ID_ACTION)));
-DolphinActionCollection.push_back(CurrentAction);
-CurrentAction.clear();
-CurrentAction.insert(std::make_pair(0, std::any(191)));
-CurrentAction.insert(std::make_pair(1, std::any(wstrBrailleLineUp)));
-CurrentAction.insert(std::make_pair(2, std::any(ID_ACTION)));
-DolphinActionCollection.push_back(CurrentAction);
-CurrentAction.clear();
-CurrentAction.insert(std::make_pair(0, std::any(192)));
-CurrentAction.insert(std::make_pair(1, std::any(wstrBrailleBottom)));
-CurrentAction.insert(std::make_pair(2, std::any(ID_ACTION)));
-DolphinActionCollection.push_back(CurrentAction);
-CurrentAction.clear();
-CurrentAction.insert(std::make_pair(0, std::any(193)));
-CurrentAction.insert(std::make_pair(1, std::any(wstrTBrailleTP)));
-CurrentAction.insert(std::make_pair(2, std::any(ID_ACTION)));
-DolphinActionCollection.push_back(CurrentAction);
-CurrentAction.clear();
-CurrentAction.insert(std::make_pair(0, std::any(197)));
-CurrentAction.insert(std::make_pair(1, std::any(wstrToggleLayoutMode)));
-CurrentAction.insert(std::make_pair(2, std::any(ID_ACTION)));
-DolphinActionCollection.push_back(CurrentAction);
-CurrentAction.clear();
-CurrentAction.insert(std::make_pair(0, std::any(217)));
-CurrentAction.insert(std::make_pair(1, std::any(wstrToggleLiteraryBraille)));
-CurrentAction.insert(std::make_pair(2, std::any(ID_ACTION)));
-DolphinActionCollection.push_back(CurrentAction);
-CurrentAction.clear();
-CurrentAction.insert(std::make_pair(0, std::any(218)));
-CurrentAction.insert(std::make_pair(1, std::any(wstrTogglePhysicalMode)));
-CurrentAction.insert(std::make_pair(2, std::any(ID_ACTION)));
-DolphinActionCollection.push_back(CurrentAction);
-CurrentAction.clear();
-CurrentAction.insert(std::make_pair(0, std::any(142)));
-CurrentAction.insert(std::make_pair(1, std::any(wstrIncreaseMag)));
-CurrentAction.insert(std::make_pair(2, std::any(ID_ACTION)));
-DolphinActionCollection.push_back(CurrentAction);
-CurrentAction.clear();
-CurrentAction.insert(std::make_pair(0, std::any(143)));
-CurrentAction.insert(std::make_pair(1, std::any(wstrDecreaseMag)));
-CurrentAction.insert(std::make_pair(2, std::any(ID_ACTION)));
-DolphinActionCollection.push_back(CurrentAction);
-CurrentAction.clear();
-CurrentAction.insert(std::make_pair(0, std::any(146)));
-CurrentAction.insert(std::make_pair(1, std::any(wstrIncrementXMag)));
-CurrentAction.insert(std::make_pair(2, std::any(ID_ACTION)));
-DolphinActionCollection.push_back(CurrentAction);
-CurrentAction.clear();
-CurrentAction.insert(std::make_pair(0, std::any(147)));
-CurrentAction.insert(std::make_pair(1, std::any(wstrDecrementXMag)));
-CurrentAction.insert(std::make_pair(2, std::any(ID_ACTION)));
-DolphinActionCollection.push_back(CurrentAction);
-CurrentAction.clear();
-CurrentAction.insert(std::make_pair(0, std::any(148)));
-CurrentAction.insert(std::make_pair(1, std::any(wstrIncrementYMag)));
-CurrentAction.insert(std::make_pair(2, std::any(ID_ACTION)));
-DolphinActionCollection.push_back(CurrentAction);
-CurrentAction.clear();
-CurrentAction.insert(std::make_pair(0, std::any(149)));
-CurrentAction.insert(std::make_pair(1, std::any(wstrDecrementYMag)));
-CurrentAction.insert(std::make_pair(2, std::any(ID_ACTION)));
-DolphinActionCollection.push_back(CurrentAction);
-CurrentAction.clear();
-CurrentAction.insert(std::make_pair(0, std::any(150)));
-CurrentAction.insert(std::make_pair(1, std::any(wstrToggleMag)));
-CurrentAction.insert(std::make_pair(2, std::any(ID_ACTION)));
-DolphinActionCollection.push_back(CurrentAction);
-CurrentAction.clear();
-CurrentAction.insert(std::make_pair(0, std::any(151)));
-CurrentAction.insert(std::make_pair(1, std::any(wstrToggleColourChanger)));
-CurrentAction.insert(std::make_pair(2, std::any(ID_ACTION)));
-DolphinActionCollection.push_back(CurrentAction);
-CurrentAction.clear();
-CurrentAction.insert(std::make_pair(0, std::any(152)));
-CurrentAction.insert(std::make_pair(1, std::any(wstrToggleOverviewMode)));
-CurrentAction.insert(std::make_pair(2, std::any(ID_ACTION)));
-DolphinActionCollection.push_back(CurrentAction);
-CurrentAction.clear();
-CurrentAction.insert(std::make_pair(0, std::any(153)));
-CurrentAction.insert(std::make_pair(1, std::any(wstrCyclePrimaryAreaType)));
-CurrentAction.insert(std::make_pair(2, std::any(ID_ACTION)));
-DolphinActionCollection.push_back(CurrentAction);
-CurrentAction.clear();
-CurrentAction.insert(std::make_pair(0, std::any(155)));
-CurrentAction.insert(std::make_pair(1, std::any(wstrCycleOrientation)));
-CurrentAction.insert(std::make_pair(2, std::any(ID_ACTION)));
-DolphinActionCollection.push_back(CurrentAction);
-CurrentAction.clear();
-CurrentAction.insert(std::make_pair(0, std::any(156)));
-CurrentAction.insert(std::make_pair(1, std::any(wstrImageSmoothing)));
-CurrentAction.insert(std::make_pair(2, std::any(ID_ACTION)));
-DolphinActionCollection.push_back(CurrentAction);
-CurrentAction.clear();
-CurrentAction.insert(std::make_pair(0, std::any(157)));
-CurrentAction.insert(std::make_pair(1, std::any(wstrToggleMagTracking)));
-CurrentAction.insert(std::make_pair(2, std::any(ID_ACTION)));
-DolphinActionCollection.push_back(CurrentAction);
-CurrentAction.clear();
-CurrentAction.insert(std::make_pair(0, std::any(158)));
-CurrentAction.insert(std::make_pair(1, std::any(wstrDisplayHookedAreas)));
-CurrentAction.insert(std::make_pair(2, std::any(ID_ACTION)));
-DolphinActionCollection.push_back(CurrentAction);
-CurrentAction.clear();
-CurrentAction.insert(std::make_pair(0, std::any(204)));
-CurrentAction.insert(std::make_pair(1, std::any(wstrLineViewWholeWindows)));
-CurrentAction.insert(std::make_pair(2, std::any(ID_ACTION)));
-DolphinActionCollection.push_back(CurrentAction);
-ActionInformation =std::make_pair(AvailableDolphinActionFields, DolphinActionCollection); //return what is required.
-		return S_OK;
-#else
-return E_NOTIMPL;
-#endif
-}
-	
-HRESULT RBSpeech::ExecuteDolphinAction(std::any& name, ScreenReaderActionType& type, DWORD& ReturnCode)
-	{
-#ifndef _WIN64
-		HRESULT hReturnValue =S_OK;
-		DWORD ReturnValue =-1;
-		DWORD DolphinCommand =-1; //store the dolphin command.
-		// wchar_t *ScriptStr;
-	// DWORD ScriptStrLen;
-ExitOnNull(ReturnCode, hReturnValue, S_FALSE, "No exact return code was supplied.");
-//determine what action type we have.
-switch(type)
-{
-case ID_ACTION:
-	ExitOnFalse(IsInt( name), hReturnValue, S_FALSE, "the command ID supplied is not an int."); //see if the name parameter contains an int, if it doesn't exit.
-	DolphinCommand =(DWORD) AsInt( name); //convert to a DWORD.
-	ReturnValue =DolAccess_Action(DolphinCommand);
-switch(ReturnValue)
-{
-case 0:
-	ReturnCode =ID_SUCCESS;
-break;
-case 1:
-	ReturnCode =ID_No_Server;
-	hReturnValue =S_FALSE;
-	break;
-case 2:
-	ReturnCode =		ID_INVALID_ID;
-	hReturnValue =S_FALSE;
-	break;
-case 3:
-	ReturnCode =ID_INVALID_LENGTH;
-	hReturnValue =S_FALSE;
-	break;
-case 4:
-	ReturnCode =ID_INVALID_ACTION;
-	hReturnValue =S_FALSE;
-	break;
-case 5:
-	ReturnCode =ID_ALREADY_IN_USE;
-	hReturnValue =S_FALSE;
-	break;
-case 6: 
-	ReturnCode =ID_SUPERNOVA_CONTROL_PANEL_IN_USE;
-	hReturnValue =S_FALSE;
-	break;
-case 7:
-	ReturnValue =ID_SUPERNOVA_NOT_RESPONDING;
-	hReturnValue =S_FALSE;
-	break;
-case 8:
-	ReturnCode =ID_SET_VAL_FAILED_PARAMETER_READONLY;
-	hReturnValue =S_FALSE;
-	break;
-default:
-	hReturnValue =S_FALSE;
-	break;
-};
-default:
-hReturnValue =S_FALSE;
-	break;
-};
-LExit:
-return hReturnValue;
-#else
-		return E_NOTIMPL;
-#endif
-}
-	
 //System Access.
-/// <summary> Determine whether Dolphin is currently active in memory. </summary>
+/// <summary> Determine whether System Access is currently active in memory. </summary>
 	/// <returns> returns true if System Access is active, false otherwise. </returns>
 bool  RBSpeech::IsSystemAccessActive()
 {
@@ -1469,7 +705,7 @@ LExit:
 	//public functions.
 
 	
-	HRESULT RBSpeech::GetActiveProduct(ActiveProduct& Product, DolphinProduct& SpecificDolphinProduct)
+	HRESULT RBSpeech::GetActiveProduct(ActiveProduct& Product)
 {
 	// Checking means scanning every running process and loading each screen reader's API,
 	// which is far too slow to repeat for every display update, so reuse a recent answer.
@@ -1478,7 +714,7 @@ LExit:
 	if ((blnHaveActiveProduct == false)
 		|| ((nNow - nActiveProductTime) >= nActiveProductCacheMs))
 	{
-		hrActiveProduct = DetectActiveProduct( CachedProduct, CachedDolphinProduct);
+		hrActiveProduct = DetectActiveProduct( CachedProduct);
 		nActiveProductTime = nNow;
 		blnHaveActiveProduct = true;
 
@@ -1490,7 +726,6 @@ LExit:
 	}
 
 	Product = CachedProduct;
-	SpecificDolphinProduct = CachedDolphinProduct;
 	return hrActiveProduct;
 }
 
@@ -1507,13 +742,10 @@ void RBSpeech::RefreshActiveProduct()
 }
 
 
-	HRESULT RBSpeech::DetectActiveProduct(ActiveProduct& Product, DolphinProduct& SpecificDolphinProduct)
+	HRESULT RBSpeech::DetectActiveProduct(ActiveProduct& Product)
 {
 HRESULT hReturnValue =S_OK;
-DolphinProduct ExactDolphinProduct =ID_NOPRODUCT; //we always obtain even if we can't output.
-SpecificDolphinProduct = ID_NOPRODUCT;
-
-//check to see what is active, in order of preference: JAWS, NVDA, Dolphin, System Access, then Narrator.
+//check to see what is active, in order of preference: JAWS, NVDA, System Access, then Narrator.
 if (IsJAWSActive())
 { //JAWS IS ACTIVE.
 	Product = ID_JAWS;
@@ -1522,11 +754,7 @@ else if (IsNVDAActive())
 	{ //NVDA is active.
 		Product =ID_NVDA;
 	} //End NVDA active block.
-else if (IsDolphinActive(ExactDolphinProduct))
-	{ //Dolphin is active.
-		Product =ID_DOLPHIN;
-		SpecificDolphinProduct =ExactDolphinProduct;
-	} //Dolphin is active.
+
 else if (IsSystemAccessActive())
 	{ //System Access is active.
 	Product =ID_SYSTEMACCESS;
@@ -1547,9 +775,8 @@ return hReturnValue;
 bool RBSpeech::LoadAPI()
 {
 	ActiveProduct CurrentProduct;
-	DolphinProduct SpecificDolphinProduct;
 
-	if (GetActiveProduct(CurrentProduct, SpecificDolphinProduct))
+	if (GetActiveProduct( CurrentProduct))
 	{
 	switch(CurrentProduct)
 	{
@@ -1570,12 +797,6 @@ bool RBSpeech::LoadAPI()
 				}
 				break;
 		
-	case ID_DOLPHIN:
-					{
-						return LoadDolphinApi();
-					}
-					break;
-		
 	default:
 			{
 return false;
@@ -1592,8 +813,7 @@ return false;
 void RBSpeech::UnloadAPI()
 {
 	ActiveProduct CurrentProduct;
-	DolphinProduct SpecificDolphinProduct;
-	GetActiveProduct(CurrentProduct, SpecificDolphinProduct);
+	GetActiveProduct( CurrentProduct);
 	switch(CurrentProduct)
 	{
 	case ID_JAWS:
@@ -1605,9 +825,6 @@ void RBSpeech::UnloadAPI()
 		case ID_SYSTEMACCESS:
 			UnloadSystemAccessApi();
 				break;
-		case ID_DOLPHIN:
-				UnloadDolphinApi();
-			break;
 		default:
 		break;
 	}
@@ -1631,12 +848,12 @@ void RBSpeech::Mute( bool blnNewMute)
 blnMuted = blnNewMute;
 }
 
-HRESULT RBSpeech::Speak(std::wstring strText, DolphinReturnCode& ReturnCode)
+HRESULT RBSpeech::Speak(std::wstring strText)
 {
-	return Speak(strText, false, ReturnCode);
+	return Speak(strText, false);
 }
 	
-HRESULT RBSpeech::Speak(std::wstring strText, BOOL blnSilence, DolphinReturnCode& ReturnCode)
+HRESULT RBSpeech::Speak(std::wstring strText, BOOL blnSilence)
 {
 	// The Mac version always honoured mute; the Windows one ignored it
 	if (IsMuted() == S_OK)
@@ -1651,8 +868,7 @@ HRESULT RBSpeech::Speak(std::wstring strText, BOOL blnSilence, DolphinReturnCode
 
 	HRESULT hReturnValue =S_FALSE;
 	ActiveProduct CurrentProduct;
-	DolphinProduct SpecificDolphinProduct;
-	GetActiveProduct(CurrentProduct, SpecificDolphinProduct);
+	GetActiveProduct( CurrentProduct);
 
 	// A screen reader's own API works while SurfaceReader is in the background,
 	// which UI Automation notifications may not, so use it whenever there is one.
@@ -1667,9 +883,6 @@ HRESULT RBSpeech::Speak(std::wstring strText, BOOL blnSilence, DolphinReturnCode
 		case ID_SYSTEMACCESS:
 				hReturnValue =SystemAccessSpeak(strText, blnSilence);
 				break;
-		case ID_DOLPHIN:
-					hReturnValue =DolphinSpeak(strText, blnSilence, ReturnCode);
-			break;
 		case ID_NARRATOR:
 			// Narrator has no API of its own; it reads UI Automation notifications
 			hReturnValue = pAnnouncer->Announce( strText, (blnSilence != FALSE));
@@ -1703,12 +916,11 @@ HRESULT RBSpeech::Speak(std::wstring strText, BOOL blnSilence, DolphinReturnCode
 	return hReturnValue;
 }
 
-HRESULT RBSpeech::Silence(DolphinReturnCode& ReturnCode)
+HRESULT RBSpeech::Silence()
 {
 	HRESULT hReturnValue =S_FALSE;
 	ActiveProduct CurrentProduct;
-	DolphinProduct SpecificDolphinProduct;
-	hReturnValue =GetActiveProduct(CurrentProduct, SpecificDolphinProduct);
+	hReturnValue =GetActiveProduct( CurrentProduct);
 	ExitOnFailure(hReturnValue, "No product is active.");
 	switch(CurrentProduct)
 	{
@@ -1721,9 +933,6 @@ HRESULT RBSpeech::Silence(DolphinReturnCode& ReturnCode)
 		case ID_SYSTEMACCESS:
 				hReturnValue =SystemAccessSilence();
 				break;
-		case ID_DOLPHIN:
-					hReturnValue =DolphinSilence(ReturnCode);
-			break;
 		default:
 		hReturnValue =E_NOTIMPL;
 			break;
@@ -1736,7 +945,6 @@ HRESULT RBSpeech::IsHotSpotInSet(std::wstring SetName, std::wstring SpotName)
 {
 	HRESULT hReturnValue =S_OK;
 	ActiveProduct CurrentProduct;
-	DolphinProduct SpecificDolphinProduct;
 	boost::property_tree::ptree IniTree; //used to store hsc information.
 		boost::property_tree::ptree::assoc_iterator it;	 
 		std::string SetNameStr;
@@ -1744,7 +952,7 @@ HRESULT RBSpeech::IsHotSpotInSet(std::wstring SetName, std::wstring SpotName)
 	ExitOnTrue(SetName.empty(), hReturnValue, S_FALSE, "No hot spot set has been provided.");
 	ExitOnTrue(SpotName.empty(), hReturnValue, S_FALSE, "No hot spot name has been provided.");
 	ExitOnFalse(fs::exists(SetName), hReturnValue, S_FALSE, "The hot spot set does not exist.");
-		hReturnValue =GetActiveProduct(CurrentProduct, SpecificDolphinProduct);
+		hReturnValue =GetActiveProduct( CurrentProduct);
 	ExitOnFailure(hReturnValue, "No product is active.");
 	switch(CurrentProduct)
 	{
@@ -1770,10 +978,9 @@ HRESULT RBSpeech::IsHotSpotInCurrentSet(std::wstring SpotName)
 	{
 		HRESULT hReturnValue =S_OK;
 		ActiveProduct CurrentProduct;
-		DolphinProduct SpecificDolphinProduct;
 		std::wstring CurrentSet;
 		ExitOnTrue(SpotName.empty(), hReturnValue, S_FALSE, "No hot spot name has been provided.");
-		hReturnValue =GetActiveProduct(CurrentProduct, SpecificDolphinProduct);	
+		hReturnValue =GetActiveProduct( CurrentProduct);	
 		ExitOnFailure(hReturnValue, "No product is active.");
 	switch(CurrentProduct)
 		{
@@ -1795,13 +1002,12 @@ LExit:
 	{
 		HRESULT hReturnValue =S_OK;
 		ActiveProduct CurrentProduct;
-		DolphinProduct SpecificDolphinProduct;
 		boost::property_tree::ptree IniTree; //used to store hsc information.
 		boost::property_tree::ptree::assoc_iterator it;	 
 		std::string SetNameStr;
 	ExitOnTrue(SetName.empty(), hReturnValue, S_FALSE, "No hot spot set has been provided.");
 	ExitOnFalse(fs::exists(SetName), hReturnValue, S_FALSE, "The hot spot set does not exist.");
-	hReturnValue =GetActiveProduct(CurrentProduct, SpecificDolphinProduct);
+	hReturnValue =GetActiveProduct( CurrentProduct);
 ExitOnFailure(hReturnValue, "No product is active.");
 	switch(CurrentProduct)
 	{
@@ -1851,9 +1057,8 @@ LExit:
 {
 	HRESULT hReturnValue =S_OK;
 ActiveProduct CurrentProduct;
-	DolphinProduct SpecificDolphinProduct;
 	std::wstring CurrentSet;
-	hReturnValue =GetActiveProduct(CurrentProduct, SpecificDolphinProduct);
+	hReturnValue =GetActiveProduct( CurrentProduct);
 ExitOnFailure(hReturnValue, "No product is active.");	
 	switch(CurrentProduct)
 	{
@@ -1881,8 +1086,7 @@ std::wstring ConvertedSpotString;
 			std::wstring JAWSFunctionCallString =L"GetCurrentJAWSEnvironment(\"%s\")"; //used to hold the call to JAWS.
 				fs::path IniFile; //file to store the hsc information.
 			ActiveProduct CurrentProduct;
-	DolphinProduct SpecificDolphinProduct;
-	hr =GetActiveProduct(CurrentProduct, SpecificDolphinProduct);
+	hr =GetActiveProduct( CurrentProduct);
 	ExitOnFailure(hr, "No product is active.");
 				switch(CurrentProduct)
 			{
@@ -1928,12 +1132,11 @@ return hr;
 	{
 		HRESULT hr =S_OK;
 		ActiveProduct CurrentProduct;
-	DolphinProduct SpecificDolphinProduct;
 		std::wstring JAWSFunctionCallString =L"HSCLookupKey( \"%s\")"; //used to hold the call to JAWS.
 		CComVariant vFunctionResult;
 		ExitOnTrue(Set.empty(), hr, S_FALSE, "No hot spot set has been provided.");
 		ExitOnTrue(SpotName.empty(), hr, S_FALSE, "No hot spot name has been provided.");
-			hr =GetActiveProduct(CurrentProduct, SpecificDolphinProduct);
+			hr =GetActiveProduct( CurrentProduct);
 	ExitOnFailure(hr, "No product is active.");
 		switch(CurrentProduct)
 			{
@@ -1963,9 +1166,7 @@ HRESULT RBSpeech::ExecuteAction(std::wstring Action, ScreenReaderActionType Type
 HRESULT hReturnValue =S_OK;
 ExitOnTrue(Action.empty(), hReturnValue, S_FALSE, "no action was supplied.");
 			ActiveProduct CurrentProduct;
-	DolphinProduct SpecificDolphinProduct;
-DWORD ReturnCode =-1;
-	hReturnValue =GetActiveProduct(CurrentProduct, SpecificDolphinProduct);
+	hReturnValue =GetActiveProduct( CurrentProduct);
 	ExitOnFailure(hReturnValue, "No product is active.");
 				
 	switch(CurrentProduct)
@@ -1973,9 +1174,6 @@ DWORD ReturnCode =-1;
 			case ID_JAWS:
 hReturnValue =ExecuteJAWSAction(Action, Type);
 				break;
-case ID_DOLPHIN:
-hReturnValue =ExecuteDolphinAction(std::any(Action), Type, ReturnCode);
-break;
 default:
 hReturnValue =E_NOTIMPL;
 break;
@@ -1989,17 +1187,13 @@ HRESULT RBSpeech::GetAvailableActions(AvailableActionsType& ActionInformation)
 HRESULT hReturnValue =S_OK;
 AvailableActionsType AvailableActions;
 			ActiveProduct CurrentProduct;
-	DolphinProduct SpecificDolphinProduct;
-	hReturnValue =GetActiveProduct(CurrentProduct, SpecificDolphinProduct);
+	hReturnValue =GetActiveProduct( CurrentProduct);
 	ExitOnFailure(hReturnValue, "No product is active.");
 				switch(CurrentProduct)
 			{
 			case ID_JAWS:
 hReturnValue =GetAvailableJAWSActions(AvailableActions);
 				break;
-case ID_DOLPHIN:
-hReturnValue =GetAvailableDolphinActions(AvailableActions);
-break;
 default:
 hReturnValue =E_NOTIMPL;
 break;

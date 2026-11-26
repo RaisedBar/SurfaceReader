@@ -20,7 +20,7 @@ ActionsPage::ActionsPage(wxWizard * wizParent, const wxString & title, std::shar
 
 	myControls = pMyAppConfig->GetHardwareControls();
 myOldActiveProduct =myActiveProduct;
-   pMySpeech->GetActiveProduct( myActiveProduct, myDolphinProduct);
+   pMySpeech->GetActiveProduct( myActiveProduct);
       
   wxPanel *myPanel = new wxPanel(this, -1);
     BuildDataView( myPanel);
@@ -497,11 +497,6 @@ if (wstrName.compare( wstrNVDA) == 0)
 		return ID_NVDA;
 	}
 	
-if (wstrName.compare( wstrDolphin) == 0)
-{
-		return ID_DOLPHIN;
-	}
-	
 return myProduct;
 }
 
@@ -760,9 +755,8 @@ vFailedActions = 		mySurfaceActions.DeleteScreenReaderActionTypes();
 		// Iterate through the available products
 		wxDataViewItem myProductNode = GetFirstChild( myNode); 
 
-for  (unsigned int i =ID_JAWS; i <= ID_MAC; i++)
+for (ActiveProduct myTargetProduct : arrActionProducts)
 {
-ActiveProduct myTargetProduct = static_cast<ActiveProduct>( i); 	
 
 if (myTargetProduct != myProduct)
 	{
@@ -1407,12 +1401,6 @@ case ID_SYSTEMACCESS:
 case ID_NVDA:
 	{
 		return wstrNVDA;
-	}
-	break;
-
-case ID_DOLPHIN:
-{
-		return wstrDolphin;
 	}
 	break;
 

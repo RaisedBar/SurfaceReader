@@ -224,7 +224,6 @@
 		2275FD451FA1DC1E005BB7EC /* SurfaceAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SurfaceAction.h; sourceTree = SOURCE_ROOT; };
 		2275FD471FA1DC1E005BB7EC /* LEDLampsPage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LEDLampsPage.cpp; sourceTree = SOURCE_ROOT; };
 		2275FD481FA1DC1F005BB7EC /* RBSpeech.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RBSpeech.h; sourceTree = SOURCE_ROOT; };
-		2275FD491FA1DC1F005BB7EC /* apiproto.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = apiproto.h; sourceTree = SOURCE_ROOT; };
 		256AC3D80F4B6AC300CF3369 /* SurfaceReaderAppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SurfaceReaderAppDelegate.h; sourceTree = "<group>"; };
 		256AC3F00F4B6AF500CF3369 /* SurfaceReader_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SurfaceReader_Prefix.pch; sourceTree = "<group>"; };
 		29B97324FDCFA39411CA2CEA /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
@@ -304,7 +303,6 @@
 				2275FD401FA1DC1E005BB7EC /* ActionsPageMac.h */,
 				2275FCA51FA1DC0C005BB7EC /* ActionsPageModels.cpp */,
 				2275FCA91FA1DC0C005BB7EC /* ActionsPageModels.h */,
-				2275FD491FA1DC1F005BB7EC /* apiproto.h */,
 				2275FD2B1FA1DC1B005BB7EC /* AppCollection.cpp */,
 				2275FCB51FA1DC0D005BB7EC /* AppCollection.h */,
 				2275FD361FA1DC1C005BB7EC /* AppConfig.cpp */,

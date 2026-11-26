@@ -28,9 +28,8 @@ m_root->Append( myControlNode);
 
 void ActionsTreeModel::AddScreenReaderNodes( ActionsTreeModelNode * myControlNode, std::string strHash, MessageDefinition myMessage)
 {
-for  (unsigned int i =ID_JAWS; i <= ID_MAC; i++)
+for (ActiveProduct myActiveProduct : arrActionProducts)
 {
-ActiveProduct myActiveProduct = static_cast<ActiveProduct>( i); 	
 ActionsTreeModelNode * myScreenReaderNode = new ActionsTreeModelNode( myControlNode, GetActiveProductName( myActiveProduct), SPEECH_LEVEL);
 AddSurfaceModeNodes( myScreenReaderNode, strHash, myMessage);
 myControlNode->Append( myScreenReaderNode);
@@ -372,12 +371,6 @@ case ID_NVDA:
 	}
 	break;
 
-case ID_DOLPHIN:
-{
-		return wstrDolphin;
-	}
-	break;
-
 case ID_MAC:
 {
 return wstrMac;
@@ -501,11 +494,6 @@ if (wstrName.compare( wstrSA) == 0)
 if (wstrName.compare( wstrNVDA) == 0)
 {
 		return ID_NVDA;
-	}
-	
-if (wstrName.compare( wstrDolphin) == 0)
-{
-		return ID_DOLPHIN;
 	}
 	
 if (wstrName.compare( wstrMac) == 0)

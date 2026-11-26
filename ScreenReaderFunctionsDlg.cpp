@@ -283,10 +283,9 @@ lbxActionNames->Append(spot);
 void ScreenReaderFunctionsDlg::ListScreenReaderActions()
 {
 ActiveProduct myProduct;
-DolphinProduct myDolphinProduct;
 
 	lbxActionNames->Clear();
-pMySpeech->GetActiveProduct( myProduct, myDolphinProduct);
+pMySpeech->GetActiveProduct( myProduct);
 
 switch (myProduct)
 {
@@ -315,11 +314,6 @@ case ID_NVDA:
 	}
 	break;
 
-case ID_DOLPHIN:
-{
-		ListDolphinActions();
-	}
-	break;
 #endif
 default:
 {
@@ -582,10 +576,6 @@ void ScreenReaderFunctionsDlg::ListNVDAActions()
 	return;
 }
 
-void ScreenReaderFunctionsDlg::ListDolphinActions()
-		{
-			return;
-		}
 #endif  // end of Windows-specific handlers
 
 

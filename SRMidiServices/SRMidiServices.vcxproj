@@ -3,7 +3,7 @@
   SRMidiServices.exe: a small 64-bit helper that SurfaceReader runs to create, list and remove
   Windows MIDI Services loopback ports. It exists because the Windows MIDI Services API
   (Windows.Devices.Midi2) is only available for x64 and Arm64, and SurfaceReader's main Windows
-  build is 32-bit (the Dolphin screen reader API is 32-bit only).
+  build is 32-bit.
 -->
 <Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="..\packages\Windows.Devices.Midi2.0.99.92-preview.11\build\native\Windows.Devices.Midi2.props" Condition="Exists('..\packages\Windows.Devices.Midi2.0.99.92-preview.11\build\native\Windows.Devices.Midi2.props')" />

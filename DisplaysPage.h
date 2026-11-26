@@ -76,7 +76,6 @@ wxTreeItemIdValue cookie;
 // Buttons to manipulate the tree contents
 wxButton * btnRename, *btnStates;
 // Active access technology product
-DolphinProduct myDolphinProduct;
 ActiveProduct myActiveProduct; //apply action to what product?
 ActiveProduct myOldActiveProduct;
 // Storage for the defined actions

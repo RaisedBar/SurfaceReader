@@ -74,7 +74,6 @@ void ListScreenReaderActions();
 void ListJawsActions();
 		void ListSAActions();
 void ListNVDAActions();
-		void ListDolphinActions();
 #endif
 	
 	//active product.

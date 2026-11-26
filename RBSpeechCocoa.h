@@ -44,13 +44,13 @@ public:
 bool LoadSpeechParameters();
 bool SaveSpeechParameters();
 
-	HRESULT GetActiveProduct(ActiveProduct& Product, DolphinProduct& SpecificDolphinProduct);
+	HRESULT GetActiveProduct(ActiveProduct& Product);
 	HRESULT IsMuted(void);
 	void Mute( bool blnNewMute);
 	
-	HRESULT Speak(std::wstring strText, DolphinReturnCode& ReturnCode);
-	HRESULT Speak(std::wstring strText, bool  blnSilence, DolphinReturnCode& ReturnCode);
-HRESULT Silence(DolphinReturnCode& ReturnCode);
+	HRESULT Speak(std::wstring strText);
+	HRESULT Speak(std::wstring strText, bool  blnSilence);
+HRESULT Silence();
 
 HRESULT GetAvailableActions(AvailableActionsType& ActionInformation);
 HRESULT ExecuteAction(std::wstring Action, ScreenReaderActionType Type);
