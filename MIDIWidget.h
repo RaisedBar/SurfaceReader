@@ -10,6 +10,7 @@
 #pragma once
 
 
+#include <atomic>
 #include <vector>
 #include <string>
 
@@ -182,7 +183,8 @@ protected:
 	std::wstring wstrWidgetName;
 		  int nHardwareInPortID, nHardwareOutPortID, nDisplayInPortID, nDisplayOutPortID;
 std::string strHardwareInPortName, strHardwareOutPortName, strDisplayInPortName, strDisplayOutPortName;
-Mode WidgetMode; //store the current mode on a widget-by-widget basis.
+// The current mode on a widget-by-widget basis. Atomic: the MIDI input thread reads it while the UI changes it.
+std::atomic <Mode> WidgetMode;
 
 // Error strings
 std::vector <std::string> vErrors;
@@ -220,7 +222,10 @@ ar & boost::serialization::make_nvp(DisplayInPortNameTag, strDisplayInPortName);
 const char* DisplayOutPortNameTag ="DisplayOutPortName";
 ar & boost::serialization::make_nvp(DisplayOutPortNameTag, strDisplayOutPortName);
 	const char* WidgetModeTag ="WidgetMode";
-ar & boost::serialization::make_nvp(WidgetModeTag, WidgetMode);
+// Serialized through a plain copy, since an atomic can't be; the saved format is unchanged
+Mode mySavedMode = WidgetMode.load();
+ar & boost::serialization::make_nvp(WidgetModeTag, mySavedMode);
+WidgetMode.store( mySavedMode);
 }
 
 public:
@@ -319,13 +324,13 @@ delete m_DisplayMIDIOut;
 	//WidgetMode functions.
 Mode GetWidgetMode()
 {
-	return WidgetMode;
+	return WidgetMode.load();
 }
 
 
 void SetWidgetMode( Mode NewMode)
 {
-	WidgetMode = NewMode;
+	WidgetMode.store( NewMode);
 	return;
 }
 

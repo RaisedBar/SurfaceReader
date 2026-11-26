@@ -5,12 +5,18 @@
 
 #pragma once
 
+#include <atomic>
+#include <mutex>
+
 #include "AppConfig.h"
 
 //AppCollection class, holding AppConfigs.
 class AppCollection
 {
 public:
+	// Incremented by every change, so a cached copy can tell it is out of date
+	unsigned int GetRevision() const { return nRevision; }
+
 AppCollection();
 ~AppCollection();
 
@@ -47,6 +53,11 @@ myArchive & boost::serialization::make_nvp( cAppCollectionTag, myAppConfigs);
 // Internal storage
 // This map uses a pair of the application exe name and a string version of a Protocol UID as a composite key to reference an application configuration 
 std::map <std::pair <std::wstring, std::wstring>, AppConfig> myAppConfigs;
+
+private:
+	// Guards the map: the surface worker threads read it while the UI thread edits it
+	mutable std::recursive_mutex myMutex;
+	std::atomic <unsigned int> nRevision { 0 };
 };
 
 #endif

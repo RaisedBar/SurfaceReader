@@ -14,9 +14,15 @@
 #include <boost/log/trivial.hpp>
 #include <boost/log/expressions.hpp>
 #include <boost/log/sinks/text_file_backend.hpp>
+#include <boost/log/sinks/sync_frontend.hpp>
+#include <boost/log/attributes/constant.hpp>
 #include <boost/log/utility/setup/file.hpp>
 #include <boost/log/utility/setup/common_attributes.hpp>
 #include <boost/log/sources/severity_logger.hpp>
+#include <atomic>
+#include <memory>
+#include <mutex>
+#include "DispatchQueue.h"
 #include <boost/log/sources/record_ostream.hpp>
 #include <memory>
 
@@ -283,6 +289,10 @@ void AnalyseDisplayMessage(std::vector <unsigned char> vBytes);
 void AnalyseHardwareMessage(std::vector <unsigned char> vBytes);
 void SendHardwareMessage( std::vector <unsigned char> * pMessage);
 void SendDisplayMessage( std::vector <unsigned char> * pMessage);
+// Called on RtMidi's input threads: forward the message, then queue a copy for the worker.
+// Nothing else happens on these threads, so MIDI traffic is never held up.
+void OnHardwareMessage( std::vector <unsigned char> * pMessage);
+void OnDisplayMessage( std::vector <unsigned char> * pMessage);
 
 std::string GetSurfaceID();
 			std::wstring GetSurfaceName();
@@ -316,7 +326,11 @@ void LogIt( std::string strMessage);
 
 private:
 	// Logging
-boost::log::sources::severity_logger<boost::log::trivial::severity_level> lg; //create a logging level.
+boost::log::sources::severity_logger_mt<boost::log::trivial::severity_level> lg; // thread-safe: used by the UI thread and the worker
+// This surface's log file, kept so it can be removed from the logging core when the surface is destroyed
+boost::shared_ptr <boost::log::sinks::synchronous_sink <boost::log::sinks::text_file_backend> > pMyLogSink;
+void OpenLog( const std::string & strLogFile);
+void CloseLog();
 	
 void Speak( std::wstring wstrText, bool blnInterrupt);
 void UpdateStatusBar( std::wstring wstrMode);
@@ -334,10 +348,15 @@ std::pair <int, int> GetCursorInfo( std::string strHash, std::vector <unsigned c
 // Action processing
 std::pair <MessageDefinition, std::string> IdentifyHardwareControl( std::vector <unsigned char> vBuffer, SurfaceProtocol * pProtocol);
 std::pair <DisplayDefinition, std::string> IdentifyDisplay( std::vector <unsigned char> vBuffer, AppConfig * pAppConfig);
-void ProcessLiveModeMessage( std::pair <MessageDefinition, std::string> myHardwarePair, SurfaceProtocol * pProtocol, AppConfig * pAppConfig, unsigned int nControlValue, std::vector <unsigned char> vBuffer);
+void ProcessLiveModeMessage( std::pair <MessageDefinition, std::string> myHardwarePair, SurfaceProtocol * pProtocol, AppConfig * pAppConfig, unsigned int nControlValue, std::vector <unsigned char> vBuffer, bool blnDisplayUpdated = false);
 bool ProcessIDModeMessage( std::string strHash, MessageDefinition myMessageDefinition, SurfaceProtocol * pProtocol, AppConfig * pAppConfig, unsigned int nControlState, std::vector <unsigned char> vBuffer);
 bool ProcessConfigModeMessage( std::string strHash, MessageDefinition myMessageDefinition, SurfaceProtocol * pProtocol, AppConfig * pAppConfig, unsigned int nControlState, std::vector <unsigned char> vBuffer);
-void ProcessScreenReaderModeMessage( std::string strHash, MessageDefinition myMessageDefinition, SurfaceProtocol * pProtocol, AppConfig * pAppConfig, unsigned int nControlValue, std::vector <unsigned char> vBuffer);
+void ProcessScreenReaderModeMessage( std::string strHash, MessageDefinition myMessageDefinition, SurfaceProtocol * pProtocol, AppConfig * pAppConfig, unsigned int nControlValue, std::vector <unsigned char> vBuffer, bool blnDisplayUpdated = false);
+// True if the action reads a display or LED, and this message is the one it acts on, so the announcement
+// should wait for the read-display delay to let the DAW update the display first
+bool ActionWaitsForDisplay( SurfaceAction myAction, std::string strHash, int nControlState);
+// Schedule an announcement after the read-display delay, keeping the configuration it uses alive
+void AfterDisplayDelay( std::function <void( SurfaceProtocol *, AppConfig *)> myAnnouncement);
 std::wstring GetActionString( SurfaceAction myAction, MessageDefinition myMessageDefinition, std::string strHash, int nControlState, SurfaceProtocol * pProtocol, AppConfig * pAppConfig, std::vector <unsigned char> vBuffer);
 std::wstring GetControlLabelString( MessageDefinition * myDefinition, std::string strHash, int nDataValue, AppConfig * pAppConfig);
 std::wstring GetControlStateString( MessageDefinition * myDefinition, int nDataValue, AppConfig * pAppConfig);
@@ -390,7 +409,9 @@ ar & boost::serialization::make_nvp(cAppConfigNameTag, wstrAppConfigName);
 if((version > 0) & (version < 2))
             {
 				const char * cReadDisplayDelayTag= "ReadDisplayDelay";
-				ar & boost::serialization::make_nvp( cReadDisplayDelayTag, nReadDisplayDelay);
+				int nSavedDelay = nReadDisplayDelay.load();  // atomics can't be serialized directly; the format is unchanged
+				ar & boost::serialization::make_nvp( cReadDisplayDelayTag, nSavedDelay);
+				nReadDisplayDelay.store( nSavedDelay);
 } // if version > 0
 }
 	
@@ -414,20 +435,44 @@ std::wstring wstrAppConfigName;
 				// Map to hold the actual contents of the displays, indexed by their labels
 std::map <std::wstring, std::wstring> myDisplays;
 
-int nReadDisplayDelay;
+// Set from the UI, read by the worker
+std::atomic <int> nReadDisplayDelay;
 
 std::shared_ptr<ProtocolCollection> pMyProtocols;
 std::shared_ptr<AppCollection> pMyApps;
 
-// Message buffering
+// Message buffering (worker thread only)
 std::vector <unsigned char> vHardwareBuffer, vDisplayBuffer;
 unsigned int nHardwareMessages, nDisplayMessages;
+
+// Guards the protocol and app config IDs and names, set from the UI and read by the worker
+mutable std::mutex myIDMutex;
+// Guards myDisplays, written by the worker and read by the UI (GetDisplayText, GetCurrentState)
+mutable std::mutex myDisplaysMutex;
+
+// The worker's own copies of this surface's protocol and app config (worker thread only).
+// They are copied again only when the IDs change or a collection's revision number moves on,
+// instead of copying both, several times over, for every MIDI message.
+bool RefreshWorkerConfig();
+SurfaceProtocol & WorkerProtocol();
+std::shared_ptr <SurfaceProtocol> pWorkerProtocol;
+std::shared_ptr <AppConfig> pWorkerAppConfig;
+std::string strWorkerProtocolID;
+std::pair <std::wstring, std::wstring> WorkerAppConfigID;
+unsigned int nWorkerProtocolRevision = 0;
+unsigned int nWorkerAppsRevision = 0;
+
+// Runs this surface's message analysis, logging and speech, in order. Declared last so that it is
+// destroyed first; the destructor also stops it before anything it uses is freed.
+WorkerQueue myWorker;
 };  // end of class
 
 // Set the class version for serialisation
 BOOST_CLASS_VERSION(MIDISurface, 3);
 	
-typedef MIDISurface * SurfacePointer;
+// Owning pointer: removing a surface from the vector now destroys it,
+// which closes its MIDI ports and log file.
+typedef std::shared_ptr <MIDISurface> SurfacePointer;
 typedef std::vector <SurfacePointer> SurfaceVectorType;
 
 void HardwareCallback(double deltatime, std::vector< unsigned char > *message, void *pSurface);

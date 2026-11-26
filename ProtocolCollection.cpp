@@ -7,6 +7,7 @@ ProtocolCollection::ProtocolCollection()
 	
 bool ProtocolCollection::IsProtocolNameUnique(std::wstring wstrName)
 		{
+	std::lock_guard <std::recursive_mutex> myLock( myMutex);
 bool blnResult = true;
 
 if (myProtocols.size() == 0)
@@ -31,6 +32,8 @@ return blnResult;
 
 int ProtocolCollection::Add(SurfaceProtocol myNewProtocol)
 	{
+	std::lock_guard <std::recursive_mutex> myLock( myMutex);
+	nRevision++;
 	 std::map <std::string, SurfaceProtocol> ::iterator it;
 	 
 	 it = myProtocols.find( myNewProtocol.GetProtocolID());
@@ -48,6 +51,8 @@ int ProtocolCollection::Add(SurfaceProtocol myNewProtocol)
 	
 void ProtocolCollection::Remove(std::string strProtocolID)
 	{
+	std::lock_guard <std::recursive_mutex> myLock( myMutex);
+	nRevision++;
 		std::map <std::string, SurfaceProtocol> ::iterator it;
 		it = myProtocols.find( strProtocolID);
 	
@@ -72,6 +77,7 @@ return myProtocols.end();
 	// Reports whether a given protocol name already exists in the map by returning its protocol ID
 std::string ProtocolCollection::FindIDForProtocolName(std::wstring myProtocolName)
 	{
+	std::lock_guard <std::recursive_mutex> myLock( myMutex);
 		std::map <std::string, SurfaceProtocol>::const_iterator it;
 				
 		for (it = myProtocols.begin(); it != myProtocols.end(); it++)
@@ -89,6 +95,7 @@ std::string ProtocolCollection::FindIDForProtocolName(std::wstring myProtocolNam
 	// Indicates whether a specified protocol exists in the collection
 bool ProtocolCollection::ProtocolExists(std::string strProtocolID)
 		{
+	std::lock_guard <std::recursive_mutex> myLock( myMutex);
 std::map <std::string, SurfaceProtocol> ::iterator it;
 it = myProtocols.find( strProtocolID);
 
@@ -106,6 +113,7 @@ else
 	// Returns a protocol, based on its ID
 SurfaceProtocol ProtocolCollection::GetProtocol(std::string strProtocolID)
 	{
+	std::lock_guard <std::recursive_mutex> myLock( myMutex);
 				std::map <std::string, SurfaceProtocol> ::iterator it;
 it = myProtocols.find( strProtocolID);
 if (it != myProtocols.end()) 
@@ -123,6 +131,7 @@ return it->second;
 // Returns a protocol, based on its location in the map
 SurfaceProtocol ProtocolCollection::GetProtocol(int nIndex)
 	{
+	std::lock_guard <std::recursive_mutex> myLock( myMutex);
 		std::map <std::string, SurfaceProtocol>::iterator it;
 int i = 0;		
 
@@ -144,6 +153,7 @@ return myProtocols.end()->second;
 //Count.
 int ProtocolCollection::count()
 	{
+	std::lock_guard <std::recursive_mutex> myLock( myMutex);
 		return myProtocols.size();
 	}
 	
