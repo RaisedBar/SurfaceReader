@@ -14,6 +14,7 @@
 #include <functional>
 #include <map>
 #include <mutex>
+#include <string>
 #include <thread>
 
 /* Each MIDI surface owns one of these. The MIDI input callbacks only forward the message and Post a copy
@@ -151,6 +152,39 @@ private:
 	bool blnStopping;
 	unsigned long long nSequence;
 	std::thread myThread;  // last, so everything it uses exists before it starts
+};
+
+
+/* Debouncing for controls that send a stream of messages, such as faders. Each message calls Moved and schedules a
+check (with WorkerQueue::PostAfter) for the same key and the number Moved returned. When a check runs, Settled is
+true only if no message has arrived for that key since, so only the check for the last message acts, once the
+control has been still for the whole delay. Not thread-safe: use it from the worker thread only. */
+
+class SettleGate
+{
+public:
+	// A message has arrived for this key: returns its number
+	unsigned long long Moved( const std::string & strKey)
+	{
+		return ++myLatest[ strKey];
+	}
+
+	// True if nNumber is still the latest message for the key; the key is then forgotten
+	bool Settled( const std::string & strKey, unsigned long long nNumber)
+	{
+		std::map <std::string, unsigned long long>::iterator it = myLatest.find( strKey);
+
+		if ((it == myLatest.end()) || (it->second != nNumber))
+		{
+			return false;
+		}
+
+		myLatest.erase( it);
+		return true;
+	}
+
+private:
+	std::map <std::string, unsigned long long> myLatest;
 };
 
 #endif  // DISPATCH_QUEUE_H

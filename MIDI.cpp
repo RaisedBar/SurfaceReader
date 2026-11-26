@@ -2,6 +2,9 @@
 // implementation of the MIDI utility class
 
 #include "MIDI.h"
+#include <algorithm>
+#include <cctype>
+#include <cstdlib>
 
 
 MIDI::MIDI()
@@ -1199,4 +1202,38 @@ unsigned int nBytePos = nNibbleCount / 2;
 }  // end if nPos > -1
 
 return nNibbleValue;
+}
+
+
+bool IsContinuousControlHash( const std::string & strHash)
+{
+	if (strHash.empty())
+	{
+		return false;
+	}
+
+	// Pitch bend: Mackie Control faders
+	if (strHash.compare( 0, strDoubleHashPrefix.length(), strDoubleHashPrefix) == 0)
+	{
+		return true;
+	}
+
+	// Nibble keys: a single control change (HUI V-Pots and jog wheel). HUI switches are two messages
+	// (zone, then port), so they have more nibbles and stay immediate.
+	if (strHash.compare( 0, strNibbleHashPrefix.length(), strNibbleHashPrefix) == 0)
+	{
+		std::string strControlChange = strNibbleHashPrefix + "11" + HASH_DELIMITER;
+		size_t nNibbles = std::count( strHash.begin(), strHash.end(), HASH_DELIMITER.at( 0));
+		return (strHash.compare( 0, strControlChange.length(), strControlChange) == 0) && (nNibbles <= 6);
+	}
+
+	// Short messages: control changes (faders, V-Pots, jog wheels, pedals) and pitch bend
+	if (std::isdigit( (unsigned char) strHash.at( 0)))
+	{
+		int nStatus = std::atoi( strHash.c_str());
+		return ((nStatus & MIDI_CODE_MASK) == (MIDI_CMD_CONTROL_CHANGE << 4))
+			|| ((nStatus & MIDI_CODE_MASK) == (MIDI_CMD_PITCH_WHEEL << 4));
+	}
+
+	return false;
 }

@@ -357,6 +357,10 @@ void ProcessScreenReaderModeMessage( std::string strHash, MessageDefinition myMe
 bool ActionWaitsForDisplay( SurfaceAction myAction, std::string strHash, int nControlState);
 // Schedule an announcement after the read-display delay, keeping the configuration it uses alive
 void AfterDisplayDelay( std::function <void( SurfaceProtocol *, AppConfig *)> myAnnouncement);
+// Faders and encoders send a stream of messages while they move. Run the announcement for such a control only
+// once it has stayed still for the settle time in SurfaceReader.json, so speech isn't flooded with intermediate
+// values; run anything else (buttons, touch) at once. Worker thread only.
+void WhenSettled( const std::string & strHash, std::function <void( SurfaceProtocol *, AppConfig *, bool)> myAnnouncement);
 std::wstring GetActionString( SurfaceAction myAction, MessageDefinition myMessageDefinition, std::string strHash, int nControlState, SurfaceProtocol * pProtocol, AppConfig * pAppConfig, std::vector <unsigned char> vBuffer);
 std::wstring GetControlLabelString( MessageDefinition * myDefinition, std::string strHash, int nDataValue, AppConfig * pAppConfig);
 std::wstring GetControlStateString( MessageDefinition * myDefinition, int nDataValue, AppConfig * pAppConfig);
@@ -461,6 +465,8 @@ std::string strWorkerProtocolID;
 std::pair <std::wstring, std::wstring> WorkerAppConfigID;
 unsigned int nWorkerProtocolRevision = 0;
 unsigned int nWorkerAppsRevision = 0;
+// For WhenSettled: which message of each moving control is the latest (worker thread only)
+SettleGate mySettleGate;
 
 // Runs this surface's message analysis, logging and speech, in order. Declared last so that it is
 // destroyed first; the destructor also stops it before anything it uses is freed.
