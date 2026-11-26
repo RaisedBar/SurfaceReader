@@ -41,7 +41,6 @@ vBox->SetSizeHints( this );
 RBPanel->Fit();
 vBox->Fit( RBPanel);
 Centre();
-this->Maximize();
 }
 
 

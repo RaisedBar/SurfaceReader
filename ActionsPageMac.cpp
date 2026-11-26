@@ -28,14 +28,14 @@ myOldActiveProduct =myActiveProduct;
       const wxSizerFlags border = wxSizerFlags().DoubleBorder();
 
 // Buttons to control the tree
-		  btnAdd = new wxButton(myPanel, ID_ADD, wstrAddButtonName, wxDefaultPosition, wxSize(70, 30));
-btnRemove = new wxButton(myPanel, ID_DELETE, wstrRemove, wxDefaultPosition, wxSize(70, 30));
-btnReplicate = new wxButton(myPanel, ID_Replicate, wstrReplicateButtonName, wxDefaultPosition, wxSize(70, 30));
-btnRename = new wxButton(myPanel, ID_RENAME, wstrRenameButtonName, wxDefaultPosition, wxSize(70, 30));
-// btnActionProperties = new wxButton(myPanel, ID_PROPERTIES_BUTTON, wxstrPropertiesButtonName, wxDefaultPosition, wxSize(70, 30));
+		  btnAdd = new wxButton(myPanel, ID_ADD, wstrAddButtonName);
+btnRemove = new wxButton(myPanel, ID_DELETE, wstrRemove);
+btnReplicate = new wxButton(myPanel, ID_Replicate, wstrReplicateButtonName);
+btnRename = new wxButton(myPanel, ID_RENAME, wstrRenameButtonName);
+// btnActionProperties = new wxButton(myPanel, ID_PROPERTIES_BUTTON, wxstrPropertiesButtonName);
 btnUp = new wxButton(myPanel, ID_UP, 
-					 wstrUpButtonName, wxDefaultPosition, wxSize(70, 30));
-  btnDown = new wxButton(myPanel, ID_DOWN, wstrDownButtonName, wxDefaultPosition, wxSize(70, 30));
+					 wstrUpButtonName);
+  btnDown = new wxButton(myPanel, ID_DOWN, wstrDownButtonName);
 
   wxBoxSizer *hBoxButtons = new wxBoxSizer(wxHORIZONTAL);
 hBoxButtons->Add( btnRename, 0, wxEXPAND);

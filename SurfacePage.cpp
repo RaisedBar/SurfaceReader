@@ -40,7 +40,7 @@ if (blnListProtocols)
 {
 // List of available control surface protocols
 lblProtocolPrompt = new wxStaticText(this, wxID_ANY, wstrProtocolPrompt);
-	lbxSurfaceProtocols = new wxListBox(this, ID_PROTOCOL_LIST_BOX,  wxDefaultPosition, wxSize( 100, 200), 0, NULL, wxLB_SORT, wxDefaultValidator, wxT( ""));
+	lbxSurfaceProtocols = new wxListBox(this, ID_PROTOCOL_LIST_BOX,  wxDefaultPosition, FromDIP( wxSize( 250, 200)), 0, NULL, wxLB_SORT, wxDefaultValidator, wxT( ""));
 		// Populate the list
 ListProtocols();
 hBoxProtocols->Add( lblProtocolPrompt, 0, wxEXPAND); 

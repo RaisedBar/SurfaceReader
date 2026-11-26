@@ -42,10 +42,10 @@ wxBoxSizer *HBox1 = new wxBoxSizer(wxHORIZONTAL);
 HBox1->Add( wxtActionPicker, 0, wxEXPAND);
 
 // Buttons 
-btnActionProperties = new wxButton(myPanel, ID_PROPERTIES_BUTTON, wstrPropertiesButtonName, wxDefaultPosition, wxSize(70, 30));
-btnOK = new wxButton(myPanel, wxID_OK, wstrOKButtonName, wxDefaultPosition, wxSize(70, 30));
+btnActionProperties = new wxButton(myPanel, ID_PROPERTIES_BUTTON, wstrPropertiesButtonName);
+btnOK = new wxButton(myPanel, wxID_OK, wstrOKButtonName);
 btnOK->SetDefault();  
-btnCancel = new wxButton(myPanel, wxID_CANCEL, wstrCancelButtonName, wxDefaultPosition, wxSize(70, 30));
+btnCancel = new wxButton(myPanel, wxID_CANCEL, wstrCancelButtonName);
 
   wxBoxSizer *HBox2 = new wxBoxSizer(wxHORIZONTAL);
 HBox2->Add(btnActionProperties, 0, wxEXPAND);     
@@ -61,7 +61,6 @@ vBox->SetSizeHints( this );
 myPanel->Fit();
 vBox->Fit( myPanel);
 Centre();
-this->Maximize();
 
 TogglePropertiesButton( wxtActionPicker->GetFocusedItem());
 }

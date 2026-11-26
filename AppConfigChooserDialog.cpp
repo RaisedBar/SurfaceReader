@@ -18,7 +18,7 @@ pMyApps = pApps;
 	
 	wxBoxSizer * hBoxApps= new wxBoxSizer( wxHORIZONTAL);
 lblDefinedAppsPrompt = new wxStaticText(myPanel, wxID_ANY, wstrDefinedAppsPrompt);
-lbxApps = new wxListBox( myPanel, ID_Apps_LIST_BOX,  wxDefaultPosition, wxSize( 100, 200), 0, NULL, wxLB_SORT, wxDefaultValidator, wxT( ""));
+lbxApps = new wxListBox( myPanel, ID_Apps_LIST_BOX,  wxDefaultPosition, FromDIP( wxSize( 250, 200)), 0, NULL, wxLB_SORT, wxDefaultValidator, wxT( ""));
 ListDefinedApps();
 hBoxApps->Add( lblDefinedAppsPrompt, 0, wxEXPAND);
 hBoxApps->Add( lbxApps, 0, wxEXPAND);
@@ -40,7 +40,6 @@ vBox1->SetSizeHints( this );
 myPanel->Fit();
 vBox1->Fit( myPanel);
 Centre();
-this->Maximize();
 }
 
 

@@ -37,13 +37,13 @@ wxBoxSizer *hBox2 = new wxBoxSizer(wxHORIZONTAL);
 wxBoxSizer *vBox3 = new wxBoxSizer(wxVERTICAL);
   
   // List of MIDI input ports
-  wxStaticBox *lblMIDIInPrompt = new wxStaticBox(myPanel, wxID_ANY, wstrMIDIInPrompt);
-lbxMIDIIn = new wxListBox(myPanel, ID_MIDI_IN_LIST_BOX);
+  wxStaticText *lblMIDIInPrompt = new wxStaticText(myPanel, wxID_ANY, wstrMIDIInPrompt);
+lbxMIDIIn = new wxListBox(myPanel, ID_MIDI_IN_LIST_BOX, wxDefaultPosition, FromDIP( wxSize( 250, 150)));
 ListMIDIInPorts();
  
 // List of MIDI output ports
-wxStaticBox *lblMIDIOutPrompt = new wxStaticBox(myPanel, wxID_ANY, wstrMIDIOutPrompt);
-lbxMIDIOut = new wxListBox(myPanel, ID_MIDI_OUT_LIST_BOX);
+wxStaticText *lblMIDIOutPrompt = new wxStaticText(myPanel, wxID_ANY, wstrMIDIOutPrompt);
+lbxMIDIOut = new wxListBox(myPanel, ID_MIDI_OUT_LIST_BOX, wxDefaultPosition, FromDIP( wxSize( 250, 150)));
 ListMIDIOutPorts();
 
 hBox1->Add(lblMIDIInPrompt, 0, wxEXPAND);  
@@ -109,13 +109,13 @@ wxBoxSizer *hBox2 = new wxBoxSizer(wxHORIZONTAL);
 wxBoxSizer *vBox3 = new wxBoxSizer(wxVERTICAL);
   
   // List of MIDI input ports
-  wxStaticBox *lblMIDIInPrompt = new wxStaticBox(myPanel, wxID_ANY, wstrMIDIInPrompt);
-lbxMIDIIn = new wxListBox(myPanel, ID_MIDI_IN_LIST_BOX);
+  wxStaticText *lblMIDIInPrompt = new wxStaticText(myPanel, wxID_ANY, wstrMIDIInPrompt);
+lbxMIDIIn = new wxListBox(myPanel, ID_MIDI_IN_LIST_BOX, wxDefaultPosition, FromDIP( wxSize( 250, 150)));
 ListMIDIInPorts( nSelectedInput);
  
 // List of MIDI output ports
-wxStaticBox *lblMIDIOutPrompt = new wxStaticBox(myPanel, wxID_ANY, wstrMIDIOutPrompt);
-lbxMIDIOut = new wxListBox(myPanel, ID_MIDI_OUT_LIST_BOX);
+wxStaticText *lblMIDIOutPrompt = new wxStaticText(myPanel, wxID_ANY, wstrMIDIOutPrompt);
+lbxMIDIOut = new wxListBox(myPanel, ID_MIDI_OUT_LIST_BOX, wxDefaultPosition, FromDIP( wxSize( 250, 150)));
 ListMIDIOutPorts( nSelectedOutput);
   
 wxButton *okButton = new wxButton(myPanel, wxID_OK, wstrOKButtonName);
@@ -172,8 +172,8 @@ wxBoxSizer *vBox3 = new wxBoxSizer(wxVERTICAL);
 // Only the real ports are listed; a virtual one is created by SurfaceReader
 if (myVirtualIn == false)
 	{
-		wxStaticBox *lblMIDIInPrompt = new wxStaticBox(myPanel, wxID_ANY, wstrMIDIInPrompt);
-lbxMIDIIn = new wxListBox(myPanel, ID_MIDI_IN_LIST_BOX);
+		wxStaticText *lblMIDIInPrompt = new wxStaticText(myPanel, wxID_ANY, wstrMIDIInPrompt);
+lbxMIDIIn = new wxListBox(myPanel, ID_MIDI_IN_LIST_BOX, wxDefaultPosition, FromDIP( wxSize( 250, 150)));
 ListMIDIInPorts();
 hBox1->Add(lblMIDIInPrompt, 0, wxEXPAND);  
 hBox1->Add(lbxMIDIIn, 0, wxEXPAND);
@@ -183,8 +183,8 @@ hBox1->Add(lbxMIDIIn, 0, wxEXPAND);
 // if ((myVP == InOnly) || (myVP == None))
 if (myVirtualOut == false)
 {
-wxStaticBox *lblMIDIOutPrompt = new wxStaticBox(myPanel, wxID_ANY, wstrMIDIOutPrompt);
-lbxMIDIOut = new wxListBox(myPanel, ID_MIDI_OUT_LIST_BOX);
+wxStaticText *lblMIDIOutPrompt = new wxStaticText(myPanel, wxID_ANY, wstrMIDIOutPrompt);
+lbxMIDIOut = new wxListBox(myPanel, ID_MIDI_OUT_LIST_BOX, wxDefaultPosition, FromDIP( wxSize( 250, 150)));
 ListMIDIOutPorts();
 
 hBox1->Add(lblMIDIOutPrompt, 0, wxEXPAND);
@@ -237,8 +237,8 @@ wxBoxSizer *vBox3 = new wxBoxSizer(wxVERTICAL);
 // if ((myVP == OutOnly) || (myVP == None))
 if (myVirtualOut)
 {
-		wxStaticBox *lblMIDIInPrompt = new wxStaticBox(myPanel, wxID_ANY, wstrMIDIInPrompt);
-lbxMIDIIn = new wxListBox(myPanel, ID_MIDI_IN_LIST_BOX);
+		wxStaticText *lblMIDIInPrompt = new wxStaticText(myPanel, wxID_ANY, wstrMIDIInPrompt);
+lbxMIDIIn = new wxListBox(myPanel, ID_MIDI_IN_LIST_BOX, wxDefaultPosition, FromDIP( wxSize( 250, 150)));
 ListMIDIInPorts( nSelectedPort);
 hBox1->Add(lblMIDIInPrompt, 0, wxEXPAND);
 hBox1->Add(lbxMIDIIn, 0, wxEXPAND);
@@ -248,8 +248,8 @@ hBox1->Add(lbxMIDIIn, 0, wxEXPAND);
 // if ((myVP == InOnly) || (myVP == None))
 if (myVirtualIn)
 {
-wxStaticBox *lblMIDIOutPrompt = new wxStaticBox(myPanel, wxID_ANY, wstrMIDIOutPrompt);
-lbxMIDIOut = new wxListBox(myPanel, ID_MIDI_OUT_LIST_BOX);
+wxStaticText *lblMIDIOutPrompt = new wxStaticText(myPanel, wxID_ANY, wstrMIDIOutPrompt);
+lbxMIDIOut = new wxListBox(myPanel, ID_MIDI_OUT_LIST_BOX, wxDefaultPosition, FromDIP( wxSize( 250, 150)));
 ListMIDIOutPorts( nSelectedPort);
 hBox1->Add(lblMIDIOutPrompt, 0, wxEXPAND);  
 hBox1->Add(lbxMIDIOut, 0, wxEXPAND);
@@ -267,7 +267,6 @@ vBox3->AddSpacer( 25);
 myPanel->SetSizer(vBox3);
 myPanel->Fit();
 	vBox3->Fit( myPanel);
-	this->Maximize();
 	Centre();
 }
 

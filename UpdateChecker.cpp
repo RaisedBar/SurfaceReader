@@ -35,9 +35,9 @@ txtUpdateDescription = new wxTextCtrl( myPanel, wxID_ANY);
   hBox2->Add( txtUpdateDescription, 0, wxEXPAND);
 
 // Buttons
-btnUpdate = new wxButton(myPanel, wxID_OK, wstrUpdateButtonName, wxDefaultPosition, wxSize(70, 30));
+btnUpdate = new wxButton(myPanel, wxID_OK, wstrUpdateButtonName);
 btnUpdate->SetDefault();
-btnCancel = new wxButton(myPanel, wxID_CANCEL, wstrCancelButtonName, wxDefaultPosition, wxSize(70, 30));
+btnCancel = new wxButton(myPanel, wxID_CANCEL, wstrCancelButtonName);
 
   wxBoxSizer *hBoxButtons = new wxBoxSizer(wxHORIZONTAL);
       hBoxButtons->Add(btnUpdate, 0, wxEXPAND);
@@ -53,7 +53,6 @@ vBox->SetSizeHints( this );
 myPanel->Fit();
 vBox->Fit( myPanel);
 Centre();
-this->Maximize();
 
 // Check for the available updates and add leaf nodes appropriately
 ListAppUpdates();
