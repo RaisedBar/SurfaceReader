@@ -300,6 +300,47 @@ return myDisplayNames;
 }
 
 
+std::string SurfaceProtocol::GetGlobalStatesHash()
+{
+	if ((strGlobalStatesHash.empty() == false) && (DisplayMessages.find( strGlobalStatesHash) != DisplayMessages.end()))
+	{
+		return strGlobalStatesHash;
+	}
+
+	if (DisplayMessages.empty())
+	{
+		return std::string();
+	}
+
+	return DisplayMessages.begin()->first;
+}
+
+
+std::wstring SurfaceProtocol::GetLEDStateName( std::string strHash, std::vector <unsigned char> vState)
+{
+	std::map <std::string, DisplayDefinition>::iterator it = DisplayMessages.find( strHash);
+
+	if ((it != DisplayMessages.end()) && (it->second.GetStateCount() > 0))
+	{
+		return it->second.GetState( vState);
+	}
+
+	if (IsUsingGlobalStates())
+	{
+		std::map <std::string, DisplayDefinition>::iterator itGlobal = DisplayMessages.find( GetGlobalStatesHash());
+
+		if (itGlobal != DisplayMessages.end())
+		{
+			return itGlobal->second.GetState( vState);
+		}
+	}
+
+	// No names: the value itself
+	MessageDefinition myUnnamed;
+	return myUnnamed.GetState( vState);
+}
+
+
 DisplayDefinition SurfaceProtocol::GetDisplayItem( unsigned int nItem)
 {
 	if ((nItem < DisplayMessages.size())

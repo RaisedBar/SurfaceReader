@@ -85,6 +85,17 @@ std::vector <std::wstring> GetDisplayNames();
 DisplayDefinition GetDisplayItem( unsigned int nItem);
 std::string GetDisplayHash( std::wstring wstrName);
 bool DeleteDisplay( std::string strHash);
+
+// LED states. A LED's own state names are used when it has any (so value displays such as meters and V-Pot
+// rings can name their values); otherwise the protocol's global names if it uses them; otherwise the number.
+std::wstring GetLEDStateName( std::string strHash, std::vector <unsigned char> vState);
+// The display that holds the global state names: the one chosen with SetGlobalStatesHash, or (for protocols
+// saved before it existed) the first display
+std::string GetGlobalStatesHash();
+void SetGlobalStatesHash( std::string strHash)
+{
+	strGlobalStatesHash = strHash;
+}
 bool RenameDisplay( std::wstring wstrOldName, std::wstring wstrNewName);
 wxInt32 GetDisplayLines( wxInt32 nHash) const;
 void SetDisplayLines( wxInt32 nHash, wxInt32 nLines);
@@ -187,6 +198,13 @@ myArchive & boost::serialization::make_nvp( cMsgBufferSizeTag , nMsgBufferSize);
 const char * cDropExtraStatusBytesTag = "DropExtraStatusBytes";
 myArchive & boost::serialization::make_nvp( cDropExtraStatusBytesTag , blnDropExtraStatusBytes);
 }								  // end if > v1
+
+// V3: which display holds the global state names (before, always the first, which depended on key order)
+if (version > 2)
+{
+	const char * cGlobalStatesHashTag = "GlobalStatesHash";
+	myArchive & boost::serialization::make_nvp( cGlobalStatesHashTag, strGlobalStatesHash);
+}
 								}  // end try
 catch( ...)
 {
@@ -211,6 +229,7 @@ std::map <std::string, MessageDefinition> HardwareMessages;
 // Display pages
 std::map <std::string, DisplayDefinition> DisplayMessages;
 bool blnUseGlobalStates;
+std::string strGlobalStatesHash;
 std::map <std::string, std::pair <std::wstring, std::map <unsigned char, std::wstring> > > CharacterTables;
 
 // Message buffering
@@ -219,6 +238,6 @@ bool blnDropExtraStatusBytes;
 };  // end of Protocol class
 
 // Set the class version for serialisation
-BOOST_CLASS_VERSION(SurfaceProtocol, 2);
+BOOST_CLASS_VERSION(SurfaceProtocol, 3);
 	
 #endif   // PROTOCOL_H

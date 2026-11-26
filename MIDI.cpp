@@ -78,10 +78,11 @@ int nData1 = vMIDIBytes[ nPosition +1];
 int nData2 = vMIDIBytes[ nPosition +2];
 
 // We want to interpret note on/off pairs consistently, so we'll convert note off messages to note on with velocity zero
-if (nCmd == MIDI_CMD_NOTE_OFF)
+// (nCmd is the status byte's high nibble in place, e.g. 0x80; the MIDI_CMD_ constants are the nibble alone)
+if ((nCmd >> 4) == MIDI_CMD_NOTE_OFF)
 {
-nCmd = MIDI_CMD_NOTE_ON;
-nStatus = (nCmd << 4) + nChannel;
+nStatus = (MIDI_CMD_NOTE_ON << 4) + nChannel;
+nCmd = nStatus & MIDI_CODE_MASK;
 nData2 = 0;
 }
 
@@ -996,7 +997,9 @@ if (vBytes.size() == 3)   // Single-message format
 int nData1 = vBytes[ 1];
 int nData2 = vBytes[ 2];
 
-switch (nCmd)
+// The MIDI_CMD_ constants are the status nibble alone, so compare with the shifted value: pitch bend never
+// matched before, so it was keyed with its changing fine byte and couldn't be defined
+switch (nCmd >> 4)
 {
 	// Messages where both data bytes are used to form an MSB/LSB pair
 case MIDI_CMD_PITCH_WHEEL:

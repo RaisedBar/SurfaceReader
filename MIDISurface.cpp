@@ -1326,19 +1326,9 @@ std::wstring MIDISurface::GetLEDString( std::string strHash, DisplayDefinition *
 {
 std::wstring wstrOut = pDisplay->GetLabel();
 		wstrOut.append( wstrSpace);
-
-		if (pProtocol->IsUsingGlobalStates())
-{
 std::vector <unsigned char> vState;
 vState.push_back( (unsigned char) nDataValue);
-wstrOut.append( pProtocol->GetDisplayItem( 0).GetState( vState));
-}
-		else
-			{
-std::vector <unsigned char> vValues;
-vValues.push_back( (unsigned char) nDataValue);
-				wstrOut.append( pProtocol->GetDisplay( strHash).GetState( vValues));
-		}  // end if using global state labels
+wstrOut.append( pProtocol->GetLEDStateName( strHash, vState));
 	
 	return wstrOut;
 }
@@ -1967,37 +1957,18 @@ LogIt( strMsg);
 	else  // Not SysEx
 		{
 			if (myDisplayPair.second.substr( 0, 1).compare( strNibbleHashPrefix) == 0)
-	{   // Nibble-by-nibble hash, so need to figure out where the value is
-int nValuePos = 0;
+	{   // Nibble-by-nibble hash: the value is the nibble at the wild card's position
+	// (this used to be found one nibble too far on, which was only right for a high nibble,
+	// and could read past the end of a short message such as a Mackie Control meter)
+MIDI myValueMIDI;
+int nNibbleValue = myValueMIDI.NibbledMessageValue( myDisplayPair.second, myMessage);
 
-// Count the delimiters within the hash to find the position of the value nibble itself
-for (unsigned int i = 0; (myDisplayPair.second.substr( i, 1).compare( NIBBLE_WILD_CARD_MARKER) != 0); i++)
+if (nNibbleValue < 0)
 {
-	if (myDisplayPair.second.substr( i, 1).compare( HASH_DELIMITER) == 0)
-{
-nValuePos++;
+	throw RB_NO_DISPLAY_DEFINITION;
 }
-}  // end for
 
-// Add 1 more to account for the delimiter after the wild card
-nValuePos++;
-
-// Figure out which byte based on the located nibble position
-int nBytePos = nValuePos / 2;
-// Which nibble within the byte?
-int nByteOffset = nValuePos % 2;
-unsigned char nByte  = myMessage.at( nBytePos);
-
-if (nByteOffset == 0)
-{
-// return the least significant nibble
-	vState.push_back( (nByte & 0x0f));
-}
-else
-{
-	// return the most significant nibble
-	vState.push_back( ((nByte & 0xf0) /16));
-}
+vState.push_back( (unsigned char) nNibbleValue);
 	}
 	else  // Short message
 		{
@@ -2007,22 +1978,9 @@ vState.push_back( (unsigned char) nData2);
 	}  // end if nibbled
 		}  // end if SysEx
 
-if (myProtocol->IsUsingGlobalStates())
-{
-	SetCurrentState( myDisplayPair.first.GetLabel(), myProtocol->GetDisplayItem( 0).GetState( vState));
-std::wstring wstrOut = L"LED state [";
-wstrOut.append( myProtocol->GetDisplayItem( 0).GetState( vState));
-wstrOut.append( L"]");
-LogIt( wstrOut);
-}
-else
-	{
-		SetCurrentState( myDisplayPair.first.GetLabel(), myProtocol->GetDisplay( myDisplayPair.second).GetState( vState));
-std::wstring wstrOut = L"LED state [";
-wstrOut.append( myProtocol->GetDisplay( myDisplayPair.second).GetState( vState));
-wstrOut.append( L"]");
-LogIt( wstrOut);
-}  // end if using global states
+std::wstring wstrState = myProtocol->GetLEDStateName( myDisplayPair.second, vState);
+SetCurrentState( myDisplayPair.first.GetLabel(), wstrState);
+LogIt( L"LED state [" + wstrState + L"]");
 }
 
 else  // Not a LED, so must be a text display 
