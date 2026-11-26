@@ -49,7 +49,9 @@ Windows and macOS:
   expressions (libjpeg-turbo, libpng, LibTIFF, libwebp, zlib, XZ Utils, Expat, PCRE2, NanoSVG).
 Windows only:
   NVDA Controller Client (nvdaControllerClient64.dll), System Access API client library (SAAPI64.dll),
-  Windows MIDI Services API (Windows.Devices.Midi2.dll and .pri, a Microsoft preview), C++/WinRT.
+  C++/WinRT and the Windows MIDI Services API description, built into the Windows MIDI Services helper
+  (SRMidiServices.exe). Microsoft's Windows MIDI Services API itself (Windows.Devices.Midi2.dll) is not
+  included: the helper uses the copy that comes with Windows, once Windows includes it.
 
 ''']
 
@@ -81,11 +83,10 @@ parts.append(section(
     'By Pneuma Solutions: https://github.com/PneumaSolutions/sa-api (sa_api.dll, shipped under the name SAAPI64.dll, '
     'as its documentation allows). MIT licence:'))
 parts.append(section(
-    'Windows MIDI Services API (Windows.Devices.Midi2.dll, Windows.Devices.Midi2.pri)',
+    'Windows MIDI Services API description (used to build SRMidiServices.exe)',
     read(os.path.join(LICENCES, 'windows-midi-services.txt')),
-    'Microsoft, https://github.com/microsoft/MIDI. This is a preview of the Windows MIDI Services API, distributed '
-    'under Microsoft\'s preview "go-live" terms (see the Preview 10 and 11 release notes). It is installed only on '
-    'Windows 11 25H2 or later whose Windows doesn\'t have the API built in; once it does, Windows uses its own. '
+    'Microsoft, https://github.com/microsoft/MIDI. The Windows MIDI Services helper is built against the API\'s '
+    'metadata (Windows.Devices.Midi2.winmd). The API binaries themselves are not distributed with SurfaceReader. '
     'MIT licence:'))
 parts.append(section('C++/WinRT', read(os.path.join(LICENCES, 'cppwinrt.txt')),
                      'Microsoft, https://github.com/microsoft/cppwinrt (used by the Windows MIDI Services helper).'))

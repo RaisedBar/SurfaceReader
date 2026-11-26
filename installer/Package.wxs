@@ -34,19 +34,14 @@
     <!-- Sets WIX_ACCOUNT_USERS to the local name of the Users group (it's translated on non-English Windows) -->
     <util:QueryWindowsWellKnownSIDs />
 
-    <!-- Windows MIDI Services. Microsoft's terms for shipping the preview API (Windows.Devices.Midi2.dll and .pri,
-         "go-live" licence, Preview 10 and 11 release notes at https://github.com/microsoft/MIDI/releases) say not to
-         ship it to Windows older than Windows 11 25H2 (build 26200), and not to put an app-local copy on a PC whose
-         Windows has its own. So: the helper only on 25H2 and later, and the API binaries only where Windows lacks
-         them. A later SurfaceReader installer checks again, so the copy goes once Windows has the API built in.
-         (Windows Installer's own version properties stop at Windows 8.1, hence the registry.) -->
+    <!-- Windows MIDI Services. The installer doesn't ship Microsoft's preview API (Windows.Devices.Midi2.dll and
+         .pri): that is only allowed under Microsoft's preview "go-live" terms. The helper uses the API that comes with
+         Windows once Windows includes it (Windows 11 25H2, build 26200, has the service but not yet the API); until
+         then it reports Windows MIDI Services as unavailable and SurfaceReader uses loopMIDI ports. So the helper is
+         installed on 25H2 and later only. (Windows Installer's own version properties stop at Windows 8.1, hence
+         the registry.) -->
     <Property Id="SR_WINDOWS_BUILD">
       <RegistrySearch Id="WindowsBuildSearch" Root="HKLM" Key="SOFTWARE\Microsoft\Windows NT\CurrentVersion" Name="CurrentBuildNumber" Type="raw" />
-    </Property>
-    <Property Id="SR_INBOX_MIDI_API">
-      <DirectorySearch Id="System64Search" Path="[System64Folder]" Depth="0">
-        <FileSearch Id="InboxMidiApiSearch" Name="Windows.Devices.Midi2.dll" />
-      </DirectorySearch>
     </Property>
 
     <StandardDirectory Id="ProgramFiles64Folder">
@@ -116,13 +111,6 @@
     <ComponentGroup Id="MidiServicesHelper" Directory="MidiServicesFolder">
       <Component Condition="SR_WINDOWS_BUILD &gt;= 26200">
         <File Source="$(BinDir)MidiServices\SRMidiServices.exe" KeyPath="yes" />
-      </Component>
-      <!-- Microsoft's preview API binaries: see SR_WINDOWS_BUILD above for when they may be installed -->
-      <Component Condition="(SR_WINDOWS_BUILD &gt;= 26200) AND (NOT SR_INBOX_MIDI_API)">
-        <File Source="$(BinDir)MidiServices\Windows.Devices.Midi2.dll" KeyPath="yes" />
-      </Component>
-      <Component Condition="(SR_WINDOWS_BUILD &gt;= 26200) AND (NOT SR_INBOX_MIDI_API)">
-        <File Source="$(BinDir)MidiServices\Windows.Devices.Midi2.pri" KeyPath="yes" />
       </Component>
     </ComponentGroup>
   </Fragment>

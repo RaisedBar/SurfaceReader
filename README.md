@@ -24,7 +24,9 @@ SurfaceReader for Windows is 64-bit only. The project uses the v143 toolset and 
 
 #### Windows MIDI Services helper
 
-On Windows 11 25H2 and later, SurfaceReader creates its own ports for the DAW through Windows MIDI Services, so loopMIDI isn't needed. A small helper, `SRMidiServices`, manages the ports in its own process, so a problem in the preview Windows MIDI Services SDK can't take SurfaceReader down. It's built automatically as part of SurfaceReader and copied to `MidiServices\` next to `SurfaceReader.exe`, with `Windows.Devices.Midi2.dll` and `.pri`.
+On Windows 11 25H2 and later, SurfaceReader creates its own ports for the DAW through Windows MIDI Services, so loopMIDI isn't needed. A small helper, `SRMidiServices`, manages the ports in its own process, so a problem in the preview Windows MIDI Services SDK can't take SurfaceReader down. It's built automatically as part of SurfaceReader and copied to `MidiServices\` next to `SurfaceReader.exe`, with `Windows.Devices.Midi2.dll` and `.pri` for development.
+
+The installer ships the helper but not Microsoft's `Windows.Devices.Midi2.dll` and `.pri`: the preview API may only be redistributed under Microsoft's preview "go-live" terms. Installed copies of SurfaceReader therefore use Windows MIDI Services once Windows includes the API itself, and loopMIDI ports until then.
 
 The helper needs two NuGet packages. One is a preview that isn't on nuget.org yet, so before the first build:
 
