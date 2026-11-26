@@ -214,9 +214,9 @@ if (		wxMessageBox( wstrMessage,                wstrAppTitle, wxYES_NO | wxNO_DE
 			{
 				if (lbxLampNames->GetCount() > 0)
 				{	
-// We use the first display to hold our global values
-					DisplayDefinition myDisplay = pMyProtocol->GetDisplayItem( GLOBAL_STATE_INDEX);
-std::string strHash = pMyProtocol->GetDisplayHash( myDisplay.GetLabel());
+// One display holds the global state names
+std::string strHash = pMyProtocol->GetGlobalStatesHash();
+DisplayDefinition myDisplay = pMyProtocol->GetDisplay( strHash);
 DisplayStatesDialog * myStatesDlg = new DisplayStatesDialog( wstrLEDStatesTitle, strHash, &myDisplay, pMyProtocol->GetSysExHeader());
 
 		if (myStatesDlg->ShowModal() == wxID_OK)
