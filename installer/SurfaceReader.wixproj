@@ -1,0 +1,35 @@
+<!--
+  SurfaceReader's Windows installer (an .msi), built with the WiX Toolset 5 MSBuild SDK, which NuGet fetches
+  on first build: nothing needs installing apart from the .NET SDK. Build it with Build-Installer.ps1, which
+  builds SurfaceReader first, or on its own with: dotnet build installer\SurfaceReader.wixproj -c Release
+  WiX 5 rather than 6: version 6 needs the Open Source Maintenance Fee to be accepted by companies that make money
+  from what they build with it.
+-->
+<Project Sdk="WixToolset.Sdk/5.0.2">
+  <PropertyGroup>
+    <InstallerPlatform>x64</InstallerPlatform>
+    <Platform>x64</Platform>
+
+    <!-- The version comes from SRVersion.h, like the About box and the executable's version resource -->
+    <SRVersionText>$([System.IO.File]::ReadAllText('$(MSBuildThisFileDirectory)..\SRVersion.h'))</SRVersionText>
+    <SRVersionMajor>$([System.Text.RegularExpressions.Regex]::Match($(SRVersionText), 'SR_VERSION_MAJOR\s+(\d+)').Groups[1].Value)</SRVersionMajor>
+    <SRVersionMinor>$([System.Text.RegularExpressions.Regex]::Match($(SRVersionText), 'SR_VERSION_MINOR\s+(\d+)').Groups[1].Value)</SRVersionMinor>
+    <SRVersionPatch>$([System.Text.RegularExpressions.Regex]::Match($(SRVersionText), 'SR_VERSION_PATCH\s+(\d+)').Groups[1].Value)</SRVersionPatch>
+    <SRVersion>$(SRVersionMajor).$(SRVersionMinor).$(SRVersionPatch)</SRVersion>
+
+    <OutputName>SurfaceReader-$(SRVersion)-x64</OutputName>
+    <!-- SurfaceReader's own Release build -->
+    <SRBinDir>$(MSBuildThisFileDirectory)..\bin\Release\</SRBinDir>
+    <DefineConstants>Version=$(SRVersion);BinDir=$(SRBinDir);FilesDir=$(MSBuildThisFileDirectory)..\Files\;IconFile=$(MSBuildThisFileDirectory)..\sample.ico</DefineConstants>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="WixToolset.UI.wixext" Version="5.0.2" />
+    <PackageReference Include="WixToolset.Util.wixext" Version="5.0.2" />
+  </ItemGroup>
+
+  <Target Name="CheckSurfaceReaderBuilt" BeforeTargets="Build">
+    <Error Condition="!Exists('$(SRBinDir)SurfaceReader.exe')" Text="SurfaceReader hasn't been built: build SurfaceReader.sln (Release, x64) first, or run installer\Build-Installer.ps1." />
+    <Error Condition="!Exists('$(SRBinDir)MidiServices\SRMidiServices.exe')" Text="SRMidiServices.exe hasn't been built, so the installer would leave out Windows MIDI Services support. See README.md." />
+  </Target>
+</Project>

@@ -20,6 +20,11 @@
 #include <Msi.h>
 #include "WIX Include.h"
 
+// The screen reader DLLs shipped with SurfaceReader (NVDA, System Access) are the 64-bit versions
+#ifndef _WIN64
+#error SurfaceReader for Windows is built for x64 only
+#endif
+
 //typedefs.
 //Nvda.
 typedef error_status_t (WINAPI *nvdaControllerTestIfRunningFunc)(void);

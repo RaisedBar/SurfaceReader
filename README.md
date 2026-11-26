@@ -18,13 +18,13 @@ The first build compiles the libraries, which takes a while. Later builds reuse 
 ### Windows (Visual Studio 2022)
 
 1. Set the `VCPKG_ROOT` environment variable to your vcpkg folder, or run `vcpkg integrate install` once.
-2. Open `SurfaceReader.sln` and build. MSBuild runs `vcpkg install` for the static triplet that matches the platform (`x86-windows-static` or `x64-windows-static`) and links the libraries automatically.
+2. Open `SurfaceReader.sln` and build. MSBuild runs `vcpkg install` for the `x64-windows-static` triplet and links the libraries automatically.
 
-The project uses the v143 toolset and the static CRT (`/MT`, `/MTd`), matching the static triplets.
+SurfaceReader for Windows is 64-bit only. The project uses the v143 toolset and the static CRT (`/MT`, `/MTd`), matching the static triplet, so it needs no Visual C++ runtime. It builds into `bin\Debug` or `bin\Release`, and copies the screen reader DLLs and help file there so it can run straight away.
 
 #### Windows MIDI Services helper
 
-On Windows 11 25H2 and later, SurfaceReader creates its own ports for the DAW through Windows MIDI Services, so loopMIDI isn't needed. The Windows MIDI Services API is 64-bit only, so a small x64 helper, `SRMidiServices`, manages the ports for the 32-bit SurfaceReader. It's built automatically as part of SurfaceReader and copied to `MidiServices\` next to `SurfaceReader.exe`, with `Windows.Devices.Midi2.dll` and `.pri`, which the installer has to include too.
+On Windows 11 25H2 and later, SurfaceReader creates its own ports for the DAW through Windows MIDI Services, so loopMIDI isn't needed. A small helper, `SRMidiServices`, manages the ports in its own process, so a problem in the preview Windows MIDI Services SDK can't take SurfaceReader down. It's built automatically as part of SurfaceReader and copied to `MidiServices\` next to `SurfaceReader.exe`, with `Windows.Devices.Midi2.dll` and `.pri`.
 
 The helper needs two NuGet packages. One is a preview that isn't on nuget.org yet, so before the first build:
 
@@ -40,6 +40,22 @@ How it works:
 - Each DAW port is a Windows MIDI Services loopback. The DAW uses one end, named like the Mac's virtual ports (`<surface> hardware`, `<surface> display`); SurfaceReader uses the other end, the same name followed by ` (SR)`. Names are fitted to the 31-character limit of classic MIDI ports.
 - The first time SurfaceReader finds Windows MIDI Services, it replaces the surfaces' loopMIDI ports with loopbacks of the same names, so DAW settings keep working. It asks the user to quit loopMIDI first if it's running, and explains the change afterwards.
 - Loopbacks last until Windows restarts (or are kept, if the PC has a Windows MIDI Services configuration file), so SurfaceReader recreates any that are missing each time it starts, and removes the ones no surface uses.
+
+#### Installer
+
+`installer\` holds the Windows installer, a WiX Toolset 5 project that the .NET SDK builds (NuGet fetches WiX itself, so it doesn't need installing). After the one-time setup above:
+
+```
+powershell -ExecutionPolicy Bypass -File installer\Build-Installer.ps1
+```
+
+This builds SurfaceReader (Release, x64), then `installer\bin\x64\Release\SurfaceReader-<version>-x64.msi`. The version comes from `SRVersion.h`, which also sets the About box and the executable's version: raise it for each release, or the new installer won't replace the old one.
+
+The installer:
+
+- puts SurfaceReader in `Program Files\Raised Bar\SurfaceReader`, with Start menu shortcuts to SurfaceReader and its help, and a desktop shortcut;
+- puts the supplied protocols and app configurations in `ProgramData\Raised Bar\SurfaceReader` and lets all users change that folder;
+- replaces any earlier SurfaceReader, including the old 32-bit one, keeping protocols the user has changed.
 
 ### macOS (Xcode)
 

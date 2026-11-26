@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  SurfaceReader's installer.
+  - The program goes in Program Files\Raised Bar\SurfaceReader, with the Windows MIDI Services helper in MidiServices\.
+  - The supplied protocols and app configurations go in ProgramData\Raised Bar\SurfaceReader, where SurfaceReader
+    looks for them. Users can change that folder (SurfaceReader saves surfaces and settings there).
+  - The upgrade code is the one the old WixSharp installers used, so this replaces any earlier SurfaceReader,
+    32-bit or 64-bit. Files the user has changed in ProgramData are kept (Windows Installer doesn't overwrite an
+    unversioned file that was modified after it was installed), and nothing the user created is removed.
+-->
+<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs"
+     xmlns:ui="http://wixtoolset.org/schemas/v4/wxs/ui"
+     xmlns:util="http://wixtoolset.org/schemas/v4/wxs/util">
+
+  <Package Name="SurfaceReader"
+           Manufacturer="Raised Bar Ltd"
+           Version="$(Version)"
+           UpgradeCode="4334E5FD-9389-4373-B6EB-86CF7473F874"
+           Scope="perMachine"
+           Language="2057">
+
+    <SummaryInformation Description="SurfaceReader $(Version) (64-bit)" />
+    <MajorUpgrade DowngradeErrorMessage="A newer version of SurfaceReader is already installed." />
+    <MediaTemplate EmbedCab="yes" />
+
+    <Icon Id="SurfaceReader.ico" SourceFile="$(IconFile)" />
+    <Property Id="ARPPRODUCTICON" Value="SurfaceReader.ico" />
+    <Property Id="ARPURLINFOABOUT" Value="http://www.raisedbar.net" />
+
+    <!-- The installer's dialogs: welcome, licence, install folder, ready, progress, finish -->
+    <ui:WixUI Id="WixUI_InstallDir" InstallDirectory="INSTALLFOLDER" />
+    <WixVariable Id="WixUILicenseRtf" Value="$(FilesDir)License.rtf" />
+
+    <!-- Sets WIX_ACCOUNT_USERS to the local name of the Users group (it's translated on non-English Windows) -->
+    <util:QueryWindowsWellKnownSIDs />
+
+    <StandardDirectory Id="ProgramFiles64Folder">
+      <Directory Id="CompanyFolder" Name="Raised Bar">
+        <Directory Id="INSTALLFOLDER" Name="SurfaceReader">
+          <Directory Id="MidiServicesFolder" Name="MidiServices" />
+        </Directory>
+      </Directory>
+    </StandardDirectory>
+
+    <StandardDirectory Id="CommonAppDataFolder">
+      <Directory Id="DataCompanyFolder" Name="Raised Bar">
+        <Directory Id="DATAFOLDER" Name="SurfaceReader">
+          <Directory Id="AppsFolder" Name="Apps" />
+          <Directory Id="ProtocolsFolder" Name="Protocols" />
+          <Directory Id="SurfacesFolder" Name="Surfaces" />
+        </Directory>
+      </Directory>
+    </StandardDirectory>
+
+    <StandardDirectory Id="ProgramMenuFolder">
+      <Directory Id="ShortcutFolder" Name="SurfaceReader" />
+    </StandardDirectory>
+
+    <Feature Id="SurfaceReader" Title="SurfaceReader" Level="1">
+      <ComponentGroupRef Id="Program" />
+      <ComponentGroupRef Id="MidiServicesHelper" />
+      <ComponentGroupRef Id="Data" />
+    </Feature>
+  </Package>
+
+  <Fragment>
+    <ComponentGroup Id="Program" Directory="INSTALLFOLDER">
+      <Component>
+        <File Id="SurfaceReaderExe" Source="$(BinDir)SurfaceReader.exe" KeyPath="yes">
+          <Shortcut Id="StartMenuShortcut" Directory="ShortcutFolder" Name="SurfaceReader" WorkingDirectory="INSTALLFOLDER" Advertise="yes" Icon="SurfaceReader.ico" />
+          <Shortcut Id="DesktopShortcut" Directory="DesktopFolder" Name="SurfaceReader" WorkingDirectory="INSTALLFOLDER" Advertise="yes" Icon="SurfaceReader.ico" />
+        </File>
+        <RemoveFolder Id="RemoveShortcutFolder" Directory="ShortcutFolder" On="uninstall" />
+      </Component>
+      <Component>
+        <File Id="HelpFile" Source="$(FilesDir)Program Files\SurfaceReader.chm" KeyPath="yes">
+          <Shortcut Id="HelpShortcut" Directory="ShortcutFolder" Name="SurfaceReader Help" Advertise="yes" />
+        </File>
+      </Component>
+      <!-- The 64-bit screen reader APIs, loaded when NVDA or System Access is running -->
+      <Component>
+        <File Source="$(FilesDir)Program Files\nvdaControllerClient64.dll" KeyPath="yes" />
+      </Component>
+      <Component>
+        <File Source="$(FilesDir)Program Files\SAAPI64.dll" KeyPath="yes" />
+      </Component>
+    </ComponentGroup>
+
+    <StandardDirectory Id="DesktopFolder" />
+  </Fragment>
+
+  <Fragment>
+    <!-- Creates and removes Windows MIDI Services loopback ports; unused where Windows MIDI Services isn't available -->
+    <ComponentGroup Id="MidiServicesHelper" Directory="MidiServicesFolder">
+      <Component>
+        <File Source="$(BinDir)MidiServices\SRMidiServices.exe" KeyPath="yes" />
+      </Component>
+      <Component>
+        <File Source="$(BinDir)MidiServices\Windows.Devices.Midi2.dll" KeyPath="yes" />
+      </Component>
+      <Component>
+        <File Source="$(BinDir)MidiServices\Windows.Devices.Midi2.pri" KeyPath="yes" />
+      </Component>
+    </ComponentGroup>
+  </Fragment>
+
+  <Fragment>
+    <ComponentGroup Id="Data">
+      <!-- SurfaceReader writes its settings, surfaces and the user's own protocols here, so everyone who uses the
+           PC needs to be able to change it, not only administrators -->
+      <Component Id="DataFolderPermissions" Directory="DATAFOLDER" Guid="3B0E1C64-8F0D-4F55-9C1B-6C0B2E7A5D21">
+        <CreateFolder>
+          <util:PermissionEx User="[WIX_ACCOUNT_USERS]" GenericAll="yes" />
+        </CreateFolder>
+      </Component>
+      <Component Id="SurfacesFolderCreate" Directory="SurfacesFolder" Guid="9C5D2F7E-1A4B-4E83-B0C6-2D8F3E1A7B54">
+        <CreateFolder />
+      </Component>
+      <Files Directory="AppsFolder" Include="$(FilesDir)ProgramData\Apps\*.*" />
+      <Files Directory="ProtocolsFolder" Include="$(FilesDir)ProgramData\Protocols\*.*" />
+    </ComponentGroup>
+  </Fragment>
+</Wix>
