@@ -110,7 +110,6 @@ wxTreeItemIdValue cookie;
 wxButton * btnAdd, * btnRemove, * btnUp, * btnDown, * btnRename, * btnReplicate, *btnActionProperties;
 
 // Active access technology product
-DolphinProduct myDolphinProduct;
 ActiveProduct myActiveProduct; //apply action to what product?
 ActiveProduct myOldActiveProduct;
 std::shared_ptr<AppConfig> pMyAppConfig;

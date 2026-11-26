@@ -115,11 +115,9 @@ else
 	
 		// Announce test string
 	ActiveProduct myActiveProduct;
-	DolphinProduct dpProduct;
-	DolphinReturnCode dpReturn;
 
-	pMySpeech->GetActiveProduct( myActiveProduct, dpProduct);
-pMySpeech->Speak( wstrVoiceTestText, true, dpReturn);
+	pMySpeech->GetActiveProduct( myActiveProduct);
+pMySpeech->Speak( wstrVoiceTestText, true);
 }
 
 

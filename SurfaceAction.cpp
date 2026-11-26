@@ -190,7 +190,6 @@ switch (myParameterType)
 		{
 		case Type_Int:
 			case Type_Bool:
-				case Type_DolphinReturnCode:
 {
 				wstrCall.append( vActionParameters.at( i).second);
 			}

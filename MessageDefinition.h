@@ -53,6 +53,11 @@ const char * cAddressBytesTag = "SysExAddressBytes";
 myArchive & boost::serialization::make_nvp( cAddressBytesTag, vSysExAddressBytes);
 const char * cActionsTag = "Actions";
 myArchive & boost::serialization::make_nvp( cActionsTag, myActions);
+// Dolphin (4) is no longer supported: don't keep its actions
+if (Archive::is_loading::value)
+{
+	myActions.erase( static_cast<ActiveProduct>( 4));
+}
 const char * cStatesTag = "StateNames";
 myArchive & boost::serialization::make_nvp( cStatesTag, StateLabels);
 const char * cMIDIModifierTag = "Modifier";

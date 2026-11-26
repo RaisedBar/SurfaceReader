@@ -100,7 +100,6 @@ wxDataViewCtrl * wxDVActions;
 wxButton * btnAdd, * btnRemove, * btnReplicate, * btnUp, * btnDown, * btnRename, *btnActionProperties;
 
 // Active access technology product
-DolphinProduct myDolphinProduct;
 ActiveProduct myActiveProduct; //apply action to what product?
 ActiveProduct myOldActiveProduct;
 std::shared_ptr <AppConfig> pMyAppConfig;

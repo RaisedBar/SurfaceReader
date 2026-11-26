@@ -20,11 +20,6 @@
 #include <Msi.h>
 #include "WIX Include.h"
 
-// Dolphin includes
-#ifndef _WIN64
-#include "apiproto.h"
-#endif
-
 //typedefs.
 //Nvda.
 typedef error_status_t (WINAPI *nvdaControllerTestIfRunningFunc)(void);
@@ -38,108 +33,11 @@ typedef BOOL (WINAPI *SABrailleFunc)(const WCHAR *textW);
 typedef BOOL (WINAPI *SASpeakFunc)(const WCHAR *textW);
 typedef BOOL (WINAPI *SAStopAudioFunc)(void);
 
-// Required constants for Dolphin products
-const std::wstring wstrScreenRefresh = L"Screen Refresh";
-const std::wstring wstrPassNextKey = L"Pass next key to application";
-const std::wstring wstrToggleHotKeys = L"Toggle Hotkeys off and on";
-const std::wstring wstrNavigationMode = L"Navigation Mode";
-const std::wstring wstrDocumentReadMode = L"Document Read Mode";
-const std::wstring wstrSwitchToPreviousLanguage = L"Switch to Previous Language";
-const std::wstring wstrSwitchToNextLanguage = L"Switch to Next Language";
-const std::wstring wstrVolumeUp = L"Volume Up";
-const std::wstring wstrVolumeDown = L"Volume Down";
-const std::wstring wstrToggleSpeech = L"Toggle Speech on off";
-const std::wstring wstrToggleRowColumnMode = L"Toggle Row or Column Mode";
-const std::wstring wstrReadFocus = L"Read Focus";
-const std::wstring wstrSpellFocus = L"Spell Focus";
-const std::wstring wstrVerboseFocus = L"Verbose Focus";
-const std::wstring wstrPhoneticFocus = L"Phonetic Focus";
-const std::wstring wstrReadTextToCursor = L"Read text To Cursor";
-const std::wstring wstrSpellTextToCursor = L"Spell Text To Cursor";
-const std::wstring wstrVerboseTextToCursor = L"Verbose Text To Cursor";
-const std::wstring wstrPhoneticTextToCursor = L"Phonetic Text To Cursor";
-const std::wstring wstrReadTextFromCursor = L"Read Text From Cursor";
-const std::wstring wstrSpellTextFromCursor = L"Spell Text From Cursor";
-const std::wstring wstrVerboseTextFromCursor = L"Verbose Text From Cursor";
-const std::wstring wstrPhoneticTextFromCursor = L"Phonetic Text From Cursor";
-const std::wstring wstrReadSpreadsheetRowAndColumn = L"Read Spreadsheet Row and Column";
-const std::wstring wstrSpellSpreadsheetRowAndColumn = L"Spell Spreadsheet Row and Column";
-const std::wstring wstrVerboseSpreadsheetRowAndColumn = L"Verbose Spreadsheet Row and Column";
-const std::wstring wstrPhoneticSpreadsheetRowAndColumn = L"Phonetic Spreadsheet Row and Column";
-const std::wstring wstrReadCharacter = L"Read Character";
-const std::wstring wstrDescribeCharacterAttributes = L"Describe Character Attributes";
-const std::wstring wstrPhoneticCharacter = L"Phonetic Character";
-const std::wstring wstrReadWord = L"Read Word";
-const std::wstring wstrSpellWord = L"Spell Word";
-const std::wstring wstrVerboseWord = L"Verbose Word";
-const std::wstring wstrPhoneticWord = L"Phonetic Word";
-const std::wstring wstrReadLine = L"Read Line";
-const std::wstring wstrSpellLine = L"Spell Line";
-const std::wstring wstrVerboseLine = L"Verbose Line";
-const std::wstring wstrPhoneticLine = L"Phonetic Line";
-const std::wstring wstrReadWindow = L"Read Window";
-const std::wstring wstrVerboseWindow = L"Verbose Window";
-const std::wstring wstrWhereAmI = L"Where Am I";
-const std::wstring wstrReadShortcut = L"Read Shortcut";
-const std::wstring wstrReadControl = L"Read Control";
-const std::wstring wstrVerboseControl = L"Verbose Control";
-const std::wstring wstr1Mute = L"1	Mute";
-const std::wstring wstrReadStatusBar = L"Read Status Bar";
-const std::wstring wstrSpellStatusBar = L"Spell Status Bar";
-const std::wstring wstrVerboseStatusBar = L"Verbose Status Bar";
-const std::wstring wstrPhoneticStatusBar = L"Phonetic Status Bar";
-const std::wstring wstrSpeedUp = L"Speed Up";
-const std::wstring wstrSpeedDown = L"Speed Down";
-const std::wstring wstrBrailleBack = L"Braille back";
-const std::wstring wstrBrailleForward = L"Braille forward";
-const std::wstring wstrBrailleLeft = L"Braille left";
-const std::wstring wstrBrailleRight = L"Braille right";
-const std::wstring wstrBrailleWidthLeft = L"Braille width Left";
-const std::wstring wstrBrailleWidthRight = L"Braille width Right";
-const std::wstring wstrBrailleHalfWidthLeft = L"Braille half Width Left";
-const std::wstring wstrBrailleHalfWidthRight = L"Braille half Width Right";
-const std::wstring wstrBrailleGoToFocus = L"Braille go To Focus";
-const std::wstring wstrBrailleHome = L"Braille home";
-const std::wstring wstrBrailleEnd = L"Braille end";
-const std::wstring wstrToggleBraille = L"Toggle Braille on off";
-const std::wstring wstrDisplayCharacters = L"Display Characters";
-const std::wstring wstrCycleAttributes = L"Cycle Attributes";
-const std::wstring wstrDisplayFontSize = L"Display Font Size";
-const std::wstring wstrDisplayFontStyle = L"Display Font Style";
-const std::wstring wstrDisplayFontColours = L"Display Font Colours";
-const std::wstring wstrDisplayFontForegroundColour = L"Display Font Foreground Colour";
-const std::wstring wstrDisplayFontName = L"Display Font Name";
-const std::wstring wstrDescribeCharacter = L"Toggle Describe Character on off";
-const std::wstring wstrToggleCursor = L"Toggle Cursor on off";
-const std::wstring wstrToggleTracking = L"Toggle tracking on off";
-const std::wstring wstrBrailleLineDown = L"Braille line down";
-const std::wstring wstrBrailleLineUp = L"Braille line up";
-const std::wstring wstrBrailleBottom = L"Braille bottom";
-const std::wstring wstrTBrailleTP = L"TBraille tp";
-const std::wstring wstrToggleLayoutMode = L"Toggle Layout Mode on off";
-const std::wstring wstrToggleLiteraryBraille = L"Toggle Literary Braille on off";
-const std::wstring wstrTogglePhysicalMode = L"Toggle Physical Mode on off";
-const std::wstring wstrIncreaseMag = L"Increase Magnification";
-const std::wstring wstrDecreaseMag = L"Decrease Magnification";
-const std::wstring wstrIncrementXMag = L"Increment X Magnification";
-const std::wstring wstrDecrementXMag = L"Decrement X Magnification";
-const std::wstring wstrIncrementYMag = L"Increment Y Magnification";
-const std::wstring wstrDecrementYMag = L"Decrement Y Magnification";
-const std::wstring wstrToggleMag = L"Toggle Magnification";
-const std::wstring wstrToggleColourChanger = L"Toggle Colour changer";
-const std::wstring wstrToggleOverviewMode = L"Toggle Overview mode";
-const std::wstring wstrCyclePrimaryAreaType = L"Cycle Primary Area type";
-const std::wstring wstrCycleOrientation = L"Cycle Orientation";
-const std::wstring wstrImageSmoothing = L"Image Smoothing";
-const std::wstring wstrToggleMagTracking = L"Toggle Tracking";
-const std::wstring wstrDisplayHookedAreas = L"Display Hooked Areas";
-const std::wstring wstrLineViewWholeWindows = L"Line View Whole Windows";
 
 
 /* Speech utilities class allowing other applications to output speech to any supported access technology. 
 The following access technologies arre supported:
 JAWS For Windows (version 8 or later).
-Any product from Dolphin Computer Access.
 System Access.
 Non-Visual Desktop Access.
 */
@@ -166,14 +64,13 @@ private:
 
 	// Which screen reader is running, cached so that speaking doesn't scan every process
 	// and reload each screen reader's API every time; see GetActiveProduct.
-	HRESULT DetectActiveProduct( ActiveProduct & Product, DolphinProduct & SpecificDolphinProduct);
+	HRESULT DetectActiveProduct( ActiveProduct & Product);
 	/// <summary> Determine whether Windows Narrator is running. </summary>
 	bool IsNarratorActive();
 	bool blnHaveActiveProduct;
 	ULONGLONG nActiveProductTime;
 	HRESULT hrActiveProduct;
 	ActiveProduct CachedProduct;
-	DolphinProduct CachedDolphinProduct;
 
 	// UI Automation notifications
 	std::unique_ptr <UiaAnnouncer> pAnnouncer;
@@ -298,29 +195,6 @@ void UnloadNVDAApi(void);
 /// <param name="strText">The text to braille.</param>
 	/// <returns> Returns S_OK if the speech has been queued for brailleing, S_FALSE otherwise.</returns>
 	HRESULT NVDABraille(std::wstring strText);
-//All dolphin functions for dolphin requires us to be 32-bit.
-/// <summary> Determine whether Dolphin is currently active in memory. </summary>
-	/// <returns> returns S_OK if Dolphin is active, S_FALSE otherwise. </returns>
-bool IsDolphinActive(DolphinProduct& SpecificProduct);
-/// <summary>Loads the Dolphin dll.</summery>
-bool LoadDolphinApi();
-/// <summary> Unloads the Dolphin dll.</summery>
-void UnloadDolphinApi(void);
-/// <summary> Speaks a string of text from Dolphin. </summery>
-/// <param name="strText">The text to speak.</param>
-	   /// <param name="blnSilence">Whether or not to silence the existing speech. True indicates the existing speech will be silenced, false indicates the speech will be queued as normal.</param>
-	/// <returns> Returns S_OK if the speech has been queued for speaking, E_NOTIMPL if the function is not supported and S_FALSE otherwise.</returns>
-	HRESULT DolphinSpeak(std::wstring strText, BOOL blnSilence, DolphinReturnCode& ReturnCode);
-/// <summary> Silences Dolphin.</summary>
-	/// <returns> Returns S_OK if the speech has been silenced, S_FALSE otherwise.</returns>
-	HRESULT DolphinSilence(DolphinReturnCode& ReturnCode);
-/// <summary> Brailles a string of text from Dolphin. </summery>
-/// <param name="strText">The text to braille.</param>
-	/// <returns> Returns S_OK if the speech has been queued for brailleing, E_NOTIMPL if the function is not available and S_FALSE otherwise.</returns>
-	HRESULT DolphinBraille(std::wstring strText);	
-	/// <Summary> Obtain a list of dolphin actions. </summary>
-	HRESULT GetAvailableDolphinActions(AvailableActionsType& ActionInformation);
-	HRESULT ExecuteDolphinAction(std::any& name, ScreenReaderActionType& type, DWORD& ReturnCode);
 /// <summary> Determine whether System Access is currently active in memory. </summary>
 	/// <returns> returns S_OK if System Access is active, S_FALSE otherwise. </returns>
 bool IsSystemAccessActive();
@@ -362,7 +236,7 @@ void ClearHscFile();
 	
 	/// <summary> Obtain the currently active speech product. </summary>
 	/// <returns> return S_OK if a product was active S_FALSE otherwise. </returns>
-	HRESULT GetActiveProduct(ActiveProduct& Product, DolphinProduct& SpecificDolphinProduct);
+	HRESULT GetActiveProduct(ActiveProduct& Product);
 	
 	/// Determine whether the application should speak anything.
 	/// </summary>
@@ -375,7 +249,7 @@ void Mute( bool blnNewMute);
 	/// </summary>
 	   /// <param name="strText">The text to speak.</param>
 	/// <returns> Returns S_OK if the speech has been queued for speaking, S_FALSE otherwise. </returns>
-	HRESULT Speak(std::wstring strText, DolphinReturnCode& ReturnCode);
+	HRESULT Speak(std::wstring strText);
 
 	/// <summary> 
 	///speak a string of text with an option to silence the currently speaking text if any is alreaky speaking.
@@ -383,8 +257,8 @@ void Mute( bool blnNewMute);
 	   /// <param name="strText">The text to speak.</param>
 	   /// <param name="blnSilence">Whether or not to silence the existing speech. True indicates the existing speech will be silenced, false indicates the speech will be queued as normal.</param>
 	/// <returns> Returns S_OK if the speech has been queued for speaking, S_FALSE otherwise. </returns>
-	HRESULT Speak(std::wstring strText, BOOL blnSilence, DolphinReturnCode& ReturnCode);
-HRESULT Silence(DolphinReturnCode& ReturnCode);
+	HRESULT Speak(std::wstring strText, BOOL blnSilence);
+HRESULT Silence();
 HRESULT GetAvailableActions(AvailableActionsType& ActionInformation);
 HRESULT ExecuteAction(std::wstring Action, ScreenReaderActionType Type);
 

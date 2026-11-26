@@ -210,10 +210,9 @@ bool RBSpeech::SaveSpeechParameters()
 }
 
 
-HRESULT RBSpeech::GetActiveProduct(ActiveProduct& Product, DolphinProduct& SpecificDolphinProduct)
+HRESULT RBSpeech::GetActiveProduct(ActiveProduct& Product)
 {
 	Product = ID_MAC;
-	SpecificDolphinProduct = ID_NOPRODUCT;
 	return S_OK;
 }
 
@@ -262,12 +261,12 @@ static void PostVoiceOverAnnouncement( const std::wstring & wstrText, bool blnIn
 }
 
 
-HRESULT RBSpeech::Speak( std::wstring wstrText, DolphinReturnCode& ReturnCode)
+HRESULT RBSpeech::Speak( std::wstring wstrText)
 {
-	return Speak( wstrText, false, ReturnCode);
+	return Speak( wstrText, false);
 }
 
-HRESULT RBSpeech::Speak( std::wstring wstrText, bool blnSilence, DolphinReturnCode& ReturnCode)
+HRESULT RBSpeech::Speak( std::wstring wstrText, bool blnSilence)
 {
 	if (IsMuted() == S_OK)
 	{
@@ -295,7 +294,7 @@ HRESULT RBSpeech::Speak( std::wstring wstrText, bool blnSilence, DolphinReturnCo
 	return S_OK;
 }
 
-HRESULT RBSpeech::Silence(DolphinReturnCode& ReturnCode)
+HRESULT RBSpeech::Silence()
 {
 	// IsMuted returns S_OK (0) when muted, so this used to test the wrong way round
 	// and never stopped speech while unmuted

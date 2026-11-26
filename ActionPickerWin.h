@@ -57,7 +57,6 @@ void ListScreenReaderParameters();
 void ListJawsActions();
 		void ListSAActions();
 void ListNVDAActions();
-		void ListDolphinActions();
 
 		void GetDisplayParameters();
 void GetScreenReaderFunction();
@@ -93,7 +92,6 @@ SurfaceAction myNewSurfaceAction;
 
 ActiveProduct myActiveProduct;
 ActiveProduct myOldActiveProduct;
-DolphinProduct myDolphinProduct;
 
 std::shared_ptr<AppConfig> pMyAppConfig;
 std::shared_ptr<RBSpeech> pMySpeech;

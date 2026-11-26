@@ -21,7 +21,7 @@ ActionPicker::ActionPicker(const wxString & title, const std::wstring  &wstrCont
 
 wstrMyControl = wstrControlName;
 myOldActiveProduct =myActiveProduct; 	
-  pMySpeech->GetActiveProduct( myActiveProduct, myDolphinProduct);
+  pMySpeech->GetActiveProduct( myActiveProduct);
     
 wxPanel *myPanel = new wxPanel(this, -1);
     BuildDataView( myPanel);
@@ -392,12 +392,6 @@ case ID_NVDA:
 	}
 	break;
 
-case ID_DOLPHIN:
-{
-		ListDolphinActions();
-	}
-	break;
-
 default:
 {
 		return;
@@ -475,10 +469,6 @@ void ActionPicker::ListSAActions()
 	
 void ActionPicker::ListNVDAActions()
 {}
-
-
-		void ActionPicker::ListDolphinActions()
-		{}
 
 
 		// We need to implement an event table in which the events received by an ActionPicker are routed to their respective handler functions 

@@ -61,7 +61,6 @@ enum ActionParameterDataType
 	Type_String, //std::string.
 	Type_WString, //std::wstring type.
 	Type_Bool, //boolean datatype.
-	Type_DolphinReturnCode, //Dolphin return code type.
 };
 
 

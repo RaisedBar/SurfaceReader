@@ -483,12 +483,11 @@ wstrAppName = wstrDefaultAppName;
 			}
 
 // Speak the active mode for the selected surface
-	DolphinReturnCode dpReturn;
 	std::wstring wstrOut = lbxSurfaces->GetStringSelection().ToStdWstring();
 	wstrOut.append( wstrSpace);
 wstrOut.append( wstrMode);
 
-Speech->Speak( wstrOut, true, dpReturn);
+Speech->Speak( wstrOut, true);
 
 // Actually update the status bar
 wstrOut = wstrMode.append( wstrSpacedDash).append( wstrProtocolName);
@@ -1053,8 +1052,7 @@ for (SurfaceParameters & myParameters : vSurfaces)
 
 				// Add the new surface to the master vector
 				ActiveProduct myProduct;
-				DolphinProduct dpProduct;
-				Speech->GetActiveProduct(myProduct, dpProduct);
+				Speech->GetActiveProduct( myProduct);
 
 				SurfacePointer pSurface(new MIDISurface(this, myProduct, &myParameters, Protocols, Apps));
 				SurfacePointers.push_back(pSurface);
@@ -1646,8 +1644,7 @@ SaveProtocols();
 
 // Add a new Surface to the Surface vector
 ActiveProduct myProduct;
-DolphinProduct dpProduct;
-Speech->GetActiveProduct(myProduct, dpProduct);
+Speech->GetActiveProduct( myProduct);
 
 SurfacePointer pSurface(new MIDISurface(this, myProduct, &myProtocolWizard.GetSurfaceParameters(), Protocols, Apps));
 SurfacePointers.push_back(pSurface);
@@ -2273,8 +2270,7 @@ myParameters.SetAppConfigName( wstrEmpty);
 
 					// Create a new surface and add it to the vector
 				ActiveProduct myProduct;
-DolphinProduct dpProduct;
-										Speech->GetActiveProduct( myProduct, dpProduct);
+										Speech->GetActiveProduct( myProduct);
 
 SurfacePointer pSurface( new MIDISurface(this, myProduct, &myParameters, Protocols, Apps));
 							SurfacePointers.push_back( pSurface);
@@ -2619,11 +2615,10 @@ SurfacePointers.at( nMySelection)->SetWidgetMode( ID_LIVE_MODE);
 SaveSurfaces();
 UpdateStatusBar();
 
-DolphinReturnCode dpReturn;
 	std::wstring wstrMessage = lbxSurfaces->GetStringSelection().ToStdWstring();
 	wstrMessage.append( wstrSpace);
 wstrMessage.append( wstrLiveMode);
-Speech->Speak( wstrMessage, true, dpReturn);
+Speech->Speak( wstrMessage, true);
 }
 
 		
@@ -2640,11 +2635,10 @@ SurfacePointers.at( nMySelection)->SetWidgetMode( ID_ID_MODE);
 SaveSurfaces();
 UpdateStatusBar();
 
-DolphinReturnCode dpReturn;
 	std::wstring wstrMessage = lbxSurfaces->GetStringSelection().ToStdWstring();
 	wstrMessage.append( wstrSpace);
 wstrMessage.append( wstrIDMode);
-Speech->Speak( wstrMessage, true, dpReturn);
+Speech->Speak( wstrMessage, true);
 }
 
 
@@ -2661,11 +2655,10 @@ SurfacePointers.at( nMySelection)->SetWidgetMode( ID_SCREEN_READER_MODE);
 SaveSurfaces();
 UpdateStatusBar();
 
-DolphinReturnCode dpReturn;
 	std::wstring wstrMessage = lbxSurfaces->GetStringSelection().ToStdWstring();
 wstrMessage.append( wstrSpace);
 wstrMessage.append( wstrScreenReaderMode);
-Speech->Speak( wstrMessage, true, dpReturn);
+Speech->Speak( wstrMessage, true);
 }
 
 
@@ -2682,11 +2675,10 @@ SurfacePointers.at( nMySelection)->SetWidgetMode( ID_CONFIG_MODE);
 SaveSurfaces();
 UpdateStatusBar();
 
-DolphinReturnCode dpReturn;
 	std::wstring wstrMessage = lbxSurfaces->GetStringSelection().ToStdWstring();
 	wstrMessage.append( wstrSpace);
 wstrMessage.append( wstrConfigMode);
-Speech->Speak( wstrMessage, true, dpReturn);
+Speech->Speak( wstrMessage, true);
 }
 
 
@@ -3010,8 +3002,7 @@ if (wstrOut.empty())
 		return;
 }
 
-			DolphinReturnCode dpReturn;
-			Speech->Speak( wstrOut, mySpeechObj.Interrupt(), dpReturn);
+			Speech->Speak( wstrOut, mySpeechObj.Interrupt());
 }
 
 

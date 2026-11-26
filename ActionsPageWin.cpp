@@ -21,7 +21,7 @@ pMySpeech = pSpeech;
 pMyJawsCache = pJawsCache;
 myControls = pMyAppConfig->GetHardwareControls();
 myOldActiveProduct =myActiveProduct;
-   pMySpeech->GetActiveProduct( myActiveProduct, myDolphinProduct);
+   pMySpeech->GetActiveProduct( myActiveProduct);
   
   wxPanel *myPanel = new wxPanel(this, -1);
 // Tree of defined actions and parameters
@@ -433,11 +433,6 @@ if (wstrName.compare( wstrNVDA) == 0)
 		return ID_NVDA;
 	}
 	
-if (wstrName.compare( wstrDolphin) == 0)
-{
-		return ID_DOLPHIN;
-	}
-	
 if (wstrName.compare( wstrMac) == 0)
 {
 		return ID_MAC;
@@ -718,9 +713,8 @@ vFailedActions = 		mySurfaceActions.DeleteScreenReaderActionTypes();
 		// Iterate through the available products
 		wxTreeItemId myProductNode = wxActionsTree->GetFirstChild( myNode, cookie); 
 
-for  (unsigned int i =ID_JAWS; i <= ID_MAC; i++)
+for (ActiveProduct myTargetProduct : arrActionProducts)
 {
-ActiveProduct myTargetProduct = static_cast<ActiveProduct>( i); 	
 
 if (myTargetProduct != myProduct)
 	{
@@ -1300,12 +1294,6 @@ case ID_NVDA:
 	}
 	break;
 
-case ID_DOLPHIN:
-{
-		return wstrDolphin;
-	}
-	break;
-
 case ID_MAC:
 {
 return wstrMac;
@@ -1380,9 +1368,8 @@ for (it = myControls.begin(); it != myControls.end(); it++)
 	void ActionsPage::ListScreenReaders( wxTreeItemId wxtIDCurrentNode )
 	{
 // Create a child node for every available speech product
-for  (unsigned int i =ID_JAWS; i <= ID_MAC; i++)
+for (ActiveProduct myActiveProduct : arrActionProducts)
 {
-ActiveProduct myActiveProduct = static_cast<ActiveProduct>( i); 	
 wxTreeItemId wxtIDNewNode = wxActionsTree->AppendItem( wxtIDCurrentNode , GetActiveProductName( myActiveProduct));
 	ListModes( wxtIDNewNode);
 }
