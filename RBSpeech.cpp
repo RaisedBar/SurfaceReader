@@ -517,16 +517,10 @@ bool RBSpeech::LoadNVDAApi()
 		return false;
 	}
 	// The DLL sits next to the executable. Without this the DLL name was appended to the
-	// executable's own path (...\SurfaceReader.exe\nvdaControllerClient32.dll), so NVDA never loaded.
+	// executable's own path (...\SurfaceReader.exe\nvdaControllerClient64.dll), so NVDA never loaded.
 	NVDADllFileName.remove_filename();
 
-	// A process can only load a DLL of its own bitness. This used to choose by whether
-	// Windows was 64-bit, so the 32-bit build picked the 64-bit DLL on 64-bit Windows.
-#ifdef _WIN64
-NVDADllFileName /=L"nvdaControllerClient64.dll";
-#else
-			NVDADllFileName /=L"nvdaControllerClient32.dll";
-#endif
+	NVDADllFileName /= L"nvdaControllerClient64.dll";
 
 			if (exists(NVDADllFileName))
 {
@@ -633,13 +627,7 @@ hr =GetExecutablePath(SystemAccessDllFileName); //assign the executable director
 		}
 		SystemAccessDllFileName.remove_filename();
 
-		// A process can only load a DLL of its own bitness; this used to choose by
-		// whether Windows was 64-bit, which is wrong for the 32-bit build there.
-#ifdef _WIN64
-			SystemAccessDllFileName /= L"SAAPI64.dll";
-#else
-			SystemAccessDllFileName /= L"SAAPI32.dll";
-#endif
+		SystemAccessDllFileName /= L"SAAPI64.dll";
 		
 		if (exists(SystemAccessDllFileName))
 		{ 
