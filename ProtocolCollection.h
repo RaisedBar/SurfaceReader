@@ -7,6 +7,9 @@
 
 #pragma once
 
+#include <atomic>
+#include <mutex>
+
 #include "Protocol.h"
 
 //ProtocolCollection class, holding Protocols.
@@ -27,6 +30,9 @@ friend class boost::serialization::access;
 		}
 
 	public:
+	// Incremented by every change, so a cached copy can tell it is out of date
+	unsigned int GetRevision() const { return nRevision; }
+
 	ProtocolCollection();
 	
 	bool IsProtocolNameUnique(std::wstring wstrName);
@@ -49,6 +55,11 @@ friend class boost::serialization::access;
 		int count();
 	
 		// End of class
+
+private:
+	// Guards the map: the surface worker threads read it while the UI thread edits it
+	mutable std::recursive_mutex myMutex;
+	std::atomic <unsigned int> nRevision { 0 };
 };
 
 #endif

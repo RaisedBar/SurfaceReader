@@ -1,112 +1,156 @@
 // DispatchQueue.h
-// Asynchronous despatch queue
-// https://embeddedartistry.com/blog/2017/2/1/c11-implementing-a-dispatch-queue-using-stdfunction
+// A single background thread that runs queued tasks in order.
+// Raised Bar Ltd.
+// http://www.raisedbar.net
 
 #ifndef DISPATCH_QUEUE_H
 #define DISPATCH_QUEUE_H
 
-#include <thread> 
-#include <functional> 
-#include <queue> 
-#include <mutex> 
-#include <condition_variable> 
+#pragma once
 
-class dispatch_queue 
+#include <chrono>
+#include <condition_variable>
+#include <deque>
+#include <functional>
+#include <map>
+#include <mutex>
+#include <thread>
+
+/* Each MIDI surface owns one of these. The MIDI input callbacks only forward the message and Post a copy
+of it here, so analysis, logging and speech never hold up MIDI traffic.
+
+- Tasks run one at a time, in the order they were posted, so a surface's messages are analysed in order.
+- PostAfter runs a task once a delay has passed, without blocking the thread in the meantime: tasks posted
+  during the delay (for example the display updates a "read display" action is waiting for) run first.
+- Stop finishes the task that is running, discards the rest and joins the thread. The owner must call it
+  before destroying anything the tasks use; the destructor calls it too. */
+
+class WorkerQueue
 {
-	typedef std::function<void(void)> fp_t;
-
 public:
-	dispatch_queue(size_t thread_cnt = 1)
+	typedef std::function <void()> Task;
+	typedef std::chrono::steady_clock Clock;
+
+	WorkerQueue()
+		: blnStopping( false),
+		nSequence( 0),
+		myThread( &WorkerQueue::Run, this)
+	{}
+
+	~WorkerQueue()
 	{
-		std::vector<std::thread>::iterator it;
+		Stop();
+	}
 
-		for (it = threads_.begin(); it != threads_.end(); it++)
-		{
-			*it = std::thread(&dispatch_queue::dispatch_thread_handler, this);
-		}
-	};
-	
-	~dispatch_queue()
+	WorkerQueue( const WorkerQueue &) = delete;
+	WorkerQueue & operator=( const WorkerQueue &) = delete;
+
+	// Run the task as soon as the tasks before it have run
+	void Post( Task myTask)
 	{
-		// printf("Destructor: Destroying dispatch threads...\n");
-
-		// Signal to dispatch threads that it's time to wrap up 
-		std::unique_lock<std::mutex> lock(lock_);
-		quit_ = true;
-		lock.unlock();
-		cv_.notify_all();
-
-		// Wait for threads to finish before we exit 
-		std::vector<std::thread>::iterator it;
-
-		for (it = threads_.begin(); it != threads_.end(); it++)
 		{
-			if (it->joinable())
+			std::lock_guard <std::mutex> myLock( myMutex);
+			if (blnStopping)
 			{
-				it->join();
+				return;
 			}
+			myTasks.push_back( std::move( myTask));
 		}
-	};
+		myCondition.notify_one();
+	}
 
-	// dispatch and copy 
-	void dispatch(const fp_t& op)
+	// Run the task once nDelayMilliseconds have passed
+	void PostAfter( int nDelayMilliseconds, Task myTask)
 	{
-		std::unique_lock<std::mutex> lock(lock_);
-		q_.push(op);
+		if (nDelayMilliseconds <= 0)
+		{
+			Post( std::move( myTask));
+			return;
+		}
 
-		// Manual unlocking is done before notifying, to avoid waking up 
-	// the waiting thread only to block again (see notify_one for details) 
-		lock.unlock();
-		cv_.notify_all();
-	};
-	
-	// dispatch and move 
-	void dispatch(fp_t&& op)
+		{
+			std::lock_guard <std::mutex> myLock( myMutex);
+			if (blnStopping)
+			{
+				return;
+			}
+			// The sequence number keeps tasks that fall due at the same moment in the order they were posted
+			myDelayedTasks.emplace( std::make_pair( Clock::now() + std::chrono::milliseconds( nDelayMilliseconds), nSequence++), std::move( myTask));
+		}
+		myCondition.notify_one();
+	}
+
+	// Discard queued tasks and wait for the thread to finish. Safe to call more than once.
+	void Stop()
 	{
-		std::unique_lock<std::mutex> lock(lock_);
-		q_.push(std::move(op));
+		{
+			std::lock_guard <std::mutex> myLock( myMutex);
+			blnStopping = true;
+			myTasks.clear();
+			myDelayedTasks.clear();
+		}
+		myCondition.notify_one();
 
-		// Manual unlocking is done before notifying, to avoid waking up 
-	// the waiting thread only to block again (see notify_one for details) 
-		lock.unlock();
-		cv_.notify_all();
-	};
-		
-	// Deleted operations 
-	dispatch_queue(const dispatch_queue& rhs) = delete;
-	dispatch_queue& operator=(const dispatch_queue& rhs) = delete;
-	dispatch_queue(dispatch_queue&& rhs) = delete;
-	dispatch_queue& operator=(dispatch_queue&& rhs) = delete;
+		if (myThread.joinable()
+			&& (myThread.get_id() != std::this_thread::get_id()))
+		{
+			myThread.join();
+		}
+	}
 
 private:
-	std::mutex lock_;
-	std::vector<std::thread> threads_;
-	std::queue<fp_t> q_;
-	std::condition_variable cv_;
-	bool quit_ = false;
-	void dispatch_thread_handler(void)
+	void Run()
 	{
-		std::unique_lock<std::mutex> lock(lock_);
+		std::unique_lock <std::mutex> myLock( myMutex);
 
-		do
+		while (blnStopping == false)
 		{
-			//Wait until we have data or a quit signal 
-			cv_.wait(lock, [this] {
-				return (q_.size() || quit_);
-			});
-
-			//after wait, we own the lock 
-			if (!quit_ && q_.size())
+			// Move delayed tasks that have fallen due onto the main queue
+			Clock::time_point myNow = Clock::now();
+			while ((myDelayedTasks.empty() == false)
+				&& (myDelayedTasks.begin()->first.first <= myNow))
 			{
-				auto op = std::move(q_.front());
-				q_.pop();
-
-				//unlock now that we're done messing with the queue 
-				lock.unlock();
-				op();
-				lock.lock();
+				myTasks.push_back( std::move( myDelayedTasks.begin()->second));
+				myDelayedTasks.erase( myDelayedTasks.begin());
 			}
-		} while (!quit_);
-	};
+
+			if (myTasks.empty())
+			{
+				if (myDelayedTasks.empty())
+				{
+					myCondition.wait( myLock);
+				}
+				else
+				{
+					myCondition.wait_until( myLock, myDelayedTasks.begin()->first.first);
+				}
+				continue;
+			}
+
+			Task myTask = std::move( myTasks.front());
+			myTasks.pop_front();
+
+			// Run the task without holding the lock, so the MIDI callbacks can keep posting
+			myLock.unlock();
+			try
+			{
+				myTask();
+			}
+			catch( ...)
+			{
+				// A failing task must not take the thread down with it
+			}
+			myLock.lock();
+		}
+	}
+
+	std::mutex myMutex;
+	std::condition_variable myCondition;
+	std::deque <Task> myTasks;
+	std::multimap <std::pair <Clock::time_point, unsigned long long>, Task> myDelayedTasks;
+	bool blnStopping;
+	unsigned long long nSequence;
+	std::thread myThread;  // last, so everything it uses exists before it starts
 };
-#endif
+
+#endif  // DISPATCH_QUEUE_H

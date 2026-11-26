@@ -3,7 +3,6 @@
 
 #include "MIDISurface.h"
 #include "SurfaceFrame.h"
-#include "DispatchQueue.h"
 
 // Post a surface update to the main window.
 // The payload is copied into the event, so nothing is left on the heap
@@ -217,6 +216,10 @@ StopDisplayProcessing();
 						m_HardwareMIDIIn->setCallback( NULL);
 m_DisplayMIDIIn->setCallback( NULL);
 
+// No more messages can be queued now. Finish the task in progress, drop the rest, and stop the
+// thread before the members and ports it uses are destroyed (and before the log is closed).
+myWorker.Stop();
+
 CloseLog();
 }
 
@@ -276,31 +279,34 @@ std::string MIDISurface::GetSurfaceID()
 	
 	std::string MIDISurface::GetProtocolID()
 	{
+		std::lock_guard <std::mutex> myLock( myIDMutex);
 		return myProtocolID;
 	}
 
 
 	void MIDISurface::SetProtocolID( std::string myNewProtocolID)
 	{
+		std::lock_guard <std::mutex> myLock( myIDMutex);
 		myProtocolID = myNewProtocolID;
 	}
 
 
 std::pair <std::wstring, std::wstring> MIDISurface::GetAppConfigID()
 {
+	std::lock_guard <std::mutex> myLock( myIDMutex);
 	return myAppConfigID;
 	}
 
 
 void MIDISurface::SetAppConfigID( std::pair <std::wstring, std::wstring> myNewAppConfigID)
 {
+std::lock_guard <std::mutex> myLock( myIDMutex);
 myAppConfigID = myNewAppConfigID;
 }
 
 
 void MIDISurface::AnalyseDisplayMessage(std::vector <unsigned char> myMessage)
 {
-SurfaceProtocol myProtocol; 
 bool blnFound = false;
 
 // Reset the buffer and message count if the new message is a system exclusive
@@ -310,48 +316,16 @@ if (myMessage.at( 0) == MIDI_SYSEX)
 		nDisplayMessages = 0;
 }
 
-// Get the protocol being used by this surface
-			try
-		{
-			 myProtocol = pMyProtocols->GetProtocol( GetProtocolID());
-			 LogIt(myProtocol.GetProtocolName());
-			 }
-		catch( int nError)
-		{
-if (nError == ID_NO_MATCHING_PROTOCOL_ID)
+// The protocol and app config used by this surface (the worker's cached copies; no copying per message)
+if (RefreshWorkerConfig() == false)
 {
 	LogIt(L"Protocol not identified");
 	nDisplayMessages = 0;
 	vDisplayBuffer.clear();
 	return;
 }
-else
-{
-	// Unknown error
-	LogIt(L"Unknown exception in protocol detection.");
-	nDisplayMessages = 0;
-	vDisplayBuffer.clear();
-return;
-}
-		}  // end catch
-
-AppConfig myAppConfig;
-	std::pair <std::wstring, std::wstring> myAppConfigID = GetAppConfigID();
-
-	// Try to load the identified configuration
-	try
-		{
-myAppConfig = pMyApps->GetAppConfig( myAppConfigID.first, myAppConfigID.second);
-LogIt(myAppConfig.GetAppName());
-	}
-catch ( RBException &myException)
-	    {
-	LogIt(L"No App Config identified");
-			LogIt(myException.what());
-			std::wstring wstrAppName;
-		wstrAppName.clear();
-		myAppConfig.SetAppName( wstrAppName);
-}  // end catch
+SurfaceProtocol & myProtocol = *pWorkerProtocol;
+AppConfig & myAppConfig = *pWorkerAppConfig;
 
 		if (myAppConfig.GetAppName().empty())  // Default behaviour - no further processing necessary
 	{
@@ -559,49 +533,17 @@ return wstrOut;
 
 void MIDISurface::AnalyseHardwareMessage(std::vector <unsigned char> myMessage)
 {
-SurfaceProtocol myProtocol; 
 bool blnFound = false;
 
-// Get the protocol being used by this surface
-			try
-		{
-			 myProtocol = pMyProtocols->GetProtocol( GetProtocolID());
-}
-		catch( int nError)
-		{
-if (nError == ID_NO_MATCHING_PROTOCOL_ID)
+// The protocol and app config used by this surface (the worker's cached copies; no copying per message)
+if (RefreshWorkerConfig() == false)
 {
 	nHardwareMessages = 0;
 	vHardwareBuffer.clear();
 	return;
 }
-else
-{
-	// Unknown error
-		nHardwareMessages = 0;
-	vHardwareBuffer.clear();
-return;
-}
-		}  // end catch
-
-		AppConfig myAppConfig;
-		try
-		{
-std::pair <std::wstring, std::wstring> myAppConfigID = GetAppConfigID();
-
-	// Try to load the identified configuration
-myAppConfig = pMyApps->GetAppConfig( myAppConfigID.first, myAppConfigID.second);
-}
-catch ( RBException &myException)
-	    {
-        					#ifdef __WINDOWS__ 
-OutputDebugString( myException.what());
-					#endif
-
-std::wstring wstrAppName;
-		wstrAppName.clear();
-		myAppConfig.SetAppName( wstrAppName);
-}  // end catch
+SurfaceProtocol & myProtocol = *pWorkerProtocol;
+AppConfig & myAppConfig = *pWorkerAppConfig;
 
 	// Add the new message to the buffer
 bool blnDropStatus = myProtocol.GetDropExtraStatusBytes();
@@ -874,6 +816,7 @@ return wstrOut;
 
 std::wstring MIDISurface::GetDisplayText( std::wstring wstrLabel)
 {
+std::lock_guard <std::mutex> myLock( myDisplaysMutex);
 std::map <std::wstring, std::wstring>::iterator it;
 it = myDisplays.find( wstrLabel);
 
@@ -897,39 +840,36 @@ if (blnCursorFromLeft == false)
 		std::reverse( wstrText.begin(), wstrText.end());
 }
 	
-std::map <std::wstring, std::wstring>::iterator it;
-it = myDisplays.find( wstrLabel);
-
-if (it == myDisplays.end())
 {
-std::pair <std::wstring, std::wstring> myPair = std::make_pair( wstrLabel, wstrText);
-myDisplays.insert( myPair);
-UpdateUI( myPair.first, blnLEDLamp, nDisplayLength, nLineCount, pProtocol, strTranslationID);
+	std::lock_guard <std::mutex> myLock( myDisplaysMutex);
+	myDisplays[ wstrLabel] = wstrText;
 }
-else
-		{
-			it->second = wstrText;
-UpdateUI( it->first, blnLEDLamp, nDisplayLength, nLineCount, pProtocol, strTranslationID);
-}
+// Outside the lock: UpdateUI reads the display text again
+UpdateUI( wstrLabel, blnLEDLamp, nDisplayLength, nLineCount, pProtocol, strTranslationID);
 }
 
 
 void MIDISurface::SetDisplayText( std::wstring wstrLabel, int nCursorPosition, std::wstring wstrNewText, bool blnCursorFromLeft, bool blnLEDLamp, int nDisplayLength, int nLineCount, SurfaceProtocol * pProtocol, std::string strTranslationID)
 {
-std::map <std::wstring, std::wstring>::iterator it;
-it = myDisplays.find( wstrLabel);
-
-if (it != myDisplays.end())
 {
-if (blnCursorFromLeft == false)
-	{
-std::reverse( wstrNewText.begin(), wstrNewText.end());
-nCursorPosition = ((it->second.length() -1) - nCursorPosition);
-}
+	std::lock_guard <std::mutex> myLock( myDisplaysMutex);
+	std::map <std::wstring, std::wstring>::iterator it = myDisplays.find( wstrLabel);
 
-it->second.replace( nCursorPosition , wstrNewText.length(), wstrNewText);	
-UpdateUI( it->first, blnLEDLamp, nDisplayLength, nLineCount, pProtocol, strTranslationID);
+	if (it == myDisplays.end())
+	{
+		return;
+	}
+
+	if (blnCursorFromLeft == false)
+	{
+		std::reverse( wstrNewText.begin(), wstrNewText.end());
+		nCursorPosition = ((it->second.length() -1) - nCursorPosition);
+	}
+
+	it->second.replace( nCursorPosition , wstrNewText.length(), wstrNewText);
 }
+// Outside the lock: UpdateUI reads the display text again
+UpdateUI( wstrLabel, blnLEDLamp, nDisplayLength, nLineCount, pProtocol, strTranslationID);
 }
 
 
@@ -1074,14 +1014,6 @@ case ReadDisplay:
 {
 	if (IsNoteOffMessage( strHash, nControlState))
 {
-int nDelay = GetReadDisplayDelay();
-
-if (nDelay > 0)
-	{
-		// Pause to allow time for the display to update
-	Sleep( nDelay);
-}
-	
 return GetDisplayString( myAction, pAppConfig, nControlState);	
 		}
 else
@@ -1094,13 +1026,6 @@ else  // any other kind of message
 {
 if (nControlState == MIDI_NOTE_OFF_VELOCITY)   // 0 usually used to indicate "off", so effectively read on release
 		{
-	int nDelay = GetReadDisplayDelay();
-
-if (nDelay > 0)
-	{
-		// Pause to allow time for the display to update
-	Sleep( nDelay);
-}
 MIDI myMIDI( vBuffer, false);
 int nDataValue = myMIDI.NibbledMessageValue( strHash, vBuffer);
 return GetDisplayString( myAction, pAppConfig, nDataValue);	
@@ -1120,14 +1045,6 @@ case ReadDisplayLine:
 {
 	if (IsNoteOffMessage( strHash, nControlState))
 {
-				int nDelay = GetReadDisplayDelay();
-
-if (nDelay > 0)
-	{
-		// Pause to allow time for the display to update
-	Sleep( nDelay);
-}
-
 return GetDisplayLineString( myAction, pAppConfig);
 }
 else  // ignore note on
@@ -1137,14 +1054,6 @@ return wstrEmpty;
 }
 else  //  any other message type
 {
-	int nDelay = GetReadDisplayDelay();
-
-if (nDelay > 0)
-	{
-		// Pause to allow time for the display to update
-	Sleep( nDelay);
-}
-
 return GetDisplayLineString( myAction, pAppConfig);
 }
 }
@@ -1156,14 +1065,6 @@ case ReadDisplayStrip:
 			{
 				if (IsNoteOffMessage( strHash, nControlState))
 {
-		int nDelay = GetReadDisplayDelay();
-
-if (nDelay > 0)
-	{
-		// Pause to allow time for the display to update
-	Sleep( nDelay);
-}
-
 return GetDisplayStripString( myAction, pAppConfig);
 		}
 				else  // ignore note on
@@ -1173,14 +1074,6 @@ return GetDisplayStripString( myAction, pAppConfig);
 		}
 		else  // any other message type
 		{
-		int nDelay = GetReadDisplayDelay();
-
-if (nDelay > 0)
-	{
-		// Pause to allow time for the display to update
-	Sleep( nDelay);
-}
-
 return GetDisplayStripString( myAction, pAppConfig);
 		}
 		}
@@ -1192,14 +1085,6 @@ case ReadDisplaySection:
 			{
 				if (IsNoteOffMessage( strHash, nControlState))
 {
-		int nDelay = GetReadDisplayDelay();
-
-if (nDelay > 0)
-	{
-		// Pause to allow time for the display to update
-	Sleep( nDelay);
-}
-
 return GetDisplaySubstring( myAction, pAppConfig);
 		}
 		else  // ignore note on
@@ -1209,14 +1094,6 @@ return GetDisplaySubstring( myAction, pAppConfig);
 		}
 		else  // any other message type
 			{
-				int nDelay = GetReadDisplayDelay();
-
-if (nDelay > 0)
-	{
-		// Pause to allow time for the display to update
-	Sleep( nDelay);
-}
-
 return GetDisplaySubstring( myAction, pAppConfig);
 		}
 	}
@@ -1365,14 +1242,6 @@ case ReadLEDIfOff:
 {
 	if (IsNoteOffMessage( strHash, nControlState))
 {
-int nDelay = GetReadDisplayDelay();
-
-if (nDelay > 0)
-	{
-		// Pause to allow time for the display to update
-	Sleep( nDelay);
-}
-	
 return GetLEDString( myAction, pAppConfig, nControlState);	
 		}
 else
@@ -1385,13 +1254,6 @@ else  // any other kind of message
 {
 if (nControlState == MIDI_NOTE_OFF_VELOCITY)   // 0 usually used to indicate "off", so effectively read on release
 		{
-	int nDelay = GetReadDisplayDelay();
-
-if (nDelay > 0)
-	{
-		// Pause to allow time for the display to update
-	Sleep( nDelay);
-}
 MIDI myMIDI( vBuffer, false);
 int nDataValue = myMIDI.NibbledMessageValue( strHash, vBuffer);
 return GetLEDString( myAction, pAppConfig, nControlState);	
@@ -1486,7 +1348,7 @@ std::wstring MIDISurface::GetDisplayString( SurfaceAction myAction, AppConfig * 
 {
 	// Get the protocol information so that we can decode correctly 
 std::string strProtocolID = GetProtocolID();
-SurfaceProtocol myProtocol = pMyProtocols->GetProtocol( strProtocolID);
+SurfaceProtocol & myProtocol = WorkerProtocol();
 
 const int DISPLAY_NAME_PARAM = 0;
 wxString wxstrHash = myAction.GetParameter( DISPLAY_NAME_PARAM).second;
@@ -1540,7 +1402,7 @@ std::wstring MIDISurface::GetDisplayLineString( SurfaceAction myAction, AppConfi
 {
 // Get the protocol information so that we can decode correctly 
 std::string strProtocolID = this->GetProtocolID();
-SurfaceProtocol myProtocol = pMyProtocols->GetProtocol( strProtocolID);
+SurfaceProtocol & myProtocol = WorkerProtocol();
 const int DISPLAY_NAME_PARAM = 0;
 wxString wxstrHash = myAction.GetParameter( DISPLAY_NAME_PARAM).second;
 std::string strDisplayHash = wxstrHash.ToStdString();
@@ -1577,7 +1439,6 @@ return wstrOut;
 
 std::wstring MIDISurface::GetDisplayStripString( SurfaceAction myAction, AppConfig * pAppConfig)
 {
-SurfaceProtocol myProtocol; 
 	
 	// Get the protocol information so that we can decode correctly 
 std::string strProtocolID = GetProtocolID();
@@ -1588,15 +1449,12 @@ LogIt( "Empty protocol ID in GetDisplayStripString");
 return wstrEmpty;
 }
 
-try
-	{
-		myProtocol = pMyProtocols->GetProtocol( strProtocolID);
-	}
-	catch( ...)
+if (pWorkerProtocol == nullptr)
 	{
 		LogIt( "Protocol not found in GetDisplayStripString");
 		return wstrEmpty;
 	}
+SurfaceProtocol & myProtocol = *pWorkerProtocol;
 
 const int DISPLAY_NAME_PARAM = 0;
 wxString wxstrHash = myAction.GetParameter( DISPLAY_NAME_PARAM).second;
@@ -1745,7 +1603,7 @@ std::wstring MIDISurface::GetDisplaySubstring( SurfaceAction myAction, AppConfig
 {
 // Get the protocol information so that we can decode correctly 
 std::string strProtocolID = this->GetProtocolID();
-SurfaceProtocol myProtocol = pMyProtocols->GetProtocol( strProtocolID);
+SurfaceProtocol & myProtocol = WorkerProtocol();
 const int DISPLAY_NAME_PARAM = 0;
 wxString wxstrHash = myAction.GetParameter( DISPLAY_NAME_PARAM).second;
 std::string strDisplayHash = wxstrHash.ToStdString();
@@ -1790,17 +1648,12 @@ if (strProtocolID.empty())
 		return wstrEmpty;
 }
 
-			SurfaceProtocol myProtocol; 
-
-				try
-			{
-				myProtocol = pMyProtocols->GetProtocol( strProtocolID);
-			}
-			catch( ...)
+			if (pWorkerProtocol == nullptr)
 			{
 				LogIt( "Protocol not found");
 				return wstrEmpty;
 			}
+			SurfaceProtocol & myProtocol = *pWorkerProtocol;
 
 const int DISPLAY_NAME_PARAM = 0;
 wxString wxstrHash = myAction.GetParameter( DISPLAY_NAME_PARAM).second;
@@ -1957,6 +1810,7 @@ PostSurfaceEvent( pMyParent, SCREEN_READER_FUNCTION_CALL_ID, mySRFunctionObj);
 
 std::wstring MIDISurface::GetCurrentState( std::wstring wstrDisplayLabel)
 {
+				std::lock_guard <std::mutex> myLock( myDisplaysMutex);
 				std::map <std::wstring, std::wstring>::iterator it;
 it = myDisplays.find( wstrDisplayLabel);
 
@@ -1978,6 +1832,7 @@ void MIDISurface::SetCurrentState( std::wstring wstrDisplayLabel, std::wstring w
 std::pair <std::wstring, std::wstring> myPair;
 myPair = std::make_pair( wstrDisplayLabel, wstrState);
 
+std::lock_guard <std::mutex> myLock( myDisplaysMutex);
 std::map <std::wstring, std::wstring>::iterator it;
 it = myDisplays.find( wstrDisplayLabel);
 
@@ -2033,17 +1888,20 @@ PostSurfaceEvent( pMyParent, STATUS_UPDATE_ID, myStatusObj);
 			return;
 	}
 
-	std::map <std::wstring, std::wstring>::iterator it;
-it = myDisplays.find( wstrLabel);
+	std::wstring wstrDisplayText;
+	{
+		std::lock_guard <std::mutex> myLock( myDisplaysMutex);
+		std::map <std::wstring, std::wstring>::iterator it = myDisplays.find( wstrLabel);
 
-if (it == myDisplays.end())
-{
-return;
-}
+		if (it == myDisplays.end())
+		{
+			return;
+		}
+		wstrDisplayText = it->second;
+	}
 
 DisplayObject myDisplayObj;
-AppConfig myAppConfig;
-myAppConfig = pMyApps->GetAppConfig( myAppConfigID);
+AppConfig & myAppConfig = *pWorkerAppConfig;
 
 		if (myAppConfig.GetAppName().empty())  // default behaviour
 {
@@ -2063,7 +1921,7 @@ else
 }
 }
 
-std::wstring wstrContents = pProtocol->GetTranslatedString( strTranslationID, it->second);
+std::wstring wstrContents = pProtocol->GetTranslatedString( strTranslationID, wstrDisplayText);
 	wstrContents = FormatDisplay( wstrContents, nDisplayLength, nLineCount);
 
 	myDisplayObj.SetContents( wstrContents);
@@ -2318,9 +2176,37 @@ return myPair;
 }
 
 
-void MIDISurface::ProcessLiveModeMessage( std::pair <MessageDefinition, std::string> myHardwarePair, SurfaceProtocol * pProtocol, AppConfig * pAppConfig, unsigned int nControlValue, std::vector <unsigned char> vBuffer)
+void MIDISurface::ProcessLiveModeMessage( std::pair <MessageDefinition, std::string> myHardwarePair, SurfaceProtocol * pProtocol, AppConfig * pAppConfig, unsigned int nControlValue, std::vector <unsigned char> vBuffer, bool blnDisplayUpdated)
 {
 std::wstring wstrOut( wstrEmpty);
+
+// If an action reads a display, give the DAW time to update it first. This used to Sleep here, which held
+// up every message behind it, including the display update being waited for; now the announcement is
+// scheduled and the worker carries on with the messages that arrive meanwhile.
+if ((blnDisplayUpdated == false)
+	&& (pAppConfig->GetAppName().empty() == false)
+	&& (GetReadDisplayDelay() > 0))
+{
+	SurfaceActions myWaitingActions;
+	try
+	{
+		myWaitingActions = pAppConfig->GetControlDefinition( myHardwarePair.second).GetSurfaceActions( MyProduct);
+	}
+	catch ( ...)
+	{}
+
+	for (int i = 0; i < myWaitingActions.GetLiveModeActionCount(); i++)
+	{
+		if (ActionWaitsForDisplay( myWaitingActions.GetLiveModeAction( i), myHardwarePair.second, nControlValue))
+		{
+			AfterDisplayDelay( [this, myHardwarePair, nControlValue, vBuffer] (SurfaceProtocol * pDelayedProtocol, AppConfig * pDelayedAppConfig)
+			{
+				ProcessLiveModeMessage( myHardwarePair, pDelayedProtocol, pDelayedAppConfig, nControlValue, vBuffer, true);
+			});
+			return;
+		}
+	}
+}
 
 if (pAppConfig->GetAppName().empty())  // No application, so use default behaviour
 			{
@@ -2407,7 +2293,7 @@ std::pair <DisplayDefinition, std::string> MIDISurface::IdentifyDisplay( std::ve
 
 // Get the protocol information so that we can decode correctly 
 std::string strProtocolID = GetProtocolID();
-SurfaceProtocol myProtocol = pMyProtocols->GetProtocol( strProtocolID);
+SurfaceProtocol & myProtocol = WorkerProtocol();
 
 std::pair <DisplayDefinition, std::string> myDisplayPair;
 DisplayDefinition myDisplay;
@@ -2594,9 +2480,35 @@ return blnFound;
 }
 
 
-void MIDISurface::ProcessScreenReaderModeMessage( std::string strHash, MessageDefinition myMessageDefinition, SurfaceProtocol * pProtocol, AppConfig * pAppConfig, unsigned int nControlValue, std::vector <unsigned char> vBuffer)
+void MIDISurface::ProcessScreenReaderModeMessage( std::string strHash, MessageDefinition myMessageDefinition, SurfaceProtocol * pProtocol, AppConfig * pAppConfig, unsigned int nControlValue, std::vector <unsigned char> vBuffer, bool blnDisplayUpdated)
 {
 std::wstring wstrOut( wstrEmpty);
+
+// As in live mode: schedule the announcement after the read-display delay instead of sleeping
+if ((blnDisplayUpdated == false)
+	&& (pAppConfig->GetAppName().empty() == false)
+	&& (GetReadDisplayDelay() > 0))
+{
+	SurfaceActions myWaitingActions;
+	try
+	{
+		myWaitingActions = pAppConfig->GetControlDefinition( strHash).GetSurfaceActions( MyProduct);
+	}
+	catch ( ...)
+	{}
+
+	for (int i = 0; i < myWaitingActions.GetScreenReaderModeActionCount(); i++)
+	{
+		if (ActionWaitsForDisplay( myWaitingActions.GetScreenReaderModeAction( i), strHash, nControlValue))
+		{
+			AfterDisplayDelay( [this, strHash, myMessageDefinition, nControlValue, vBuffer] (SurfaceProtocol * pDelayedProtocol, AppConfig * pDelayedAppConfig)
+			{
+				ProcessScreenReaderModeMessage( strHash, myMessageDefinition, pDelayedProtocol, pDelayedAppConfig, nControlValue, vBuffer, true);
+			});
+			return;
+		}
+	}
+}
 
 if (pAppConfig->GetAppName().empty())  // No application, so use default behaviour
 			{
@@ -2763,14 +2675,13 @@ void MIDISurface::SendHardwareMessage( std::vector <unsigned char> * pMessage)
 try
 	{
 		m_HardwareMIDIOut->sendMessage( pMessage);
-	// Sleep( 10);
 }
 catch ( RtMidiError &errMsg)
 {
 std::string strLog = "Hardware send error: ";
 strLog.append( errMsg.getMessage());
-strLog.append( BytesToHex( *pMessage));
-LogIt( strLog);
+std::vector <unsigned char> vFailed = *pMessage;
+myWorker.Post( [this, strLog, vFailed] { LogIt( strLog + BytesToHex( vFailed)); });
 }
 }
 
@@ -2779,15 +2690,16 @@ void MIDISurface::SendDisplayMessage( std::vector <unsigned char> * pMessage)
 {
 try
 	{
-		Sleep( 10);
+		// This used to Sleep( 10) before every message from the DAW to the surface, which made the
+		// display traffic fall further and further behind
 m_DisplayMIDIOut->sendMessage( pMessage);
 }
 catch ( RtMidiError &errMsg)
 {
 std::string strLog = "Display send error: ";
 strLog.append( errMsg.getMessage());
-strLog.append( BytesToHex( *pMessage));
-LogIt( strLog);
+std::vector <unsigned char> vFailed = *pMessage;
+myWorker.Post( [this, strLog, vFailed] { LogIt( strLog + BytesToHex( vFailed)); });
 }
 }
 
@@ -2821,24 +2733,28 @@ return false;
 
 	std::wstring MIDISurface::GetAppConfigName()
 {
+	std::lock_guard <std::mutex> myLock( myIDMutex);
 	return wstrAppConfigName;
 }
 
 
 void MIDISurface::SetAppConfigName( std::wstring wstrNewAppConfigName)
 {
+	std::lock_guard <std::mutex> myLock( myIDMutex);
 	wstrAppConfigName = wstrNewAppConfigName;
 }
 
 
 std::wstring MIDISurface::GetProtocolName()
 {
+	std::lock_guard <std::mutex> myLock( myIDMutex);
 	return wstrProtocolName;
 }
 
 
 void MIDISurface::SetProtocolName( std::wstring wstrNewProtocolName)
 {
+	std::lock_guard <std::mutex> myLock( myIDMutex);
 	wstrProtocolName = wstrNewProtocolName;
 }
 
@@ -2901,7 +2817,7 @@ bool MIDISurface::ResumeDisplayProcessing()
 
 	try
 	{
-		m_DisplayMIDIIn	->setCallback( &HardwareCallback, (void*) this);
+		m_DisplayMIDIIn->setCallback( &DisplayCallback, (void*) this);
 	}
 	catch( ...)
 	{
@@ -2914,16 +2830,8 @@ bool MIDISurface::ResumeDisplayProcessing()
 
 void MIDISurface::LogIt( std::string strMessage)
 {
-	SurfaceProtocol myProtocol;
-	
-	try
-		{
-			myProtocol = pMyProtocols->GetProtocol( this->GetProtocolID());
-	}
-	catch( ...)
-	{
-		return;
-	}
+	// This used to copy the whole protocol on every call, only to check whether the
+	// (switched off) log encryption applied
 
 /*
 if (myProtocol.IsEncrypted())
@@ -3024,40 +2932,159 @@ break;
 }
 
 
-// Queue to handle processing of messages - only creates 1 thread
-extern dispatch_queue SpeechQ;
+// MIDI input. RtMidi calls these on its own thread, one message at a time, so anything slow here delays
+// every message after it. They only forward the message and queue a copy for the surface's worker.
 
-// Callbacks
-
-	void HardwareCallback(double deltatime, std::vector< unsigned char > *message, void *pSurface) 
+void HardwareCallback(double deltatime, std::vector< unsigned char > *message, void *pSurface)
 {
-MIDISurface * pMySurface = (MIDISurface*) pSurface;
-	std::string strLog = "Hardware received ";
-strLog.append( BytesToHex( * message));
-pMySurface->LogIt( strLog);
-	
-	// Pass the message along to the DAW
-if ((pMySurface->GetWidgetMode() == ID_LIVE_MODE)
-	|| (pMySurface->GetWidgetMode() == ID_CONFIG_MODE))
-{
-	pMySurface->SendHardwareMessage( message);
-}			
-		// pMySurface->AnalyseHardwareMessage( * message);    
-SpeechQ.dispatch([=] {pMySurface->AnalyseHardwareMessage(*message); });
+	static_cast <MIDISurface *> (pSurface)->OnHardwareMessage( message);
 }
 
 
-	void DisplayCallback(double deltatime, std::vector< unsigned char > *message, void *pSurface)
+void DisplayCallback(double deltatime, std::vector< unsigned char > *message, void *pSurface)
 {
-MIDISurface * pMySurface = (MIDISurface*) pSurface;
+	static_cast <MIDISurface *> (pSurface)->OnDisplayMessage( message);
+}
 
-std::string strLog = "Display received ";
-strLog.append( BytesToHex( * message));
-pMySurface->LogIt( strLog);
 
-pMySurface->SendDisplayMessage( message);
-			// pMySurface->AnalyseDisplayMessage( * message);    
-SpeechQ.dispatch([=] {pMySurface->AnalyseDisplayMessage(*message); });
+void MIDISurface::OnHardwareMessage( std::vector <unsigned char> * pMessage)
+{
+	// Pass the message along to the DAW first
+	Mode myMode = GetWidgetMode();
+	if ((myMode == ID_LIVE_MODE)
+		|| (myMode == ID_CONFIG_MODE))
+	{
+		SendHardwareMessage( pMessage);
+	}
+
+	// Then queue a copy: RtMidi reuses its buffer once this returns
+	std::vector <unsigned char> vMessage = *pMessage;
+	myWorker.Post( [this, vMessage]
+	{
+		LogIt( "Hardware received " + BytesToHex( vMessage));
+		AnalyseHardwareMessage( vMessage);
+	});
+}
+
+
+void MIDISurface::OnDisplayMessage( std::vector <unsigned char> * pMessage)
+{
+	SendDisplayMessage( pMessage);
+
+	std::vector <unsigned char> vMessage = *pMessage;
+	myWorker.Post( [this, vMessage]
+	{
+		LogIt( "Display received " + BytesToHex( vMessage));
+		AnalyseDisplayMessage( vMessage);
+	});
+}
+
+
+// Worker thread only. Brings the cached protocol and app config up to date, copying them only when
+// this surface's IDs have changed or the collections have been edited. Returns false if this surface's
+// protocol doesn't exist. If its app config doesn't exist, an empty one (no app name) is used.
+bool MIDISurface::RefreshWorkerConfig()
+{
+	std::string strProtocolID = GetProtocolID();
+	unsigned int nProtocolRevision = pMyProtocols->GetRevision();  // read before copying, so a change during the copy is picked up next time
+
+	if ((pWorkerProtocol == nullptr)
+		|| (strProtocolID != strWorkerProtocolID)
+		|| (nProtocolRevision != nWorkerProtocolRevision))
+	{
+		try
+		{
+			pWorkerProtocol = std::make_shared <SurfaceProtocol> ( pMyProtocols->GetProtocol( strProtocolID));
+		}
+		catch ( ...)
+		{
+			pWorkerProtocol.reset();
+		}
+		strWorkerProtocolID = strProtocolID;
+		nWorkerProtocolRevision = nProtocolRevision;
+	}
+
+	std::pair <std::wstring, std::wstring> myAppConfigID = GetAppConfigID();
+	unsigned int nAppsRevision = pMyApps->GetRevision();
+
+	if ((pWorkerAppConfig == nullptr)
+		|| (myAppConfigID != WorkerAppConfigID)
+		|| (nAppsRevision != nWorkerAppsRevision))
+	{
+		try
+		{
+			pWorkerAppConfig = std::make_shared <AppConfig> ( pMyApps->GetAppConfig( myAppConfigID.first, myAppConfigID.second));
+		}
+		catch ( ...)
+		{
+			pWorkerAppConfig = std::make_shared <AppConfig> ();
+			pWorkerAppConfig->SetAppName( std::wstring());
+			LogIt( L"No App Config identified");
+		}
+		WorkerAppConfigID = myAppConfigID;
+		nWorkerAppsRevision = nAppsRevision;
+	}
+
+	return (pWorkerProtocol != nullptr);
+}
+
+
+// Worker thread only: the cached protocol, for the helpers called while analysing a message
+SurfaceProtocol & MIDISurface::WorkerProtocol()
+{
+	if (pWorkerProtocol == nullptr)
+	{
+		throw ID_NO_MATCHING_PROTOCOL_ID;  // what ProtocolCollection::GetProtocol throws
+	}
+	return *pWorkerProtocol;
+}
+
+
+// The display and LED read actions act on a release (note off, or a value of 0 for other messages), and
+// the line, strip and section reads on any message that isn't a note on. Those are the cases that used to
+// sleep for the read-display delay before reading.
+bool MIDISurface::ActionWaitsForDisplay( SurfaceAction myAction, std::string strHash, int nControlState)
+{
+	switch (myAction.GetSurfaceActionType())
+	{
+	case ReadDisplay:
+	case ReadLEDIfOn:
+	case ReadLEDIfOff:
+		if (IsNoteMessage( strHash))
+		{
+			return IsNoteOffMessage( strHash, nControlState);
+		}
+		return (nControlState == MIDI_NOTE_OFF_VELOCITY);
+
+	case ReadDisplayLine:
+	case ReadDisplayStrip:
+	case ReadDisplaySection:
+		if (IsNoteMessage( strHash))
+		{
+			return IsNoteOffMessage( strHash, nControlState);
+		}
+		return true;
+
+	default:
+		return false;
+	}
+}
+
+
+// Worker thread only. Runs the announcement after the read-display delay, on the worker, with the
+// configuration current at that time. The shared pointers keep that configuration alive while it runs.
+void MIDISurface::AfterDisplayDelay( std::function <void( SurfaceProtocol *, AppConfig *)> myAnnouncement)
+{
+	myWorker.PostAfter( GetReadDisplayDelay(), [this, myAnnouncement]
+	{
+		if (RefreshWorkerConfig() == false)
+		{
+			return;
+		}
+		std::shared_ptr <SurfaceProtocol> pProtocol = pWorkerProtocol;
+		std::shared_ptr <AppConfig> pAppConfig = pWorkerAppConfig;
+		myAnnouncement( pProtocol.get(), pAppConfig.get());
+	});
 }
 
 

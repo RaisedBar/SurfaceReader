@@ -17,6 +17,8 @@ AppCollection::AppCollection()
 
 	void AppCollection::Add( std::wstring wstrAppExeName, std::wstring wstrProtocolID, AppConfig MyAppConfig)
 {
+	std::lock_guard <std::recursive_mutex> myLock( myMutex);
+	nRevision++;
 	std::pair <std::wstring, std::wstring> myIndexPair;
 	std::pair <std::pair <std::wstring, std::wstring>, AppConfig> myAppConfigPair;
 	
@@ -38,6 +40,8 @@ myAppConfigs.insert( myAppConfigPair);
 
 bool AppCollection::Add( std::wstring wstrAppExeName, std::wstring wstrProtocolID)
 	{
+	std::lock_guard <std::recursive_mutex> myLock( myMutex);
+	nRevision++;
 		// Is there an existing connection between this application and the specified protocol?
 		std::pair <std::wstring, std::wstring> myAppProtocolPair;
 		myAppProtocolPair = std::make_pair( wstrAppExeName, wstrProtocolID);
@@ -59,6 +63,8 @@ AppConfig myAppConfig;
 
 	void AppCollection::Remove( std::wstring wstrAppExeName, std::wstring wstrProtocolID, boost::uuids::uuid * myAppConfigID)
 	{
+	std::lock_guard <std::recursive_mutex> myLock( myMutex);
+	nRevision++;
 // Does the specified configuration exist?
 		std::pair <std::wstring, std::wstring> myAppProtocolPair;
 		myAppProtocolPair = std::make_pair( wstrAppExeName, wstrProtocolID);
@@ -75,6 +81,7 @@ AppConfig myAppConfig;
 
 AppConfig AppCollection::GetAppConfig( std::pair <std::wstring, std::wstring> myID)
 	{
+	std::lock_guard <std::recursive_mutex> myLock( myMutex);
 		  std::map <std::pair <std::wstring, std::wstring>, AppConfig> ::iterator it; 
 		
 		it = myAppConfigs.find( myID);
@@ -91,6 +98,7 @@ AppConfig AppCollection::GetAppConfig( std::pair <std::wstring, std::wstring> my
 
 		AppConfig AppCollection::GetAppConfig( std::wstring wstrAppExeName, std::wstring wstrProtocolID)
 	{
+	std::lock_guard <std::recursive_mutex> myLock( myMutex);
 		  // Does the specified configuration exist?
 		std::pair <std::wstring, std::wstring> myAppProtocolPair;
 		myAppProtocolPair = std::make_pair( wstrAppExeName, wstrProtocolID);
@@ -110,6 +118,7 @@ AppConfig AppCollection::GetAppConfig( std::pair <std::wstring, std::wstring> my
 
 	std::pair <std::wstring, std::wstring> AppCollection::FindAppConfig( std::wstring wstrAppName, std::wstring wstrProtocolID)
 {
+	std::lock_guard <std::recursive_mutex> myLock( myMutex);
 	std::pair <std::wstring, std::wstring> myAppPair;
 myAppPair = std::make_pair( wstrAppName, wstrProtocolID);
 
@@ -138,6 +147,7 @@ myAppPair = std::make_pair( wstrEmpty, wstrEmpty);
 
 	std::vector <std::wstring> AppCollection::GetAppNames( std::wstring wstrProtocolID)
 	{
+	std::lock_guard <std::recursive_mutex> myLock( myMutex);
 std::map <std::pair <std::wstring, std::wstring>, AppConfig>::iterator it;
 std::vector <std::wstring> myAppNames;
 
@@ -154,6 +164,7 @@ for (it = myAppConfigs.begin(); it != myAppConfigs.end(); it++)
 
 AppConfig AppCollection::GetAppConfigItem( int nIndex)
 {
+	std::lock_guard <std::recursive_mutex> myLock( myMutex);
 std::map <std::pair <std::wstring, std::wstring>, AppConfig>::iterator it;
 int i = 0;
 
@@ -174,12 +185,15 @@ return it->second;
 
 int AppCollection::Count()
 {
+	std::lock_guard <std::recursive_mutex> myLock( myMutex);
 	return myAppConfigs.size();
 }
 
 
 void AppCollection::Clone( std::wstring wstrSourceProtocolID, std::wstring wstrDestinationProtocolID)
 {
+	std::lock_guard <std::recursive_mutex> myLock( myMutex);
+	nRevision++;
 std::map <std::pair <std::wstring, std::wstring>, AppConfig>::iterator it;
 
 for (it = myAppConfigs.begin(); it != myAppConfigs.end(); it++)
@@ -195,6 +209,8 @@ for (it = myAppConfigs.begin(); it != myAppConfigs.end(); it++)
 
 void AppCollection::UpdateDisplays( std::wstring wstrProtocolID, std::map <std::string , DisplayDefinition> myNewDisplays)
 {
+	std::lock_guard <std::recursive_mutex> myLock( myMutex);
+	nRevision++;
 std::map <std::pair <std::wstring, std::wstring>, AppConfig>::iterator it;
 
 for (it = myAppConfigs.begin(); it != myAppConfigs.end(); it++)
@@ -212,6 +228,7 @@ if (it->first.second.compare( wstrProtocolID) == 0)
 
 bool AppCollection::IsAppConfigUnique( std::pair <std::wstring, std::wstring> myAppConfigID)
 {
+	std::lock_guard <std::recursive_mutex> myLock( myMutex);
 // Does the specified configuration exist?
 		std::map <std::pair <std::wstring, std::wstring>, AppConfig> ::iterator it; 
 		
