@@ -169,7 +169,8 @@ wxBoxSizer *vBox3 = new wxBoxSizer(wxVERTICAL);
   
   // List of MIDI input ports
 // if ((myVP == OutOnly) || (myVP == None))
-if (myVirtualOut)
+// Only the real ports are listed; a virtual one is created by SurfaceReader
+if (myVirtualIn == false)
 	{
 		wxStaticBox *lblMIDIInPrompt = new wxStaticBox(myPanel, wxID_ANY, wstrMIDIInPrompt);
 lbxMIDIIn = new wxListBox(myPanel, ID_MIDI_IN_LIST_BOX);
@@ -180,7 +181,7 @@ hBox1->Add(lbxMIDIIn, 0, wxEXPAND);
 
 // List of MIDI output ports
 // if ((myVP == InOnly) || (myVP == None))
-if (myVirtualIn)
+if (myVirtualOut == false)
 {
 wxStaticBox *lblMIDIOutPrompt = new wxStaticBox(myPanel, wxID_ANY, wstrMIDIOutPrompt);
 lbxMIDIOut = new wxListBox(myPanel, ID_MIDI_OUT_LIST_BOX);
@@ -297,12 +298,10 @@ void MIDIDialog::SetSelectedOutput( int nPortNumber)
 
 int MIDIDialog::GetSelectedInput()
 	{		
-#ifndef __WINDOWS__ 
 				if (myVirtualIn)
 {
 return VP_PORT_ID;
 }
-#endif
 				
 					int nSelection = lbxMIDIIn->GetSelection();
 
@@ -319,14 +318,12 @@ else
 
 std::string MIDIDialog::GetSelectedInputName()
 	{		
-#ifndef __WINDOWS__ 
 				if (myVirtualIn)
 	{
 std::string strName;
 strName.clear();
 return strName;
 }
-#endif
 				
 					int nSelected = lbxMIDIIn->GetSelection();
 if (nSelected >= 0)
@@ -344,12 +341,10 @@ else
 
 int MIDIDialog::GetSelectedOutput()
 {
-#ifndef __WINDOWS__ 
 if (myVirtualOut)
 {
 return VP_PORT_ID;
 }
-#endif
 
 	int nSelection = lbxMIDIOut->GetSelection();
 
@@ -366,14 +361,12 @@ else
 
 std::string MIDIDialog::GetSelectedOutputName()
 {		
-#ifndef __WINDOWS__ 
 if (myVirtualOut)
 {
 std::string strName;
 strName.clear();
 return strName;
 }
-#endif
 
 	int nSelected = lbxMIDIOut->GetSelection();
 if (nSelected >= 0)

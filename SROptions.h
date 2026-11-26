@@ -17,8 +17,20 @@ class SurfaceReaderOptions
 public:
 	SurfaceReaderOptions()
 	:
-blnStartSized( true)
+blnStartSized( true),
+blnMidiServicesSeen( false)
 	{};
+
+// Set once SurfaceReader has found Windows MIDI Services and replaced any loopMIDI ports
+bool GetMidiServicesSeen()
+{
+	return blnMidiServicesSeen;
+};
+
+void SetMidiServicesSeen( bool blnSeen)
+{
+	blnMidiServicesSeen = blnSeen;
+};
 
 bool GetStartSized()
 {
@@ -41,6 +53,12 @@ try
 	{
 		const char* cStartSizedTag ="StartSized";
 ar & boost::serialization::make_nvp(cStartSizedTag, blnStartSized);
+
+		if (version >= 1)
+		{
+			const char* cMidiServicesSeenTag ="MidiServicesSeen";
+			ar & boost::serialization::make_nvp(cMidiServicesSeenTag, blnMidiServicesSeen);
+		}
 }  // end try
 catch( ...)
 {
@@ -50,5 +68,9 @@ throw ID_LOAD_DATA_EXCEPTION;
 	
 	// Internal storage
 bool blnStartSized;
+bool blnMidiServicesSeen;
 };
+
+#include <boost/serialization/version.hpp>
+BOOST_CLASS_VERSION(SurfaceReaderOptions, 1)
 #endif  // define

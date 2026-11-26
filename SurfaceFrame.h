@@ -7,6 +7,8 @@
 
 // 
 #include "SRFilesystem.h"
+#include <set>
+#include <string>
 
 #include "RBSpeech.h"
 #include "SurfaceReaderHelp.h"
@@ -106,6 +108,14 @@ void UpdateMenuStates();
 	void UpdateStatusBar();
 		void ListSurfaces();
 bool OpenSurfacePorts( SurfacePointer pMySurface);
+// Windows MIDI Services (Windows only; these do nothing elsewhere)
+// Create the loopbacks named, if missing; with blnRemoveUnused, also remove SurfaceReader's loopbacks no surface uses
+void EnsureMidiServicesPorts( const std::set <std::string> & myDawPortNames, bool blnRemoveUnused);
+// Bring the loopbacks in line with the current surfaces (after one is added, removed or renamed)
+void UpdateMidiServicesPorts();
+// The first time Windows MIDI Services is found: point the surfaces' loopMIDI ports at loopbacks of the
+// same names. Returns the ports replaced, one per line, or an empty string if nothing was changed.
+std::wstring MigrateFromLoopMidi( std::vector <SurfaceParameters> & vSurfaces);
 		void CloseSurfacePorts(SurfacePointer pMySurface);
 std::string GetPortErrorReport(SurfacePointer pMySurface);
 		void OpenAllSurfaces();

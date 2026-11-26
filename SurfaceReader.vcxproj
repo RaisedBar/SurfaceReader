@@ -188,6 +188,7 @@
     <ClCompile Include=".\MIDI.cpp" />
     <ClCompile Include=".\MIDIDialog.cpp" />
     <ClCompile Include=".\MIDISurface.cpp" />
+    <ClCompile Include=".\MidiServices.cpp" />
     <ClCompile Include=".\NewSurfaceDialog.cpp" />
     <ClCompile Include=".\Protocol.cpp" />
     <ClCompile Include=".\ProtocolChooserDialog.cpp" />
@@ -242,6 +243,7 @@
     <ClInclude Include=".\MIDI.h" />
     <ClInclude Include=".\MIDIDialog.h" />
     <ClInclude Include=".\MIDISurface.h" />
+    <ClInclude Include=".\MidiServices.h" />
     <ClInclude Include=".\MIDIWidget.h" />
     <ClInclude Include=".\NewSurfaceDialog.h" />
     <ClInclude Include=".\nvdaController.h" />
@@ -287,6 +289,28 @@
   <ItemGroup>
     <ResourceCompile Include=".\sample.rc" />
   </ItemGroup>
+  <!-- SRMidiServices.exe manages Windows MIDI Services loopbacks; the API is 64-bit only, so it is always built
+       for x64, whatever platform SurfaceReader is built for. It needs the NuGet packages: see README.md. -->
+  <ItemGroup>
+    <!-- Only when its NuGet packages have been restored; otherwise SurfaceReader builds without it (see the warning below) -->
+    <ProjectReference Include="SRMidiServices\SRMidiServices.vcxproj" Condition="Exists('$(MSBuildThisFileDirectory)packages\Windows.Devices.Midi2.0.99.92-preview.11\build\native\Windows.Devices.Midi2.targets')">
+      <Project>{6A2F4E61-1B7C-4C8E-9D2B-5F0C3A7E9B14}</Project>
+      <SetPlatform>Platform=x64</SetPlatform>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <LinkLibraryDependencies>false</LinkLibraryDependencies>
+      <UseLibraryDependencyInputs>false</UseLibraryDependencyInputs>
+    </ProjectReference>
+  </ItemGroup>
+  <Target Name="CopyMidiServicesHelper" AfterTargets="Build">
+    <PropertyGroup>
+      <MidiServicesHelperDir>$(MSBuildThisFileDirectory)files\x64\$(Configuration)\</MidiServicesHelperDir>
+    </PropertyGroup>
+    <ItemGroup>
+      <MidiServicesHelperFiles Include="$(MidiServicesHelperDir)SRMidiServices.exe;$(MidiServicesHelperDir)Windows.Devices.Midi2.dll;$(MidiServicesHelperDir)Windows.Devices.Midi2.pri" />
+    </ItemGroup>
+    <Warning Condition="!Exists('$(MidiServicesHelperDir)SRMidiServices.exe')" Text="SRMidiServices.exe hasn't been built, so SurfaceReader won't use Windows MIDI Services. See README.md." />
+    <Copy Condition="Exists('$(MidiServicesHelperDir)SRMidiServices.exe')" SourceFiles="@(MidiServicesHelperFiles)" DestinationFolder="$(OutDir)MidiServices\" SkipUnchangedFiles="true" />
+  </Target>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <Import Project="$(VCPKG_ROOT)\scripts\buildsystems\msbuild\vcpkg.targets" Condition="'$(VCPKG_ROOT)' != '' And Exists('$(VCPKG_ROOT)\scripts\buildsystems\msbuild\vcpkg.targets')" />
   <Target Name="SurfaceReaderCheckVcpkg" BeforeTargets="PrepareForBuild" Condition="'$(VcpkgPropsImported)' != 'true'">

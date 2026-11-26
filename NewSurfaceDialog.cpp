@@ -13,6 +13,7 @@
 #include <wx/button.h>
 
 #include "NewSurfaceDialog.h"
+#include "MidiServices.h"
 #include "SurfaceReader.h"
 
 
@@ -208,15 +209,15 @@ else
 nDisplay_VirtualMIDIIn = -1;
 nDisplay_MIDIOut = -1;
 	
-	MIDIDialog * dlgDisplaySetup = new MIDIDialog( wstrDisplaySetupTitle);
-			if (dlgDisplaySetup->ShowModal() == wxID_OK) 
+	// With Windows MIDI Services (or CoreMIDI) SurfaceReader creates the DAW's port itself
+	MIDIDialog dlgDisplaySetup( wstrDisplaySetupTitle, MidiServices::IsAvailable(), false);
+			if (dlgDisplaySetup.ShowModal() == wxID_OK) 
 {
-nDisplay_VirtualMIDIIn = dlgDisplaySetup->GetSelectedInput();
-nDisplay_MIDIOut = dlgDisplaySetup->GetSelectedOutput();
-strDisplay_VirtualMIDIIn = dlgDisplaySetup->GetSelectedInputName();
-strDisplay_MIDIOut = dlgDisplaySetup->GetSelectedOutputName();
+nDisplay_VirtualMIDIIn = dlgDisplaySetup.GetSelectedInput();
+nDisplay_MIDIOut = dlgDisplaySetup.GetSelectedOutput();
+strDisplay_VirtualMIDIIn = dlgDisplaySetup.GetSelectedInputName();
+strDisplay_MIDIOut = dlgDisplaySetup.GetSelectedOutputName();
 }  // OK button processing finished
-dlgDisplaySetup->Destroy();
 		}
 
 
@@ -225,15 +226,14 @@ dlgDisplaySetup->Destroy();
 		    		nHardware_MIDIIn = -1;
 nHardware_VirtualMIDIOut = -1;
 
-MIDIDialog * dlgHardwareSetup = new MIDIDialog( wstrHardwareSetupTitle);
-			if (dlgHardwareSetup->ShowModal() == wxID_OK) 
+MIDIDialog dlgHardwareSetup( wstrHardwareSetupTitle, false, MidiServices::IsAvailable());
+			if (dlgHardwareSetup.ShowModal() == wxID_OK) 
 {
-nHardware_MIDIIn = dlgHardwareSetup->GetSelectedInput();
-nHardware_VirtualMIDIOut = dlgHardwareSetup->GetSelectedOutput();
-strHardware_MIDIIn = dlgHardwareSetup->GetSelectedInputName();
-strHardware_VirtualMIDIOut = dlgHardwareSetup->GetSelectedOutputName();
+nHardware_MIDIIn = dlgHardwareSetup.GetSelectedInput();
+nHardware_VirtualMIDIOut = dlgHardwareSetup.GetSelectedOutput();
+strHardware_MIDIIn = dlgHardwareSetup.GetSelectedInputName();
+strHardware_VirtualMIDIOut = dlgHardwareSetup.GetSelectedOutputName();
 }  // OK button processing finished
-dlgHardwareSetup->Destroy();
 }
 
 
