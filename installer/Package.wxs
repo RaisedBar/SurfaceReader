@@ -34,6 +34,21 @@
     <!-- Sets WIX_ACCOUNT_USERS to the local name of the Users group (it's translated on non-English Windows) -->
     <util:QueryWindowsWellKnownSIDs />
 
+    <!-- Windows MIDI Services. Microsoft's terms for shipping the preview API (Windows.Devices.Midi2.dll and .pri,
+         "go-live" licence, Preview 10 and 11 release notes at https://github.com/microsoft/MIDI/releases) say not to
+         ship it to Windows older than Windows 11 25H2 (build 26200), and not to put an app-local copy on a PC whose
+         Windows has its own. So: the helper only on 25H2 and later, and the API binaries only where Windows lacks
+         them. A later SurfaceReader installer checks again, so the copy goes once Windows has the API built in.
+         (Windows Installer's own version properties stop at Windows 8.1, hence the registry.) -->
+    <Property Id="SR_WINDOWS_BUILD">
+      <RegistrySearch Id="WindowsBuildSearch" Root="HKLM" Key="SOFTWARE\Microsoft\Windows NT\CurrentVersion" Name="CurrentBuildNumber" Type="raw" />
+    </Property>
+    <Property Id="SR_INBOX_MIDI_API">
+      <DirectorySearch Id="System64Search" Path="[System64Folder]" Depth="0">
+        <FileSearch Id="InboxMidiApiSearch" Name="Windows.Devices.Midi2.dll" />
+      </DirectorySearch>
+    </Property>
+
     <StandardDirectory Id="ProgramFiles64Folder">
       <Directory Id="CompanyFolder" Name="Raised Bar">
         <Directory Id="INSTALLFOLDER" Name="SurfaceReader">
@@ -77,6 +92,13 @@
           <Shortcut Id="HelpShortcut" Directory="ShortcutFolder" Name="SurfaceReader Help" Advertise="yes" />
         </File>
       </Component>
+      <!-- SurfaceReader's licence, and the licences of the open source software it includes -->
+      <Component>
+        <File Id="LicenceFile" Source="$(sys.SOURCEFILEDIR)..\LICENSE" Name="LICENSE.txt" KeyPath="yes" />
+      </Component>
+      <Component>
+        <File Id="NoticesFile" Source="$(sys.SOURCEFILEDIR)..\packaging\THIRD-PARTY-NOTICES.txt" KeyPath="yes" />
+      </Component>
       <!-- The 64-bit screen reader APIs, loaded when NVDA or System Access is running -->
       <Component>
         <File Source="$(FilesDir)Program Files\nvdaControllerClient64.dll" KeyPath="yes" />
@@ -92,13 +114,14 @@
   <Fragment>
     <!-- Creates and removes Windows MIDI Services loopback ports; unused where Windows MIDI Services isn't available -->
     <ComponentGroup Id="MidiServicesHelper" Directory="MidiServicesFolder">
-      <Component>
+      <Component Condition="SR_WINDOWS_BUILD &gt;= 26200">
         <File Source="$(BinDir)MidiServices\SRMidiServices.exe" KeyPath="yes" />
       </Component>
-      <Component>
+      <!-- Microsoft's preview API binaries: see SR_WINDOWS_BUILD above for when they may be installed -->
+      <Component Condition="(SR_WINDOWS_BUILD &gt;= 26200) AND (NOT SR_INBOX_MIDI_API)">
         <File Source="$(BinDir)MidiServices\Windows.Devices.Midi2.dll" KeyPath="yes" />
       </Component>
-      <Component>
+      <Component Condition="(SR_WINDOWS_BUILD &gt;= 26200) AND (NOT SR_INBOX_MIDI_API)">
         <File Source="$(BinDir)MidiServices\Windows.Devices.Midi2.pri" KeyPath="yes" />
       </Component>
     </ComponentGroup>

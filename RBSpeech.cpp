@@ -627,6 +627,8 @@ hr =GetExecutablePath(SystemAccessDllFileName); //assign the executable director
 		}
 		SystemAccessDllFileName.remove_filename();
 
+		// Pneuma Solutions' System Access client library (MIT licence, github.com/PneumaSolutions/sa-api),
+		// sa_api.dll for x64, under the name its documentation allows for the 64-bit version
 		SystemAccessDllFileName /= L"SAAPI64.dll";
 		
 		if (exists(SystemAccessDllFileName))
