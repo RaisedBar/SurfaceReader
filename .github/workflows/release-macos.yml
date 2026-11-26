@@ -34,8 +34,9 @@ jobs:
 
       - name: vcpkg
         run: |
-          # The manifest's builtin-baseline must be in the clone's history
-          git clone --filter=blob:none https://github.com/microsoft/vcpkg.git "$VCPKG_ROOT"
+          # A full clone: the manifest's builtin-baseline must be in its history, and vcpkg checks out older port
+          # versions from it (a partial clone failed to fetch them)
+          git clone https://github.com/microsoft/vcpkg.git "$VCPKG_ROOT"
           "$VCPKG_ROOT/bootstrap-vcpkg.sh" -disableMetrics
           mkdir -p "$VCPKG_DEFAULT_BINARY_CACHE"
 
@@ -45,8 +46,10 @@ jobs:
         uses: actions/cache/restore@v4
         with:
           path: ${{ github.workspace }}/vcpkg-cache
-          key: vcpkg-macos-${{ hashFiles('vcpkg.json') }}
-          restore-keys: vcpkg-macos-
+          key: vcpkg-macos-${{ hashFiles('vcpkg.json') }}-${{ github.run_id }}
+          restore-keys: |
+            vcpkg-macos-${{ hashFiles('vcpkg.json') }}-
+            vcpkg-macos-
 
       - name: Build (universal)
         run: |
@@ -60,11 +63,12 @@ jobs:
           test -x build/Release/SurfaceReader.app/Contents/MacOS/SurfaceReader
 
       - name: Save vcpkg libraries
-        if: always() && steps.vcpkg-cache.outputs.cache-hit != 'true'
+        # A new entry each run (the latest is restored), so a run that built little can't pin an incomplete cache
+        if: always()
         uses: actions/cache/save@v4
         with:
           path: ${{ github.workspace }}/vcpkg-cache
-          key: vcpkg-macos-${{ hashFiles('vcpkg.json') }}
+          key: vcpkg-macos-${{ hashFiles('vcpkg.json') }}-${{ github.run_id }}
 
       - name: Show build errors
         if: failure()
