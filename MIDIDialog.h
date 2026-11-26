@@ -24,6 +24,7 @@
 #include <wx/utils.h> 
 #include <wx/dialog.h>
 #include <wx/listbox.h>
+#include <wx/stattext.h>
 #include <wx/sizer.h>
 #include <wx/statbox.h>
 #include <wx/button.h>

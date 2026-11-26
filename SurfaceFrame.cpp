@@ -67,6 +67,7 @@ void myTaskBarIcon::OnLeftButtonDClick(wxTaskBarIconEvent&)
 
 
 #include "MidiServices.h"
+#include "UiStyle.h"
 #include <algorithm>
 
 #ifdef __WINDOWS__
@@ -219,22 +220,33 @@ SetAcceleratorTable(wxatKeys);
 // create a menu bar
 InitMenus();
 	
-        // Set up the rest of the UI
-	myPanel = new wxPanel(this, -1);
-	wxBoxSizer * hBox = new wxBoxSizer(wxHORIZONTAL);
-  
-wxBoxSizer * hListSizer= new wxBoxSizer(wxHORIZONTAL);
-wxStaticText * lblSurfaces = new wxStaticText( this, wxID_ANY, wstrSurfacesPrompt, wxPoint( LEFT_MARGIN, TOP_MARGIN), wxSize( NORMAL_WIDTH, -1));
-lbxSurfaces = new SurfaceList( this, ID_SURFACE_LIST_BOX,  &SurfacePointers, Protocols, wxPoint( SURFACE_LIST_LEFT, TOP_MARGIN), wxSize( NORMAL_WIDTH, -1));
-hListSizer->Add(lblSurfaces, 0, wxEXPAND);
-	hListSizer->Add( lbxSurfaces, 0, wxEXPAND);
-hBox->Add( hListSizer, 0, wxEXPAND);
+        // Set up the rest of the UI. Everything sits on one panel, which gives the window its proper
+	// background and keyboard navigation; the surface list on the left, the surfaces' displays on the right.
+	myPanel = new wxPanel(this, wxID_ANY);
+	// No name of its own: it is only a container (wxWidgets would otherwise expose it as "panel")
+	myPanel->SetLabel( wxEmptyString);
+	const int nGap = FromDIP( 10);
 
-	  // Sizer to hold the display information
-myDisplaySizer= new wxBoxSizer(wxVERTICAL);
-hBox->Add( myDisplaySizer, wxEXPAND);
+// The label is created immediately before the list, so screen readers use it as the list's name
+wxBoxSizer * vListSizer = new wxBoxSizer( wxVERTICAL);
+wxStaticText * lblSurfaces = new wxStaticText( myPanel, wxID_ANY, wstrSurfacesPrompt);
+lbxSurfaces = new SurfaceList( myPanel, ID_SURFACE_LIST_BOX,  &SurfacePointers, Protocols, wxDefaultPosition, FromDIP( wxSize( 260, 200)));
+vListSizer->Add( lblSurfaces, 0, wxBOTTOM, FromDIP( 4));
+vListSizer->Add( lbxSurfaces, 1, wxEXPAND);
+
+	  // Each display adds a row: its name, then its contents, which take the remaining width
+myDisplaySizer = new wxFlexGridSizer( 2, FromDIP( wxSize( 8, 8)));
+myDisplaySizer->AddGrowableCol( 1);
+
+wxBoxSizer * hPanelSizer = new wxBoxSizer( wxHORIZONTAL);
+hPanelSizer->Add( vListSizer, 0, wxEXPAND | wxALL, nGap);
+hPanelSizer->Add( myDisplaySizer, 1, wxEXPAND | wxTOP | wxRIGHT | wxBOTTOM, nGap);
+myPanel->SetSizer( hPanelSizer);
+
+wxBoxSizer * hBox = new wxBoxSizer( wxHORIZONTAL);
+hBox->Add( myPanel, 1, wxEXPAND);
 	SetSizer( hBox);
-  hBox->Fit( this);
+  hBox->SetSizeHints( this);
 lbxSurfaces->SetFocus();
 
 // We want to show what the application is up to
@@ -505,8 +517,10 @@ for (unsigned int i = 0; (i < nSurfaceCount); i++)
 
 void SurfaceFrame::ClearDisplays()
 {
-// Remove all of the display components from the sizer
-	myDisplaySizer->Clear();
+// Remove all of the display components from the sizer, deleting them too:
+// Clear() without true left them on the window, where they stayed visible and leaked
+	myDisplaySizer->Clear( true);
+	myPanel->Layout();
 // Empty the map of displays
 	myDisplays.clear();
 }
@@ -1613,6 +1627,7 @@ void SurfaceFrame::OnNewProtocol(wxCommandEvent& event)
 	std::shared_ptr <SurfaceProtocol> pProtocol( new SurfaceProtocol());
 	ProtocolWizard myProtocolWizard( this, true, pProtocol, blnEncryptionMode, Protocols, pHelpController);
 
+UiStyle::ApplyWizardSpacing( &myProtocolWizard);
 if (myProtocolWizard.RunWizard( myProtocolWizard.GetSurfacePage()))
 {
 	if (myProtocolWizard.GetSurfacePage()->TransferDataFromWindow())
@@ -1751,6 +1766,7 @@ pAppConfig->SetDisplays( pProtocol->GetDisplays());
 // Allow the user to define the desired behaviour for this application
 AppConfigWizard myAppConfigWizard( this, true, pAppConfig, pProtocol, Speech, JawsCache, pHelpController);
 			
+UiStyle::ApplyWizardSpacing( &myAppConfigWizard);
 if (myAppConfigWizard.RunWizard( myAppConfigWizard.GetActionsPage()))
 {
 	pAppConfig = myAppConfigWizard.GetAppConfig();
@@ -1989,6 +2005,7 @@ std::shared_ptr <SurfaceProtocol> pProtocol(new SurfaceProtocol(Protocols->GetPr
 
 	 AppConfigWizard myAppConfigWizard( this, true, pAppConfig, pProtocol, Speech, JawsCache, pHelpController);
 			
+UiStyle::ApplyWizardSpacing( &myAppConfigWizard);
 if (myAppConfigWizard.RunWizard( myAppConfigWizard.GetActionsPage()))
 {
 	pAppConfig = myAppConfigWizard.GetAppConfig();
@@ -2072,6 +2089,7 @@ pParameters->SetSurfaceMode( SurfacePointers.at( nMySelection)->GetWidgetMode())
 // Edit the protocol
 EditProtocolWizard myProtocolEdit(this, true, pProtocol, pParameters, blnEncryptionMode, pHelpController);
 
+UiStyle::ApplyWizardSpacing( &myProtocolEdit);
 if (myProtocolEdit.RunWizard( myProtocolEdit.GetSysExPage()))
 {
 	// Update the map of available protocols
@@ -2222,6 +2240,7 @@ void SurfaceFrame::OnSurfaceAdd(wxCommandEvent& event)
 {
  				SurfaceWizard mySurfaceWizard( this, Protocols, pHelpController, true);
 
+UiStyle::ApplyWizardSpacing( &mySurfaceWizard);
 if (mySurfaceWizard.RunWizard( mySurfaceWizard.GetSurfacePage()))
 {
 	
@@ -3041,33 +3060,37 @@ if ((wstrLabel.empty())
 				// Create new display elements
 DisplayElement myDisplayElement;
 
-myDisplayElement.ElementSizer = new wxBoxSizer(wxHORIZONTAL);
+myDisplayElement.ElementSizer = nullptr;  // the label and contents go straight into the display grid
 
+// The label is created immediately before its text box, which takes its accessible name from it
 std::wstring wstrElementLabel = wstrLabel;
-myDisplayElement.DisplayLabel = new wxStaticText(this, wxID_ANY, wstrElementLabel, wxPoint( DISPLAY_LABEL_LEFT, -1), wxSize( NORMAL_WIDTH, -1));
+myDisplayElement.DisplayLabel = new wxStaticText( myPanel, wxID_ANY, wstrElementLabel);
 myDisplayElement.DisplayContents = NULL;
 
-		if (myDisplay.GetLineCount() > 1)
+int nLines = (myDisplay.GetLineCount() > 1) ? myDisplay.GetLineCount() : 1;
+		if (nLines > 1)
 		{
-			myDisplayElement.DisplayContents = new RBTextCtrl( this, wxID_ANY, wstrEmpty, wxPoint( DISPLAY_CONTENTS_LEFT, -1), wxSize( TEXT_WIDTH, -1), wxTE_READONLY | wxTE_MULTILINE | wxTE_NO_VSCROLL);
+			myDisplayElement.DisplayContents = new RBTextCtrl( myPanel, wxID_ANY, wstrEmpty, wxDefaultPosition, wxDefaultSize, wxTE_READONLY | wxTE_MULTILINE | wxTE_NO_VSCROLL);
 }
 		else
 {
-myDisplayElement.DisplayContents = new RBTextCtrl( this, wxID_ANY, wstrEmpty, wxPoint( DISPLAY_CONTENTS_LEFT, -1), wxSize( TEXT_WIDTH, -1), wxTE_READONLY);
+myDisplayElement.DisplayContents = new RBTextCtrl( myPanel, wxID_ANY, wstrEmpty, wxDefaultPosition, wxDefaultSize, wxTE_READONLY);
 }
-				
-wxFont myFont = 		wxSystemSettings::GetFont(wxSYS_OEM_FIXED_FONT);
-myDisplayElement.DisplayContents->SetFont( myFont);
+
+// Monospaced, so the display's columns line up as on the surface, at the user's normal text size.
+// (It used the OEM fixed font, a small bitmap font that doesn't scale with the display.)
+myDisplayElement.DisplayContents->SetFont( UiStyle::DisplayFont( this));
+// Wide enough for a typical display line, and tall enough for all of a multi-line display's lines
+myDisplayElement.DisplayContents->SetMinSize( wxSize( FromDIP( 420), myDisplayElement.DisplayContents->GetCharHeight() * nLines + FromDIP( 10)));
 myDisplayElement.DisplayContents->SetValue( wstrContents);
 myDisplayElement.DisplayContents->SetInsertionPoint( 0);   // Always position the cursor at the start
-// myDisplayElement.DisplayContents->Refresh();
 
-// Add the new display components to their own sizer
-myDisplayElement.ElementSizer->Add( myDisplayElement.DisplayLabel, wxEXPAND);
-myDisplayElement.ElementSizer->Add( myDisplayElement.DisplayContents, wxEXPAND);
-// Add the new display element to the overall display sizer
-myDisplaySizer->Add( myDisplayElement.ElementSizer, wxEXPAND);
-myDisplaySizer->AddSpacer( 25);
+myDisplaySizer->Add( myDisplayElement.DisplayLabel, 0, (nLines > 1) ? wxALIGN_TOP : wxALIGN_CENTER_VERTICAL);
+myDisplaySizer->Add( myDisplayElement.DisplayContents, 1, wxEXPAND);
+myPanel->Layout();
+// Grow the window if the new display doesn't fit
+wxSize myNeeded = GetBestSize();
+SetSize( wxSize( std::max( GetSize().x, myNeeded.x), std::max( GetSize().y, myNeeded.y)));
 
 // Make sure that the new controls appear in the UI
 myDisplayElement.DisplayLabel->Enable();
@@ -3122,7 +3145,9 @@ void SurfaceFrame::OnToggleDisplays( wxCommandEvent& event)
 			else
 			{
 			// Set focus to the first text box
-			myDisplays.at( 0).DisplayContents->SetFocus();
+			// The first display. myDisplays is keyed by display name, so at( 0) made a string from a
+			// null pointer, and F7 crashed SurfaceReader whenever there was a display.
+			myDisplays.begin()->second.DisplayContents->SetFocus();
 }
 				}
 }

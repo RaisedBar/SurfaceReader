@@ -199,7 +199,8 @@ wxMenuBar *myMenuBar;
 		SurfaceList * lbxSurfaces;
 
 		// Sizer to hold displays
-		wxBoxSizer * myDisplaySizer;
+		// The surfaces' displays: a label and a read-only text box per display, in two columns
+		wxFlexGridSizer * myDisplaySizer;
 
 		// UI options, etc.
 			SurfaceReaderOptions myOptions;

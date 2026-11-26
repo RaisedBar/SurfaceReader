@@ -47,7 +47,6 @@ vBox1->SetSizeHints( this );
 myPanel->Fit();
 vBox1->Fit( myPanel);
 Centre();
-this->Maximize();
 }
 
 

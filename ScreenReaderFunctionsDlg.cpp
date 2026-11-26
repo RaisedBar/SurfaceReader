@@ -22,7 +22,7 @@ wstrTargetFileName.clear();
 // List of the available options
 wxBoxSizer * hBoxLists = new wxBoxSizer( wxHORIZONTAL);
   wxStaticText * lblActionsPrompt = new wxStaticText(this, wxID_ANY, wstrAvailableScreenReaderActionsPrompt, wxDefaultPosition, wxSize( wxDefaultSize));
-lbxActionNames = new wxListBox( this, ID_ACTIONS_LIST_BOX, wxPoint( ACTIONS_LIST_LEFT, ACTIONS_TOP_MARGIN), wxSize( ACTIONS_WIDTH, -1));
+lbxActionNames = new wxListBox( this, ID_ACTIONS_LIST_BOX, wxDefaultPosition, FromDIP( wxSize( ACTIONS_WIDTH, 250)));
 	    
 		  hBoxLists ->Add( lblActionsPrompt, 0, wxEXPAND);  
 	  	  hBoxLists ->Add( lbxActionNames, 0, wxEXPAND);  
@@ -67,7 +67,7 @@ wstrTargetFileName.clear();
 // List of the available options
 wxBoxSizer * hBoxLists = new wxBoxSizer( wxHORIZONTAL);
   wxStaticText * lblActionsPrompt = new wxStaticText(this, wxID_ANY, wstrAvailableScreenReaderActionsPrompt, wxDefaultPosition, wxSize( wxDefaultSize));
-lbxActionNames = new wxListBox( this, ID_ACTIONS_LIST_BOX, wxPoint( ACTIONS_LIST_LEFT, ACTIONS_TOP_MARGIN), wxSize( ACTIONS_WIDTH, -1));
+lbxActionNames = new wxListBox( this, ID_ACTIONS_LIST_BOX, wxDefaultPosition, FromDIP( wxSize( ACTIONS_WIDTH, 250)));
 	    
 		  hBoxLists ->Add( lblActionsPrompt, 0, wxEXPAND);  
 	  	  hBoxLists ->Add( lbxActionNames, 0, wxEXPAND);  

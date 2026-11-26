@@ -35,8 +35,8 @@ wxBoxSizer *HBox1 = new wxBoxSizer(wxHORIZONTAL);
 HBox1->Add( wxDisplayTree, 0, wxEXPAND);
 
 // Buttons to control the tree
-		  btnRename = new wxButton(myPanel, ID_RENAME, wstrRenameButtonName, wxDefaultPosition, wxSize(70, 30));
-btnStates = new wxButton(myPanel, ID_STATES, wstrDefineStates, wxDefaultPosition, wxSize(70, 30));
+		  btnRename = new wxButton(myPanel, ID_RENAME, wstrRenameButtonName);
+btnStates = new wxButton(myPanel, ID_STATES, wstrDefineStates);
 
   wxBoxSizer *hBoxButtons = new wxBoxSizer(wxHORIZONTAL);
 hBoxButtons->Add( btnRename, 0, wxEXPAND);

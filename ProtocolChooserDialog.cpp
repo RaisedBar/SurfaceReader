@@ -16,7 +16,7 @@ ProtocolChooserDialog::ProtocolChooserDialog( const wxString& title, std::string
 	wxPanel * myPanel = new wxPanel(this, -1);
 	wxBoxSizer * hBoxApps= new wxBoxSizer( wxHORIZONTAL);
 lblProtocolsPrompt = new wxStaticText(myPanel, wxID_ANY, wstrProtocolsPrompt);
-lbxProtocols = new wxListBox( myPanel, ID_PROTOCOL_LIST_BOX,  wxDefaultPosition, wxSize( 100, 200), 0, NULL, wxLB_SORT, wxDefaultValidator, wxT( ""));
+lbxProtocols = new wxListBox( myPanel, ID_PROTOCOL_LIST_BOX,  wxDefaultPosition, FromDIP( wxSize( 250, 200)), 0, NULL, wxLB_SORT, wxDefaultValidator, wxT( ""));
 ListProtocols( strProtocolID);
 hBoxApps->Add( lblProtocolsPrompt, 0, wxEXPAND);
 hBoxApps->Add( lbxProtocols, 0, wxEXPAND);
