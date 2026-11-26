@@ -2969,7 +2969,6 @@ bool SurfaceFrame::SaveOptions()
 	
 	 try
 	 {
-		 myOptions.SetStartSized( mySurfaceFrame->GetStartSized());	 
 		 SaveData <SurfaceReaderOptions> ( myOptions, myPath, false);
 		 		 	 return true;
 	 }
