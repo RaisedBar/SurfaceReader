@@ -301,6 +301,14 @@
       <UseLibraryDependencyInputs>false</UseLibraryDependencyInputs>
     </ProjectReference>
   </ItemGroup>
+  <!-- The DLLs and help file SurfaceReader needs at run time, which the installer puts next to it: without
+       dolapi.dll (which the exe links to) a development build can't even start -->
+  <Target Name="CopyRuntimeFiles" AfterTargets="Build">
+    <ItemGroup>
+      <SurfaceReaderRuntimeFiles Include="$(MSBuildThisFileDirectory)Files\Program Files\*.dll;$(MSBuildThisFileDirectory)Files\Program Files\*.chm" />
+    </ItemGroup>
+    <Copy SourceFiles="@(SurfaceReaderRuntimeFiles)" DestinationFolder="$(OutDir)" SkipUnchangedFiles="true" />
+  </Target>
   <Target Name="CopyMidiServicesHelper" AfterTargets="Build">
     <PropertyGroup>
       <MidiServicesHelperDir>$(MSBuildThisFileDirectory)files\x64\$(Configuration)\</MidiServicesHelperDir>
