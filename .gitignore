@@ -331,3 +331,7 @@ ASALocalRun/
 
 # vcpkg manifest-mode install tree
 vcpkg_installed/
+
+# NuGet packages for SRMidiServices (restored), and the downloaded Windows MIDI Services package
+packages/
+packages-local/

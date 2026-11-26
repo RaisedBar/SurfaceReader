@@ -17,6 +17,7 @@
 #include "SRConstants.h"
 #include "RBException.h"
 #include "MIDI.h"
+#include "MidiServices.h"
 
 #include <rtmidi/RtMidi.h>
 
@@ -35,6 +36,39 @@ enum Mode
 
 
 	//Widget class.
+
+// RtMidi's Windows (WinMM) backend adds " <port index>" to every port name, and the index changes whenever
+// ports are added or removed, so SurfaceReader matches ports on the name without it.
+inline std::string PortBaseName( std::string strPortName)
+{
+#ifdef __WINDOWS__
+	size_t nSpace = strPortName.find_last_of( ' ');
+	if ((nSpace != std::string::npos)
+		&& (nSpace + 1 < strPortName.size())
+		&& (strPortName.find_first_not_of( "0123456789", nSpace + 1) == std::string::npos))
+	{
+		strPortName.erase( nSpace);
+	}
+#endif
+	return strPortName;
+}
+
+
+// The index of the port with this name (ignoring RtMidi's index suffix), or -1
+inline int FindPortByName( RtMidi & myMIDI, const std::string & strPortName)
+{
+	std::string strWanted = PortBaseName( strPortName);
+	unsigned int nCount = myMIDI.getPortCount();
+	for (unsigned int i = 0; i < nCount; i++)
+	{
+		if (PortBaseName( myMIDI.getPortName( i)) == strWanted)
+		{
+			return (int) i;
+		}
+	}
+	return -1;
+}
+
 class MIDIWidget
 {
 public:
@@ -337,70 +371,26 @@ void SetWidgetMode( Mode NewMode)
 // Validate input port
 bool IsValidInputPort( int nPortID, std::string strPortName)
 {
-// Test for a currently valid port ID
-if (nPortID == VP_PORT_ID)
+if ((nPortID == VP_PORT_ID) || (nPortID == MS_PORT_ID))
 {
-	#ifdef __WINDOWS__ 
-return false;
+#ifdef __WINDOWS__
+	// A virtual port, or one that replaced a loopMIDI port, is a Windows MIDI Services loopback
+	return MidiServices::IsAvailable();
 #else
 	return true;
 #endif
 }
 
-RtMidiIn * myMIDIIn = 0;	
-
 try
 	{
-		myMIDIIn = new RtMidiIn;
-
-		if ((nPortID < 0)
-			|| (nPortID > (int) myMIDIIn->getPortCount())
-			|| (myMIDIIn->getPortCount() == 0))
-{
-	delete myMIDIIn;
-		return false;
+		RtMidiIn myMIDIIn;
+		return ((nPortID >= 0) && (nPortID < (int) myMIDIIn.getPortCount()));
 }
-		else
-			{
-	delete myMIDIIn;
-		return true;
-}
-
-// Create an array with the character, c, and a null terminator 
-char buff[2] = { '\1', '\0' };
-std::string strOne( buff);
-std::string strEmpty( "");
-
-std::string strTempName = StripSpaces( strPortName);
-	strTempName = StripNonAlphaNums( strTempName);
-boost::replace_all(strTempName, strOne, strEmpty); 	
-	
-std::string strCurrentPortName = StripSpaces( myMIDIIn->getPortName( nPortID));
-strCurrentPortName = StripNonAlphaNums( strCurrentPortName);
-boost::replace_all(strCurrentPortName, strOne, strEmpty); 
-#ifdef __WINDOWS__ 
-// Remove trailing null
-strCurrentPortName = strCurrentPortName.substr( 0, strCurrentPortName.length() -1);
-#endif
-
-if (strTempName.compare( strCurrentPortName) == 0)
-	{
-		delete myMIDIIn;
-		return true;
-		}
-else
-{
-		delete myMIDIIn;
-return false;
-}
-}  // end try
 catch ( RtMidiError &error )
 {
 #ifdef __WINDOWS__
 OutputDebugStringA(error.what());
 #endif
-
-		delete myMIDIIn;
 return false;
 }
 }
@@ -409,72 +399,79 @@ return false;
 // Validate output port
 bool IsValidOutputPort( int nPortID, std::string strPortName)
 {
-// Test for a currently valid port ID
-if (nPortID == VP_PORT_ID)
+if ((nPortID == VP_PORT_ID) || (nPortID == MS_PORT_ID))
 	{
-		#ifdef __WINDOWS__ 
-return false;
+#ifdef __WINDOWS__
+	return MidiServices::IsAvailable();
 #else
-		return true;
+	return true;
 #endif
 }
-
-RtMidiOut * myMIDIOut = 0;
 
 try
 	{
-myMIDIOut = new RtMidiOut;	
-
-	if ((nPortID < 0) || (nPortID > (int) myMIDIOut->getPortCount())
-		|| (myMIDIOut->getPortCount() == 0))
-{
-		delete myMIDIOut;
-return false;
+		RtMidiOut myMIDIOut;
+		return ((nPortID >= 0) && (nPortID < (int) myMIDIOut.getPortCount()));
 }
-	else
-		{
-	delete myMIDIOut;
-		return true;
-}
-
-// Create an array with the character, c, and a null terminator 
-char buff[2] = { '\1', '\0' };
-std::string strOne( buff);
-std::string strEmpty( "");
-
-std::string strTempName = StripSpaces( strPortName);
-	strTempName = StripNonAlphaNums( strTempName);
-boost::replace_all(strTempName, strOne, strEmpty); 	
-	
-	std::string strCurrentPortName = StripSpaces( myMIDIOut->getPortName( nPortID));
-strCurrentPortName = StripNonAlphaNums( strCurrentPortName);
-boost::replace_all(strCurrentPortName, strOne, strEmpty); 	
-		
-#ifdef __WINDOWS__ 
-// Remove trailing null
-strCurrentPortName = strCurrentPortName.substr( 0, strCurrentPortName.length() -1);
-#endif
-
-		if (strTempName.compare( strCurrentPortName) == 0)
-{
-		delete myMIDIOut;
-		return true;
-}
-else
-{
-delete myMIDIOut;
-return false;
-}
-}  // end try
 	catch ( RtMidiError &error )
 	{
-#ifdef __WINDOWS__ 
- OutputDebugStringA( error.what());
-					#endif
-
-delete myMIDIOut;
+#ifdef __WINDOWS__
+OutputDebugStringA(error.what());
+#endif
 return false;
-		}
+}
+}
+
+
+// The index to open for a saved port: found by name if there is one, since the saved index goes stale
+// whenever ports are added or removed. -1 if the named port isn't there.
+int ResolveInputPort( int nPortID, const std::string & strPortName)
+{
+	if ((nPortID == VP_PORT_ID) || (nPortID == MS_PORT_ID) || strPortName.empty())
+	{
+		return nPortID;
+	}
+	try
+	{
+		RtMidiIn myMIDIIn;
+		return FindPortByName( myMIDIIn, strPortName);
+	}
+	catch ( RtMidiError &)
+	{
+		return -1;
+	}
+}
+
+
+int ResolveOutputPort( int nPortID, const std::string & strPortName)
+{
+	if ((nPortID == VP_PORT_ID) || (nPortID == MS_PORT_ID) || strPortName.empty())
+	{
+		return nPortID;
+	}
+	try
+	{
+		RtMidiOut myMIDIOut;
+		return FindPortByName( myMIDIOut, strPortName);
+	}
+	catch ( RtMidiError &)
+	{
+		return -1;
+	}
+}
+
+
+// The name of this surface's virtual port: "<surface> display" or "<surface> hardware"
+std::string VirtualPortName( const std::string & strSuffix)
+{
+#ifdef __WINDOWS__
+	// UTF-8, like the port names RtMidi and the Windows MIDI Services helper use. The surface name is shortened
+	// if need be, so the whole name fits WinMM's limit and " hardware" and " display" always stay distinct.
+	std::string strSurface( wxString( wstrWidgetName).utf8_str());
+	return MidiServices::FitPortName( strSurface, MidiServices::nMaxPortName - strSuffix.size()) + strSuffix;
+#else
+	return wxString( wstrWidgetName).ToStdString() + strSuffix;
+#endif
 }
 
 
@@ -505,12 +502,22 @@ bool OpenDisplayInput( int nInputID)
 {
 try
 	{
-if (nInputID == VP_PORT_ID)
+if ((nInputID == VP_PORT_ID) || (nInputID == MS_PORT_ID))
 {
-wxString wxstrName = wstrWidgetName;
-	std::string strName = wxstrName.ToStdString();
-		strName.append( strVirtualInSuffix);
+// The DAW's end: the surface's own virtual port, or the loopMIDI port it replaced
+std::string strName = (nInputID == VP_PORT_ID) ? VirtualPortName( strVirtualInSuffix) : strDisplayInPortName;
+#ifdef __WINDOWS__
+// SurfaceReader's end of the surface's loopback; SurfaceFrame makes sure the loopback exists
+std::string strOwnPort = MidiServices::SurfaceReaderPortName( strName);
+int nPort = FindPortByName( *m_DisplayMIDIIn, strOwnPort);
+if (nPort < 0)
+{
+	throw RBException( "Windows MIDI Services port not found: " + strOwnPort);
+}
+m_DisplayMIDIIn->openPort( nPort);
+#else
 m_DisplayMIDIIn->openVirtualPort( strName);
+#endif
 // Don't ignore sysex, timing, or active sensing messages.
     m_DisplayMIDIIn->ignoreTypes( false, false, false );
 }
@@ -537,12 +544,20 @@ bool OpenHardwareOutput( int nOutputID)
 {
 try 
 	{
-if (nOutputID == VP_PORT_ID)
+if ((nOutputID == VP_PORT_ID) || (nOutputID == MS_PORT_ID))
 {
-	wxString wxstrName( wstrWidgetName);
-	std::string strName = wxstrName.ToStdString();
-	strName = strName.append( strVirtualOutSuffix);
+std::string strName = (nOutputID == VP_PORT_ID) ? VirtualPortName( strVirtualOutSuffix) : strHardwareOutPortName;
+#ifdef __WINDOWS__
+std::string strOwnPort = MidiServices::SurfaceReaderPortName( strName);
+int nPort = FindPortByName( *m_HardwareMIDIOut, strOwnPort);
+if (nPort < 0)
+{
+	throw RBException( "Windows MIDI Services port not found: " + strOwnPort);
+}
+m_HardwareMIDIOut->openPort( nPort);
+#else
 m_HardwareMIDIOut->openVirtualPort( strName);
+#endif
 }
 else
 {
@@ -646,6 +661,8 @@ wxMessageBox( error.getMessage(),                wstrAppTitle, wxOK | wxICON_ERR
 bool OpenHardwareThru( int nHardwareInID, int nHardwareOutID)
 {
 bool blnResult = true;
+nHardwareInID = ResolveInputPort( nHardwareInID, strHardwareInPortName);
+nHardwareOutID = ResolveOutputPort( nHardwareOutID, strHardwareOutPortName);
 
 if (IsValidInputPort( nHardwareInID, strHardwareInPortName) == false) 
 	{
@@ -670,7 +687,7 @@ if (blnResult == false)
 
 nHardwareInPortID = nHardwareInID;
 		nHardwareOutPortID =nHardwareOutID;
-bool blnOutput, blnInput = true;
+bool blnOutput = false, blnInput = false;
 
 		try
 			{
@@ -718,6 +735,8 @@ blnInput = false;
 bool OpenDisplayThru( int nDisplayInID, int nDisplayOutID)
 {
 bool blnResult = true;
+nDisplayInID = ResolveInputPort( nDisplayInID, strDisplayInPortName);
+nDisplayOutID = ResolveOutputPort( nDisplayOutID, strDisplayOutPortName);
 	
 		if (IsValidInputPort( nDisplayInID, strDisplayInPortName) == false) 
 {
@@ -742,7 +761,7 @@ if (blnResult == false)
 
 	nDisplayInPortID = nDisplayInID;
 	nDisplayOutPortID =nDisplayOutID;
-bool blnInput, blnOutput;
+bool blnInput = false, blnOutput = false;
 
 	try
 		{

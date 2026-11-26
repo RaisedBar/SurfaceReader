@@ -56,6 +56,8 @@
 const unsigned int SHORT_MIDI_MESSAGE_LENGTH = 3;
 // Virtual ports
 const int VP_PORT_ID = 1000;
+// A Windows MIDI Services loopback that replaced a loopMIDI port; the saved port name is the DAW's end
+const int MS_PORT_ID = 1001;
 
 // Location of ID bytes within a SysEx header:
 const int DEFAULT_MANUFACTURER_POSITION = 1;

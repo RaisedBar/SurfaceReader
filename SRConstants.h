@@ -124,6 +124,14 @@ const std::wstring wstrNoDisplayDefinitionError = L"No matching display definiti
 const std::wstring wstrEmptySurfaceNameError = L"No new surface name provided.";
 const std::wstring wstrNoAppNameError = L"You didn't enter an application name.";
 const std::wstring wstrDuplicatedSurfaceNameError = L"There is already a surface with that name.";
+
+// Windows MIDI Services
+const std::wstring wstrMidiServicesTitle = L"Windows MIDI Services";
+const std::wstring wstrQuitLoopMidiPrompt1 = L"SurfaceReader can now use Windows MIDI Services instead of loopMIDI. It will replace these loopMIDI ports with Windows MIDI Services ports of the same names, so your DAW's MIDI settings keep working:\n\n";
+const std::wstring wstrQuitLoopMidiPrompt2 = L"\nTwo ports can't have the same name, so please quit loopMIDI first: right-click its icon in the notification area and choose Exit. Then press OK.\n\nPress Cancel to keep using loopMIDI for now. SurfaceReader will ask again the next time it starts.";
+const std::wstring wstrMidiServicesMigrated1 = L"SurfaceReader now uses Windows MIDI Services instead of loopMIDI.\n\nThese loopMIDI ports have been replaced by Windows MIDI Services ports with the same names, so your DAW will find them as before:\n\n";
+const std::wstring wstrMidiServicesMigrated2 = L"\nEach port also has a partner whose name ends in \"(SR)\". SurfaceReader uses that one itself, so don't select it in your DAW.\n\nYou no longer need loopMIDI and can uninstall it. If your DAW is already running, restart it or rescan its MIDI ports. After restarting Windows, start SurfaceReader before your DAW, so that the ports are there when the DAW looks for them.";
+const std::wstring wstrMidiServicesPortError = L"SurfaceReader couldn't create these Windows MIDI Services ports:\n\n";
 const std::wstring wstrMIDIOverwriteCheck = L" already uses that MIDI message.  Do you want to overwrite it?";
 const std::wstring wstrSurfaceRemovalCheck = L"Are you sure you want to remove the surface:  ?";
 const std::wstring wstrReplicationCheck = L"Other screen readers in this configuration already contain actions. Do you want to overwrite these?";

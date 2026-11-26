@@ -66,6 +66,78 @@ void myTaskBarIcon::OnLeftButtonDClick(wxTaskBarIconEvent&)
 }
 
 
+#include "MidiServices.h"
+#include <algorithm>
+
+#ifdef __WINDOWS__
+#include <TlHelp32.h>
+
+namespace
+{
+	// The DAW end of the Windows MIDI Services loopback a surface port uses, if it uses one:
+	// a virtual port is "<surface> hardware" or "<surface> display" (fitted to WinMM's name length, as
+	// MIDIWidget::VirtualPortName does); a port that replaced a loopMIDI port keeps the loopMIDI name.
+	void AddMidiServicesPort( int nPortID, const std::string & strPortName, const std::string & strSurfaceName, const std::string & strSuffix, std::set <std::string> & myNames)
+	{
+		if (nPortID == VP_PORT_ID)
+		{
+			myNames.insert( MidiServices::FitPortName( strSurfaceName, MidiServices::nMaxPortName - strSuffix.size()) + strSuffix);
+		}
+		else if (nPortID == MS_PORT_ID)
+		{
+			myNames.insert( MidiServices::FitPortName( strPortName));
+		}
+	}
+
+	// For both SurfaceParameters and MIDISurface, which have the same accessors
+	template <class T>
+	void AddMidiServicesPorts( T & mySurface, std::set <std::string> & myNames)
+	{
+		std::string strSurfaceName( wxString( mySurface.GetSurfaceName()).utf8_str());
+		AddMidiServicesPort( mySurface.GetHardwareOutID(), mySurface.GetHardwareOutName(), strSurfaceName, strVirtualOutSuffix, myNames);
+		AddMidiServicesPort( mySurface.GetDisplayInID(), mySurface.GetDisplayInName(), strSurfaceName, strVirtualInSuffix, myNames);
+	}
+
+	bool IsProcessRunning( const wchar_t * szExeName)
+	{
+		HANDLE hSnapshot = CreateToolhelp32Snapshot( TH32CS_SNAPPROCESS, 0);
+		if (hSnapshot == INVALID_HANDLE_VALUE)
+		{
+			return false;
+		}
+		PROCESSENTRY32W myEntry { sizeof( myEntry) };
+		bool blnFound = false;
+		for (BOOL blnMore = Process32FirstW( hSnapshot, &myEntry); blnMore && (blnFound == false); blnMore = Process32NextW( hSnapshot, &myEntry))
+		{
+			blnFound = (_wcsicmp( myEntry.szExeFile, szExeName) == 0);
+		}
+		CloseHandle( hSnapshot);
+		return blnFound;
+	}
+
+	// True if a MIDI input or output port with this name exists (ignoring RtMidi's index suffix)
+	bool PortExists( const std::string & strName)
+	{
+		try
+		{
+			RtMidiIn myIn;
+			RtMidiOut myOut;
+			return (FindPortByName( myIn, strName) >= 0) || (FindPortByName( myOut, strName) >= 0);
+		}
+		catch ( RtMidiError &)
+		{
+			return false;
+		}
+	}
+
+	std::wstring Utf8ToWide( const std::string & strText)
+	{
+		return wxString::FromUTF8( strText.c_str()).ToStdWstring();
+	}
+}
+#endif  // __WINDOWS__
+
+
 SurfaceFrame::SurfaceFrame(const wxString& title, bool EncryptionMode):
 wxFrame(NULL, wxID_ANY, title),
 Speech(new RBSpeech()),
@@ -443,6 +515,17 @@ void SurfaceFrame::ClearDisplays()
 bool SurfaceFrame::OpenSurfacePorts( SurfacePointer pMySurface)
 		{
 bool blnResult = true;
+
+#ifdef __WINDOWS__
+// A surface's virtual and migrated ports are Windows MIDI Services loopbacks, which last only until
+// Windows restarts (unless the PC has a MIDI configuration file), so create any that are missing
+std::set <std::string> myLoopbacks;
+AddMidiServicesPorts( *pMySurface, myLoopbacks);
+if (myLoopbacks.empty() == false)
+{
+	EnsureMidiServicesPorts( myLoopbacks, false);
+}
+#endif
 std::string strErrors;
 wxString strReportTitle = strPortError;
 strReportTitle.append( pMySurface->GetLabel());
@@ -474,7 +557,178 @@ if (blnResult == false)
 }
 
 
-		void SurfaceFrame::CloseSurfacePorts(SurfacePointer pMySurface)
+		void SurfaceFrame::EnsureMidiServicesPorts( const std::set <std::string> & myDawPortNames, bool blnRemoveUnused)
+{
+#ifdef __WINDOWS__
+	if (MidiServices::IsAvailable() == false)
+	{
+		return;
+	}
+
+	std::vector <MidiServices::Loopback> vLoopbacks;
+	if (MidiServices::ListLoopbacks( vLoopbacks) == false)
+	{
+		return;  // the ports that are missing are reported when the surfaces open them
+	}
+
+	std::wstring wstrErrors;
+	std::vector <std::string> vCreated;
+	for (const std::string & strName : myDawPortNames)
+	{
+		bool blnExists = std::any_of( vLoopbacks.begin(), vLoopbacks.end(), [&] (const MidiServices::Loopback & myLoopback)
+		{
+			return (myLoopback.strNameB == strName);
+		});
+
+		if (blnExists == false)
+		{
+			std::string strError;
+			if (MidiServices::CreateLoopback( strName, strError))
+			{
+				vCreated.push_back( MidiServices::SurfaceReaderPortName( strName));
+			}
+			else
+			{
+				wstrErrors += Utf8ToWide( strName) + L": " + Utf8ToWide( strError) + L"\n";
+			}
+		}
+	}
+
+	// Remove the loopbacks SurfaceReader made that no surface uses any more
+	if (blnRemoveUnused)
+	{
+		for (const MidiServices::Loopback & myLoopback : vLoopbacks)
+		{
+			if ((myLoopback.strNameA == MidiServices::SurfaceReaderPortName( myLoopback.strNameB))
+				&& (myDawPortNames.count( myLoopback.strNameB) == 0))
+			{
+				std::string strError;
+				MidiServices::RemoveLoopback( myLoopback.strAssociationID, strError);
+			}
+		}
+	}
+
+	// New loopbacks take a moment to appear as MIDI 1.0 ports; wait (up to 3 seconds) so they can be opened
+	for (int nTries = 0; (vCreated.empty() == false) && (nTries < 60); nTries++)
+	{
+		vCreated.erase( std::remove_if( vCreated.begin(), vCreated.end(), PortExists), vCreated.end());
+		if (vCreated.empty() == false)
+		{
+			wxMilliSleep( 50);
+		}
+	}
+
+	if (wstrErrors.empty() == false)
+	{
+		wxMessageBox( wstrMidiServicesPortError + wstrErrors, wstrMidiServicesTitle, wxOK | wxICON_ERROR);
+	}
+#endif
+}
+
+
+void SurfaceFrame::UpdateMidiServicesPorts()
+{
+#ifdef __WINDOWS__
+	std::set <std::string> myNames;
+	for (SurfacePointer & pSurface : SurfacePointers)
+	{
+		AddMidiServicesPorts( *pSurface, myNames);
+	}
+	EnsureMidiServicesPorts( myNames, true);
+#endif
+}
+
+
+std::wstring SurfaceFrame::MigrateFromLoopMidi( std::vector <SurfaceParameters> & vSurfaces)
+{
+#ifdef __WINDOWS__
+	if ((MidiServices::IsAvailable() == false)
+		|| myOptions.GetMidiServicesSeen())
+	{
+		return std::wstring();
+	}
+
+	// The ports the surfaces share with the DAW that aren't Windows MIDI Services loopbacks yet:
+	// on Windows those are always virtual cables, normally loopMIDI ports
+	std::set <std::string> myCables;
+	for (SurfaceParameters & myParameters : vSurfaces)
+	{
+		for (std::pair <int, std::string> myPort : { std::make_pair( myParameters.GetHardwareOutID(), myParameters.GetHardwareOutName()),
+			std::make_pair( myParameters.GetDisplayInID(), myParameters.GetDisplayInName()) })
+		{
+			std::string strBase = PortBaseName( myPort.second);
+			if ((myPort.first != VP_PORT_ID)
+				&& (myPort.first != MS_PORT_ID)
+				&& (strBase.empty() == false))
+			{
+				myCables.insert( strBase);
+			}
+		}
+	}
+
+	if (myCables.empty())
+	{
+		// Nothing to replace: a new installation, or one that never used loopMIDI
+		myOptions.SetMidiServicesSeen( true);
+		SaveOptions();
+		return std::wstring();
+	}
+
+	std::wstring wstrPorts;
+	for (const std::string & strCable : myCables)
+	{
+		wstrPorts += L"    " + Utf8ToWide( strCable) + L"\n";
+	}
+
+	// Two ports can't share a name, so loopMIDI's must be gone before the replacements are made
+	std::vector <MidiServices::Loopback> vLoopbacks;
+	MidiServices::ListLoopbacks( vLoopbacks);
+	auto IsInUseElsewhere = [&] (const std::string & strCable)
+	{
+		bool blnIsLoopback = std::any_of( vLoopbacks.begin(), vLoopbacks.end(), [&] (const MidiServices::Loopback & myLoopback)
+		{
+			return (myLoopback.strNameB == strCable);
+		});
+		return (blnIsLoopback == false) && PortExists( strCable);
+	};
+
+	while (IsProcessRunning( L"loopMIDI.exe")
+		|| std::any_of( myCables.begin(), myCables.end(), IsInUseElsewhere))
+	{
+		if (wxMessageBox( wstrQuitLoopMidiPrompt1 + wstrPorts + wstrQuitLoopMidiPrompt2, wstrMidiServicesTitle, wxOK | wxCANCEL | wxICON_INFORMATION) != wxOK)
+		{
+			return std::wstring();  // asked again next time
+		}
+	}
+
+	// Each of these ports is now a loopback: the DAW keeps the old name, and SurfaceReader opens its own end
+	for (SurfaceParameters & myParameters : vSurfaces)
+	{
+		std::string strHardwareOut = PortBaseName( myParameters.GetHardwareOutName());
+		if ((myParameters.GetHardwareOutID() != VP_PORT_ID) && myCables.count( strHardwareOut))
+		{
+			myParameters.SetHardwareOutID( MS_PORT_ID);
+			myParameters.SetHardwareOutName( strHardwareOut);
+		}
+
+		std::string strDisplayIn = PortBaseName( myParameters.GetDisplayInName());
+		if ((myParameters.GetDisplayInID() != VP_PORT_ID) && myCables.count( strDisplayIn))
+		{
+			myParameters.SetDisplayInID( MS_PORT_ID);
+			myParameters.SetDisplayInName( strDisplayIn);
+		}
+	}
+
+	myOptions.SetMidiServicesSeen( true);
+	SaveOptions();
+	return wstrPorts;
+#else
+	return std::wstring();
+#endif
+}
+
+
+void SurfaceFrame::CloseSurfacePorts(SurfacePointer pMySurface)
 		{
 			pMySurface->CloseHardwareThru();
 		pMySurface->CloseDisplayThru();
@@ -711,6 +965,10 @@ return false;
 // Directory exists so process the contents
   fs::directory_iterator end_itr; // Default ctor yields past-the-end
 
+// Read every surface's settings first, so that any loopMIDI ports can be moved to Windows MIDI Services
+// and the loopbacks created before any surface opens its ports
+std::vector <SurfaceParameters> vSurfaces;
+
 for (fs::directory_iterator i( myPath); i != end_itr; ++i )
 {
     // Skip if not a file
@@ -730,6 +988,35 @@ for (fs::directory_iterator i( myPath); i != end_itr; ++i )
 			bool blnProtocolExists = Protocols->ProtocolExists(myParameters.GetProtocolID());
 
 			if (blnProtocolExists)
+			{
+				vSurfaces.push_back( myParameters);
+			}  // end if protocol exists
+		}
+		catch (boost::archive::archive_exception &)
+		{
+blnSuccess = false;
+blnResult = false;
+vFailedFiles.push_back( i->path().filename().generic_string());
+		}
+}  // end if match
+}  // end for
+
+std::wstring wstrMigratedPorts = MigrateFromLoopMidi( vSurfaces);
+
+#ifdef __WINDOWS__
+// Create the loopbacks the surfaces need, and remove SurfaceReader's old ones that none of them uses
+{
+	std::set <std::string> myLoopbacks;
+	for (SurfaceParameters & myParameters : vSurfaces)
+	{
+		AddMidiServicesPorts( myParameters, myLoopbacks);
+	}
+	EnsureMidiServicesPorts( myLoopbacks, true);
+}
+#endif
+
+for (SurfaceParameters & myParameters : vSurfaces)
+{
 			{
 				// Look up the name strings for the loaded AppConfig and Protocol
 				try
@@ -766,16 +1053,15 @@ for (fs::directory_iterator i( myPath); i != end_itr; ++i )
 
 				// Update the surface list
 				lbxSurfaces->Append(SurfacePointers.at(SurfacePointers.size() - 1)->GetSurfaceName());
-			}  // end if protocol exists
-		}
-		catch (boost::archive::archive_exception &)
-		{
-blnSuccess = false;
-blnResult = false;
-vFailedFiles.push_back( i->path().filename().generic_string());
-		}
-}  // end if match
+			}
 }  // end for
+
+if (wstrMigratedPorts.empty() == false)
+{
+	// Save the surfaces with their new ports, then tell the user what changed
+	SaveSurfaces();
+	wxMessageBox( wstrMidiServicesMigrated1 + wstrMigratedPorts + wstrMidiServicesMigrated2, wstrMidiServicesTitle, wxOK | wxICON_INFORMATION);
+}
     
 // Display the names of any files that failed to load
 if (vFailedFiles.size() > 0)
@@ -2176,14 +2462,12 @@ if (nMySelection < 0)
 		}
 		
 std::wstring wstrOldName = lbxSurfaces->GetStringSelection().ToStdWstring();
-RBInputBox * RenameSurfaceDlg = new RBInputBox( wstrAppTitle, wstrRenameSurfacePrompt, wstrOldName);
+// On the stack: the dialog used to be leaked whenever the rename was cancelled
+RBInputBox RenameSurfaceDlg( wstrAppTitle, wstrRenameSurfacePrompt, wstrOldName);
 		
-		if (RenameSurfaceDlg ->ShowModal() == wxID_OK)
+		if (RenameSurfaceDlg.ShowModal() == wxID_OK)
 		{
-			std::wstring wstrNewName = RenameSurfaceDlg ->GetText();
-
-			// Tidy up
-			RenameSurfaceDlg->Destroy(); 	
+			std::wstring wstrNewName = RenameSurfaceDlg.GetText();
 			
 			if (wstrNewName.empty())
 {
@@ -2198,9 +2482,30 @@ RBInputBox * RenameSurfaceDlg = new RBInputBox( wstrAppTitle, wstrRenameSurfaceP
 			}
 
 // Rename the surface with the new name
-SurfacePointers.at( nMySelection)->SetSurfaceName( wstrNewName);
+SurfacePointer pSurface = SurfacePointers.at( nMySelection);
+bool blnVirtualPorts = ((pSurface->GetHardwareOutID() == VP_PORT_ID) || (pSurface->GetDisplayInID() == VP_PORT_ID));  // named after the surface
+
+if (blnVirtualPorts)
+{
+	// Virtual ports are named after the surface, so they have to be closed and opened again under the new name
+	pSurface->StopDisplayProcessing();
+	pSurface->StopHardwareProcessing();
+	CloseSurfacePorts( pSurface);
+}
+
+pSurface->SetSurfaceName( wstrNewName);
 				lbxSurfaces->SetString( nMySelection, wstrNewName);
 			SaveSurfaces();
+
+if (blnVirtualPorts)
+{
+	UpdateMidiServicesPorts();  // makes the newly named ports and removes the old ones
+	if (OpenSurfacePorts( pSurface))
+	{
+		pSurface->ResumeDisplayProcessing();
+		pSurface->ResumeHardwareProcessing();
+	}
+}
 }  // end if OK button
 }
 
@@ -2273,6 +2578,8 @@ i++;
 					
 				lbxSurfaces->Delete( nMySelection);
 		SaveSurfaces();
+		// Remove the surface's Windows MIDI Services ports if no other surface uses them
+		UpdateMidiServicesPorts();
 		UpdateStatusBar();
 		}  // if not empty
 	}  // if user confirms

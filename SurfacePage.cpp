@@ -6,6 +6,7 @@
 
 
 #include "SurfacePage.h"
+#include "MidiServices.h"
 
 
 SurfacePage::SurfacePage( wxWizard * wizParent, const wxString & title, bool blnPickProtocol, std::shared_ptr<SurfaceParameters> pSurfaceParameters, std::shared_ptr<ProtocolCollection> pProtocols)
@@ -280,21 +281,23 @@ nDisplay_VirtualMIDIIn = pMySurfaceParameters->GetDisplayInID();
 nDisplay_MIDIOut = pMySurfaceParameters->GetDisplayOutID();
 	
 
+// The DAW sends to a virtual port SurfaceReader creates: CoreMIDI on the Mac, a Windows MIDI Services
+// loopback on Windows when it's available (otherwise the user picks a loopMIDI port)
 #ifdef __WINDOWS__
-	MIDIDialog * dlgDisplaySetup = new MIDIDialog(	wstrDisplaySetupTitle);
+bool blnVirtual = MidiServices::IsAvailable();
 #else
-	MIDIDialog * dlgDisplaySetup = new MIDIDialog(wstrDisplaySetupTitle, true, false);
+bool blnVirtual = true;
 #endif
+// On the stack: these dialogs used to be leaked
+MIDIDialog dlgDisplaySetup( wstrDisplaySetupTitle, blnVirtual, false);
 
-if (dlgDisplaySetup->ShowModal() == wxID_OK)
+if (dlgDisplaySetup.ShowModal() == wxID_OK)
 {
-	nDisplay_VirtualMIDIIn = dlgDisplaySetup->GetSelectedInput();
-	nDisplay_MIDIOut = dlgDisplaySetup->GetSelectedOutput();
-	strDisplay_VirtualMIDIInName = dlgDisplaySetup->GetSelectedInputName();
-strDisplay_MIDIOutName = dlgDisplaySetup->GetSelectedOutputName();
+	nDisplay_VirtualMIDIIn = dlgDisplaySetup.GetSelectedInput();
+	nDisplay_MIDIOut = dlgDisplaySetup.GetSelectedOutput();
+	strDisplay_VirtualMIDIInName = dlgDisplaySetup.GetSelectedInputName();
+strDisplay_MIDIOutName = dlgDisplaySetup.GetSelectedOutputName();
 }  // OK button processing finished
-
-// 	dlgDisplaySetup->Destroy();
 }
 
 
@@ -303,20 +306,21 @@ strDisplay_MIDIOutName = dlgDisplaySetup->GetSelectedOutputName();
 nHardware_MIDIIn = pMySurfaceParameters->GetHardwareInID();
 nHardware_VirtualMIDIOut = pMySurfaceParameters->GetHardwareOutID();
 
-#ifdef __WINDOWS__ 
-	MIDIDialog * dlgHardwareSetup = new MIDIDialog( wstrHardwareSetupTitle);
+// SurfaceReader sends to the DAW through a virtual port, as for the display above
+#ifdef __WINDOWS__
+bool blnVirtual = MidiServices::IsAvailable();
 #else
-	MIDIDialog * dlgHardwareSetup = new MIDIDialog(wstrHardwareSetupTitle, false, true);
+bool blnVirtual = true;
 #endif
+MIDIDialog dlgHardwareSetup( wstrHardwareSetupTitle, false, blnVirtual);
 
-if (dlgHardwareSetup->ShowModal() == wxID_OK) 
+if (dlgHardwareSetup.ShowModal() == wxID_OK) 
 {
-nHardware_MIDIIn = dlgHardwareSetup->GetSelectedInput();
-nHardware_VirtualMIDIOut = dlgHardwareSetup->GetSelectedOutput();
-strHardware_MIDIInName = dlgHardwareSetup->GetSelectedInputName();
-strHardware_VirtualMIDIOutName = dlgHardwareSetup->GetSelectedOutputName();
+nHardware_MIDIIn = dlgHardwareSetup.GetSelectedInput();
+nHardware_VirtualMIDIOut = dlgHardwareSetup.GetSelectedOutput();
+strHardware_MIDIInName = dlgHardwareSetup.GetSelectedInputName();
+strHardware_VirtualMIDIOutName = dlgHardwareSetup.GetSelectedOutputName();
 }  // OK button processing finished
-// dlgHardwareSetup->Destroy();
 }
 
 
