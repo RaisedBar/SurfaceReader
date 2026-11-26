@@ -53,6 +53,7 @@
 		2275FD7D1FA1DC1F005BB7EC /* wx_small.xpm in Resources */ = {isa = PBXBuildFile; fileRef = 2275FD001FA1DC16005BB7EC /* wx_small.xpm */; };
 		5EC0DE0000000000000000B2 /* MidiServices.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5EC0DE0000000000000000B1 /* MidiServices.cpp */; };
 		5EC0DE0000000000000000B5 /* UiStyle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5EC0DE0000000000000000B4 /* UiStyle.cpp */; };
+		5EC0DE0000000000000000B8 /* AppSettings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5EC0DE0000000000000000B7 /* AppSettings.cpp */; };
 		2275FD801FA1DC1F005BB7EC /* ControlStatesDialog.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2275FD091FA1DC17005BB7EC /* ControlStatesDialog.cpp */; };
 		2275FD811FA1DC1F005BB7EC /* DisplayStatesDialog.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2275FD0A1FA1DC17005BB7EC /* DisplayStatesDialog.cpp */; };
 		2275FD831FA1DC1F005BB7EC /* RBSpeech.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2275FD0D1FA1DC17005BB7EC /* RBSpeech.cpp */; };
@@ -171,6 +172,8 @@
 		5EC0DE0000000000000000B3 /* MidiServices.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MidiServices.h; sourceTree = SOURCE_ROOT; };
 		5EC0DE0000000000000000B4 /* UiStyle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UiStyle.cpp; sourceTree = SOURCE_ROOT; };
 		5EC0DE0000000000000000B6 /* UiStyle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UiStyle.h; sourceTree = SOURCE_ROOT; };
+		5EC0DE0000000000000000B7 /* AppSettings.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AppSettings.cpp; sourceTree = SOURCE_ROOT; };
+		5EC0DE0000000000000000B9 /* AppSettings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppSettings.h; sourceTree = SOURCE_ROOT; };
 		2275FD011FA1DC16005BB7EC /* RBEnums.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RBEnums.h; sourceTree = SOURCE_ROOT; };
 		2275FD031FA1DC16005BB7EC /* SysExPage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SysExPage.h; sourceTree = SOURCE_ROOT; };
 		2275FD051FA1DC16005BB7EC /* Protocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Protocol.h; sourceTree = SOURCE_ROOT; };
@@ -356,6 +359,8 @@
 				5EC0DE0000000000000000B3 /* MidiServices.h */,
 				5EC0DE0000000000000000B4 /* UiStyle.cpp */,
 				5EC0DE0000000000000000B6 /* UiStyle.h */,
+				5EC0DE0000000000000000B7 /* AppSettings.cpp */,
+				5EC0DE0000000000000000B9 /* AppSettings.h */,
 				2275FD1F1FA1DC19005BB7EC /* NewSurfaceDialog.cpp */,
 				2275FCA71FA1DC0C005BB7EC /* NewSurfaceDialog.h */,
 				2275FD271FA1DC1A005BB7EC /* null.xpm */,
@@ -607,6 +612,7 @@
 				2275FD5B1FA1DC1F005BB7EC /* SurfaceList.cpp in Sources */,
 				5EC0DE0000000000000000B2 /* MidiServices.cpp in Sources */,
 				5EC0DE0000000000000000B5 /* UiStyle.cpp in Sources */,
+				5EC0DE0000000000000000B8 /* AppSettings.cpp in Sources */,
 				2275FD5E1FA1DC1F005BB7EC /* ActionPickerModels.cpp in Sources */,
 				2275FD6E1FA1DC1F005BB7EC /* SurfaceReader.cpp in Sources */,
 				2275FD6C1FA1DC1F005BB7EC /* SurfaceFrame.cpp in Sources */,

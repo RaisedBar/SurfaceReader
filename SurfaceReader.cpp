@@ -5,6 +5,7 @@
 
 #include "SurfaceReader.h"
 #include "UiStyle.h"
+#include "AppSettings.h"
 
 #include <wx/wizard.h>
 
@@ -41,6 +42,9 @@ return false;
     {
         wxMessageBox( wstrNoTaskBarSupportError, wstrErrorTitle, wxOK | wxICON_EXCLAMATION);
     }
+
+    // Hand-edited settings, such as how long a fader must settle before it is announced
+	AppSettings::Load();
 
     // create the main application window
 mySurfaceFrame = new SurfaceFrame( wstrAppTitle, AllowEncryption);

@@ -2,6 +2,7 @@
 // MIDISurface implementation
 
 #include "MIDISurface.h"
+#include "AppSettings.h"
 #include "SurfaceFrame.h"
 
 // Post a surface update to the main window.
@@ -601,7 +602,13 @@ else
 		}
 }
 
-ProcessLiveModeMessage( myHardwarePair, &myProtocol, &myAppConfig, nControlState, vHardwareBuffer);
+{
+std::vector <unsigned char> vSettledBuffer = vHardwareBuffer;
+WhenSettled( myHardwarePair.second, [this, myHardwarePair, nControlState, vSettledBuffer] (SurfaceProtocol * pSettledProtocol, AppConfig * pSettledAppConfig, bool blnDisplayUpdated)
+{
+	ProcessLiveModeMessage( myHardwarePair, pSettledProtocol, pSettledAppConfig, nControlState, vSettledBuffer, blnDisplayUpdated);
+});
+}
 }  // end if empty hash
 			}
 			catch ( unsigned int nException)
@@ -643,7 +650,13 @@ else
 		}
 }
 
-ProcessLiveModeMessage( myHardwarePair, &myProtocol, &myAppConfig, nControlState, vHardwareBuffer);
+{
+std::vector <unsigned char> vSettledBuffer = vHardwareBuffer;
+WhenSettled( myHardwarePair.second, [this, myHardwarePair, nControlState, vSettledBuffer] (SurfaceProtocol * pSettledProtocol, AppConfig * pSettledAppConfig, bool blnDisplayUpdated)
+{
+	ProcessLiveModeMessage( myHardwarePair, pSettledProtocol, pSettledAppConfig, nControlState, vSettledBuffer, blnDisplayUpdated);
+});
+}
 }  // end if empty hash
 			}
 			catch ( unsigned int nException)
@@ -691,7 +704,10 @@ else
 wstrOut = myHardwarePair.first.GetLabel();
 wstrOut.append( L" value equals ");
 wstrOut.append( boost::lexical_cast <std::wstring> (nControlState));
-Speak( wstrOut, false);
+WhenSettled( myHardwarePair.second, [this, wstrOut] (SurfaceProtocol *, AppConfig *, bool)
+{
+	Speak( wstrOut, false);
+});
 }  // end if empty hash
 			}
 			catch ( unsigned int nException)
@@ -737,7 +753,13 @@ else
 		}
 }
 
-ProcessScreenReaderModeMessage( myHardwarePair.second, myHardwarePair.first, &myProtocol, &myAppConfig, nControlState, vHardwareBuffer);
+{
+std::vector <unsigned char> vSettledBuffer = vHardwareBuffer;
+WhenSettled( myHardwarePair.second, [this, myHardwarePair, nControlState, vSettledBuffer] (SurfaceProtocol * pSettledProtocol, AppConfig * pSettledAppConfig, bool blnDisplayUpdated)
+{
+	ProcessScreenReaderModeMessage( myHardwarePair.second, myHardwarePair.first, pSettledProtocol, pSettledAppConfig, nControlState, vSettledBuffer, blnDisplayUpdated);
+});
+}
 }  // end if empty hash
 			}
 			catch ( unsigned int nException)
@@ -3031,6 +3053,40 @@ bool MIDISurface::ActionWaitsForDisplay( SurfaceAction myAction, std::string str
 
 // Worker thread only. Runs the announcement after the read-display delay, on the worker, with the
 // configuration current at that time. The shared pointers keep that configuration alive while it runs.
+void MIDISurface::WhenSettled( const std::string & strHash, std::function <void( SurfaceProtocol *, AppConfig *, bool)> myAnnouncement)
+{
+	int nSettle = AppSettings::GetSettleTimeMilliseconds();
+
+	if ((nSettle <= 0) || (IsContinuousControlHash( strHash) == false))
+	{
+		myAnnouncement( pWorkerProtocol.get(), pWorkerAppConfig.get(), false);
+		return;
+	}
+
+	// Each message for the control schedules its own check. Only the check for the latest message finds its
+	// number still current, and that runs once the control has been still for the whole settle time.
+	unsigned long long nGeneration = mySettleGate.Moved( strHash);
+	// By then the DAW has had at least the settle time to update its displays
+	bool blnDisplayUpdated = (nSettle >= GetReadDisplayDelay());
+
+	myWorker.PostAfter( nSettle, [this, strHash, nGeneration, blnDisplayUpdated, myAnnouncement]
+	{
+		if (mySettleGate.Settled( strHash, nGeneration) == false)
+		{
+			return;  // moved again since
+		}
+
+		if (RefreshWorkerConfig() == false)
+		{
+			return;
+		}
+		std::shared_ptr <SurfaceProtocol> pProtocol = pWorkerProtocol;
+		std::shared_ptr <AppConfig> pAppConfig = pWorkerAppConfig;
+		myAnnouncement( pProtocol.get(), pAppConfig.get(), blnDisplayUpdated);
+	});
+}
+
+
 void MIDISurface::AfterDisplayDelay( std::function <void( SurfaceProtocol *, AppConfig *)> myAnnouncement)
 {
 	myWorker.PostAfter( GetReadDisplayDelay(), [this, myAnnouncement]

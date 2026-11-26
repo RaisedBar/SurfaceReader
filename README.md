@@ -63,3 +63,17 @@ The installer:
 2. Build. The **Install vcpkg dependencies** build phase runs `vcpkg install` for each architecture being built (`arm64-osx`, `x64-osx`) into `vcpkg_installed/`. It then writes a linker file list of every library vcpkg installed. The header path and linker flags come from the `VCPKG_*` build settings.
 
 Both projects link every library vcpkg installs, so adding a dependency only means adding it to `vcpkg.json`.
+
+## Settings file
+
+SurfaceReader reads `SurfaceReader.json` from its data folder when it starts (`ProgramData\Raised Bar\SurfaceReader` on Windows), creating it with the defaults if it is missing:
+
+```json
+{
+    "speech": {
+        "settleTimeSeconds": 0.2
+    }
+}
+```
+
+- `speech.settleTimeSeconds`: how long a fader, V-Pot, jog wheel or other continuous control must stay still before SurfaceReader announces it, so moving one isn't announced at every step. Buttons and fader touches are announced at once. 0 announces every change; values from 0 to 5 are accepted, and anything else keeps the default of 0.2.

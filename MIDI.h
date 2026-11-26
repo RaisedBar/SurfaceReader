@@ -209,4 +209,9 @@ unsigned int nAddressBytes;
 std::vector <unsigned char> vMIDIBytes;
 };
 
+// True for a control whose key (see MIDI::MIDIHash) is for a stream of values rather than a button: pitch bend,
+// or a single control change (faders, V-Pots, jog wheels, pedals). HUI switches, which are two control changes
+// (zone, then port), are buttons.
+bool IsContinuousControlHash( const std::string & strHash);
+
 #endif  // MIDI_H

@@ -42,6 +42,8 @@ const std::wstring wstrLogExtension = L".log";
 const std::wstring wstrBadLogError = L"Unable to open the log file: ";
 const std::wstring wstrAppIconFileName = L"32SurfaceReader.ico";
 const std::wstring wstrOptionsFileName = L"SurfaceReader.cfg";
+// Settings to edit by hand (see AppSettings.h)
+const std::wstring wstrSettingsFileName = L"SurfaceReader.json";
 const std::wstring wstrSpeechConfigFileName = L"Speech.RBS";
 const std::wstring wstrDefaultVoiceName = L"com.apple.speech.synthesis.voice.Alex";
 
