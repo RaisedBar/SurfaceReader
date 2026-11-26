@@ -8,6 +8,7 @@
 #include <string>
 
 #include <wx/string.h>
+#include "SRVersion.h"
 #include <wx/msw/winundef.h> 
 
 
@@ -340,7 +341,7 @@ const std::wstring wstrStatusConnecting = L"Connecting...";
 const std::wstring wstrStatusActive = L"Active";
 const std::wstring wstrStatusNoSelectedSurface = L"No surface selected in the list.";
 
-const std::wstring wstrAboutMessage = L"Version 1.2.0\n\n";
+const std::wstring wstrAboutMessage = std::wstring( L"Version ") + wxString( SR_VERSION_STRING).ToStdWstring() + L"\n\n";
 
 // String constants for control labels
 const std::wstring wstrDefineNewDisplayPrompt = L"&Define Display:";
