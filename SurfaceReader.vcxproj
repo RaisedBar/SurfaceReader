@@ -189,6 +189,7 @@
     <ClCompile Include=".\MIDIDialog.cpp" />
     <ClCompile Include=".\MIDISurface.cpp" />
     <ClCompile Include=".\MidiServices.cpp" />
+    <ClCompile Include=".\UiStyle.cpp" />
     <ClCompile Include=".\NewSurfaceDialog.cpp" />
     <ClCompile Include=".\Protocol.cpp" />
     <ClCompile Include=".\ProtocolChooserDialog.cpp" />
@@ -244,6 +245,7 @@
     <ClInclude Include=".\MIDIDialog.h" />
     <ClInclude Include=".\MIDISurface.h" />
     <ClInclude Include=".\MidiServices.h" />
+    <ClInclude Include=".\UiStyle.h" />
     <ClInclude Include=".\MIDIWidget.h" />
     <ClInclude Include=".\NewSurfaceDialog.h" />
     <ClInclude Include=".\nvdaController.h" />

@@ -55,6 +55,8 @@ SurfaceReaderApp();
     virtual ~SurfaceReaderApp(){};
 
 virtual bool OnInit();
+// Lays out every dialog the same way as it is shown (see UiStyle.h)
+virtual int FilterEvent( wxEvent & event) wxOVERRIDE;
     
 // 2nd-level exception handling: we get all the exceptions occurring in any
     // event handler here

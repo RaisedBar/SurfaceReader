@@ -4,6 +4,9 @@
 
 
 #include "SurfaceReader.h"
+#include "UiStyle.h"
+
+#include <wx/wizard.h>
 
 IMPLEMENT_APP( SurfaceReaderApp)
 
@@ -50,6 +53,22 @@ mySurfaceFrame->Show( true);
 
 // success: wxApp::OnRun() will be called which will enter the main message loop and the application will run. If we returned false here, the application would exit immediately.
     return true;
+}
+
+
+int SurfaceReaderApp::FilterEvent( wxEvent & event)
+{
+	// A dialog sends wxEVT_INIT_DIALOG as it is shown: give it the standard spacing and size it to fit.
+	// Wizards size themselves around their pages, so their spacing is applied before they run.
+	if (event.GetEventType() == wxEVT_INIT_DIALOG)
+	{
+		wxDialog * pDialog = wxDynamicCast( event.GetEventObject(), wxDialog);
+		if ((pDialog != nullptr) && (wxDynamicCast( pDialog, wxWizard) == nullptr))
+		{
+			UiStyle::PrepareDialog( pDialog);
+		}
+	}
+	return Event_Skip;
 }
 
 
