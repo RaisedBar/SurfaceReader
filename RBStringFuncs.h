@@ -21,6 +21,7 @@
 #include "SRConstants.h"
 
 #include <wx/stdpaths.h>
+#include <wx/utils.h>
 #include <wx/msgdlg.h>
 #include <wx/msw/winundef.h> 
 
@@ -31,6 +32,9 @@ fs::path AppDataPath();
 fs::path HelpPath();
 fs::path AppConfigPath();
 fs::path SpeechPath();
+// macOS: copy the supplied protocols and app configurations from the app bundle into the data folder,
+// where they are missing. Does nothing on Windows, where the installer puts them there.
+void SeedDataFolder();
 fs::path ProtocolPath();
 fs::path SurfacePath();
 fs::path LogPath();

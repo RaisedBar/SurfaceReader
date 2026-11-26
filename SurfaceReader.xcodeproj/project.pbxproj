@@ -665,7 +665,7 @@
 					"-lpthread",
 					"-liconv",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.yourcompany.${PRODUCT_NAME:rfc1034identifier}";
+				PRODUCT_BUNDLE_IDENTIFIER = net.raisedbar.SurfaceReader;
 				PRODUCT_NAME = SurfaceReader;
 				SCAN_ALL_SOURCE_FILES_FOR_INCLUDES = NO;
 				SDKROOT = macosx;
@@ -690,7 +690,7 @@
 					"\"$(SRCROOT)/..\"",
 					"$(PROJECT_DIR)",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.yourcompany.${PRODUCT_NAME:rfc1034identifier}";
+				PRODUCT_BUNDLE_IDENTIFIER = net.raisedbar.SurfaceReader;
 				PRODUCT_NAME = SurfaceReader;
 				SDKROOT = macosx;
 			};

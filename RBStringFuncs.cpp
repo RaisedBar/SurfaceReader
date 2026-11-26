@@ -24,56 +24,51 @@ bool IsAllHexChars(std::string strIn)
 fs::path AppDataPath()
 {
 #ifdef __WINDOWS__
+	// ProgramData\SurfaceReader: take the folder above it, then add the company and app folders
 	fs::path myPath = wxStandardPaths::Get().GetConfigDir().ToStdWstring();
-#else
-	fs::path myPath =wxStandardPaths::Get().GetExecutablePath().ToStdWstring();
-#endif
-		
-		if (myPath.has_filename())
+
+	if (myPath.has_filename())
 	{
 		myPath.remove_filename();
 	}
+#else
+	// ~/Library/Application Support: per user and writable. (This used to be the folder holding the executable,
+	// inside the app bundle, which can't be changed without breaking the app's signature, and which only
+	// administrators can write to in /Applications.)
+	fs::path myPath = wxGetHomeDir().ToStdWstring();
+	myPath /= L"Library";
+	myPath /= L"Application Support";
+#endif
 
-#ifdef __WINDOWS__
-	// Add the company name
-myPath /=wstrRBCompanyName;
-	
-	// check for directory existence
-if (!fs::exists(myPath))
+	myPath /= wstrRBCompanyName;
+	myPath /= wstrAppTitle;
+
+	std::error_code myError;
+	if (fs::exists( myPath, myError) == false)
 	{
-		// Create the required directory
 		try
 		{
-		fs::create_directory(myPath);
+			fs::create_directories( myPath);
 		}
-		catch(const fs::filesystem_error& err)
-		{
-				wxMessageBox( err.code().message(), wstrErrorTitle, wxOK | wxICON_EXCLAMATION);
-			}
-		}
-	
-	myPath /=wstrAppTitle;
-
-	if (!fs::exists(myPath))
-	{
-		// Create the required directory
-		try 
-			{
-				fs::create_directory(myPath);
-			}
-		catch(const fs::filesystem_error& err)
+		catch (const fs::filesystem_error & err)
 		{
 			wxMessageBox( err.code().message(), wstrErrorTitle, wxOK | wxICON_EXCLAMATION);
 		}
 	}
-#endif
-	
+
 	return myPath;
 }
 
 
 fs::path HelpPath()
 {
+#ifdef __WXOSX_COCOA__
+	// The HTML help (with wxhelp.map) in the app bundle's Resources folder. Read only: nothing is created there.
+	fs::path myPath = wxStandardPaths::Get().GetResourcesDir().ToStdWstring();
+	myPath /= wstrMacHelpDir;
+	return myPath;
+#else
+	// The folder holding the executable, where the installer puts the help file
 	fs::path myPath = wxStandardPaths::Get().GetExecutablePath().ToStdWstring();
 
 	if (myPath.has_filename())
@@ -81,16 +76,8 @@ fs::path HelpPath()
 		myPath.remove_filename();
 	}
 
-#ifdef __WXOSX_COCOA__   
-	myPath /= wstrMacHelpDir;
-
-	if (!fs::exists(myPath))
-	{
-		fs::create_directory(myPath);
-	}
-#endif
-
 	return myPath;
+#endif
 }
 
 
@@ -121,22 +108,47 @@ fs::path SpeechPath()
 #ifdef __WINDOWS__
 	fs::path myPath = wxStandardPaths::Get().GetExecutablePath().ToStdWstring();
 #else
-	fs::path myPath = wxStandardPaths::Get().GetExecutablePath().ToStdWstring();
-
-	if (myPath.has_filename())
-	{
-		myPath.remove_filename();
-	}
-
+	// The speech settings are saved, so they go in the data folder, not in the app bundle
+	fs::path myPath = AppDataPath();
 	myPath /= wstrSpeechDir;
 
-	if (!fs::exists(myPath))
+	std::error_code myError;
+	if (fs::exists( myPath, myError) == false)
 	{
-		fs::create_directory(myPath);
+		fs::create_directories( myPath, myError);
 	}
 #endif
 
 	return myPath;
+}
+
+
+void SeedDataFolder()
+{
+#ifdef __WXOSX_COCOA__
+	// The app bundle carries the supplied protocols and app configurations in Resources. Copy any that the data
+	// folder doesn't have yet; never overwrite one, so the user's changes are kept.
+	fs::path myResources = wxStandardPaths::Get().GetResourcesDir().ToStdWstring();
+	const std::pair <std::wstring, fs::path> myFolders[] = {
+		{ wstrProtocolDir, ProtocolPath() },
+		{ wstrAppConfigDir, AppConfigPath() } };
+
+	for (const auto & myFolder : myFolders)
+	{
+		std::error_code myError;
+		fs::directory_iterator it( myResources / myFolder.first, myError);
+
+		for (; (myError.value() == 0) && (it != fs::directory_iterator()); it.increment( myError))
+		{
+			fs::path myTarget = myFolder.second / it->path().filename();
+
+			if (it->is_regular_file( myError) && (fs::exists( myTarget, myError) == false))
+			{
+				fs::copy_file( it->path(), myTarget, myError);
+			}
+		}
+	}
+#endif
 }
 
 

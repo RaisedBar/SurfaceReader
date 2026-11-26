@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="Windows-1252"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns:MadCap="http://www.madcapsoftware.com/Schemas/MadCap.xsd" MadCap:tocPath="Using SurfaceReader|Appendix" MadCap:medium="print" MadCap:InPreviewMode="false" MadCap:PreloadImages="false" MadCap:RuntimeFileType="Topic" MadCap:TargetType="HtmlHelp" MadCap:PathToHelpSystem="../../" MadCap:HelpSystemFileName="SurfaceReader.xml" MadCap:SearchType="Stem">
+    <head><title>Defining a MIDI Message</title>
+        <link href="../../Resources/Stylesheets/SurfaceReader.css" rel="stylesheet" type="text/css" />
+        <script type="text/javascript" src="../../SkinSupport/MadCapMerging.js">
+        </script>
+        <script type="text/javascript" src="../../SkinSupport/MadCapAliasFile.js">
+        </script>
+        <script type="text/javascript" src="../../SkinSupport/MadCapUtilities.js">
+        </script>
+        <script type="text/javascript" src="../../SkinSupport/MadCapBody.js">
+        </script>
+        <script type="text/javascript" src="../../SkinSupport/MadCapHighlighter.js">
+        </script>
+    </head>
+    <body>
+        <h2><a name="DefiningMIDI"></a>Defining a MIDI Message</h2>
+        <p>To define a MIDI message using the Define MIDI Message dialog box:</p>
+        <ol>
+            <li value="1">Choose the required message type from the group of radio buttons.  The hexadecimal values shown in parenthesis after the message type represent the MIDI value for this message type and is shown to help you identify the correct values in the equipment manufacturer's documentation.</li>
+            <li value="2">Fill in any additional fields that may appear to help you complete the message definition.  The possible fields are described below.</li>
+            <li value="3">Tab to the OK button and press Enter.</li>
+        </ol>
+        <h6>MIDI message fields.</h6>
+        <p>The following descriptions should help you understand any additional prompts that may appear after you've selected a message type.</p>
+        <h6>MIDI channel.</h6>
+        <p>If you selected a message type of Note on, Note on/off, CC, Pitch Wheel, RPN, NRPN, or Nibble by nibble,  You need to enter which MIDI channel your message will be transmitted on when the desired control is adjusted.  The valid values, in decimal form, are 1 through 16 inclusive.</p>
+        <h6>Note number.</h6>
+        <p>This is a decimal number representing a specific note in MIDI.  Most control surfaces transmit note on or note on/note off messages, with the  note number indicating which particular button was pressed/released.  Your control surface documentation should contain a table of button names and their corresponding note number values.  Many surfaces also use this kind of message to change the state of LED lamps and, again, the manufacturer's documentation should provide the values.</p>
+        <h6>Message number</h6>
+        <p>If you've selected a message type of CC, RPN or NRPN, this field will appear.  The number you need to enter will be provided by your control surface's documentation and should be entered in decimal format.</p>
+        <h6>System exclusive message, Add Address byte... and Remove Address Byte....</h6>
+        <p>If you selected a message type of Complete SysEx, you will be able to create a MIDI system exclusive message definition.  These messages are constructed using the information from the System Exclusive page of the Protocol Wizard, together with a number of command address bytes that you define here.  The following items will appear in your Tab order:</p>
+        <ol>
+            <li value="1">The System exclusive message read-only edit box.  This contains a representation of a MIDI system exclusive message that you've defined for this control.  it is displayed to help you check your message definition as you add/remove bytes to/from the message.</li>
+            <li value="2">The Add message address byte... button.  If you press Enter on this button you will be prompted to type in a byte value in hexadecimal format (the valid range is 00 through ff, inclusive).  Once you've typed in the value, press Tab to get to the OK button then press Enter.  Your new byte will appear within the System exclusive message read-only field, so you can check that its value and position are correct.  Please note that address bytes are added immediately before the terminating F7 (end of system exclusive message) byte.</li>
+            <li value="3">Remove message address byte button.  If you press Enter on this button you will successively remove any address bytes that you've added to the message definition.  Bytes are removed in reverse order, so the last byte you added will be the first to be removed.  You can check the System exclusive message read-only edit box to ensure that you know what's happening.</li>
+        </ol>
+        <script type="text/javascript" src="../../SkinSupport/MadCapBodyEnd.js">
+        </script>
+    </body>
+</html>

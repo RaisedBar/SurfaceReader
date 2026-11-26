@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="Windows-1252"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns:MadCap="http://www.madcapsoftware.com/Schemas/MadCap.xsd" MadCap:tocPath="Using SurfaceReader|Advanced Configuration|Protocol Definitions|Creating a new protocol." MadCap:medium="print" MadCap:InPreviewMode="false" MadCap:PreloadImages="false" MadCap:RuntimeFileType="Topic" MadCap:TargetType="HtmlHelp" MadCap:PathToHelpSystem="../../" MadCap:HelpSystemFileName="SurfaceReader.xml" MadCap:SearchType="Stem">
+    <head><title>System Exclusive Page</title>
+        <link href="../../Resources/Stylesheets/SurfaceReader.css" rel="stylesheet" type="text/css" />
+        <script type="text/javascript" src="../../SkinSupport/MadCapMerging.js">
+        </script>
+        <script type="text/javascript" src="../../SkinSupport/MadCapAliasFile.js">
+        </script>
+        <script type="text/javascript" src="../../SkinSupport/MadCapUtilities.js">
+        </script>
+        <script type="text/javascript" src="../../SkinSupport/MadCapBody.js">
+        </script>
+        <script type="text/javascript" src="../../SkinSupport/MadCapHighlighter.js">
+        </script>
+    </head>
+    <body>
+        <h5>System Exclusive Page</h5>
+        <p>This page allows you to define a name for your new protocol, together with any byte values that your device uses to identify its MIDI system exclusive messages.  The fields are as follows:</p>
+        <ul>
+            <li value="1">Protocol name.</li>
+            <li value="2">Manufacturer ID byte 1.</li>
+            <li value="3">Manufacturer ID byte 2.</li>
+            <li value="4">Manufacturer ID byte 3.</li>
+            <li value="5">Model ID.</li>
+            <li value="6">Device ID.</li>
+        </ul>
+        <p>Apart from the protocol name, all of the other fields require a single byte value in hex format, so the valid range is from 00 to FF.  The rule for the manufacturer ID is that, if the first byte is 00, the remaining two bytes must be specified.  If the first byte is other than 00, the remaining two bytes should be empty.</p>
+        <p>The model and device ID values can be left blank if your device documentation doesn't specify values.</p>
+        <p>Once you've completed this page, press Tab until you get to the Next button then press Enter.</p>
+        <script type="text/javascript" src="../../SkinSupport/MadCapBodyEnd.js">
+        </script>
+    </body>
+</html>

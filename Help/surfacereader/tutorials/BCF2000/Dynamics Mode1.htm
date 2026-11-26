@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="Windows-1252"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns:MadCap="http://www.madcapsoftware.com/Schemas/MadCap.xsd" MadCap:tocPath="Control Surface Tutorials|Using a Behringer BCF2000|Sonar" MadCap:medium="print" MadCap:InPreviewMode="false" MadCap:PreloadImages="false" MadCap:RuntimeFileType="Topic" MadCap:TargetType="HtmlHelp" MadCap:PathToHelpSystem="../../../" MadCap:HelpSystemFileName="SurfaceReader.xml" MadCap:SearchType="Stem">
+    <head><title>Dynamics Mode</title>
+        <link href="../../../Resources/Stylesheets/SurfaceReader.css" rel="stylesheet" type="text/css" />
+        <script type="text/javascript" src="../../../SkinSupport/MadCapMerging.js">
+        </script>
+        <script type="text/javascript" src="../../../SkinSupport/MadCapAliasFile.js">
+        </script>
+        <script type="text/javascript" src="../../../SkinSupport/MadCapUtilities.js">
+        </script>
+        <script type="text/javascript" src="../../../SkinSupport/MadCapBody.js">
+        </script>
+        <script type="text/javascript" src="../../../SkinSupport/MadCapHighlighter.js">
+        </script>
+    </head>
+    <body>
+        <h4 class="Heading4"><a name="_Toc323208793"></a><a name="kanchor90"></a>Dynamics Mode</h4>
+        <p class="p_1">To control the <a name="kanchor91"></a>Sonitus Compressor plug-in in the same manner as Sonar’s track EQ, you will need to edit a text file.&#160; Navigate to your Cakewalk\Shared Surfaces folder, and locate the file MackieControl.ini.&#160; Before going any further, back this up for peace of mind by renaming this file something like MackieControl-Backup.ini.&#160; Open a text editor such as Notepad, and load the file, saving it as MackieControl.ini.&#160; You now have a copy to modify and a backup copy in case you wish to reverse any changes.</p>
+        <p class="p_1">At the top of the file where plug-ins are defined, find the line which reads </p>
+        <p class="p_1">5=CompressorX (Sonar XL) </p>
+        <p class="p_1">And change it to read </p>
+        <p class="p_1">5=Compressor</p>
+        <p class="p_1">Now scroll down until you reach the section where the compressor plug-in is defined.&#160; It starts with this line.</p>
+        <p class="p_1">[CompressorX (Sonar XL)]</p>
+        <p class="p_1">Change this line and the lines which follow it to match the description, below.&#160; Copy and paste is recommended for safe operation.</p>
+        <p class="p_1">[Compressor] </p>
+        <p class="p_1">PluginType=2 </p>
+        <p class="p_1">NumVPots=10 </p>
+        <p class="p_1">VPot0=0,level,1.0&#160;&#160; ; Threshold </p>
+        <p class="p_1">VPot1=1,level,0&#160;&#160;&#160; ; Ratio </p>
+        <p class="p_1">VPot2=2,level,0&#160;&#160;&#160; ; Knee </p>
+        <p class="p_1">VPot3=3,level,0.5&#160;&#160; ; Gain </p>
+        <p class="p_1">VPot4=4,level,0.01&#160;&#160; ; Attack </p>
+        <p class="p_1">VPot5=5,level,0.05&#160;&#160; ; Release </p>
+        <p class="p_1">VPot6=6,switch&#160;&#160;&#160; ; TCSelect aOn/Off </p>
+        <p class="p_1">VPot7=8,switch&#160;&#160;&#160; ; Limiter On/Off </p>
+        <p class="p_1">VPot8=7,switch&#160;&#160;&#160; ; Type Normal/vintage </p>
+        <p class="p_1">VPot9=9,switch&#160;&#160;&#160; ; Output Audio/Sidechain</p>
+        <p class="p_1">Now, with the Sonitus Compressor inserted on one of your tracks, press Upper Shift+EQ Mode to enter Dynamics multi mode.&#160; Press Upper Shift+EQ Mode a second time to enter dynamics single mode.&#160; Press Track Mode twice to return to Track Multi.</p>
+        <p class="p_1">NOTE: The comments in the file MackieControl.ini explain what each line is for, and you can now map your plug-ins to the BCF2000 to your heart’s content.</p>
+        <script type="text/javascript" src="../../../SkinSupport/MadCapBodyEnd.js">
+        </script>
+    </body>
+</html>

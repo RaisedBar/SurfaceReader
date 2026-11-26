@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="Windows-1252"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns:MadCap="http://www.madcapsoftware.com/Schemas/MadCap.xsd" MadCap:tocPath="Control Surface Tutorials|Using a Behringer BCF2000|Sonar|Enabling Communication Between BCF2000 and Sonar" MadCap:medium="print" MadCap:InPreviewMode="false" MadCap:PreloadImages="false" MadCap:RuntimeFileType="Topic" MadCap:TargetType="HtmlHelp" MadCap:PathToHelpSystem="../../../" MadCap:HelpSystemFileName="SurfaceReader.xml" MadCap:SearchType="Stem">
+    <head><title>Enabling Communication Between BCF2000 and Sonar</title>
+        <link href="../../../Resources/Stylesheets/SurfaceReader.css" rel="stylesheet" type="text/css" />
+        <script type="text/javascript" src="../../../SkinSupport/MadCapMerging.js">
+        </script>
+        <script type="text/javascript" src="../../../SkinSupport/MadCapAliasFile.js">
+        </script>
+        <script type="text/javascript" src="../../../SkinSupport/MadCapUtilities.js">
+        </script>
+        <script type="text/javascript" src="../../../SkinSupport/MadCapBody.js">
+        </script>
+        <script type="text/javascript" src="../../../SkinSupport/MadCapHighlighter.js">
+        </script>
+    </head>
+    <body>
+        <h4 class="Heading4"><span><a name="kanchor72"></a></span><a name="_Toc323208773"></a>Enabling Communication Between BCF2000 and Sonar</h4>
+        <p>IMPORTANT! Always turn on the BCF2000 before starting Sonar. You should also turn the BCF2000 off after you exit Sonar or just leave it switched on all the time.&#160; Failing to follow this procedure will require you to perform some of the following steps again to re-enable communication.&#160; To get Sonar and the BCF2000 communicating with each other:</p>
+        <h5 class="Heading5"><a name="_Toc323208774"></a><a name="kanchor73"></a>Selecting Mackie/Sonar Emulation Mode On The BCF2000</h5>
+        <p>Put the BCF2000 into Mackie/Sonar emulation mode by holding down the fourth Mute button while you turn the unit on.&#160; Feel across the top of the unit, along the row of v-pots, until you get to the fourth v-pot from the left.&#160; Press and hold down the flat rectangular button immediately below that v-pot, while turning on the BCF2000 with the power button.&#160; If successful, the faders will move to the bottom of their travel.&#160; If you have someone sighted around, they can confirm that the display shows the text “MCSo”, as in Mackie Control Sonar.&#160; Turning the BCF2000 off and then on again will pop you right back into this emulation mode and the faders will move to the bottom if they are not already there.&#160; You should only need to select this mode once.&#160; If, for some reason, you need to change back to this emulation mode, or to select one of the other available emulation modes, simply hold down one of the following buttons as you turn the unit on:</p>
+        <ul class="ul_1">
+            <li class="ListParagraph_1" value="1">Strip 1 Mute Button: Native B-Control</li>
+            <li class="ListParagraph_1" value="2">Strip 2 Mute Button: Mackie/CueBase</li>
+            <li class="ListParagraph_1" value="3">Strip 3 Mute button: Logic Control</li>
+            <li class="ListParagraph_1" value="4">Strip 4 Mute button: Mackie/Sonar (the topic of this guide)</li>
+            <li class="ListParagraph_1" value="5">Strip 5 Mute button: Baby HUI</li>
+        </ul>
+        <h5 class="Heading5"><a name="_Toc323208775"></a><a name="kanchor74"></a>Enabling MIDI Ports In Sonar</h5>
+        <p>From within Sonar, disable the physical MIDI ports to which the BCF2000 is connected so that its messages won’t bleed through into your MIDI tracks.&#160; You also need to ensure that the two virtual cables that you’ve configured within SurfaceReader are enabled within Sonar.</p>
+        <ol start="6" class="ol_3">
+            <li class="li_1" value="6">Go to the Options Menu and select MIDI Devices. It should be the first item in the menu.</li>
+            <li class="li_1" value="7">In the lists of available MIDI input and output ports, make sure the entries marked BCF2000 are unchecked and the entries for your virtual ports are checked. </li>
+        </ol>
+        <h5 class="Heading5"><a name="_Toc323208776"></a><a name="kanchor75"></a>Selecting the Control Surface In Sonar</h5>
+        <p>Now, tell Sonar you are using a Mackie Control by going to the Options Menu with ALT+o, then select Controllers/Surfaces.&#160; Mackie Control is probably not yet listed there, so TAB and then activate the Add Surfaces button to bring up a list of available surfaces, and pick Mackie Control from the list.&#160; Press Tab and make sure the correct input and output ports are selected.</p>
+        <script type="text/javascript" src="../../../SkinSupport/MadCapBodyEnd.js">
+        </script>
+    </body>
+</html>

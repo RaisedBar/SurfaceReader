@@ -6,6 +6,7 @@
 #include "SurfaceReader.h"
 #include "UiStyle.h"
 #include "AppSettings.h"
+#include "RBStringFuncs.h"
 
 #include <wx/wizard.h>
 
@@ -44,6 +45,7 @@ return false;
     }
 
     // Hand-edited settings, such as how long a fader must settle before it is announced
+	SeedDataFolder();
 	AppSettings::Load();
 
     // create the main application window
